@@ -58,9 +58,9 @@ public:
 	void addElement(int value, Node* addAfter)
 	{
 		Node* temp = nullptr;
-		temp->setVal(addAfter->getNext);
+		temp->setNext(addAfter->getNext());
 		addAfter->setNext(new Node());
-		addAfter->getNext.setNext(temp);
+		addAfter->getNext()->setNext(temp);
 	}
 };
 
