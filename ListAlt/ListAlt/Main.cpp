@@ -88,12 +88,14 @@ public:
 
 	int getCurrent()
 	{
-		return current->getValue();
+		if(current != nullptr)
+			return current->getValue();
 	}
 
 	void setCurrent(int newVal)
 	{
-		current->setValue(newVal);
+		if(current != nullptr)
+			current->setValue(newVal);
 	}
 
 	void addElementBeforeHead(int val)
@@ -102,6 +104,7 @@ public:
 		{
 			head = tail = new Node();
 			head->setValue(val);
+			current = head;
 		}
 		else
 		{
@@ -119,6 +122,7 @@ public:
 		{
 			head = tail = new Node();
 			head->setValue(val);
+			current = head;
 		}
 		else
 		{
@@ -135,6 +139,7 @@ public:
 		{
 			head = tail = new Node();
 			head->setValue(val);
+			current = head;
 		}
 		else
 		{
