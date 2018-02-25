@@ -131,6 +131,7 @@ public:
 			tail->setNext(temp);
 			tail = temp;
 		}
+		size++;
 	}
 
 	void addElementAfterCurrent(int val)
@@ -148,6 +149,7 @@ public:
 			temp->setNext(current->getNext());
 			current->setNext(temp);
 		}
+		size++;
 	}
 
 	void deleteAfterCurrentElement()
@@ -155,6 +157,7 @@ public:
 		Node* temp = current->getNext();
 		current->setNext(current->getNext()->getNext());
 		delete temp;
+		size--;
 	}
 
 	void deleteHeadElement()
@@ -162,6 +165,7 @@ public:
 		Node* temp = head->getNext();
 		delete head;
 		head = temp;
+		size--;
 	}
 
 	void deleteTailElement()
@@ -173,6 +177,7 @@ public:
 		}
 		delete tail;
 		tail = temp;
+		size--;
 	}
 };
 
