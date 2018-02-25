@@ -145,24 +145,33 @@ public:
 		}
 	}
 
-	//Plombs below
 	void deleteAfterCurrentElement()
 	{
-
+		Node* temp = current->getNext();
+		current->setNext(current->getNext()->getNext());
+		delete temp;
 	}
 
 	void deleteHeadElement()
 	{
-
+		Node* temp = head->getNext();
+		delete head;
+		head = temp;
 	}
 
 	void deleteTailElement()
 	{
-
+		Node* temp = head;
+		for (int i = 0; i < size - 1; i++)
+		{
+			temp = temp->getNext();
+		}
+		delete tail;
+		tail = temp;
 	}
 };
 
 int main()
 {
-	List myList;
+	return 0;
 }
