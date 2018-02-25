@@ -37,6 +37,7 @@ private:
 	int listSize = 0;
 	Node* head = nullptr;
 	Node* tail = nullptr;
+	Node* CurentIndex
 
 public:
 	List()
