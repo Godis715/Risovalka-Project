@@ -1,4 +1,5 @@
 #include <iostream>
+#include <stdexcept>
 
 using namespace std;
 
@@ -153,6 +154,10 @@ public:
 			temp->setValue(val);
 			temp->setNext(current->getNext());
 			current->setNext(temp);
+
+			if (current == tail) {
+				tail = temp;
+			}
 		}
 		size++;
 	}
@@ -184,9 +189,61 @@ public:
 		tail = temp;
 		size--;
 	}
+
+	int getValueAt(int index) const {
+		if (index < 0) {
+			throw exception("Index was negative.");
+		}
+
+		if (head == nullptr) {
+			throw exception("List is empty.");
+		}
+
+		Node* currElem = head;
+
+		for (int i = 0; i < index; ++i) {
+			currElem = currElem->getNext();
+			if (currElem == nullptr) {
+				throw exception("Index out of range.");
+			}
+		}
+
+		return currElem->getValue();
+	}
+
+	void setCurrentAt(int index) {
+		if (index < 0) {
+			throw exception("Index was negative.");
+		}
+
+		if (head == nullptr) {
+			throw exception("List is empty.");
+		}
+
+		Node* currElem = head;
+
+		for (int i = 0; i < index; ++i) {
+			currElem = currElem->getNext();
+			if (currElem == nullptr) {
+				throw exception("Index out of range.");
+			}
+		}
+
+		current = currElem;
+	}
 };
 
 int main()
 {
+	List list;
+	for (int i = 0; i < 10; ++i) {
+		list.addElementAfterCurrent(i);
+		list.moveTail();
+	}
+	
+	int num = list.getCurrent();
+	num = list.getValueAt(0);
+	num = list.getValueAt(9);
+
 	return 0;
 }
