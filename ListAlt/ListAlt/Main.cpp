@@ -81,9 +81,14 @@ public:
 		current = this->getHead();
 	}
 
-	void moveNext()
+	bool moveNext()
 	{
-		current = current->getNext();
+		if (current->getNext() != nullptr)
+		{
+			current = current->getNext();
+			return true;
+		}
+		return false;
 	}
 
 	int getCurrent()
