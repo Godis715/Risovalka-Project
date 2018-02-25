@@ -24,6 +24,11 @@ private:
 			return next;
 		}
 
+		void setNext(Node* nxt)
+		{
+			next = nxt;
+		}
+
 		int getValue()
 		{
 			return value;
@@ -91,23 +96,57 @@ public:
 		current->setValue(newVal);
 	}
 
+	void addElementBeforeHead(int val)
+	{
+		if (size == 0)
+		{
+			head = tail = new Node();
+			head->setValue(val);
+		}
+		else
+		{
+			Node* temp = new Node();
+			temp->setValue(val);
+			temp->setNext(head);
+			head = temp;
+		}
+		size++;
+	}
+
+	void addElementAfterTail(int val)
+	{
+		if (size == 0)
+		{
+			head = tail = new Node();
+			head->setValue(val);
+		}
+		else
+		{
+			Node* temp = new Node();
+			temp->setValue(val);
+			tail->setNext(temp);
+			tail = temp;
+		}
+	}
+
+	void addElementAfterCurrent(int val)
+	{
+		if (size == 0)
+		{
+			head = tail = new Node();
+			head->setValue(val);
+		}
+		else
+		{
+			Node* temp = new Node();
+			temp->setValue(val);
+			temp->setNext(current->getNext());
+			current->setNext(temp);
+		}
+	}
+
 	//Plombs below
-	void addElementBeforeHead()
-	{
-
-	}
-
-	void addElementAfterTail()
-	{
-
-	}
-
-	void addElementAfterCurrent()
-	{
-
-	}
-
-	void deleteCurrentElement()
+	void deleteAfterCurrentElement()
 	{
 
 	}
