@@ -14,7 +14,7 @@ public:
 		int value = 0;
 		Node* next = nullptr;
 	}
-	
+
 	Node* getNext()
 	{
 		return next;
@@ -29,6 +29,10 @@ public:
 	{
 		next = nxt;
 	}
+
+	int GetValue() {
+		return value;
+	}
 };
 
 class List
@@ -37,7 +41,7 @@ private:
 	int listSize = 0;
 	Node* head = nullptr;
 	Node* tail = nullptr;
-	Node* CurentIndex
+	Node* CurentIndex = nullptr;
 
 public:
 	List()
@@ -62,6 +66,18 @@ public:
 		temp->setNext(addAfter->getNext());
 		addAfter->setNext(new Node());
 		addAfter->getNext()->setNext(temp);
+	}
+
+	void IndexToStart() {
+		CurentIndex = head;
+	}
+
+	void IndexToEnd() {
+		CurentIndex = tail;
+	}
+
+	int GetCurentValue() {
+		return CurentIndex->GetValue();
 	}
 };
 
