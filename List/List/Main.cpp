@@ -14,7 +14,7 @@ public:
 		int value = 0;
 		Node* next = nullptr;
 	}
-	
+
 	Node* getNext()
 	{
 		return next;
@@ -24,7 +24,10 @@ public:
 	{
 		value = val;
 	}
-
+	int getVal()
+	{
+		return value;
+	}
 	void setNext(Node* nxt)
 	{
 		next = nxt;
@@ -37,7 +40,13 @@ private:
 	int listSize = 0;
 	Node* head = nullptr;
 	Node* tail = nullptr;
-
+	void insert(int value, Node* addAfter)
+	{
+		Node* temp = new Node();
+		temp->setNext(addAfter->getNext());
+		temp->setVal(value);
+		addAfter->setNext(temp);
+	}
 public:
 	List()
 	{
@@ -45,7 +54,22 @@ public:
 		Node* head = nullptr;
 		Node* tail = nullptr;
 	}
-
+	void newHead(int value)
+	{
+		if (listSize == 0)
+		{
+			head = tail = new Node();
+			head->setVal(value);
+		}
+		else
+		{
+			Node* temp = new Node();
+			temp->setNext(head);
+			temp->setVal(value);
+			head = temp;
+		}
+		listSize++;
+	}
 	void addElement(int value)
 	{
 		if (listSize == 0)
@@ -53,14 +77,41 @@ public:
 			head = tail = new Node();
 			head->setVal(value);
 		}
-	}
+		else
+		{
+			insert(value, tail);
+			tail = tail->getNext();
+		}
+		listSize++;
 
-	void addElement(int value, Node* addAfter)
+	}
+	void addElement(int value, int index)
 	{
-		Node* temp = nullptr;
-		temp->setNext(addAfter->getNext());
-		addAfter->setNext(new Node());
-		addAfter->getNext()->setNext(temp);
+		if (listSize == 0)
+		{
+			head = tail = new Node();
+			head->setVal(value);
+		}
+		else
+		{
+			if (index < listSize)
+			{
+				Node* curr = head;
+				int i = 0;
+				while (i != index)
+				{
+					curr = curr->getNext();
+					i++;
+				}
+				insert(value, curr);
+				if (i = listSize - 1)
+				{
+					tail = tail->getNext();
+				}
+				listSize++;
+			}
+		}
+
 	}
 };
 
