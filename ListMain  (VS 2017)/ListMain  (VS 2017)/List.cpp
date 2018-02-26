@@ -1,7 +1,18 @@
 #include "List.h"
 #include <stdexcept>
 
+List::~List() {
+	if (head != nullptr) {
+		Node* current = head;
+		Node* tempNext;
+		do {
+			tempNext = current->getNext();
+			delete current;
+			current = tempNext;
 
+		} while (current != nullptr);
+	}
+}
 
 List::Node* List::getHead(){
 		return head;

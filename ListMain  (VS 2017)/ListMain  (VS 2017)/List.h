@@ -46,7 +46,8 @@ private:
 	Node* getHead();
 	Node* getTail();
 public:
-	List();	
+	List();
+	~List();
 	int getSize();
 	void moveTail();
 	void moveHead();
