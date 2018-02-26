@@ -51,7 +51,7 @@ public:
 	void moveTail();
 	void moveHead();
 	bool moveNext();
-	int getCurrent();	
+	int getCurrent();
 	void setCurrent(int newVal);
 	void addElementBeforeHead(int val);
 	void addElementAfterTail(int val);

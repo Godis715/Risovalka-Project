@@ -31,7 +31,7 @@ void List::moveHead(){
 
 bool List::moveNext()
 	{
-		if (current->getNext() != nullptr)
+		if (current != nullptr && current->getNext() != nullptr)
 		{
 			current = current->getNext();
 			return true;
@@ -43,6 +43,7 @@ int List::getCurrent()
 	{
 		if(current != nullptr)
 			return current->getValue();
+		throw std::out_of_range("Пустой список");
 	}
 
 	void List::setCurrent(int newVal)
