@@ -14,6 +14,6 @@ int main()
 		//list.moveTail();
 	}
 	printList(list);
-
+	system("pause");
 	return 0;
 }
