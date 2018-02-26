@@ -32,6 +32,10 @@ public:
 	{
 		next = nxt;
 	}
+
+	int GetValue() {
+		return value;
+	}
 };
 
 class List
@@ -40,6 +44,7 @@ private:
 	int listSize = 0;
 	Node* head = nullptr;
 	Node* tail = nullptr;
+
 	void insert(int value, Node* addAfter)
 	{
 		Node* temp = new Node();
@@ -111,7 +116,6 @@ public:
 				listSize++;
 			}
 		}
-
 	}
 };
 
