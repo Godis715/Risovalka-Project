@@ -45,30 +45,30 @@ public:
 	List();	
 	class Marker
 	{
-		
 	private:
-		Node* current = nullptr;
-		List* ListForMarker;
+		Node* current;
+		List* listForMarker;
 	public:
 		Marker(List* list)
 		{
 			current = list->head;
-			ListForMarker = list;
+			listForMarker = list;
 		}
-		Node* getCurrent();
 		bool moveNext();
+		int getCurrent() const;
+		void setCurrent(int value);
 		void moveTail();
 		void moveHead();
+		void addAfter(int val);
+		void deleteAfter();
 	};
+	
 	int getSize();
 	void addElementBeforeHead(int val);
 	void addElementAfterTail(int val);
-	void addElementAfterMarker(int val, List::Marker marker);
-	void deleteAfterMarkerElement(List::Marker marker);
 	void deleteHeadElement();
 	void deleteTailElement();
-	int getValueAt(int index) const;
-	void setCurrentAt(int index);
+	Marker* createMarker();
 };
 
 #endif

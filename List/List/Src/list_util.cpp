@@ -1,17 +1,32 @@
 #include "list_util.h"
 #include <iostream>
 
-void printList(List&list){
-	List::Marker marker(&list);
-	do{
+void printListStrange(List& list) {
+	auto marker = list.createMarker();
+	do {
+		if (marker->getCurrent() % 2 == 0) {
+			std::cout << marker->getCurrent() << " ";
+		}
+	} while (marker->moveNext());
+	marker->moveHead();
+	do {
+		if (marker->getCurrent() % 2 == 1) {
+			std::cout << marker->getCurrent() << " ";
+		}
+	} while (marker->moveNext());
+}
+
+void printList(List& list) {
+	auto marker = list.createMarker();
+	do {
 		try
 		{
-			std::cout << marker.getCurrent()->getValue() << " ";
+			std::cout << marker->getCurrent() << " ";
 		}
-		catch(std::out_of_range)
+		catch (std::out_of_range)
 		{
 			std::cout << "Список пуст\n";
 		}
-	}while ( marker.moveNext() );
+	} while (marker->moveNext());
 	std::cout << "\n";
 }

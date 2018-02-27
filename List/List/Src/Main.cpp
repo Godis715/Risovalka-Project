@@ -8,12 +8,17 @@ using namespace std;
 
 int main()
 {
-	setlocale(LC_ALL, "Russian");
-	List list;
-	for (int i = 0; i < 10; ++i) {
-		//list.addElementAfterTail(i);
+	try {
+		std::setlocale(LC_ALL, "Russian");
+		List list;
+		for (int i = 0; i < 10; ++i) {
+			//list.addElementAfterTail(i);
+		}
+		printListStrange(list);
 	}
-	printList(list);
+	catch (std::exception e) {
+		std::cout << "baaad";
+	}
 	system("pause");
 	return 0;
 }

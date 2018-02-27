@@ -1,49 +1,17 @@
 #include "List.h"
 #include <stdexcept>
 
-
-
-
 List::List(){
 		head = nullptr;
 		tail = nullptr;
 		size = 0;
 }
+
 int List::getSize()	{
 		return size;
 }
 
-void List::Marker::moveTail()
-	{
-		current = ListForMarker->tail;
-	}
-
-void List::Marker::moveHead(){
-		current = ListForMarker->head;
-}
-List::Node* List::Marker::getCurrent()
-{
-	if (current != nullptr)
-	{
-		return current;
-	}
-	else
-	{
-		throw std::out_of_range("Список пуст\n");
-	}
-	
-}
-bool List::Marker::moveNext()
-	{
-		if (current != nullptr && current->getNext() != nullptr)
-		{
-			current = current->getNext();
-			return true;
-		}
-		return false;
-	}
-
-	void List::addElementBeforeHead(int val)
+void List::addElementBeforeHead(int val)
 	{
 		if (size == 0)
 		{
@@ -60,7 +28,7 @@ bool List::Marker::moveNext()
 		size++;
 	}
 
-	void List::addElementAfterTail(int val)
+void List::addElementAfterTail(int val)
 	{
 		if (size == 0)
 		{
@@ -77,35 +45,7 @@ bool List::Marker::moveNext()
 		size++;
 	}
 
-	void List::addElementAfterMarker(int val, List::Marker marker)
-	{
-		if (size == 0)
-		{
-			head = tail = new Node();
-			head->setValue(val);
-		}
-		else
-		{
-			Node* temp = new Node();
-			temp->setValue(val);
-			temp->setNext(marker.getCurrent()->getNext());
-			marker.getCurrent()->setNext(temp);
-			if (marker.getCurrent() == tail) {
-				tail = temp;
-			}
-		}
-		size++;
-	}
-
-	void List::deleteAfterMarkerElement(List::Marker marker)
-	{
-		Node* temp = marker.getCurrent()->getNext();
-		marker.getCurrent()->setNext(marker.getCurrent()->getNext()->getNext());
-		delete temp;
-		size--;
-	}
-
-	void List::deleteHeadElement()
+void List::deleteHeadElement()
 	{
 		Node* temp = head->getNext();
 		delete head;
@@ -113,7 +53,7 @@ bool List::Marker::moveNext()
 		size--;
 	}
 
-	void List::deleteTailElement()
+void List::deleteTailElement()
 	{
 		Node* temp = head;
 		for (int i = 0; i < size - 1; i++)
@@ -125,42 +65,68 @@ bool List::Marker::moveNext()
 		size--;
 	}
 
-	int List::getValueAt(int index) const {
-		if (index < 0) {
-			throw std::exception("Index was negative.");
-		}
+List::Marker* List::createMarker() {
+	List::Marker* newMarker = new Marker(this);
+	newMarker->moveHead();
+	return newMarker;
+}
 
-		if (head == nullptr) {
-			throw std::exception("List is empty.");
-		}
+void List::Marker::moveTail()
+{
+	current = listForMarker->tail;
+}
 
-		Node* currElem = head;
+void List::Marker::moveHead() {
+	current = listForMarker->head;
+}
 
-		for (int i = 0; i < index; ++i) {
-			currElem = currElem->getNext();
-			if (currElem == nullptr) {
-				throw std::exception("Index out of range.");
-			}
-		}
-
-		return currElem->getValue();
+bool List::Marker::moveNext()
+{
+	if (current != nullptr && current->getNext() != nullptr)
+	{
+		current = current->getNext();
+		return true;
 	}
+	return false;
+}
 
-	void List::setCurrentAt(int index) {
-		if (index < 0) {
-			throw std::exception("Index was negative.");
-		}
+int List::Marker::getCurrent() const {
+	if (current != nullptr) {
+		return current->getValue();
+	}
+	else {
+		throw std::exception("Current was nullptr");
+	}
+}
 
-		if (head == nullptr) {
-			throw std::exception("List is empty.");
-		}
+void List::Marker::setCurrent(int value) {
+	current->setValue(value);
+}
 
-		Node* currElem = head;
-
-		for (int i = 0; i < index; ++i) {
-			currElem = currElem->getNext();
-			if (currElem == nullptr) {
-				throw std::exception("Index out of range.");
-			}
+void List::Marker::addAfter(int val)
+{
+	if (listForMarker->size == 0)
+	{
+		listForMarker->head = listForMarker->tail = new Node();
+		listForMarker->head->setValue(val);
+	}
+	else
+	{
+		Node* temp = new Node();
+		temp->setValue(val);
+		temp->setNext(current->getNext());
+		current->setNext(temp);
+		if (current == listForMarker->tail) {
+			listForMarker->tail = temp;
 		}
 	}
+	listForMarker->size++;
+}
+
+void List::Marker::deleteAfter()
+{
+	Node* temp = current->getNext();
+	current->setNext(current->getNext()->getNext());
+	delete temp;
+	listForMarker->size--;
+}
