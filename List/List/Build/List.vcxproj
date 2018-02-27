@@ -20,8 +20,8 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
-    <ProjectGuid>{F138F2CC-257E-42E1-8EF4-FE2A985BD267}</ProjectGuid>
-    <RootNamespace>ListMainVS2017</RootNamespace>
+    <ProjectGuid>{0863146D-0B46-4744-AC51-E455CCD5426A}</ProjectGuid>
+    <RootNamespace>List</RootNamespace>
     <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -111,13 +111,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\ListAlt (VS 2012)\ListAlt\List.cpp" />
-    <ClCompile Include="..\..\ListAlt (VS 2012)\ListAlt\list_util.cpp" />
-    <ClCompile Include="..\..\ListAlt (VS 2012)\ListAlt\Main.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="..\..\ListAlt (VS 2012)\ListAlt\List.h" />
-    <ClInclude Include="..\..\ListAlt (VS 2012)\ListAlt\list_util.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

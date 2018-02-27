@@ -6,11 +6,12 @@ void printList(List&list){
 	do{
 		try
 		{
-			std::cout << marker.getCurrent()->getValue();
+			std::cout << marker.getCurrent()->getValue() << " ";
 		}
 		catch(std::out_of_range)
 		{
 			std::cout << "Список пуст\n";
 		}
-	}while ( !marker.moveNext() );
+	}while ( marker.moveNext() );
+	std::cout << "\n";
 }
