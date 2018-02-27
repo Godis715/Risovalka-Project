@@ -41,22 +41,30 @@ private:
 	Node* head;
 	Node* tail;
 	int size;
-	Node* current;
-
-	Node* getHead();
-	Node* getTail();
 public:
 	List();	
+	class Marker
+	{
+		
+	private:
+		Node* current = nullptr;
+		List* ListForMarker;
+	public:
+		Marker(List* list)
+		{
+			current = list->head;
+			ListForMarker = list;
+		}
+		Node* getCurrent();
+		bool moveNext();
+		void moveTail();
+		void moveHead();
+	};
 	int getSize();
-	void moveTail();
-	void moveHead();
-	bool moveNext();
-	int getCurrent();
-	void setCurrent(int newVal);
 	void addElementBeforeHead(int val);
 	void addElementAfterTail(int val);
-	void addElementAfterCurrent(int val);
-	void deleteAfterCurrentElement();
+	void addElementAfterMarker(int val, List::Marker marker);
+	void deleteAfterMarkerElement(List::Marker marker);
 	void deleteHeadElement();
 	void deleteTailElement();
 	int getValueAt(int index) const;

@@ -3,33 +3,37 @@
 
 
 
-List::Node* List::getHead(){
-		return head;
-}
 
-List::Node* List::getTail()	{
-		return tail;
-}
 List::List(){
 		head = nullptr;
 		tail = nullptr;
 		size = 0;
-		current = head;
 }
 int List::getSize()	{
 		return size;
 }
 
-void List::moveTail()
+void List::Marker::moveTail()
 	{
-		current = this->getTail();
+		current = ListForMarker->tail;
 	}
 
-void List::moveHead(){
-		current = this->getHead();
+void List::Marker::moveHead(){
+		current = ListForMarker->head;
 }
-
-bool List::moveNext()
+List::Node* List::Marker::getCurrent()
+{
+	if (current != nullptr)
+	{
+		return current;
+	}
+	else
+	{
+		throw std::out_of_range("Список пуст\n");
+	}
+	
+}
+bool List::Marker::moveNext()
 	{
 		if (current != nullptr && current->getNext() != nullptr)
 		{
@@ -39,26 +43,12 @@ bool List::moveNext()
 		return false;
 	}
 
-int List::getCurrent()
-	{
-		if(current != nullptr)
-			return current->getValue();
-		throw std::out_of_range("Пустой список");
-	}
-
-	void List::setCurrent(int newVal)
-	{
-		if(current != nullptr)
-			current->setValue(newVal);
-	}
-
 	void List::addElementBeforeHead(int val)
 	{
 		if (size == 0)
 		{
 			head = tail = new Node();
 			head->setValue(val);
-			current = head;
 		}
 		else
 		{
@@ -76,7 +66,6 @@ int List::getCurrent()
 		{
 			head = tail = new Node();
 			head->setValue(val);
-			current = head;
 		}
 		else
 		{
@@ -88,32 +77,30 @@ int List::getCurrent()
 		size++;
 	}
 
-	void List::addElementAfterCurrent(int val)
+	void List::addElementAfterMarker(int val, List::Marker marker)
 	{
 		if (size == 0)
 		{
 			head = tail = new Node();
 			head->setValue(val);
-			current = head;
 		}
 		else
 		{
 			Node* temp = new Node();
 			temp->setValue(val);
-			temp->setNext(current->getNext());
-			current->setNext(temp);
-
-			if (current == tail) {
+			temp->setNext(marker.getCurrent()->getNext());
+			marker.getCurrent()->setNext(temp);
+			if (marker.getCurrent() == tail) {
 				tail = temp;
 			}
 		}
 		size++;
 	}
 
-	void List::deleteAfterCurrentElement()
+	void List::deleteAfterMarkerElement(List::Marker marker)
 	{
-		Node* temp = current->getNext();
-		current->setNext(current->getNext()->getNext());
+		Node* temp = marker.getCurrent()->getNext();
+		marker.getCurrent()->setNext(marker.getCurrent()->getNext()->getNext());
 		delete temp;
 		size--;
 	}
@@ -176,6 +163,4 @@ int List::getCurrent()
 				throw std::exception("Index out of range.");
 			}
 		}
-
-		current = currElem;
 	}
