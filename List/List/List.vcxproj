@@ -93,7 +93,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <AdditionalUsingDirectories>%(AdditionalUsingDirectories)</AdditionalUsingDirectories>
-      <AdditionalIncludeDirectories>D:\OOP_REP\133_ProgrammingBasics\List\List\Include;D:\OOP_REP\133_ProgrammingBasics\List\List\Src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\projects\133-programmingbasics\List\List\Src;C:\projects\133-programmingbasics\List\List\Include;C:\projects\133-programmingbasics\List\List\Build;D:\OOP_REP\133_ProgrammingBasics\List\List\Include;D:\OOP_REP\133_ProgrammingBasics\List\List\Src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
