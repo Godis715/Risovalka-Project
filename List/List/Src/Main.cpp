@@ -12,7 +12,7 @@ int main()
 		std::setlocale(LC_ALL, "Russian");
 		List list;
 		for (int i = 0; i < 10; ++i) {
-			//list.addElementAfterTail(i);
+			list.addElementAfterTail(i);
 		}
 		printListStrange(list);
 	}
