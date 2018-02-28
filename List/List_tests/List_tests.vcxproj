@@ -92,7 +92,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>D:\OOP_REP\133_ProgrammingBasics\List\List\Build;D:\OOP_REP\133_ProgrammingBasics\List\List\Include;D:\OOP_REP\133_ProgrammingBasics\List\List\Src;$(VCInstallDir)UnitTest\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\projects\133-programmingbasics\List\List\Src;C:\projects\133-programmingbasics\List\List\Include;C:\projects\133-programmingbasics\List\List;C:\projects\133-programmingbasics\List\List\Build;D:\OOP_REP\133_ProgrammingBasics\List\List\Build;D:\OOP_REP\133_ProgrammingBasics\List\List\Include;D:\OOP_REP\133_ProgrammingBasics\List\List\Src;$(VCInstallDir)UnitTest\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <UseFullPaths>true</UseFullPaths>
     </ClCompile>
