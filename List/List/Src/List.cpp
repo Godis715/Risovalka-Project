@@ -7,8 +7,9 @@ List::List(){
 		size = 0;
 }
 
-int List::getSize()	{
-		return size;
+int List::getSize()
+{
+	return size;
 }
 
 void List::addElementBeforeHead(int val)
@@ -56,7 +57,7 @@ void List::deleteHeadElement()
 void List::deleteTailElement()
 	{
 		Node* temp = head;
-		for (int i = 0; i < size - 1; i++)
+		for (int i = 0; i < size - 2; i++)
 		{
 			temp = temp->getNext();
 		}
@@ -100,7 +101,12 @@ int List::Marker::getCurrent() const {
 }
 
 void List::Marker::setCurrent(int value) {
-	current->setValue(value);
+	if (current != nullptr) {
+		current->setValue(value);
+	}
+	else {
+		throw std::exception("Current was nullptr");
+	}
 }
 
 void List::Marker::addAfter(int val)

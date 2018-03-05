@@ -25,8 +25,55 @@ void printList(List& list) {
 		}
 		catch (std::out_of_range)
 		{
-			std::cout << "Список пуст\n";
+			std::cout << "пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ\n";
 		}
 	} while (marker->moveNext());
 	std::cout << "\n";
+}
+
+void BublesSort(List& list) {
+	if (list.getSize() < 2) {
+		return;
+	}
+	
+	auto markerLeft = list.createMarker();
+	auto markerRight = list.createMarker();
+	markerRight->moveNext();
+	bool WasSwap = false;
+	try
+	{
+		markerLeft->getCurrent();
+	}
+	catch (std::exception)
+	{
+		std::cout << "пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ\n";
+	}
+	try
+	{
+		markerRight->getCurrent();
+	}
+	catch (std::exception)
+	{
+		std::cout << "пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ\n";
+	}
+
+	do
+	{
+		WasSwap = false;
+		markerLeft->moveHead();
+		markerRight->moveHead();
+		markerRight->moveNext();
+		do
+		{
+			int Left = markerLeft->getCurrent();
+			int Right = markerRight->getCurrent();
+			if (Left > Right) {
+				markerLeft->setCurrent(Right);
+				markerRight->setCurrent(Left);
+				WasSwap = true;
+			}
+
+		} while ((markerLeft->moveNext()) && (markerRight->moveNext()));
+	} while (WasSwap);
+	return;
 }
