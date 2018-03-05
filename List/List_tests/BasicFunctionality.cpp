@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "CppUnitTest.h"
-
+#include "list_util.cpp"
 #include "List.cpp"
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
@@ -167,5 +167,55 @@ namespace List_tests
 			}
 		}
 
+		TEST_METHOD(Test_List_BubleSort_NoNeed)
+		{
+			List tempList;
+			for (int i = 0; i < 10; i++)
+			{
+				tempList.addElementAfterTail(i);
+			}
+			BublesSort(tempList);
+			auto tempMarker = tempList.createMarker();
+			tempMarker->moveHead();
+			for (int i = 0; i < 10; i++)
+			{
+				Assert::AreEqual(i, tempMarker->getCurrent());
+				tempMarker->moveNext();
+			}
+		}
+
+		TEST_METHOD(Test_List_BubleSort_Reverted)
+		{
+			List tempList;
+			for (int i = 9; i >= 0; i--)
+			{
+				tempList.addElementAfterTail(i);
+			}
+			BublesSort(tempList);
+			auto tempMarker = tempList.createMarker();
+			tempMarker->moveHead();
+			for (int i = 0; i < 10; i++)
+			{
+				Assert::AreEqual(i, tempMarker->getCurrent());
+				tempMarker->moveNext();
+			}
+		}
+
+		TEST_METHOD(Test_List_BubleSort_Equal)
+		{
+			List tempList;
+			for (int i = 0; i < 10; i++)
+			{
+				tempList.addElementAfterTail(12);
+			}
+			BublesSort(tempList);
+			auto tempMarker = tempList.createMarker();
+			tempMarker->moveHead();
+			for (int i = 0; i < 10; i++)
+			{
+				Assert::AreEqual(12, tempMarker->getCurrent());
+				tempMarker->moveNext();
+			}
+		}
 	};
 }
