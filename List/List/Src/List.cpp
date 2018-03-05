@@ -1,6 +1,3 @@
-#include "List.h"
-#include <stdexcept>
-
 List::List(){
 		head = nullptr;
 		tail = nullptr;
