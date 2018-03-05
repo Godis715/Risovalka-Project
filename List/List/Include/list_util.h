@@ -6,7 +6,7 @@ template <typename T> void printList(List<T>& l);
 template <typename T> void printListStrange(List<T>& list);
 template <typename T> void BublesSort(List<T>& list);
 
-void printListStrange(List<T>& list) {
+template <typename T> void printListStrange(List<T>& list) {
 	auto marker = list.createMarker();
 	do {
 		if (marker->getCurrent() % 2 == 0) {

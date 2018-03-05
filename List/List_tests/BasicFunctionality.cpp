@@ -1,5 +1,7 @@
 #include "stdafx.h"
 #include "CppUnitTest.h"
+#include "../List/Include/List.h"
+#include "../List/Include/list_util.h"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
@@ -11,7 +13,7 @@ namespace List_tests
 		
 		TEST_METHOD(Test_List_Marker_moveNext)
 		{
-			List tempList;
+			List<int> tempList;
 			for (int i = 0; i < 10; i++)
 			{
 				tempList.addElementAfterTail(i);
@@ -26,7 +28,7 @@ namespace List_tests
 
 		TEST_METHOD(Test_List_Marker_getCurrent)
 		{
-			List tempList;
+			List<int> tempList;
 			for (int i = 0; i < 10; i++)
 			{
 				tempList.addElementAfterTail(i);
@@ -37,7 +39,7 @@ namespace List_tests
 
 		TEST_METHOD(Test_List_Marker_setCurrent)
 		{
-			List tempList;
+			List<int> tempList;
 			for (int i = 0; i < 10; i++)
 			{
 				tempList.addElementAfterTail(i);
@@ -50,7 +52,7 @@ namespace List_tests
 
 		TEST_METHOD(Test_List_Marker_moveTail)
 		{
-			List tempList;
+			List<int> tempList;
 			int i;
 			for (i = 0; i < 10; i++)
 			{
@@ -63,7 +65,7 @@ namespace List_tests
 
 		TEST_METHOD(Test_List_Marker_moveHead)
 		{
-			List tempList;
+			List<int> tempList;
 			for (int i = 0; i < 10; i++)
 			{
 				tempList.addElementAfterTail(i);
@@ -76,7 +78,7 @@ namespace List_tests
 
 		TEST_METHOD(Test_List_Marker_addAfter)
 		{
-			List tempList;
+			List<int> tempList;
 			for (int i = 0; i < 10; i++)
 			{
 				tempList.addElementAfterTail(i);
@@ -89,7 +91,7 @@ namespace List_tests
 
 		TEST_METHOD(Test_List_Marker_deleteAfter)
 		{
-			List tempList;
+			List<int> tempList;
 			for (int i = 0; i < 10; i++)
 			{
 				tempList.addElementAfterTail(i);
@@ -102,7 +104,7 @@ namespace List_tests
 
 		TEST_METHOD(Test_List_getSize)
 		{
-			List tempList;
+			List<int> tempList;
 			for (int i = 0; i < 10; i++)
 			{
 				tempList.addElementAfterTail(i);
@@ -112,7 +114,7 @@ namespace List_tests
 
 		TEST_METHOD(Test_List_addElementBeforeHead)
 		{
-			List tempList;
+			List<int> tempList;
 			auto tempMarker = tempList.createMarker();
 			tempList.addElementBeforeHead(11);
 			tempMarker->moveHead();
@@ -124,7 +126,7 @@ namespace List_tests
 
 		TEST_METHOD(Test_List_addElementAfterTail)
 		{
-			List tempList;
+			List<int> tempList;
 			auto tempMarker = tempList.createMarker();
 			for (int i = 0; i < 10; i++)
 			{
@@ -136,7 +138,7 @@ namespace List_tests
 
 		TEST_METHOD(Test_List_deleteHeadElement)
 		{
-			List tempList;
+			List<int> tempList;
 			for (int i = 0; i < 10; i++)
 			{
 				tempList.addElementAfterTail(i);
@@ -152,7 +154,7 @@ namespace List_tests
 
 		TEST_METHOD(Test_List_deleteTailElement)
 		{
-			List tempList;
+			List<int> tempList;
 			for (int i = 0; i < 10; i++)
 			{
 				tempList.addElementAfterTail(i);
@@ -168,7 +170,7 @@ namespace List_tests
 
 		TEST_METHOD(Test_List_BubleSort_NoNeed)
 		{
-			List tempList;
+			List<int> tempList;
 			for (int i = 0; i < 10; i++)
 			{
 				tempList.addElementAfterTail(i);
@@ -185,7 +187,7 @@ namespace List_tests
 
 		TEST_METHOD(Test_List_BubleSort_Reverted)
 		{
-			List tempList;
+			List<int> tempList;
 			for (int i = 9; i >= 0; i--)
 			{
 				tempList.addElementAfterTail(i);
@@ -202,7 +204,7 @@ namespace List_tests
 
 		TEST_METHOD(Test_List_BubleSort_Equal)
 		{
-			List tempList;
+			List<int> tempList;
 			for (int i = 0; i < 10; i++)
 			{
 				tempList.addElementAfterTail(12);
