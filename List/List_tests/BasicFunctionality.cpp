@@ -1,7 +1,6 @@
 #include "stdafx.h"
 #include "CppUnitTest.h"
-#include "list_util.cpp"
-#include "List.cpp"
+
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
 namespace List_tests

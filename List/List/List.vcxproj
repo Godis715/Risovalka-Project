@@ -19,8 +19,6 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Src\List.cpp" />
-    <ClCompile Include="Src\list_util.cpp" />
     <ClCompile Include="Src\Main.cpp" />
   </ItemGroup>
   <ItemGroup>
