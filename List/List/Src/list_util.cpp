@@ -25,7 +25,7 @@ void printList(List& list) {
 		}
 		catch (std::out_of_range)
 		{
-			std::cout << "Список пуст\n";
+			std::cout << "пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ\n";
 		}
 	} while (marker->moveNext());
 	std::cout << "\n";
@@ -46,7 +46,7 @@ void BublesSort(List& list) {
 	}
 	catch (std::exception)
 	{
-		std::cout << "Список пуст\n";
+		std::cout << "пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ\n";
 	}
 	try
 	{
@@ -54,7 +54,7 @@ void BublesSort(List& list) {
 	}
 	catch (std::exception)
 	{
-		std::cout << "Список пуст\n";
+		std::cout << "пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ\n";
 	}
 
 	do
