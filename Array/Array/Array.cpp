@@ -30,23 +30,23 @@ private:
 
 	void createPyramid(int cur, int end)
 	{
-		int childe;
+		int child;
 		while (cur <= end / 2)
 		{
 			if (cur * 2 + 1 <= end)
 			{
 				if (cur * 2 + 2 <= end && _storage[cur * 2 + 2] > _storage[cur * 2 + 1])
 				{
-					childe = cur * 2 + 2;
+					child = cur * 2 + 2;
 				}
 				else
 				{
-					childe = cur * 2 + 1;
+					child = cur * 2 + 1;
 				}
-				if (_storage[cur] < _storage[childe])
+				if (_storage[cur] < _storage[child])
 				{
-					swap(cur, childe);
-					cur = childe;
+					swap(cur, child);
+					cur = child;
 				}
 				else
 				{
