@@ -28,20 +28,20 @@ private:
 		}
 	}
 
-	void createPyramid(int cur, int end)
+	void createPyramid(int cur, int end, int delta)
 	{
 		int child;
-		while (cur <= end / 2)
+		while ((cur - delta) <= (end - delta) / 2)
 		{
-			if (cur * 2 + 1 <= end)
+			if ((cur - delta) * 2 + 1 <= (end - delta))
 			{
-				if (cur * 2 + 2 <= end && _storage[cur * 2 + 2] > _storage[cur * 2 + 1])
+				if ((cur - delta) * 2 + 2 <= (end - delta) && _storage[(cur - delta) * 2 + 2 + delta] > _storage[(cur - delta) * 2 + 1 + delta])
 				{
-					child = cur * 2 + 2;
+					child = (cur - delta) * 2 + 2 + delta;
 				}
 				else
 				{
-					child = cur * 2 + 1;
+					child = (cur - delta) * 2 + 1 + delta;
 				}
 				if (_storage[cur] < _storage[child])
 				{
@@ -60,22 +60,22 @@ private:
 		}
 	}
 	
-	void phaseOne(int l, int r)
+	void phaseOne(int l, int r, int delta)
 	{
 		for (int i = (l + r) / 2; i >= l; i--)
 		{
-			createPyramid(i, r);
+			createPyramid(i, r, delta);
 		}
 	}
 	
-	void phaseTwo(int l, int r)
+	void phaseTwo(int l, int r, int delta)
 	{
 		int end = r;
 		while (end != l)
 		{
 			swap(l, end);
 			end--;
-			createPyramid(0, end);
+			createPyramid(l, end, delta);
 		}
 	}
 
@@ -232,8 +232,9 @@ public:
 			std::cout << "Negative index! OR Index out of range\n";
 			throw std::invalid_argument("Negative index! OR Index out of range\n");
 		}
-		phaseOne(l, r);
-		phaseTwo(l, r);
+		int delta = l;
+		phaseOne(l, r, delta);
+		phaseTwo(l, r, delta);
 	}
 };
 
@@ -247,7 +248,7 @@ int main()
 		std::cout << arr[i] << " ";
 	}
 	std::cout << std::endl;
-	arr.sort(0, size - 1);
+	arr.sort(5, 10);
 	for (size_t i = 0; i < size; i++)
 	{
 		std::cout << arr[i] << " ";
