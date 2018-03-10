@@ -27,7 +27,6 @@ private:
 			_storage[i] = 0;
 		}
 	}
-
 public:
 
 	int getSize() const
@@ -173,6 +172,38 @@ public:
 			}
 		}
 	}
+
+	void Insert(int Index, T Value) {
+		if (Index > _size) {
+			throw std::out_of_range("Index out of range!");
+		}
+		if (Index < 0) {
+			std::cout << "Negative index! Index token by abs. value\n";
+			Index = abs(Index);
+		}
+		this->pushBack(Value);
+		for (int i = _size - 2; i >= Index; --i) {
+			T Temp = _storage[i];
+			_storage[i] = _storage[i + 1];
+			_storage[i + 1] = Temp;
+		}
+	}
+
+	T Erase(int Index) {
+		if (Index > _size) {
+			throw std::out_of_range("Index out of range!");
+		}
+		if (Index < 0) {
+			std::cout << "Negative index! Index token by abs. value\n";
+			Index = abs(Index);
+		}
+		for (int i = Index; i < _size - 1; i++) {
+			T Temp = _storage[i];
+			_storage[i] = _storage[i + 1];
+			_storage[i + 1] = Temp;
+		}
+		return this->popBack();
+	}
 };
 
 int main()
@@ -181,6 +212,12 @@ int main()
 	arr.pushBack(1);
 	arr.pushBack(2);
 	arr.pushBack(3);
+	arr.pushBack(21);
+	arr.pushBack(35);
+	arr.Insert(3, 6);
+	std::cout << arr.Erase(3) << "\n";
+	arr.Insert(3, 6);
+	std::cout << arr.popBack() << "\n";
 	std::cout << arr.popBack() << "\n";
 	std::cout << arr.popBack() << "\n";
 	std::cout << arr.popBack() << "\n";
