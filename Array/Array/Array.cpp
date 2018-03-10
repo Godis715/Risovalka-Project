@@ -20,7 +20,7 @@ private:
 		_capacity *= 2;
 	}
 
-	void FillDefault(size_t l, size_t r)
+	void fillDefault(size_t l, size_t r)
 	{
 		for (size_t i = l; i <= r; i++)
 		{
@@ -110,7 +110,7 @@ public:
 		}
 		_size = size;
 		_storage = new T[_capacity];
-		FillDefault(0, _size - 1);
+		fillDefault(0, _size - 1);
 	}
 
 	~Array()
@@ -171,7 +171,7 @@ public:
 		_storage = newStorage;
 		if (newSize > _size)
 		{
-			FillDefault(_size, newSize - 1);
+			fillDefault(_size, newSize - 1);
 		}
 		_size = newSize;
 	}
