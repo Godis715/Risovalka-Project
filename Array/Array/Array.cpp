@@ -28,6 +28,57 @@ private:
 		}
 	}
 
+	void createPyramid(int cur, int end)
+	{
+		int child;
+		while (cur <= end / 2)
+		{
+			if (cur * 2 + 1 <= end)
+			{
+				if (cur * 2 + 2 <= end && _storage[cur * 2 + 2] > _storage[cur * 2 + 1])
+				{
+					child = cur * 2 + 2;
+				}
+				else
+				{
+					child = cur * 2 + 1;
+				}
+				if (_storage[cur] < _storage[child])
+				{
+					swap(cur, child);
+					cur = child;
+				}
+				else
+				{
+					break;
+				}
+			}
+			else
+			{
+				break;
+			}
+		}
+	}
+	
+	void phaseOne(int l, int r)
+	{
+		for (int i = (l + r) / 2; i >= l; i--)
+		{
+			createPyramid(i, r);
+		}
+	}
+	
+	void phaseTwo(int l, int r)
+	{
+		int end = r;
+		while (end != l)
+		{
+			swap(l, end);
+			end--;
+			createPyramid(0, end);
+		}
+	}
+
 public:
 
 	int getSize() const
@@ -65,7 +116,7 @@ public:
 
 	T& operator[](int index)
 	{
-		if (index < 0 || index >= size)
+		if (index < 0 || index >= _size)
 		{
 			throw std::out_of_range("Index out of range!");
 		}
@@ -155,7 +206,7 @@ public:
 	}
 
 	//TODO: Normal sort
-	void sort(int l, int r)
+	/*void sort(int l, int r)
 	{
 		if (l < 0 || r < 0 || l > r || l >= _size || r >= _size)
 		{
@@ -172,19 +223,42 @@ public:
 				}
 			}
 		}
+	}*/
+
+	void sort(int l, int r)
+	{
+		if (l < 0 || r < 0 || l > r || l >= _size || r >= _size)
+		{
+			std::cout << "Negative index! OR Index out of range\n";
+			throw std::invalid_argument("Negative index! OR Index out of range\n");
+		}
+		phaseOne(l, r);
+		phaseTwo(l, r);
 	}
 };
 
 int main()
 {
-	Array<int> arr;
-	arr.pushBack(1);
-	arr.pushBack(2);
-	arr.pushBack(3);
-	std::cout << arr.popBack() << "\n";
-	std::cout << arr.popBack() << "\n";
-	std::cout << arr.popBack() << "\n";
-	std::cout << "Size = " << arr.getSize() << "\n";
+	int size = 20;
+	Array<int> arr(size);
+	for (size_t i = 0; i < size; i++)
+	{
+		arr[i] = rand() % 100;
+		std::cout << arr[i] << " ";
+	}
+	std::cout << std::endl;
+	arr.sort(0, size - 1);
+	for (size_t i = 0; i < size; i++)
+	{
+		std::cout << arr[i] << " ";
+	}
+	//arr.pushBack(1);
+	//arr.pushBack(2);
+	//arr.pushBack(3);
+	//std::cout << arr.popBack() << "\n";
+	//std::cout << arr.popBack() << "\n";
+	//std::cout << arr.popBack() << "\n";
+	//std::cout << "Size = " << arr.getSize() << "\n";
 	
 	system("pause");
 	return 0;
