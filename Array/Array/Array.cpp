@@ -20,6 +20,14 @@ private:
 		_capacity *= 2;
 	}
 
+	void FillDefault(size_t l, size_t r)
+	{
+		for (size_t i = l; i <= r; i++)
+		{
+			_storage[i] = 0;
+		}
+	}
+
 public:
 
 	int getSize() const
@@ -47,10 +55,7 @@ public:
 		}
 		_size = size;
 		_storage = new T[_capacity];
-		for (size_t i = 0; i < _size; i++)
-		{
-			_storage[i] = 0;
-		}
+		FillDefault(0, _size - 1);
 	}
 
 	~Array()
@@ -85,6 +90,42 @@ public:
 		_size--;
 		return _storage[_size];
 	}
+
+	bool isEmpty()
+	{
+		return (_size > 0) ? false : true;
+	}
+
+	void resize(int newSize)
+	{
+		if (newSize < 0)
+		{
+			std::cout << "Negative size! Size token by abs. value\n";
+			newSize = abs(newSize);
+		}
+		if (newSize > _capacity)
+		{
+			_capacity = 2 * newSize;
+		}
+		auto newStorage = new T[_capacity];
+		for (size_t i = 0; i < newSize && i < _size; i++)
+		{
+			newStorage[i] = _storage[i];
+		}
+		delete[] _storage;
+		_storage = newStorage;
+		if (newSize > _size)
+		{
+			FillDefault(_size, newSize - 1);
+		}
+		_size = newSize;
+	}
+
+	void clear()
+	{
+		_capacity = 512;
+		resize(0);
+	}
 };
 
 int main()
@@ -97,6 +138,7 @@ int main()
 	std::cout << arr.popBack() << "\n";
 	std::cout << arr.popBack() << "\n";
 	std::cout << "Size = " << arr.getSize() << "\n";
+	
 	system("pause");
 	return 0;
 }
