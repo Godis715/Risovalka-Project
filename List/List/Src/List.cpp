@@ -1,6 +1,3 @@
-#include "List.h"
-#include <stdexcept>
-
 List::List(){
 		head = nullptr;
 		tail = nullptr;
@@ -57,7 +54,7 @@ void List::deleteHeadElement()
 void List::deleteTailElement()
 	{
 		Node* temp = head;
-		for (int i = 0; i < size - 1; i++)
+		for (int i = 0; i < size - 2; i++)
 		{
 			temp = temp->getNext();
 		}
