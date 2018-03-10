@@ -214,8 +214,9 @@ public:
 			std::cout << "Negative index! OR Index out of range\n";
 			throw std::invalid_argument("Negative index! OR Index out of range\n");
 		}
-		phaseOne(l, r);
-		phaseTwo(l, r);
+		int delta = l;
+		phaseOne(l, r, delta);
+		phaseTwo(l, r, delta);
 	}
 
 	void reverse(int l, int r)
@@ -255,12 +256,8 @@ int main()
 	std::cout << arr << "\n";
 	arr.reverse(0, size - 1);
 	std::cout << arr << "\n";
-	std::cout << std::endl;
 	arr.sort(5, 10);
-	for (size_t i = 0; i < size; i++)
-	{
-		std::cout << arr[i] << " ";
-	}
+	std::cout << arr << "\n";
 	system("pause");
 	return 0;
 }
