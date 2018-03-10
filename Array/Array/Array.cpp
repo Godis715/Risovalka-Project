@@ -28,6 +28,8 @@ private:
 		}
 	}
 
+	//Sort methods begin
+
 	void createPyramid(int cur, int end, int delta)
 	{
 		int child;
