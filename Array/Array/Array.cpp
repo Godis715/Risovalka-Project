@@ -126,6 +126,53 @@ public:
 		_capacity = 512;
 		resize(0);
 	}
+
+	int find(T value)
+	{
+		int index = -1;
+		for (size_t i = 0; i < _size; i++)
+		{
+			if (_storage[i] = value)
+			{
+				index = i;
+				break;
+			}
+		}
+		return index;
+	}
+
+	void swap(int index1, int index2)
+	{
+		if (index1 < 0 || index2 < 0)
+		{
+			std::cout << "Negative index! Index token by abs. value\n";
+			index1 = abs(index1);
+			index2 = abs(index2);
+		}
+		T temp = _storage[index1];
+		_storage[index1] = _storage[index2];
+		_storage[index2] = temp;
+	}
+
+	//TODO: Normal sort
+	void sort(int l, int r)
+	{
+		if (l < 0 || r < 0 || l > r || l >= _size || r >= _size)
+		{
+			std::cout << "Negative index! OR Index out of range\n";
+			throw std::invalid_argument("Negative index! OR Index out of range\n");
+		}
+		for (int i = l; i <= r; i++)
+		{
+			for (int j = i+1; j <= r; j++)
+			{
+				if (arr[j] < arr[j - 1])
+				{
+					swap(j, j - 1);
+				}
+			}
+		}
+	}
 };
 
 int main()
