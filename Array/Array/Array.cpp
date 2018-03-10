@@ -28,6 +28,8 @@ private:
 		}
 	}
 
+	//Sort methods begin
+
 	void createPyramid(int cur, int end)
 	{
 		int child;
@@ -78,6 +80,8 @@ private:
 			createPyramid(0, end);
 		}
 	}
+
+	//Sort methods end
 
 public:
 
@@ -205,26 +209,6 @@ public:
 		_storage[index2] = temp;
 	}
 
-	//TODO: Normal sort
-	/*void sort(int l, int r)
-	{
-		if (l < 0 || r < 0 || l > r || l >= _size || r >= _size)
-		{
-			std::cout << "Negative index! OR Index out of range\n";
-			throw std::invalid_argument("Negative index! OR Index out of range\n");
-		}
-		for (int i = l; i <= r; i++)
-		{
-			for (int j = i+1; j <= r; j++)
-			{
-				if (arr[j] < arr[j - 1])
-				{
-					swap(j, j - 1);
-				}
-			}
-		}
-	}*/
-
 	void sort(int l, int r)
 	{
 		if (l < 0 || r < 0 || l > r || l >= _size || r >= _size)
@@ -235,6 +219,29 @@ public:
 		phaseOne(l, r);
 		phaseTwo(l, r);
 	}
+
+	void reverse(int l, int r)
+	{
+		if (l < 0 || r < 0 || l > r || l >= _size || r >= _size)
+		{
+			std::cout << "Negative index! OR Index out of range\n";
+			throw std::invalid_argument("Negative index! OR Index out of range\n");
+		}
+		for (int i = 0; i < (r - l + 1) / 2; i++)
+		{
+			swap(l + i, r - i);
+		}
+	}
+
+	friend std::ostream& operator<< (std::ostream& out, Array& arr)
+	{
+		for (size_t i = 0; i < arr.getSize(); i++)
+		{
+			out << arr[i] << " ";
+		}
+		out << "\n";
+		return out;
+	}
 };
 
 int main()
@@ -244,22 +251,12 @@ int main()
 	for (size_t i = 0; i < size; i++)
 	{
 		arr[i] = rand() % 100;
-		std::cout << arr[i] << " ";
 	}
-	std::cout << std::endl;
+	std::cout << arr << "\n";
 	arr.sort(0, size - 1);
-	for (size_t i = 0; i < size; i++)
-	{
-		std::cout << arr[i] << " ";
-	}
-	//arr.pushBack(1);
-	//arr.pushBack(2);
-	//arr.pushBack(3);
-	//std::cout << arr.popBack() << "\n";
-	//std::cout << arr.popBack() << "\n";
-	//std::cout << arr.popBack() << "\n";
-	//std::cout << "Size = " << arr.getSize() << "\n";
-	
+	std::cout << arr << "\n";
+	arr.reverse(0, size - 1);
+	std::cout << arr << "\n";
 	system("pause");
 	return 0;
 }
