@@ -184,20 +184,6 @@ public:
 		resize(0);
 	}
 
-	int find(T value)
-	{
-		int index = -1;
-		for (size_t i = 0; i < _size; i++)
-		{
-			if (_storage[i] = value)
-			{
-				index = i;
-				break;
-			}
-		}
-		return index;
-	}
-
 	void swap(int index1, int index2)
 	{
 		if (index1 < 0 || index2 < 0)
