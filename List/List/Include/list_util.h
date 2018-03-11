@@ -30,7 +30,7 @@ template <typename T> void printList(List<T>& list) {
 		}
 		catch (std::out_of_range)
 		{
-			std::cout << "������ ����\n";
+			std::cout << "out of range\n";
 		}
 	} while (marker->moveNext());
 	std::cout << "\n";
@@ -51,7 +51,7 @@ template <typename T> void BublesSort(List<T>& list) {
 	}
 	catch (std::exception)
 	{
-		std::cout << "������ ����\n";
+		std::cout << "out of range\n";
 	}
 	try
 	{
@@ -59,7 +59,7 @@ template <typename T> void BublesSort(List<T>& list) {
 	}
 	catch (std::exception)
 	{
-		std::cout << "������ ����\n";
+		std::cout << "out of range\n";
 	}
 
 	do
