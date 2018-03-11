@@ -82,4 +82,3 @@ template <typename T> void BublesSort(List<T>& list) {
 	} while (WasSwap);
 	return;
 }
-
