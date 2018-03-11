@@ -36,7 +36,7 @@ template <typename T> void printList(List<T>& list) {
 	std::cout << "\n";
 }
 
-template <typename T>void BublesSort(List<T>& list) {
+template <typename T> void BublesSort(List<T>& list) {
 	if (list.getSize() < 2) {
 		return;
 	}
@@ -81,4 +81,9 @@ template <typename T>void BublesSort(List<T>& list) {
 		} while ((markerLeft->moveNext()) && (markerRight->moveNext()));
 	} while (WasSwap);
 	return;
+}
+
+template <typename T> int& operator >> (int& Temp, typename const List<T>::Marker marker) {
+	Temp = marker->getCurrent();
+	return Temp;
 }

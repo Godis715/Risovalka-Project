@@ -43,7 +43,7 @@ private:
 	Node* tail;
 	int size;
 public:
-	List();	
+	List();
 	class Marker
 	{
 	private:
@@ -56,12 +56,14 @@ public:
 			listForMarker = list;
 		}
 		bool moveNext();
-		int getCurrent() const;
+		T getCurrent() const;
 		void setCurrent(T value);
 		void moveTail();
 		void moveHead();
 		void addAfter(T val);
 		void deleteAfter();
+		void operator <<(T NewValue);
+		T operator >>(Marker *marker);
 	};
 	
 	int getSize();
@@ -162,7 +164,7 @@ template <typename T> bool List<T>::Marker::moveNext()
 	return false;
 }
 
-template <typename T> int List<T>::Marker::getCurrent() const {
+template <typename T> T List<T>::Marker::getCurrent() const {
 	if (current != nullptr) {
 		return current->getValue();
 	}
@@ -206,6 +208,14 @@ template <typename T> void List<T>::Marker::deleteAfter()
 	current->setNext(current->getNext()->getNext());
 	delete temp;
 	listForMarker->size--;
+}
+
+template <typename T> void List<T>::Marker::operator <<(T NewValue) {
+	this->addAfter(NewValue);
+}
+
+template <typename T> T List<T>::Marker::operator >>(Marker *marker) {
+	return marker->getCurrent();
 }
 
 #endif

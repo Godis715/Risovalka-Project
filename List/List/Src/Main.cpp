@@ -13,7 +13,7 @@ int main()
 	List<int> list;
 	try {
 		std::setlocale(LC_ALL, "Russian");
-		for (int i = 0; i < 100; ++i) {
+		for (int i = 0; i < 10; ++i) {
 			list.addElementAfterTail(rand()%1000);
 		}
 		printList<int>(list);
@@ -24,6 +24,18 @@ int main()
 	std:cout << std::endl;
 	BublesSort<int>(list);
 	printList<int>(list);
+	std::cout << std::endl;
+	auto marker = list.createMarker();
+	int Temp = 8;
+	marker->operator<<(Temp);
+	*marker << Temp;
+
+
+	Temp = *marker >> marker;
+
+
+
+	Temp >> *marker;
 	system("pause");
 	return 0;
 }
