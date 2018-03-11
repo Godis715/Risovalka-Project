@@ -196,7 +196,7 @@ public:
 		if (index1 < 0 || index2 < 0)
 		{
 			std::cout << "Negative index!\n";
-			trow std::invalid_argument("Negative index!");
+			throw std::invalid_argument("Negative index!");
 		}
 		T temp = _storage[index1];
 		_storage[index1] = _storage[index2];
