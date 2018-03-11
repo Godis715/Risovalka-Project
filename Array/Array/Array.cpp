@@ -236,16 +236,6 @@ public:
 		}
 	}
 
-	friend std::ostream& operator<< (std::ostream& out, Array& arr)
-	{
-		for (size_t i = 0; i < arr.getSize(); i++)
-		{
-			out << arr[i] << " ";
-		}
-		out << "\n";
-		return out;
-	}
-
 	void insert(int index, T value) {
 		if (index > _size) {
 			throw std::out_of_range("Index out of range!");
@@ -278,3 +268,13 @@ public:
 		popBack();
 	}
 };
+
+template <class T> std::ostream& operator<< (std::ostream& out, Array<T>& arr)
+{
+	for (size_t i = 0; i < arr.getSize(); i++)
+	{
+		out << arr[i] << " ";
+	}
+	out << "\n";
+	return out;
+}
