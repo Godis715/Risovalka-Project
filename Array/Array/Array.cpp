@@ -103,8 +103,8 @@ public:
 	{
 		if (size < 0)
 		{
-			std::cout << "Bad array size. Size set by abs. value\n";
-			size = abs(size);
+			std::cout << "Bad array size!\n";
+			throw std::invalid_argument("Bad array size!");
 		}
 		if (size > _capacity)
 		{
@@ -124,6 +124,7 @@ public:
 	{
 		if (index < 0 || index >= _size)
 		{
+			std::cout << "Index out of range!\n";
 			throw std::out_of_range("Index out of range!");
 		}
 		return _storage[index];
@@ -142,6 +143,7 @@ public:
 	{
 		if (_size == 0)
 		{
+			std::cout << "Array is empty\n";
 			throw std::out_of_range("Array is empty");
 		}
 		_size--;
@@ -157,8 +159,8 @@ public:
 	{
 		if (newSize < 0)
 		{
-			std::cout << "Negative size! Size token by abs. value\n";
-			newSize = abs(newSize);
+			std::cout << "Negative size!\n";
+			throw std::invalid_argument("Negative size!");
 		}
 		if (newSize > _capacity)
 		{
@@ -184,27 +186,17 @@ public:
 		resize(0);
 	}
 
-	int find(T value)
-	{
-		int index = -1;
-		for (size_t i = 0; i < _size; i++)
-		{
-			if (_storage[i] = value)
-			{
-				index = i;
-				break;
-			}
-		}
-		return index;
-	}
-
 	void swap(int index1, int index2)
 	{
+		if (index1 > _size - 1 || index2 > _size - 1)
+		{
+			std::cout << "Index out of range!\n";
+			throw std::out_of_range("Index out of range!");
+		}
 		if (index1 < 0 || index2 < 0)
 		{
-			std::cout << "Negative index! Index token by abs. value\n";
-			index1 = abs(index1);
-			index2 = abs(index2);
+			std::cout << "Negative index!\n";
+			throw std::invalid_argument("Negative index!");
 		}
 		T temp = _storage[index1];
 		_storage[index1] = _storage[index2];
@@ -237,12 +229,13 @@ public:
 	}
 
 	void insert(int index, T value) {
-		if (index > _size) {
+		if (index >= _size) {
+			std::cout << "Index out of range!\n";
 			throw std::out_of_range("Index out of range!");
 		}
 		if (index < 0) {
-			std::cout << "Negative index! Index token by abs. value\n";
-			index = abs(index);
+			std::cout << "Negative index!\n";
+			throw std::invalid_argument("Negative index!");
 		}
 		pushBack(value);
 		for (int i = _size - 2; i >= index; --i) {
@@ -253,12 +246,13 @@ public:
 	}
 
 	void erase(int index) {
-		if (index > _size) {
+		if (index >= _size) {
+			std::cout << "Index out of range!\n";
 			throw std::out_of_range("Index out of range!");
 		}
 		if (index < 0) {
-			std::cout << "Negative index! Index token by abs. value\n";
-			index = abs(index);
+			std::cout << "Negative index!\n";
+			throw std::invalid_argument("Negative index!");
 		}
 		for (int i = index; i < _size - 1; i++) {
 			T Temp = _storage[i];
@@ -266,6 +260,56 @@ public:
 			_storage[i + 1] = Temp;
 		}
 		popBack();
+	}
+	int binSearch(int l, int r, T value)
+	{
+		if (l < 0 || r < 0 || l > r || l >= _size || r >= _size)
+		{
+			std::cout << "Negative index! OR Index out of range\n";
+			throw std::invalid_argument("Negative index! OR Index out of range\n");
+		}
+		if (value < _storage[l])
+		{
+			return l - 1;
+		}
+		if (value > _storage[r])
+		{
+			return r;
+		}
+		int index;
+		while (true)
+		{
+			int center = (l + r) / 2;
+			if (_storage[center] == value)
+			{
+				index = center;
+				break;
+			}
+			if (r - l <= 1)
+			{
+				if (_storage[l] == value)
+				{
+					index = l;
+					break;
+				}
+				if (_storage[r] == value)
+				{
+					index = r;
+					break;
+				}
+				index = l;
+				break;
+			}
+			if (value < _storage[center])
+			{
+				r = center;
+			}
+			else
+			{
+				l = center;
+			}
+		}
+		return index;
 	}
 };
 
