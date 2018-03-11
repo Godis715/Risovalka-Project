@@ -103,8 +103,8 @@ public:
 	{
 		if (size < 0)
 		{
-			std::cout << "Bad array size. Size set by abs. value\n";
-			size = abs(size);
+			std::cout << "Bad array size!\n";
+			throw std::invalid_argument("Bad array size!");
 		}
 		if (size > _capacity)
 		{
@@ -159,8 +159,8 @@ public:
 	{
 		if (newSize < 0)
 		{
-			std::cout << "Negative size! Size token by abs. value\n";
-			newSize = abs(newSize);
+			std::cout << "Negative size!\n";
+			throw std::invalid_argument("Negative size!");
 		}
 		if (newSize > _capacity)
 		{
@@ -195,9 +195,8 @@ public:
 		}
 		if (index1 < 0 || index2 < 0)
 		{
-			std::cout << "Negative index! Index token by abs. value\n";
-			index1 = abs(index1);
-			index2 = abs(index2);
+			std::cout << "Negative index!\n";
+			trow std::invalid_argument("Negative index!");
 		}
 		T temp = _storage[index1];
 		_storage[index1] = _storage[index2];
@@ -230,7 +229,7 @@ public:
 	}
 
 	void insert(int index, T value) {
-		if (index > _size) {
+		if (index >= _size) {
 			std::cout << "Index out of range!\n";
 			throw std::out_of_range("Index out of range!");
 		}
@@ -247,13 +246,13 @@ public:
 	}
 
 	void erase(int index) {
-		if (index > _size) {
+		if (index >= _size) {
 			std::cout << "Index out of range!\n";
 			throw std::out_of_range("Index out of range!");
 		}
 		if (index < 0) {
-			std::cout << "Negative index! Index token by abs. value\n";
-			index = abs(index);
+			std::cout << "Negative index!\n";
+			throw std::invalid_argument("Negative index!");
 		}
 		for (int i = index; i < _size - 1; i++) {
 			T Temp = _storage[i];
