@@ -188,7 +188,7 @@ public:
 
 	void swap(int index1, int index2)
 	{
-		if (index1 > size - 1 || index2 > size - 1)
+		if (index1 > _size - 1 || index2 > _size - 1)
 		{
 			std::cout << "Index out of range!\n";
 			throw std::out_of_range("Index out of range!");
