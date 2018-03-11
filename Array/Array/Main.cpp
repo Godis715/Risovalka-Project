@@ -3,34 +3,24 @@
 
 int main()
 {
-	int size = 20;
+	int size = 6;
 	Array<int> arr(size);
 	for (size_t i = 0; i < size; i++)
 	{
-		arr[i] = rand() % 100;
+		arr[i] = 2*i;
 	}
-	std::cout << arr << "\n";
-	arr.sort(0, size - 1);
-	std::cout << arr << "\n";
-	arr.reverse(0, size - 1);
-	std::cout << arr << "\n";
-	arr.sort(5, 10);
-	std::cout << arr << "\n";
-	arr.clear();
-	arr.pushBack(1);
-	arr.pushBack(2);
-	arr.pushBack(3);
-	arr.pushBack(21);
-	arr.pushBack(35);
-	arr.insert(3, 6);
-	arr.insert(3, 6);
-	std::cout << arr << "\n";
-	std::cout << arr.popBack() << "\n";
-	std::cout << arr.popBack() << "\n";
-	std::cout << arr.popBack() << "\n";
-	std::cout << arr.popBack() << "\n";
-	std::cout << "Size = " << arr.getSize() << "\n";
+	/*std::cout << arr.binSearch(0, size - 1, -1) << "\n";
+	std::cout << arr.binSearch(0, size - 1, 4) << "\n";
+	std::cout << arr.binSearch(0, size - 1, 7) << "\n";
+	std::cout << arr.binSearch(0, size - 1, 11) << "\n";*/
 
+	arr.insert(arr.binSearch(0, arr.getSize() - 1, -1) + 1, -1);
+	arr.sort(0, arr.getSize() - 1);
+	arr.insert(arr.binSearch(0, arr.getSize() - 1, 11) + 1, 11);
+	arr.sort(0, arr.getSize() - 1);
+	arr.insert(arr.binSearch(0, arr.getSize() - 1, 5) + 1, 5);
+	//arr.insert(arr.binSearch(0, size - 1, -1) + 1, -1);
+	std::cout << arr << "\n";
 	system("pause");
 	return 0;
 }

@@ -251,8 +251,7 @@ public:
 			throw std::out_of_range("Index out of range!");
 		}
 		if (index < 0) {
-			std::cout << "Negative index! Index token by abs. value\n";
-			index = abs(index);
+			throw std::invalid_argument("Negative index!");
 		}
 		pushBack(value);
 		for (int i = _size - 2; i >= index; --i) {
@@ -276,5 +275,55 @@ public:
 			_storage[i + 1] = Temp;
 		}
 		popBack();
+	}
+	int binSearch(int l, int r, T value)
+	{
+		if (l < 0 || r < 0 || l > r || l >= _size || r >= _size)
+		{
+			std::cout << "Negative index! OR Index out of range\n";
+			throw std::invalid_argument("Negative index! OR Index out of range\n");
+		}
+		if (value < _storage[l])
+		{
+			return l - 1;
+		}
+		if (value > _storage[r])
+		{
+			return r;
+		}
+		int index;
+		while (true)
+		{
+			int center = (l + r) / 2;
+			if (_storage[center] == value)
+			{
+				index = center;
+				break;
+			}
+			if (r - l <= 1)
+			{
+				if (_storage[l] == value)
+				{
+					index = l;
+					break;
+				}
+				if (_storage[r] == value)
+				{
+					index = r;
+					break;
+				}
+				index = l;
+				break;
+			}
+			if (value < _storage[center])
+			{
+				r = center;
+			}
+			else
+			{
+				l = center;
+			}
+		}
+		return index;
 	}
 };
