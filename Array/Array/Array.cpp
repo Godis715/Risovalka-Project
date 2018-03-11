@@ -321,4 +321,4 @@ template <class T> std::ostream& operator<< (std::ostream& out, Array<T>& arr)
 	}
 	out << "\n";
 	return out;
-}
+}//Flag
