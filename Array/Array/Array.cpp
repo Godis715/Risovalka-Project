@@ -186,6 +186,10 @@ public:
 
 	void swap(int index1, int index2)
 	{
+		if (index1 > size - 1 || index2 > size - 1)
+		{
+			throw std::out_of_range("Index out of range!");
+		}
 		if (index1 < 0 || index2 < 0)
 		{
 			std::cout << "Negative index! Index token by abs. value\n";
