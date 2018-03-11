@@ -29,13 +29,23 @@ int main()
 	int Temp = 8;
 	marker->operator<<(Temp);
 	*marker << Temp;
+	*marker << 9000;
 
 
-	Temp = *marker >> marker;
+	//Temp = *marker >> marker;
 
 
 
-	Temp >> *marker;
+	//Temp >> *marker;
+
+	printList<int>(list);
+	std::cout << std::endl;
+	marker->moveHead();
+	for (int i = 0; i < 10; ++i) {
+		*marker >> Temp;
+		std::cout << Temp << ' ';
+		marker->moveNext();
+	}
 	system("pause");
 	return 0;
 }
