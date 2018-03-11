@@ -83,7 +83,3 @@ template <typename T> void BublesSort(List<T>& list) {
 	return;
 }
 
-template <typename T> int& operator >> (int& Temp, typename const List<T>::Marker marker) {
-	Temp = marker->getCurrent();
-	return Temp;
-}

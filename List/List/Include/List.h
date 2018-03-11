@@ -63,7 +63,7 @@ public:
 		void addAfter(T val);
 		void deleteAfter();
 		void operator <<(T NewValue);
-		T operator >>(Marker *marker);
+		T& operator >>(T& Temp);
 	};
 	
 	int getSize();
@@ -214,8 +214,12 @@ template <typename T> void List<T>::Marker::operator <<(T NewValue) {
 	this->addAfter(NewValue);
 }
 
-template <typename T> T List<T>::Marker::operator >>(Marker *marker) {
-	return marker->getCurrent();
-}
+//template <typename T> T List<T>::Marker::operator >>(Marker *marker) {
+//	return marker->getCurrent();
+//}
 
+template <typename T> T& List<T>::Marker:: operator >> (T& Temp) {
+	Temp = this->getCurrent();
+	return Temp;
+}
 #endif
