@@ -124,6 +124,7 @@ public:
 	{
 		if (index < 0 || index >= _size)
 		{
+			std::cout << "Index out of range!\n";
 			throw std::out_of_range("Index out of range!");
 		}
 		return _storage[index];
@@ -142,6 +143,7 @@ public:
 	{
 		if (_size == 0)
 		{
+			std::cout << "Array is empty\n";
 			throw std::out_of_range("Array is empty");
 		}
 		_size--;
@@ -188,6 +190,7 @@ public:
 	{
 		if (index1 > size - 1 || index2 > size - 1)
 		{
+			std::cout << "Index out of range!\n";
 			throw std::out_of_range("Index out of range!");
 		}
 		if (index1 < 0 || index2 < 0)
@@ -228,9 +231,11 @@ public:
 
 	void insert(int index, T value) {
 		if (index > _size) {
+			std::cout << "Index out of range!\n";
 			throw std::out_of_range("Index out of range!");
 		}
 		if (index < 0) {
+			std::cout << "Negative index!\n";
 			throw std::invalid_argument("Negative index!");
 		}
 		pushBack(value);
@@ -243,6 +248,7 @@ public:
 
 	void erase(int index) {
 		if (index > _size) {
+			std::cout << "Index out of range!\n";
 			throw std::out_of_range("Index out of range!");
 		}
 		if (index < 0) {
