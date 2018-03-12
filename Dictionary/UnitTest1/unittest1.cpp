@@ -23,19 +23,12 @@ namespace UnitTest1
 			Assert::AreEqual(1, dic.getsize());
 		}
 
-		TEST_METHOD(Test_Dictionary_contains)
-		{
-			Dict<int, int> dic;
-			dic.add(5, 10);
-			Assert::AreEqual(true, dic.contains(5));
-		}
-
 		TEST_METHOD(Test_Dictionary_find)
 		{
-			Dict<int, int> dic;
-			dic.add(5, 10);
+			Dict<char, int> dic;
+			dic.add('A', 10);
 			int a;
-			dic.find(5, a);
+			dic.find('A', a);
 			Assert::AreEqual(10, a);
 		}
 
