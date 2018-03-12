@@ -1,6 +1,4 @@
-#include <iostream>
-
-using namespace std;
+#pragma once
 
 template <class T1, class T2> class Pair
 {
@@ -16,7 +14,7 @@ private:
 	static class Node
 	{
 	public:
-		Node* rightChild = nullptr;
+		Node * rightChild = nullptr;
 		Node* leftChild = nullptr;
 		Node* parent = nullptr;
 		T1 key;
@@ -106,14 +104,3 @@ public:
 		}
 	}
 };
-
-int main()
-{
-	Dict<char, int> arr;
-	arr.add('a', 5);
-	int res = 0;
-	//arr.find('a', res);
-	cout << arr.find('a', res) << " " << res << "\n";
-	system("pause");
-	return 0;
-}
