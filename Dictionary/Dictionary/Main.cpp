@@ -13,10 +13,16 @@ template <class T1, class T2> class Dict
 private:
 	int _size = 0;
 
-	class Node
+	static class Node
 	{
-
+		Node* rightSon = nullptr;
+		Node* leftSon = nullptr;
+		Node* parent = nullptr;
+		T1 key;
+		T2 value;
 	};
+
+	Node* head = nullptr;
 
 public:
 	Dict()
@@ -37,11 +43,25 @@ public:
 	}
 	bool find(T1 key, T2 &val)
 	{
-
-	}
-	bool contains(T1 key)
-	{
-
+		Node* temp = head;
+		while (temp->key != key && temp->leftChild != nullptr && temp->rightChild != nullptr)
+		{
+			if (temp->key < key)
+			{
+				temp = temp->rightChild;
+			}
+			else
+			{
+				temp = temp->leftChild;
+			}
+		}
+		if (temp->key != key)
+			return false;
+		else
+		{
+			value = temp->value;
+			return true;
+		}
 	}
 };
 
