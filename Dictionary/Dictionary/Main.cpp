@@ -15,8 +15,9 @@ private:
 
 	static class Node
 	{
-		Node* rightSon = nullptr;
-		Node* leftSon = nullptr;
+	public:
+		Node* rightChild = nullptr;
+		Node* leftChild = nullptr;
 		Node* parent = nullptr;
 		T1 key;
 		T2 value;
@@ -35,13 +36,54 @@ public:
 	}
 	void add(const T1 &key, const T2 &val)
 	{
-
+		_size++;
+		if (head == nullptr)
+		{
+			head = new Node;
+			head->key = key;
+			head->value = val;
+			return;
+		}
+		Node* temp = head;
+		while (temp != nullptr)
+		{
+			if (key > temp->key)
+			{
+				if (temp->rightChild != nullptr)
+				{
+					temp = temp->rightChild;
+				}
+				else
+				{
+					temp->rightChild = new Node();
+					temp->rightChild->key = key;
+					temp->rightChild->value = val;
+					temp->rightChild->parent = temp;
+					break;
+				}
+			}
+			else
+			{
+				if (temp->leftChild != nullptr)
+				{
+					temp = temp->leftChild;
+				}
+				else
+				{
+					temp->leftChild = new Node();
+					temp->leftChild->key = key;
+					temp->leftChild->value = val;
+					temp->leftChild->parent = temp;
+					break;
+				}
+			}
+		}
 	}
 	void erase(const T1 &key)
 	{
 
 	}
-	bool find(T1 key, T2 &val)
+	bool find(T1 key, T2& val)
 	{
 		Node* temp = head;
 		while (temp->key != key && temp->leftChild != nullptr && temp->rightChild != nullptr)
@@ -59,7 +101,7 @@ public:
 			return false;
 		else
 		{
-			value = temp->value;
+			val = temp->value;
 			return true;
 		}
 	}
@@ -67,5 +109,11 @@ public:
 
 int main()
 {
-
+	Dict<char, int> arr;
+	arr.add('a', 5);
+	int res = 0;
+	//arr.find('a', res);
+	cout << arr.find('a', res) << " " << res << "\n";
+	system("pause");
+	return 0;
 }
