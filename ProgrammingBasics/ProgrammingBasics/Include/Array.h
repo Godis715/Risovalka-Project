@@ -1,3 +1,4 @@
+#pragma once
 #include <iostream>
 #include <stdexcept>
 
@@ -6,7 +7,7 @@
 template <class T> class Array
 {
 private:
-	T* _storage = nullptr;
+	T * _storage = nullptr;
 	int _size = 0;
 	int _capacity = 512;
 
@@ -63,7 +64,7 @@ private:
 			}
 		}
 	}
-	
+
 	void phaseOne(int l, int r, int delta)
 	{
 		for (int i = (l + r) / 2; i >= l; i--)
@@ -71,7 +72,7 @@ private:
 			createPyramid(i, r, delta);
 		}
 	}
-	
+
 	void phaseTwo(int l, int r, int delta)
 	{
 		int end = r;
