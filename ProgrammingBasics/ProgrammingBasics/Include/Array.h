@@ -2,8 +2,6 @@
 #include <iostream>
 #include <stdexcept>
 
-#pragma once
-
 template <class T> class Array
 {
 private:
