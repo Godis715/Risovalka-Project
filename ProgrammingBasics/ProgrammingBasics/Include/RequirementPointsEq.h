@@ -7,4 +7,5 @@ public:
 	RequirementPointsEq();
 	virtual double error();
 private:
+
 };

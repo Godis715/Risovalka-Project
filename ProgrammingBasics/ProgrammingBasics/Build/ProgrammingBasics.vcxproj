@@ -125,7 +125,9 @@
     <ClInclude Include="..\Include\IDGenerator.h" />
     <ClInclude Include="..\Include\List.h" />
     <ClInclude Include="..\Include\list_util.h" />
+    <ClInclude Include="..\Include\Point.h" />
     <ClInclude Include="..\Include\Requirement.h" />
+    <ClInclude Include="..\Include\RequirementPointsEq.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
