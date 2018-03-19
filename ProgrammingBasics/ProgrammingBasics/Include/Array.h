@@ -1,9 +1,6 @@
 #ifndef __ARRAY
 #define __ARRAY
 
-#include <stdexcept>
-
-
 template <class T> class Array
 {
 private:

@@ -1,4 +1,5 @@
-#pragma once
+#ifndef __DICT
+#define __DICT
 
 template <class T1, class T2> class Pair
 {
@@ -284,3 +285,5 @@ public:
 		}
 	}
 };
+
+#endif

@@ -1,4 +1,5 @@
-#pragma once
+#ifndef __ID
+#define __ID
 
 class ID {
 private:
@@ -20,3 +21,5 @@ bool ID::operator==(ID& item) {
 bool ID::operator<(ID& item) {
 	return hash < item.hash;
 }
+
+#endif

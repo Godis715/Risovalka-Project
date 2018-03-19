@@ -1,8 +1,6 @@
 #ifndef __LIST_H
 #define __LIST_H
 
-#include <stdexcept>
-
 template <typename T> class List
 {
 private:

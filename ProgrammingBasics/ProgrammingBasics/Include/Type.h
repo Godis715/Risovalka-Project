@@ -1,4 +1,5 @@
-#pragma once
+#ifndef __TYPE
+#define __TYPE
 
 enum type_id { point = 1, segment, arc };
 
@@ -41,3 +42,5 @@ const char* Type::GetName() const {
 type_id Type::GetTypeId() const {
 	return id;
 }
+
+#endif

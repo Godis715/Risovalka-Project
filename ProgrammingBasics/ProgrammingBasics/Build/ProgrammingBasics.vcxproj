@@ -124,13 +124,9 @@
     <ClInclude Include="..\Include\Array.h" />
     <ClInclude Include="..\Include\Dictionary.h" />
     <ClInclude Include="..\Include\ID.h" />
-    <ClInclude Include="..\Include\IView.h" />
     <ClInclude Include="..\Include\List.h" />
-    <ClInclude Include="..\Include\list_util.h" />
     <ClInclude Include="..\Include\Model.h" />
-    <ClInclude Include="..\Include\Presenter.h" />
     <ClInclude Include="..\Include\Type.h" />
-    <ClInclude Include="..\Include\View.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
