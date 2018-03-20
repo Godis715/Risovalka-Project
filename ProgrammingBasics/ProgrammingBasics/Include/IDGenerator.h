@@ -1,7 +1,7 @@
 #ifndef IDGENERATOR_H
 #define IDGENERATOR_H
 
-#define ID int
+#include "ID.h"
 
 class IDGenerator
 {
@@ -15,9 +15,16 @@ class IDGenerator
         ID generateID();
     private:
     IDGenerator();
-    static IDGenerator *_instance;
+    static IDGenerator* _instance;
 
-    static ID _lastGiven;
+    static unsigned long long _lastGivenHash;
 };
+
+ID IDGenerator::generateID() {
+	return ID(_lastGivenHash++);
+}
+
+unsigned long long IDGenerator::_lastGivenHash = 1;
+IDGenerator* IDGenerator::_instance = nullptr;
 
 #endif // IDGENERATOR_H

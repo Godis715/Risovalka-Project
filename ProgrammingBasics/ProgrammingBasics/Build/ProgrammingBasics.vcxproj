@@ -72,6 +72,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ExecutablePath>$(ExecutablePath)</ExecutablePath>
     <IncludePath>../Include;$(IncludePath)</IncludePath>
+    <SourcePath>../src;$(VC_SourcePath);</SourcePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -119,6 +120,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\Src\main.cpp" />
+    <ClCompile Include="..\Src\Model.cpp" />
     <ClCompile Include="..\Src\state_function.cpp" />
   </ItemGroup>
   <ItemGroup>

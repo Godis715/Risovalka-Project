@@ -13,7 +13,7 @@ public:
 	type_id GetTypeId() const;
 };
 
-Type::Type(type_id _id) {
+Type::Type(const type_id _id) {
 	switch (_id)
 	{
 	case point: {

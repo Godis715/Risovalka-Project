@@ -3,14 +3,15 @@
 
 class ID {
 private:
-	int hash;
+	unsigned long long hash;
 public:
-	ID(int);
+	ID(unsigned long long);
+	ID();
 	bool operator== (ID&);
 	bool operator< (ID&);
 };
 
-ID::ID(int h) {
+ID::ID(unsigned long long h) {
 	hash = h;
 }
 
@@ -21,5 +22,10 @@ bool ID::operator==(ID& item) {
 bool ID::operator<(ID& item) {
 	return hash < item.hash;
 }
+
+ID::ID() {
+	hash = 0;
+}
+
 
 #endif
