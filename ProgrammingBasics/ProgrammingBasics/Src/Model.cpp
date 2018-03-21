@@ -15,7 +15,7 @@ ID Primitive::GetId() {
 }
 
 Primitive::Primitive(ID _id, Type _type) : id(_id), type(_type) {
-
+	
 }
 Type Primitive::GetType() {
 	return type;
@@ -35,31 +35,51 @@ double Point::GetDistance(Vector2 point) {
 		(position.y - point.y)*(position.y - point.y));
 }
 
-
-Segment::Segment(Vector2 _p1, Vector2 _p2) : Primitive(IDGenerator::getInstance()->generateID(), Type(segment)) {
-	Array<double> params1;
-	params1.pushBack(_p1.x);
-	params1.pushBack(_p1.y);
-
-	Array<double> params2;
-	params1.pushBack(_p2.x);
-	params1.pushBack(_p2.y);
-
-	point1 = Model::createObject(Type(point), params1);
-	point2 = Model::createObject(Type(point), params2);
+Vector2 Point::GetPosition() const {
+	return position;
+}
+void Point::SetPosition(Vector2 _pos) {
+	position = _pos;
+}
+void Point::SetPosition(double x, double y) {
+	position.x = x;
+	position.y = y;
 }
 
-Segment::Segment(double x1, double y1, double x2, double y2) : Primitive(IDGenerator::getInstance()->generateID(), Type(segment)) {
-	Array<double> params1;
-	params1.pushBack(x1);
-	params1.pushBack(y1);
 
-	Array<double> params2;
-	params1.pushBack(x2);
-	params1.pushBack(y2);
+Segment::Segment(Vector2 _p1, Vector2 _p2) : 
+	Primitive(IDGenerator::getInstance()->generateID(), Type(segment)),
+	point1(Point(_p1)),
+	point2(Point(_p2))
+{
 
-	point1 = Model::createObject(Type(point), params1);
-	point2 = Model::createObject(Type(point), params2);
+}
+
+Segment::Segment(double x1, double y1, double x2, double y2) : 
+	Primitive(IDGenerator::getInstance()->generateID(), Type(segment)),
+	point1(Point(x1, y1)),
+	point2(Point(x2, y2)) 
+{
+
+}
+
+Vector2 Segment::GetPoint1_pos() const {
+	return point1.GetPosition();
+}
+Vector2 Segment::GetPoint2_pos() const {
+	return point2.GetPosition();
+}
+Vector2 Segment::SetPoint1_pos(Vector2 _pos) {
+	point1.SetPosition(_pos);
+}
+Vector2 Segment::SetPoint2_pos(Vector2 _pos) {
+	point2.SetPosition(_pos);
+}
+ID Segment::GetPoint1_ID() const {
+	return point1.GetId();
+}
+ID Segment::GetPoint2_ID() const {
+	return point2.GetId();
 }
 
 Arc::Arc(double cx, double cy, double px, double py, double _angle) : Primitive(IDGenerator::getInstance()->generateID(), Type(arc)) {

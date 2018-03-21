@@ -12,15 +12,15 @@ class Primitive;
 class Model
 {
 private:
-	static Array<Primitive*> data; //or another container
-	static IDGenerator* idGen;
+	Array<Primitive*> data; //or another container
+	IDGenerator* idGen;
 public:
 	Model();
-	static ID createObject(Type, Array<double>);
-	static ID getNearest(double, double);
-	static Type getObjType(ID);
-	static Array<double> getObjSubs(ID); //?????
-	static Array<double> getObjParam(ID);
+	ID createObject(Type, Array<double>);
+	ID getNearest(double, double);
+	Type getObjType(ID);
+	Array<double> getObjSubs(ID); //?????
+	Array<double> getObjParam(ID);
 };
 
 // just pair of numbers
@@ -54,16 +54,26 @@ public:
 	Point(double, double);
 	Point(Point&); //copying constructor
 	double GetDistance(Vector2) override;
+	Vector2 GetPosition() const;
+	void SetPosition(Vector2);
+	void SetPosition(double, double);
 };
 
 class Segment : public Primitive {
 private:
-	ID point1;
-	ID point2;
+	Point& point1;
+	Point& point2;
 public:
 	Segment(Vector2, Vector2);
 	Segment(double, double, double, double);
 	double GetDistance(Vector2) override;
+	ID GetPoint1_ID() const;
+	ID GetPoint2_ID() const;
+	Vector2 GetPoint1_pos() const;
+	Vector2 GetPoint2_pos() const;
+	Vector2 SetPoint1_pos(Vector2);
+	Vector2 SetPoint2_pos(Vector2);
+
 	/*functions for getting and setting coords*/
 };
 

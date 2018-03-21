@@ -311,7 +311,7 @@ public:
 	}
 };
 
-template <class T> std::ostream& operator<< (std::ostream& out, Array<T>& arr)
+template <class T> std::ostream& operator<< <T> (std::ostream& out, Array<T>& arr)
 {
 	for (size_t i = 0; i < arr.getSize(); i++)
 	{
