@@ -177,7 +177,7 @@ void func(Point* p, double fault, int size) {
 	return;
 }
 
-int main() {
+int not_main() {
 	Point* p = new Point[6];
 	for (int i = 0; i < 6; ++i) {
 		cin >> p[i].x >> p[i].y;

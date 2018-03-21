@@ -71,8 +71,8 @@ public:
 	ID GetPoint2_ID() const;
 	Vector2 GetPoint1_pos() const;
 	Vector2 GetPoint2_pos() const;
-	Vector2 SetPoint1_pos(Vector2);
-	Vector2 SetPoint2_pos(Vector2);
+	void SetPoint1_pos(Vector2);
+	void SetPoint2_pos(Vector2);
 
 	/*functions for getting and setting coords*/
 };

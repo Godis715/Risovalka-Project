@@ -69,10 +69,10 @@ Vector2 Segment::GetPoint1_pos() const {
 Vector2 Segment::GetPoint2_pos() const {
 	return point2.GetPosition();
 }
-Vector2 Segment::SetPoint1_pos(Vector2 _pos) {
+void Segment::SetPoint1_pos(Vector2 _pos) {
 	point1.SetPosition(_pos);
 }
-Vector2 Segment::SetPoint2_pos(Vector2 _pos) {
+void Segment::SetPoint2_pos(Vector2 _pos) {
 	point2.SetPosition(_pos);
 }
 ID Segment::GetPoint1_ID() const {
