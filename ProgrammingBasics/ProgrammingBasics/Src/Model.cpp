@@ -118,5 +118,24 @@ ID Model::createObject(Type T, Array<double> params) {
 	default:
 		break;
 	}
-	
+}
+
+ID Model::getNearest(double x, double y) {
+	if (data.getSize() != 0) {
+		Vector2 pos(x, y);
+		ID nearestObject = data[0]->GetId();
+		double minDist = data[0]->GetDistance(pos);
+		for (int i = 1; i < data.getSize(); ++i) {
+			double dist = data[i]->GetDistance(pos);
+			if (minDist > dist) {
+				minDist = dist;
+				nearestObject = data[i]->GetId();
+			}
+		}
+		return nearestObject;
+	}
+	else 
+	{
+		return NULL_ID;
+	}
 }
