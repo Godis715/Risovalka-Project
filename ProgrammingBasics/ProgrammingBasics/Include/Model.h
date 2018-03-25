@@ -1,11 +1,10 @@
-#ifndef __MODEL
-#define __MODEL
-
 #include "Array.h"
 #include "Type.h"
 #include <cmath>
 #include "IDGenerator.h"
 
+#ifndef __MODEL
+#define __MODEL
 
 class Primitive;
 
@@ -32,9 +31,12 @@ public:
 	Vector2(double, double);
 	Vector2();
 	static double Dot(Vector2, Vector2);
+	static double Cross(Vector2, Vector2);
 	double x;
 	double y;
 	Vector2 operator -(Vector2&);
+	Vector2 operator +(Vector2&);
+	Vector2 operator *(double);
 	double GetLength();
 };
 
@@ -84,13 +86,14 @@ public:
 // piece of circle
 class Arc : public Primitive {
 private:
-	Vector2 center;
-	Vector2 point1;
-	double angle; // from -2pi to 2pi
+	Point& point1;
+	Point& point2;
+	double angle; // from 0 to 2pi
 public: 
 	Arc(double, double, double, double, double); //size = sizeof(Arc);
 	Arc(Vector2, Vector2, double);
 	double GetDistance(Vector2) override;
+	Vector2 GetCenter() const;
 	/*Vector2 GetPoint1() const;
 	Vector2 GetPoint2() const;
 	other function for getting/setting

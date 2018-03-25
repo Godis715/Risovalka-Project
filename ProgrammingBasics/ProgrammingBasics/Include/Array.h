@@ -1,7 +1,7 @@
+#include <iostream>
+
 #ifndef __ARRAY
 #define __ARRAY
-
-#include <iostream>
 
 template <class T> class Array
 {

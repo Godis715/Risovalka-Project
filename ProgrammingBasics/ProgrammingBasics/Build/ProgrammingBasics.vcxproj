@@ -130,7 +130,6 @@
     <ClInclude Include="..\Include\IDGenerator.h" />
     <ClInclude Include="..\Include\List.h" />
     <ClInclude Include="..\Include\Model.h" />
-    <ClInclude Include="..\Include\Point.h" />
     <ClInclude Include="..\Include\Requirement.h" />
     <ClInclude Include="..\Include\RequirementPointsEq.h" />
     <ClInclude Include="..\Include\Type.h" />

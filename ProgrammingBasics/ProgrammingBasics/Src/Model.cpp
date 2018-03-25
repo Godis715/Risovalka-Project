@@ -12,6 +12,11 @@ Vector2::Vector2() {
 Vector2 Vector2::operator -(Vector2& vector) {
 	return Vector2(this->x - vector.x, this->y - vector.y);
 }
+
+Vector2 Vector2::operator +(Vector2& vector) {
+	return Vector2(this->x + vector.x, this->y + vector.y);
+}
+
 double Vector2::GetLength() {
 	return sqrt(this->x * this->x + this->y * this->y);
 }
@@ -20,6 +25,13 @@ double Vector2::Dot(Vector2 vec1, Vector2 vec2) {
 	return vec1.x * vec2.x + vec1.y + vec2.y;
 }
 
+double Vector2::Cross(Vector2 vec1, Vector2 vec2) {
+	return (vec1.x * vec2.y - vec1.y * vec1.x);
+}
+
+Vector2 Vector2::operator*(double val) {
+	return Vector2(this->x * val, this->y * val);
+}
 
 ID Primitive::GetId() {
 	return id;
@@ -107,21 +119,21 @@ ID Segment::GetPoint2_ID() const {
 	return point2.GetId();
 }
 
-Arc::Arc(double cx, double cy, double px, double py, double _angle) : 
+Arc::Arc(double p1x, double p1y, double p2x, double p2y, double _angle) :
 	Primitive(IDGenerator::getInstance()->generateID(),
-	Type(arc)) 
+	Type(arc)),
+	point1(Point(p1x, p1y)),
+	point2(Point(p2x, p2y))
 {
-	center = Vector2(cx, cy);
-	point1 = Vector2(px, py);
 	angle = _angle;
 }
 
-Arc::Arc(Vector2 _center, Vector2 _point1, double _angle) :
+Arc::Arc(Vector2 _point1, Vector2 _point2, double _angle) :
 	Primitive(IDGenerator::getInstance()->generateID(),
-	Type(arc))
+	Type(arc)),
+	point1(Point(_point1)),
+	point2(Point(_point2))
 {
-	center = _center;
-	point1 = _point1;
 	angle = _angle;
 }
 
@@ -218,3 +230,26 @@ double Segment::GetDistance(Vector2 point) {
 	}
 	return answer;
 }
+
+double Arc::GetDistance(Vector2) {
+	
+
+}
+
+Vector2 Arc::GetCenter() const {
+	Vector2 base = point2.GetPosition() - point1.GetPosition();
+	Vector2 halfBase = base * 0.5;
+	double tempValue = sqrt(base.x * base.x - base.y * base.y);
+	Vector2 N(-base.y, base.x);
+	double H = halfBase.GetLength() / tan(angle / 2.0);
+	N = N * (1.0 / tempValue * H);
+
+	Vector2 H1 = point1.GetPosition() + halfBase + N;
+	Vector2 H2 = point1.GetPosition() + halfBase + N;
+
+	Vector2 H1toPoint1 = point1.GetPosition() - H1;
+	Vector2 H1toPoint2 = point2.GetPosition() - H1;
+
+	return (Vector2::Cross(H1toPoint1, H1toPoint2) > 0) ? H1 : H2;
+}
+
