@@ -5,19 +5,19 @@
 
 class IDGenerator
 {
-    public:
-        static IDGenerator * getInstance(){
-            if (_instance == nullptr )
-                _instance  = new IDGenerator;
-            return _instance;
-        };
+	public:
+	static IDGenerator * getInstance(){
+			if (_instance == nullptr )
+				_instance  = new IDGenerator;
+			return _instance;
+		};
 
-        ID generateID();
-    private:
-    IDGenerator();
-    static IDGenerator* _instance;
+		ID generateID();
+	private:
+	IDGenerator();
+	static IDGenerator* _instance;
 
-    static unsigned long long _lastGivenHash;
+	static unsigned long long _lastGivenHash;
 };
 
 ID IDGenerator::generateID() {

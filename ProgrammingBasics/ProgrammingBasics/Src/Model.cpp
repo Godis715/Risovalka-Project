@@ -9,25 +9,48 @@ Vector2::Vector2() {
 	x = 0.0f;
 	y = 0.0f;
 }
+Vector2 Vector2::operator -(Vector2& vector) {
+	return Vector2(this->x - vector.x, this->y - vector.y);
+}
+double Vector2::GetLength() {
+	return sqrt(this->x * this->x + this->y * this->y);
+}
+
+double Vector2::Dot(Vector2 vec1, Vector2 vec2) {
+	return vec1.x * vec2.x + vec1.y + vec2.y;
+}
+
 
 ID Primitive::GetId() {
 	return id;
 }
 
-Primitive::Primitive(ID _id, Type _type) : id(_id), type(_type) {
+Primitive::Primitive(ID _id, Type _type) : 
+	id(_id), 
+	type(_type) {
 	
 }
+
 Type Primitive::GetType() {
 	return type;
 }
 
-Point::Point(Vector2 pos) : Primitive(IDGenerator::getInstance()->generateID(), Type(point)) {
+Point::Point(Vector2 pos) : 
+	Primitive(IDGenerator::getInstance()->generateID(),
+	Type(point)) 
+{
 	this->position = pos;
 }
-Point::Point(double _x, double _y) : Primitive(IDGenerator::getInstance()->generateID(), Type(point)) {
+Point::Point(double _x, double _y) : 
+	Primitive(IDGenerator::getInstance()->generateID(),
+	Type(point))
+{
 	this->position = Vector2(_x, _y);
 }
-Point::Point(Point& _p) : Primitive(IDGenerator::getInstance()->generateID(), Type(point)) {
+Point::Point(Point& _p) : 
+	Primitive(IDGenerator::getInstance()->generateID(),
+	Type(point))
+{
 	this->position = _p.position;
 }
 double Point::GetDistance(Vector2 point) {
@@ -48,7 +71,8 @@ void Point::SetPosition(double x, double y) {
 
 
 Segment::Segment(Vector2 _p1, Vector2 _p2) : 
-	Primitive(IDGenerator::getInstance()->generateID(), Type(segment)),
+	Primitive(IDGenerator::getInstance()->generateID(),
+	Type(segment)),
 	point1(Point(_p1)),
 	point2(Point(_p2))
 {
@@ -56,7 +80,8 @@ Segment::Segment(Vector2 _p1, Vector2 _p2) :
 }
 
 Segment::Segment(double x1, double y1, double x2, double y2) : 
-	Primitive(IDGenerator::getInstance()->generateID(), Type(segment)),
+	Primitive(IDGenerator::getInstance()->generateID(),
+	Type(segment)),
 	point1(Point(x1, y1)),
 	point2(Point(x2, y2)) 
 {
@@ -82,13 +107,19 @@ ID Segment::GetPoint2_ID() const {
 	return point2.GetId();
 }
 
-Arc::Arc(double cx, double cy, double px, double py, double _angle) : Primitive(IDGenerator::getInstance()->generateID(), Type(arc)) {
+Arc::Arc(double cx, double cy, double px, double py, double _angle) : 
+	Primitive(IDGenerator::getInstance()->generateID(),
+	Type(arc)) 
+{
 	center = Vector2(cx, cy);
 	point1 = Vector2(px, py);
 	angle = _angle;
 }
 
-Arc::Arc(Vector2 _center, Vector2 _point1, double _angle) : Primitive(IDGenerator::getInstance()->generateID(), Type(arc)) {
+Arc::Arc(Vector2 _center, Vector2 _point1, double _angle) :
+	Primitive(IDGenerator::getInstance()->generateID(),
+	Type(arc))
+{
 	center = _center;
 	point1 = _point1;
 	angle = _angle;
@@ -134,8 +165,56 @@ ID Model::getNearest(double x, double y) {
 		}
 		return nearestObject;
 	}
-	else 
+	else
 	{
-		return NULL_ID;
+		//return NULL_ID; //what????????
 	}
+}
+
+bool Model::getNearest(double x, double y, ID& obj_id) {
+	if (data.getSize() != 0) {
+		Vector2 pos(x, y);
+		ID nearestObject = data[0]->GetId();
+		double minDist = data[0]->GetDistance(pos);
+		for (int i = 1; i < data.getSize(); ++i) {
+			double dist = data[i]->GetDistance(pos);
+			if (minDist > dist) {
+				minDist = dist;
+				nearestObject = data[i]->GetId();
+			}
+		}
+		obj_id = nearestObject;
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
+double Segment::GetDistance(Vector2 point) {
+	double dotProduct1 = 0.0;
+	double dotProduct2 = 0.0;
+	Vector2 point1 = this->point1.GetPosition();
+	Vector2 point2 = this->point2.GetPosition();
+
+	Vector2 pointTo1 = point - point1;
+	Vector2 pointTo2 = point - point2;
+	Vector2 segment = point2 - point1;
+	dotProduct1 = Vector2::Dot(pointTo1, segment);
+	dotProduct2 = Vector2::Dot(pointTo2, segment);
+	dotProduct2 *= -1;
+	double answer = 0;
+	if (dotProduct1 >= 0 && dotProduct2 >= 0) {
+		answer = pointTo1.x * segment.y - pointTo1.y * segment.x;
+		answer /= 2;
+		answer /= segment.GetLength();
+	}
+	else {
+		answer = pointTo1.GetLength();
+		if (answer > pointTo2.GetLength()) {
+			answer = pointTo2.GetLength();
+		}
+	}
+	return answer;
 }

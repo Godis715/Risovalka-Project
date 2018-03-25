@@ -27,5 +27,4 @@ ID::ID() {
 	hash = 0;
 }
 
-
 #endif

@@ -18,6 +18,7 @@ public:
 	Model();
 	ID createObject(Type, Array<double>);
 	ID getNearest(double, double);
+	bool getNearest(double, double, ID&);
 	Type getObjType(ID);
 	Array<double> getObjSubs(ID); //?????
 	Array<double> getObjParam(ID);
@@ -30,8 +31,11 @@ private:
 public:
 	Vector2(double, double);
 	Vector2();
+	static double Dot(Vector2, Vector2);
 	double x;
 	double y;
+	Vector2 operator -(Vector2&);
+	double GetLength();
 };
 
 // parent of point, segment, arc
