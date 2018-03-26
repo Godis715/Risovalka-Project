@@ -11,20 +11,4 @@ public:
 	bool operator< (ID&);
 };
 
-ID::ID(unsigned long long h) {
-	hash = h;
-}
-
-bool ID::operator==(ID& item) {
-	return hash == item.hash;
-}
-
-bool ID::operator<(ID& item) {
-	return hash < item.hash;
-}
-
-ID::ID() {
-	hash = 0;
-}
-
 #endif
