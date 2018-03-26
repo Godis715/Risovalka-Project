@@ -11,11 +11,11 @@ Vector2::Vector2() {
 	y = 0.0f;
 }
 
-Vector2 Vector2::operator -(Vector2& vector) {
+Vector2 Vector2::operator -(const Vector2& vector) {
 	return Vector2(this->x - vector.x, this->y - vector.y);
 }
 
-Vector2 Vector2::operator +(Vector2& vector) {
+Vector2 Vector2::operator +(const Vector2& vector) {
 	return Vector2(this->x + vector.x, this->y + vector.y);
 }
 

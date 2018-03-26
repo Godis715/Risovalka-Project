@@ -11,8 +11,8 @@ public:
 	static double Cross(Vector2, Vector2);
 	double x;
 	double y;
-	Vector2 operator -(Vector2&);
-	Vector2 operator +(Vector2&);
+	Vector2 operator -(const Vector2&);
+	Vector2 operator +(const Vector2&);
 	Vector2 operator *(double);
 	double GetLength();
 };

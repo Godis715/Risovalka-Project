@@ -22,7 +22,7 @@ Type::Type(const type_id _id) {
 	id = _id;
 }
 
-const char* Type::GetName() const {
+std::string Type::GetName() const {
 	return name;
 }
 

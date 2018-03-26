@@ -22,7 +22,7 @@ private:
 public:
 	Point(Vector2);
 	Point(double, double);
-	Point(Point&); //copying constructor
+	Point(const Point&); //copying constructor
 	double GetDistance(Vector2) override;
 	Vector2 GetPosition() const;
 	void SetPosition(Vector2);

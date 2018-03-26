@@ -7,7 +7,6 @@ ID Primitive::GetId() const {
 Primitive::Primitive(ID _id, Type _type) :
 	id(_id),
 	type(_type) {
-
 }
 
 Type Primitive::GetType() {
@@ -26,7 +25,7 @@ Point::Point(double _x, double _y) :
 {
 	this->position = Vector2(_x, _y);
 }
-Point::Point(Point& _p) :
+Point::Point(const Point& _p) :
 	Primitive(IDGenerator::getInstance()->generateID(),
 		Type(point))
 {
@@ -135,7 +134,10 @@ double Arc::GetDistance(Vector2) {
 }
 
 Vector2 Arc::GetCenter() const {
-	Vector2 base = point2.GetPosition() - point1.GetPosition();
+	Vector2 point1Pos = point1.GetPosition();
+	Vector2 point2Pos = point2.GetPosition();
+
+	Vector2 base = point2Pos - point1Pos;
 	Vector2 halfBase = base * 0.5;
 	double tempValue = sqrt(base.x * base.x - base.y * base.y);
 	Vector2 N(-base.y, base.x);
