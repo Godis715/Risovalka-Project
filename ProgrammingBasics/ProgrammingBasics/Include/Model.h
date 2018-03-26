@@ -34,8 +34,8 @@ public:
 	static double Cross(Vector2, Vector2);
 	double x;
 	double y;
-	Vector2 operator -(Vector2&);
-	Vector2 operator +(Vector2&);
+	Vector2 operator -(const Vector2&);
+	Vector2 operator +(const Vector2&);
 	Vector2 operator *(double);
 	double GetLength();
 };
@@ -48,7 +48,7 @@ private:
 public:
 	Primitive(ID, Type);
 	virtual double GetDistance(Vector2) = 0;
-	ID GetId();
+	ID GetId()const ;
 	Type GetType();
 };
 
@@ -58,7 +58,7 @@ private:
 public:
 	Point(Vector2);
 	Point(double, double);
-	Point(Point&); //copying constructor
+	Point(const Point&); //copying constructor
 	double GetDistance(Vector2) override;
 	Vector2 GetPosition() const;
 	void SetPosition(Vector2);
@@ -67,8 +67,8 @@ public:
 
 class Segment : public Primitive {
 private:
-	Point& point1;
-	Point& point2;
+	Point point1;
+	Point point2;
 public:
 	Segment(Vector2, Vector2);
 	Segment(double, double, double, double);
@@ -86,10 +86,10 @@ public:
 // piece of circle
 class Arc : public Primitive {
 private:
-	Point& point1;
-	Point& point2;
+	Point point1;
+	Point point2;
 	double angle; // from 0 to 2pi
-public: 
+public:
 	Arc(double, double, double, double, double); //size = sizeof(Arc);
 	Arc(Vector2, Vector2, double);
 	double GetDistance(Vector2) override;

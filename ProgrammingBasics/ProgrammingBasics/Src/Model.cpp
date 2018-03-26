@@ -9,11 +9,11 @@ Vector2::Vector2() {
 	x = 0.0f;
 	y = 0.0f;
 }
-Vector2 Vector2::operator -(Vector2& vector) {
+Vector2 Vector2::operator -(const Vector2& vector) {
 	return Vector2(this->x - vector.x, this->y - vector.y);
 }
 
-Vector2 Vector2::operator +(Vector2& vector) {
+Vector2 Vector2::operator +(const Vector2& vector) {
 	return Vector2(this->x + vector.x, this->y + vector.y);
 }
 
@@ -33,33 +33,33 @@ Vector2 Vector2::operator*(double val) {
 	return Vector2(this->x * val, this->y * val);
 }
 
-ID Primitive::GetId() {
+ID Primitive::GetId()const {
 	return id;
 }
 
-Primitive::Primitive(ID _id, Type _type) : 
-	id(_id), 
+Primitive::Primitive(ID _id, Type _type) :
+	id(_id),
 	type(_type) {
-	
+
 }
 
 Type Primitive::GetType() {
 	return type;
 }
 
-Point::Point(Vector2 pos) : 
+Point::Point(Vector2 pos) :
 	Primitive(IDGenerator::getInstance()->generateID(),
-	Type(point)) 
+	Type(point))
 {
 	this->position = pos;
 }
-Point::Point(double _x, double _y) : 
+Point::Point(double _x, double _y) :
 	Primitive(IDGenerator::getInstance()->generateID(),
 	Type(point))
 {
 	this->position = Vector2(_x, _y);
 }
-Point::Point(Point& _p) : 
+Point::Point(const Point& _p) :
 	Primitive(IDGenerator::getInstance()->generateID(),
 	Type(point))
 {
@@ -82,7 +82,7 @@ void Point::SetPosition(double x, double y) {
 }
 
 
-Segment::Segment(Vector2 _p1, Vector2 _p2) : 
+Segment::Segment(Vector2 _p1, Vector2 _p2) :
 	Primitive(IDGenerator::getInstance()->generateID(),
 	Type(segment)),
 	point1(Point(_p1)),
@@ -91,11 +91,11 @@ Segment::Segment(Vector2 _p1, Vector2 _p2) :
 
 }
 
-Segment::Segment(double x1, double y1, double x2, double y2) : 
+Segment::Segment(double x1, double y1, double x2, double y2) :
 	Primitive(IDGenerator::getInstance()->generateID(),
 	Type(segment)),
 	point1(Point(x1, y1)),
-	point2(Point(x2, y2)) 
+	point2(Point(x2, y2))
 {
 
 }
@@ -232,7 +232,7 @@ double Segment::GetDistance(Vector2 point) {
 }
 
 double Arc::GetDistance(Vector2) {
-	
+
 
 }
 
