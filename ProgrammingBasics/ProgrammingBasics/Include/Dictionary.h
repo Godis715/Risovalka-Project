@@ -83,28 +83,71 @@ private:
 	}
 
 	void RestoreBalance() {
-	
-	
+		int leftHigh = 0;
+		int rightHigh = 0;
+		if (support->leftChild != nullptr) {
+			leftHigh = support->leftChild->high;
+		}
+		if (support->rightChild != nullptr) {
+			rightHigh = support->rightChild->high;
+		}
+
+		if (rightHigh > leftHigh) {
+			leftHigh = 0;
+			rightHigh = 0;
+			if (support->rightChild->leftChild != nullptr) {
+				leftHigh = support->rightChild->leftChild->high;
+			}
+			if (support->rightChild->rightChild != nullptr) {
+				rightHigh = support->rightChild->rightChild->high;
+			}
+			if (rightHigh >= leftHigh) {
+				RR();
+				return;
+			}
+			else {
+				RL();
+				return;
+			}
+		}
+		else {
+			leftHigh = 0;
+			rightHigh = 0;
+			if (support->leftChild->leftChild != nullptr) {
+				lehtHigh = support->leftChild->leftChild->high;
+			}
+			if (support->leftChild->rightChild != nullptr) {
+				rightHigh = support->leftChild->rightChild->high;
+			}
+			if (leftHigh >= rightHigh) {
+				LL();
+				return;
+			}
+			else {
+				LR();
+				return;
+			}
+		}
 	}
 
 	void RestoreHigh() {
 		while (support != nullptr)
 		{
-			int lehtHigh = 0;
+			int leftHigh = 0;
 			int rightHigh = 0;
 			if (support->leftChild != nullptr) {
-				lehtHigh = support->leftChild->high;
+				leftHigh = support->leftChild->high;
 			}
 			if (support->rightChild != nullptr) {
 				rightHigh = support->rightChild->high;
 			}
-			if (rightHigh > lehtHigh) {
-				support->high = rightHigh;
+			if (rightHigh > leftHigh) {
+				support->high = rightHigh + 1;
 			}
 			else {
-				support->high = lehtHigh;
+				support->high = leftHigh + 1;
 			}
-			if ((rightHigh > lehtHigh + 1) || (rightHigh + 1 < lehtHigh)) {
+			if ((rightHigh > leftHigh + 1) || (rightHigh + 1 < leftHigh)) {
 				RestoreBalance();
 			}
 		}
