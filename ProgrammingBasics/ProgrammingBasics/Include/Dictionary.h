@@ -1,29 +1,36 @@
 #ifndef __DICT
 #define __DICT
 
-template <class T1, class T2> class Pair
+template <class TKey, class TVal> class Pair
 {
-	T1 first;
-	T2 second;
+	TKey first;
+	TVal second;
 };
 
-template <class T1, class T2> class Dict
+template <class TKey, class TVal> class Dict
 {
 private:
-	int _size = 0;
-
-	static class Node
+	template <class TKey, class TVal> class Node
 	{
 	public:
 		Node* rightChild = nullptr;
 		Node* leftChild = nullptr;
 		Node* parent = nullptr;
-		T1 key;
-		T2 value;
+		TKey key;
+		TVal value;
+		int high = 1;
 	};
 
-	Node* head = nullptr;
-	Node* find(T1 key)
+	int size;
+	Node<TKey, TVal>* head;
+	Node<TKey, TVal>* current;
+	// вопрос, почему оба варианта работают?
+	Node* support;
+	Node* temp; 
+	// и здесь тоже?
+	// Node<TKey, TVal>* find(TKey key)
+	// и вообще она уже не нужна, но я ее оставлю для вопроса
+	Node* find(TKey key)
 	{
 		Node* temp = head;
 		while (temp->key != key && temp != nullptr)
@@ -58,41 +65,213 @@ private:
 			return temp;
 		}
 	}
+
+	void LL() {
+
+	}
+
+	void RR() {
+
+	}
+
+	void RL() {
+
+	}
+	
+	void LR() {
+
+	}
+
+	void RestoreBalance() {
+	
+	
+	}
+
+	void RestoreHigh() {
+		while (support != nullptr)
+		{
+			int lehtHigh = 0;
+			int rightHigh = 0;
+			if (support->leftChild != nullptr) {
+				lehtHigh = support->leftChild->high;
+			}
+			if (support->rightChild != nullptr) {
+				rightHigh = support->rightChild->high;
+			}
+			if (rightHigh > lehtHigh) {
+				support->high = rightHigh;
+			}
+			else {
+				support->high = lehtHigh;
+			}
+			if ((rightHigh > lehtHigh + 1) || (rightHigh + 1 < lehtHigh)) {
+				RestoreBalance();
+			}
+		}
+	}
+	
+	void Erase() {
+		--size;
+		if ((support->rightChild == nullptr) && (support->leftChild == nullptr)) {
+			// если мы стоим на удаляемом
+			if (current == support) {
+				current = support->parent;
+			}
+			if (support->parent != nullptr) {
+				if (support->value <= support->value->value) {
+					support = support->parent;
+					delete support->leftChild;
+					support->leftChild = nullptr;
+				}
+				else {
+					support = support->parent;
+					delete support->rightChild;
+					support->rightChild = nullptr;
+				}
+				RestoreHigh();
+			}
+			else
+			{
+				head = nullptr;
+				current = nullptr;
+				delete support;
+			}
+			
+			support = head;
+			return;
+		}
+
+		// определение из какого лучше удалять
+		bool inRight;
+		if ((support->rightChild != nullptr) && (support->leftChild != nullptr)) {
+			if (support->rightChild->high > support->leftChild->high) {
+				inRight = true;
+			}
+			else {
+				inRight = false;
+			}
+		}
+		else {
+			if (support->rightChild != nullptr) {
+				inRight = true;
+			}
+			else {
+				inRight = false;
+			}
+		}
+		//
+
+		if (inRight) {
+			temp = support->rightChild;
+			while (temp->leftChild != nullptr)
+			{
+				temp = temp->leftChild;
+			}
+
+			if (temp == support->rightChild) {
+				// проверка, если у большего сына удаляемого елемента нет меньших сыновей
+				support->rightChild = temp->rightChild;
+				if (temp->rightChild != nullptr) {
+					temp->rightChild->Father = support;
+				}
+				support->value = temp->value;
+				support->key = temp->key
+				delete temp;
+				RestoreHigh();
+				return;
+			}
+			temp->parent->leftChild = Temp->rightChild;
+			if (temp->rightChild != nullptr) {
+				temp->rightChild->Father = temp->Father;
+			}
+			support->value = temp->value;
+			support->key = temp->key;
+			// так как восстановление высоты происходит с вспомогательного,
+			// то он должен быть на уровне с удаляемым
+			support = temp->parent;
+			delete temp;
+			RestoreHigh();
+			return;
+		}
+		else {
+			temp = support->leftChild;
+			while (temp->rightChild != nullptr)
+			{
+				temp = temp->rightChild;
+			}
+			if (temp == support->leftChild) {
+				// проверка, если у меньшего сына удаляемого елемента нет больших сыновей
+				support->leftChild = temp->leftChild;
+				if (temp->leftChild != nullptr) {
+					temp->leftChild->parent = support;
+				}
+				support->value = temp->value;
+				support->key = temp->key;
+				support = temp->parent;
+				delete temp;
+				RestoreHigh();
+				return;
+			}
+			temp->parent->rightChild = temp->leftChild;
+			if (temp->leftChild != nullptr) {
+				temp->leftChild->parent = temp->parent;
+			}
+			support->value = temp->value;
+			// так как восстановление высоты происходит с вспомогательного,
+			// то он должен быть на уровне с удаляемым
+			support->key = temp->key;
+			delete temp;
+			RestoreHigh();
+			return;
+		}
+
+	}
 public:
 	Dict()
 	{
-
+		head = nullptr;
+		current = nullptr;
+		support = nullptr;
+		temp = nullptr;
+		size = 0;
 	}
+
 	int getsize()
 	{
-		return _size;
+		return size;
 	}
-	void add(const T1 &key, const T2 &val)
+
+	void Add(const TKey &key, const TVal &val)
 	{
-		_size++;
+		size++;
 		if (head == nullptr)
 		{
 			head = new Node;
 			head->key = key;
 			head->value = val;
+			head->high = 1;
+			current = head;
 			return;
 		}
-		Node* temp = head;
-		while (temp != nullptr)
+
+		support = head;
+		while (support != nullptr)
 		{
-			if (key > temp->key)
+			if (key > support->key)
 			{
-				if (temp->rightChild != nullptr)
+				if (support->rightChild != nullptr)
 				{
-					temp = temp->rightChild;
+					support = support->rightChild;
 				}
 				else
 				{
-					temp->rightChild = new Node();
-					temp->rightChild->key = key;
-					temp->rightChild->value = val;
-					temp->rightChild->parent = temp;
-					break;
+					support->rightChild = new Node();
+					support->rightChild->key = key;
+					support->rightChild->value = val;
+					support->rightChild->parent = support;
+					support->rightChild->high = 1;
+					RestoreHighUp();
+					return;
 				}
 			}
 			else
@@ -103,165 +282,34 @@ public:
 				}
 				else
 				{
-					temp->leftChild = new Node();
-					temp->leftChild->key = key;
-					temp->leftChild->value = val;
-					temp->leftChild->parent = temp;
-					break;
+					support->leftChild = new Node();
+					support->leftChild->key = key;
+					support->leftChild->value = val;
+					support->leftChild->parent = support;
+					RestoreHighUp();
+					return;
 				}
 			}
 		}
 	}
 
-	void erase(const T1 &key)
-	{
-		Node* temp = find(key);
-		if (temp == nullptr) {
-			return;
-		}
-		bool isRight = false;
-		if (temp->parent != nullptr) {
-			if (temp->parent->key < temp->key) {
-				isRight = true;
-			}
-		}
-		if (temp->rightChild == nullptr) {
-			if (temp->leftChild == nullptr) {
-				if (temp == head) {
-					head = nullptr;
-				}
-				else {
-					if (isRight) {
-						temp->parent->rightChild = nullptr;
-					}
-					else {
-						temp->parent->leftChild = nullptr;
-					}
-				}
-				delete temp;
-				--_size;
+	void Erase(const TKey &key) {
+		support = head;
+		while (support != nullptr)
+		{
+			if (key == support->key) {
+				Erase();
 				return;
 			}
-
-			Node* right = temp->leftChild;
-			if (right->rightChild == nullptr) {
-				right->parent = temp->parent;
-				if (temp == head) {
-					head = right;
-				}
-				else {
-					if (isRight) {
-						temp->parent->rightChild = right;
-					}
-					else {
-						temp->parent->leftChild = right;
-					}
-				}
-				delete temp;
-				--_size;
-				return;
-			}
-			while (right->rightChild != nullptr)
+			if (key > support->key)
 			{
-				right = right->rightChild;
-			}
-
-			if (right->leftChild != nullptr) {
-				right->parent->rightChild = right->leftChild;
-				right->leftChild->parent = right->parent;
-			}
-			else {
-				right->parent = nullptr;
-			}
-			right->leftChild = temp->leftChild;
-			right->leftChild->parent = right;
-			right->parent = temp->parent;
-			if (temp == head) {
-				head = right;
-			}
-			else {
-				if (isRight) {
-					temp->parent->rightChild = right;
-				}
-				else {
-					temp->parent->leftChild = right;
-				}
-			}
-			delete temp;
-			--_size;
-			return;
-		}
-
-		Node* left = temp->rightChild;
-		if (left->leftChild == nullptr) {
-			if (temp->leftChild != nullptr) {
-				left->leftChild = temp->leftChild;
-				left->leftChild->parent = left;
-			}
-			left->parent = temp->parent;
-			if (temp == head) {
-				head = left;
-			}
-			else {
-				if (isRight) {
-					temp->parent->rightChild = left;
-				}
-				else {
-					temp->parent->leftChild = left;
-				}
-			}
-			delete temp;
-			--_size;
-			return;
-		}
-
-		while (left->leftChild != nullptr)
-		{
-			left = left->leftChild;
-		}
-		if (left->rightChild != nullptr) {
-			left->parent->leftChild = left->rightChild;
-			left->rightChild = left->parent;
-		}
-		else {
-			left->parent = nullptr;
-		}
-		left->rightChild = temp->rightChild;
-		left->rightChild->parent = left;
-		if (temp->leftChild != nullptr) {
-			left->leftChild = temp->leftChild;
-			left->leftChild->parent = left;
-		}
-		if (temp == head) {
-			head = left;
-		}
-		else {
-			if (isRight) {
-				temp->parent->rightChild = left;
-			}
-			else {
-				temp->parent->leftChild = left;
-			}
-		}
-		delete temp;
-		--_size;
-		return;
-	}
-
-	bool find(T1 key, T2& val)
-	{
-		Node* temp = head;
-		while (temp != nullptr && temp->key != key)
-		{
-			if (temp->key < key)
-			{
-				if (temp->rightChild != nullptr)
+				if (support->rightChild != nullptr)
 				{
-					temp = temp->rightChild;
+					support = support->rightChild;
 				}
 				else
 				{
-					break;
+					return;
 				}
 			}
 			else
@@ -272,16 +320,107 @@ public:
 				}
 				else
 				{
-					break;
+					return;
 				}
 			}
 		}
-		if (temp->key != key || temp == nullptr)
+	}
+
+	bool find(const TKey &key)
+	{
+		support = head;
+		while (support != nullptr)
+		{
+			if (support->key == key) {
+				current = support;
+				return true;
+			}
+			if (support->key < key)
+			{
+				if (support->rightChild != nullptr)
+				{
+					support = support->rightChild;
+				}
+				else
+				{
+					return false;
+				}
+			}
+			else
+			{
+				if (support->leftChild != nullptr)
+				{
+					support = support->leftChild;
+				}
+				else
+				{
+					return false;
+				}
+			}
+		}
+	}
+
+	void MoveHead() {
+		current = Head;
+	}
+
+	bool MoveParent() {
+		if (current == nullptr) {
 			return false;
-		else
-		{
-			val = temp->value;
+		}
+		if (current->parent = nullptr) {
+			return false;
+		}
+		current = current->parent;
+		return true;
+	}
+
+	bool MoveLeft() {
+		if (current == nullptr) {
+			return false;
+		}
+		if (current->leftChild = nullptr) {
+			return false;
+		}
+		current = current->leftChild;
+		return true;
+	}
+
+	bool MoveRight() {
+		if (current == nullptr) {
+			return false;
+		}
+		if (current->rightChild = nullptr) {
+			return false;
+		}
+		current = current->rightChild;
+		return true;
+	}
+
+	bool IsCurrent() {
+		if (current == nullptr) {
+			return false;
+		}
+		else {
 			return true;
+		}
+	}
+
+	TVal* GetCurrent() {
+		if (current == nullptr) {
+			throw std::exception("use is current, it was nullptr");
+		}
+		else {
+			return current->value;
+		}
+	}
+
+	TKey GetCurrntKey() {
+		if (current == nullptr) {
+			throw std::exception("use is current, it was nullptr");
+		}
+		else {
+			return current->key;
 		}
 	}
 };
