@@ -24,47 +24,8 @@ private:
 	int size;
 	Node<TKey, TVal>* head;
 	Node<TKey, TVal>* current;
-	// вопрос, почему оба варианта работают?
 	Node<TKey, TVal>* support;
 	Node<TKey, TVal>* temp;
-	// и здесь тоже?
-	// Node<TKey, TVal>* find(TKey key)
-	// и вообще она уже не нужна, но я ее оставлю для вопроса
-	Node<TKey, TVal>* find(TKey key)
-	{
-		Node* temp = head;
-		while (temp->key != key && temp != nullptr)
-		{
-			if (temp->key < key)
-			{
-				if (temp->rightChild != nullptr)
-				{
-					temp = temp->rightChild;
-				}
-				else
-				{
-					break;
-				}
-			}
-			else
-			{
-				if (temp->leftChild != nullptr)
-				{
-					temp = temp->leftChild;
-				}
-				else
-				{
-					break;
-				}
-			}
-		}
-		if (temp->key != key || temp == nullptr)
-			return nullptr;
-		else
-		{
-			return temp;
-		}
-	}
 
 	void LL() {
 		temp = support->leftChild;
@@ -91,7 +52,6 @@ private:
 		support->parent = temp;
 		RestoreHighOnce(support);
 		RestoreHighOnce(temp);
-
 	}
 
 	void RR() {
@@ -127,7 +87,6 @@ private:
 		// дважды вверх, ведь support там опускается на один вниз
 		support = support->parent->parent;
 		RR();
-
 	}
 
 	void LR() {
@@ -235,7 +194,7 @@ private:
 				current = support->parent;
 			}
 			if (support->parent != nullptr) {
-				if (support->value <= support->value->value) {
+				if (support->value <= support->parent->value) {
 					support = support->parent;
 					delete support->leftChild;
 					support->leftChild = nullptr;
@@ -253,11 +212,8 @@ private:
 				current = nullptr;
 				delete support;
 			}
-
-			support = head;
 			return;
 		}
-
 		// определение из какого лучше удалять
 		bool inRight;
 		if ((support->rightChild != nullptr) && (support->leftChild != nullptr)) {
@@ -277,7 +233,6 @@ private:
 			}
 		}
 		//
-
 		if (inRight) {
 			temp = support->rightChild;
 			while (temp->leftChild != nullptr)
@@ -289,7 +244,7 @@ private:
 				// проверка, если у большего сына удаляемого елемента нет меньших сыновей
 				support->rightChild = temp->rightChild;
 				if (temp->rightChild != nullptr) {
-					temp->rightChild->Father = support;
+					temp->rightChild->parent = support;
 				}
 				support->value = temp->value;
 				support->key = temp->key;
@@ -297,9 +252,9 @@ private:
 				RestoreHigh();
 				return;
 			}
-			temp->parent->leftChild = Temp->rightChild;
+			temp->parent->leftChild = temp->rightChild;
 			if (temp->rightChild != nullptr) {
-				temp->rightChild->Father = temp->Father;
+				temp->rightChild->parent = temp->parent;
 			}
 			support->value = temp->value;
 			support->key = temp->key;
@@ -342,36 +297,6 @@ private:
 			return;
 		}
 	}
-
-	void PrintUpPR() {
-		if (temp->leftChild != nullptr) {
-			temp = temp->leftChild;
-			PrintUpPR();
-			temp = temp->parent;
-		}
-		std::cout << temp->value << ' ';
-		if (temp->rightChild != nullptr) {
-			temp = temp->rightChild;
-			PrintUpPR();
-			temp = temp->parent;
-		}
-		return;
-	}
-
-	void PrintDownPR() {
-		if (temp->rightChild != nullptr) {
-			temp = temp->rightChild;
-			PrintDownPR();
-			temp = temp->parent;
-		}
-		std::cout << temp->value << ' ';
-		if (temp->leftChild != nullptr) {
-			temp = temp->leftChild;
-			PrintDownPR();
-			temp = temp->parent;
-		}
-		return;
-	}
 public:
 	Dict()
 	{
@@ -380,22 +305,6 @@ public:
 		support = nullptr;
 		temp = nullptr;
 		size = 0;
-	}
-
-	void PrintUp() {
-		if (head != nullptr) {
-			temp = head;
-			PrintUpPR();
-		}
-		return;
-	}
-
-	void PrintDown() {
-		if (head != nullptr) {
-			temp = head;
-			PrintDownPR();
-		}
-		return;
 	}
 
 	int getsize()
@@ -476,9 +385,9 @@ public:
 			}
 			else
 			{
-				if (temp->leftChild != nullptr)
+				if (support->leftChild != nullptr)
 				{
-					temp = temp->leftChild;
+					support = support->leftChild;
 				}
 				else
 				{
@@ -523,14 +432,14 @@ public:
 	}
 
 	void MoveHead() {
-		current = Head;
+		current = head;
 	}
 
 	bool MoveParent() {
 		if (current == nullptr) {
 			return false;
 		}
-		if (current->parent = nullptr) {
+		if (current->parent == nullptr) {
 			return false;
 		}
 		current = current->parent;
@@ -541,7 +450,7 @@ public:
 		if (current == nullptr) {
 			return false;
 		}
-		if (current->leftChild = nullptr) {
+		if (current->leftChild == nullptr) {
 			return false;
 		}
 		current = current->leftChild;
@@ -552,7 +461,7 @@ public:
 		if (current == nullptr) {
 			return false;
 		}
-		if (current->rightChild = nullptr) {
+		if (current->rightChild == nullptr) {
 			return false;
 		}
 		current = current->rightChild;
@@ -568,7 +477,7 @@ public:
 		}
 	}
 
-	TVal* GetCurrent() {
+	TVal GetCurrent() {
 		if (current == nullptr) {
 			throw std::exception("use is current, it was nullptr");
 		}
@@ -590,5 +499,4 @@ public:
 
 	}
 };
-
 #endif
