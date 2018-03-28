@@ -13,7 +13,7 @@ private:
 	template <class TKey, class TVal> class Node
 	{
 	public:
-		Node* rightChild = nullptr;
+		Node * rightChild = nullptr;
 		Node* leftChild = nullptr;
 		Node* parent = nullptr;
 		TKey key;
@@ -25,12 +25,12 @@ private:
 	Node<TKey, TVal>* head;
 	Node<TKey, TVal>* current;
 	// вопрос, почему оба варианта работают?
-	Node* support;
-	Node* temp; 
+	Node<TKey, TVal>* support;
+	Node<TKey, TVal>* temp;
 	// и здесь тоже?
 	// Node<TKey, TVal>* find(TKey key)
 	// и вообще она уже не нужна, но я ее оставлю для вопроса
-	Node* find(TKey key)
+	Node<TKey, TVal>* find(TKey key)
 	{
 		Node* temp = head;
 		while (temp->key != key && temp != nullptr)
@@ -75,7 +75,7 @@ private:
 		temp->rightChild = support;
 		if (support->parent != nullptr) {
 			if (support->key <= support->parent->key) {
-				
+
 				support->parent->leftChild = temp;
 			}
 			else {
@@ -89,7 +89,9 @@ private:
 			head = temp;
 		}
 		support->parent = temp;
-		return;
+		RestoreHighOnce(support);
+		RestoreHighOnce(temp);
+
 	}
 
 	void RR() {
@@ -115,6 +117,8 @@ private:
 			head = temp;
 		}
 		support->parent = temp;
+		RestoreHighOnce(support);
+		RestoreHighOnce(temp);
 	}
 
 	void RL() {
@@ -125,7 +129,7 @@ private:
 		RR();
 
 	}
-	
+
 	void LR() {
 		support = support->leftChild;
 		RR();
@@ -166,7 +170,7 @@ private:
 			leftHigh = 0;
 			rightHigh = 0;
 			if (support->leftChild->leftChild != nullptr) {
-				lehtHigh = support->leftChild->leftChild->high;
+				leftHigh = support->leftChild->leftChild->high;
 			}
 			if (support->leftChild->rightChild != nullptr) {
 				rightHigh = support->leftChild->rightChild->high;
@@ -202,9 +206,27 @@ private:
 			if ((rightHigh > leftHigh + 1) || (rightHigh + 1 < leftHigh)) {
 				RestoreBalance();
 			}
+			support = support->parent;
 		}
 	}
-	
+
+	void RestoreHighOnce(Node<TKey, TVal>* node) {
+		int leftHigh = 0;
+		int rightHigh = 0;
+		if (node->leftChild != nullptr) {
+			leftHigh = node->leftChild->high;
+		}
+		if (node->rightChild != nullptr) {
+			rightHigh = node->rightChild->high;
+		}
+		if (rightHigh > leftHigh) {
+			node->high = rightHigh + 1;
+		}
+		else {
+			node->high = leftHigh + 1;
+		}
+	}
+
 	void Erase() {
 		--size;
 		if ((support->rightChild == nullptr) && (support->leftChild == nullptr)) {
@@ -231,7 +253,7 @@ private:
 				current = nullptr;
 				delete support;
 			}
-			
+
 			support = head;
 			return;
 		}
@@ -270,7 +292,7 @@ private:
 					temp->rightChild->Father = support;
 				}
 				support->value = temp->value;
-				support->key = temp->key
+				support->key = temp->key;
 				delete temp;
 				RestoreHigh();
 				return;
@@ -319,7 +341,36 @@ private:
 			RestoreHigh();
 			return;
 		}
+	}
 
+	void PrintUpPR() {
+		if (temp->leftChild != nullptr) {
+			temp = temp->leftChild;
+			PrintUpPR();
+			temp = temp->parent;
+		}
+		std::cout << temp->value << ' ';
+		if (temp->rightChild != nullptr) {
+			temp = temp->rightChild;
+			PrintUpPR();
+			temp = temp->parent;
+		}
+		return;
+	}
+
+	void PrintDownPR() {
+		if (temp->rightChild != nullptr) {
+			temp = temp->rightChild;
+			PrintDownPR();
+			temp = temp->parent;
+		}
+		std::cout << temp->value << ' ';
+		if (temp->leftChild != nullptr) {
+			temp = temp->leftChild;
+			PrintDownPR();
+			temp = temp->parent;
+		}
+		return;
 	}
 public:
 	Dict()
@@ -329,6 +380,22 @@ public:
 		support = nullptr;
 		temp = nullptr;
 		size = 0;
+	}
+
+	void PrintUp() {
+		if (head != nullptr) {
+			temp = head;
+			PrintUpPR();
+		}
+		return;
+	}
+
+	void PrintDown() {
+		if (head != nullptr) {
+			temp = head;
+			PrintDownPR();
+		}
+		return;
 	}
 
 	int getsize()
@@ -341,7 +408,7 @@ public:
 		size++;
 		if (head == nullptr)
 		{
-			head = new Node;
+			head = new Node<TKey, TVal>;
 			head->key = key;
 			head->value = val;
 			head->high = 1;
@@ -360,28 +427,28 @@ public:
 				}
 				else
 				{
-					support->rightChild = new Node();
+					support->rightChild = new Node<TKey, TVal>;
 					support->rightChild->key = key;
 					support->rightChild->value = val;
 					support->rightChild->parent = support;
 					support->rightChild->high = 1;
-					RestoreHighUp();
+					RestoreHigh();
 					return;
 				}
 			}
 			else
 			{
-				if (temp->leftChild != nullptr)
+				if (support->leftChild != nullptr)
 				{
-					temp = temp->leftChild;
+					support = support->leftChild;
 				}
 				else
 				{
-					support->leftChild = new Node();
+					support->leftChild = new Node<TKey, TVal>;
 					support->leftChild->key = key;
 					support->leftChild->value = val;
 					support->leftChild->parent = support;
-					RestoreHighUp();
+					RestoreHigh();
 					return;
 				}
 			}
@@ -517,6 +584,10 @@ public:
 		else {
 			return current->key;
 		}
+	}
+
+	void DeleteDict() {
+
 	}
 };
 
