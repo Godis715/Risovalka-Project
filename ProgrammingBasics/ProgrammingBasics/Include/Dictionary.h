@@ -67,19 +67,71 @@ private:
 	}
 
 	void LL() {
+		temp = support->leftChild;
+		support->leftChild = temp->rightChild;
+		if (temp->rightChild != nullptr) {
+			temp->rightChild->parent = support;
+		}
+		temp->rightChild = support;
+		if (support->parent != nullptr) {
+			if (support->key <= support->parent->key) {
+				
+				support->parent->leftChild = temp;
+			}
+			else {
+				support->parent->rightChild = temp;
 
+			}
+			temp->parent = support->parent;
+		}
+		else {
+			temp->parent = nullptr;
+			head = temp;
+		}
+		support->parent = temp;
+		return;
 	}
 
 	void RR() {
+		temp = support->rightChild;
+		support->rightChild = temp->leftChild;
+		if (temp->leftChild != nullptr) {
+			temp->leftChild->parent = support;
+		}
+		temp->leftChild = support;
+		if (support->parent != nullptr) {
+			if (support->key <= support->parent->key) {
 
+				support->parent->leftChild = temp;
+			}
+			else {
+				support->parent->rightChild = temp;
+
+			}
+			temp->parent = support->parent;
+		}
+		else {
+			temp->parent = nullptr;
+			head = temp;
+		}
+		support->parent = temp;
 	}
 
 	void RL() {
+		support = support->rightChild;
+		LL();
+		// дважды вверх, ведь support там опускается на один вниз
+		support = support->parent->parent;
+		RR();
 
 	}
 	
 	void LR() {
-
+		support = support->leftChild;
+		RR();
+		// дважды вверх, ведь support там опускается на один вниз
+		support = support->parent->parent;
+		LL();
 	}
 
 	void RestoreBalance() {
