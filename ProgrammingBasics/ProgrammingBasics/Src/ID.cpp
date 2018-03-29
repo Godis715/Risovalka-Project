@@ -6,12 +6,16 @@ ID::ID(unsigned long long h) {
 	hash = h;
 }
 
-bool ID::operator==(ID& item) {
+bool ID::operator==(const ID& item) const {
 	return hash == item.hash;
 }
 
-bool ID::operator<(ID& item) {
+bool ID::operator<(const ID& item) const {
 	return hash < item.hash;
+}
+
+bool ID::operator>(const ID& item) const {
+	return hash > item.hash;
 }
 
 ID::ID() {

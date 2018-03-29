@@ -1,10 +1,9 @@
 #include <iostream>
-#include "Model.h"
-#include "Dictionary.h"
+#include "Requirement.h"
 
 int main()
 {
-	/*Dict<int, int> dict;
+	Dict<int, int> dict;
 	dict.Add(5, 5);
 	dict.Add(3, 3);
 	dict.Add(7, 7);
@@ -49,6 +48,6 @@ int main()
 	dict.Add(5, 5);
 	dict.Add(3, 3);
 	dict.Add(7, 7);
-	system("pause");*/
+	system("pause");
 	return 0;
 }

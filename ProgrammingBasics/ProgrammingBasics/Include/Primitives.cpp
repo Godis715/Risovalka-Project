@@ -84,6 +84,12 @@ ID Segment::GetPoint1_ID() const {
 ID Segment::GetPoint2_ID() const {
 	return point2.GetId();
 }
+double Segment::Inequality(Vector2 vector) {
+	Equation* equation = this->CreateEquation();
+	double answer = equation->a * vector.x + equation->b * vector.y + equation->c;
+	delete equation;
+	return answer;
+}
 
 Arc::Arc(double p1x, double p1y, double p2x, double p2y, double _angle) :
 	Primitive(IDGenerator::getInstance()->generateID(),

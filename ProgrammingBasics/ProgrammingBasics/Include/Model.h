@@ -1,5 +1,7 @@
 #include "Array.h"
 #include "Primitives.h"
+#include "Dictionary.h"
+
 
 #ifndef __MODEL
 #define __MODEL
@@ -18,6 +20,7 @@ public:
 	bool getObjType(ID, Type&);
 	//Array<double> getObjSubs(ID); //?????
 	bool getObjParam(ID, Array<double>&);
+	Dict<const ID&, Primitive*> dict;
 };
 
 #endif

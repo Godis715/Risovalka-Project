@@ -33,6 +33,23 @@ class Segment : public Primitive {
 private:
 	Point point1;
 	Point point2;
+
+	struct Equation
+	{
+		double a;
+		double b;
+		double c;
+	};
+
+	Equation* CreateEquation() {
+		Equation* NewEquation = new Equation;
+		Vector2 vector1 = point1.GetPosition();
+		Vector2 vector2 = point2.GetPosition();
+		NewEquation->a = vector1.y - vector2.y;
+		NewEquation->b = vector2.x - vector1.x;
+		NewEquation->c = vector1.x * vector2.y - vector2.x  * vector1.y;
+		return NewEquation;
+	}
 public:
 	Segment(Vector2, Vector2);
 	Segment(double, double, double, double);
@@ -44,6 +61,7 @@ public:
 	void SetPoint1_pos(Vector2);
 	void SetPoint2_pos(Vector2);
 
+	double Inequality(Vector2);
 	/*functions for getting and setting coords*/
 };
 

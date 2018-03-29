@@ -7,8 +7,9 @@ private:
 public:
 	ID(unsigned long long);
 	ID();
-	bool operator== (ID&);
-	bool operator< (ID&);
+	bool operator== (const ID&) const;
+	bool operator< (const ID&) const;
+	bool operator> (const ID&) const;
 };
 
 #endif

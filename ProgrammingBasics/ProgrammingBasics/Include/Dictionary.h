@@ -407,7 +407,7 @@ public:
 				current = support;
 				return true;
 			}
-			if (support->key < key)
+			if (key > support->key)
 			{
 				if (support->rightChild != nullptr)
 				{
