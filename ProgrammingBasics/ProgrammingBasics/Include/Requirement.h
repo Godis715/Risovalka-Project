@@ -150,4 +150,62 @@ private:
 	const ID& segment2;
 	double angle;
 };
+
+class RequirementDistanceBetweenPointArc : public IRequirement
+{
+public:
+	RequirementDistanceBetweenPointArc(const Arc& ar, const Point& point, double dist) :
+		arc(ar.GetId()),
+		first(point.GetId())
+	{
+		distance = dist;
+	}
+	~RequirementDistanceBetweenPointArc() {}
+	virtual double error() {
+		Model model;
+		if (!model.dict.find(first)) {
+			// требование должно быть удалено, процесс удаления еще не сделан
+		}
+		Point* point = dynamic_cast<Point*>(model.dict.GetCurrent());
+		if (!model.dict.find(arc)) {
+			// требование должно быть удалено, процесс удаления еще не сделан
+		}
+		Arc* arcL = dynamic_cast<Arc*>(model.dict.GetCurrent());
+		Vector2 center = arcL->GetCenter();
+		return abs(point->GetDistance(center) - distance);
+	}
+	void ChangeDistance(double dist) {
+		distance = dist;
+	}
+private:
+	const ID& arc;
+	const ID& first;
+	double distance;
+};
+
+class RequirementPointInArc : public IRequirement
+{
+public:
+	RequirementPointInArc(const Arc& ar, const Point& point) :
+		arc(ar.GetId()),
+		first(point.GetId())
+	{}
+	~RequirementPointInArc() {}
+	virtual double error() {
+		Model model;
+		if (!model.dict.find(first)) {
+			// требование должно быть удалено, процесс удаления еще не сделан
+		}
+		Point* point = dynamic_cast<Point*>(model.dict.GetCurrent());
+		if (!model.dict.find(arc)) {
+			// требование должно быть удалено, процесс удаления еще не сделан
+		}
+		Arc* arcL = dynamic_cast<Arc*>(model.dict.GetCurrent());
+		Vector2 center = arcL->GetCenter();
+		return abs(point->GetDistance(center));
+	}
+private:
+	const ID& arc;
+	const ID& first;
+};
 #endif // REQUIREMENT_H
