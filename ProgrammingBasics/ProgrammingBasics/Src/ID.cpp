@@ -6,15 +6,15 @@ ID::ID(unsigned long long h) {
 	hash = h;
 }
 
-bool ID::operator==(const ID& item) const {
+bool ID::operator== (const ID& item) const {
 	return hash == item.hash;
 }
 
-bool ID::operator<(const ID& item) const {
+bool ID::operator< (const ID& item) const {
 	return hash < item.hash;
 }
 
-bool ID::operator>(const ID& item) const {
+bool ID::operator> (const ID& item) const {
 	return hash > item.hash;
 }
 

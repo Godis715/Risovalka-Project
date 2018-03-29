@@ -31,7 +31,7 @@ Point::Point(const Point& _p) :
 {
 	this->position = _p.position;
 }
-double Point::GetDistance(Vector2 point) {
+double Point::GetDistance(Vector2 point) const {
 	return sqrt((position.x - point.x)*(position.x - point.x) +
 		(position.y - point.y)*(position.y - point.y));
 }
@@ -108,7 +108,7 @@ Arc::Arc(Vector2 _point1, Vector2 _point2, double _angle) :
 {
 	angle = _angle;
 }
-double Segment::GetDistance(Vector2 point) {
+double Segment::GetDistance(Vector2 point) const {
 	double dotProduct1 = 0.0;
 	double dotProduct2 = 0.0;
 	Vector2 point1 = this->point1.GetPosition();
@@ -135,7 +135,7 @@ double Segment::GetDistance(Vector2 point) {
 	return answer;
 }
 
-double Arc::GetDistance(Vector2) {
+double Arc::GetDistance(Vector2) const {
 	return 0.0;
 }
 

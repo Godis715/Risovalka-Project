@@ -11,10 +11,11 @@ template <class TKey, class TVal> class Pair
 template <class TKey, class TVal> class Dict
 {
 private:
+
 	template <class TKey, class TVal> class Node
 	{
 	public:
-		Node * rightChild = nullptr;
+		Node* rightChild = nullptr;
 		Node* leftChild = nullptr;
 		Node* parent = nullptr;
 		TKey key;
@@ -36,13 +37,11 @@ private:
 		}
 		temp->rightChild = support;
 		if (support->parent != nullptr) {
-			if (support->key <= support->parent->key) {
-
-				support->parent->leftChild = temp;
+			if (support->key > support->parent->key) {
+				support->parent->rightChild = temp;
 			}
 			else {
-				support->parent->rightChild = temp;
-
+				support->parent->leftChild = temp;
 			}
 			temp->parent = support->parent;
 		}
@@ -63,13 +62,11 @@ private:
 		}
 		temp->leftChild = support;
 		if (support->parent != nullptr) {
-			if (support->key <= support->parent->key) {
-
-				support->parent->leftChild = temp;
+			if (support->key > support->parent->key) {
+				support->parent->rightChild = temp;
 			}
 			else {
-				support->parent->rightChild = temp;
-
+				support->parent->leftChild = temp;
 			}
 			temp->parent = support->parent;
 		}
@@ -469,6 +466,14 @@ public:
 		return true;
 	}
 
+	void MoveBegin() {
+
+	}
+
+	bool MoveNext() {
+		return true;
+	}
+
 	bool IsCurrent() {
 		if (current == nullptr) {
 			return false;
@@ -487,7 +492,7 @@ public:
 		}
 	}
 
-	TKey GetCurrntKey() {
+	TKey GetCurrentKey() {
 		if (current == nullptr) {
 			throw std::exception("use is current, it was nullptr");
 		}
@@ -518,4 +523,5 @@ public:
 		size = 0;
 	}
 };
+
 #endif

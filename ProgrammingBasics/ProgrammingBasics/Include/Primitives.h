@@ -11,7 +11,7 @@ private:
 	Type& type;
 public:
 	Primitive(ID, Type);
-	virtual double GetDistance(Vector2) = 0;
+	virtual double GetDistance(Vector2) const = 0;
 	ID GetId() const;
 	Type GetType();
 };
@@ -23,7 +23,7 @@ public:
 	Point(Vector2);
 	Point(double, double);
 	Point(const Point&); //copying constructor
-	double GetDistance(Vector2) override;
+	double GetDistance(Vector2) const override;
 	Vector2 GetPosition() const;
 	void SetPosition(Vector2);
 	void SetPosition(double, double);
@@ -34,8 +34,8 @@ private:
 	Point point1;
 	Point point2;
 
-	struct Equation
-	{
+	class Equation {
+	public:
 		double a;
 		double b;
 		double c;
@@ -53,7 +53,7 @@ private:
 public:
 	Segment(Vector2, Vector2);
 	Segment(double, double, double, double);
-	double GetDistance(Vector2) override;
+	double GetDistance(Vector2) const override;
 	ID GetPoint1_ID() const;
 	ID GetPoint2_ID() const;
 	Vector2 GetPoint1_pos() const;
@@ -74,7 +74,7 @@ private:
 public:
 	Arc(double, double, double, double, double); //size = sizeof(Arc);
 	Arc(Vector2, Vector2, double);
-	double GetDistance(Vector2) override;
+	double GetDistance(Vector2) const override;
 	Vector2 GetCenter() const;
 	ID GetPoint1_ID() const;
 	ID GetPoint2_ID() const;

@@ -13,13 +13,14 @@ ID Model::createObject(Type T, Array<double> params) {
 		catch (std::out_of_range) {
 			throw std::invalid_argument("Invalid parameters");
 		}
-		data.pushBack(_point);
+		data.Add(_point->GetId(),_point);
 		return _point->GetId();
 		break;
 	}
 	case segment: {
+		//REWRITE AND FINISH!!!
 		Point* _point = new Point(params.popBack(), params.popBack());
-		data.pushBack(_point);
+		//data.pushBack(_point);
 		return _point->GetId();
 		break;
 	}
@@ -29,15 +30,16 @@ ID Model::createObject(Type T, Array<double> params) {
 }
 
 bool Model::getNearest(double x, double y, ID& obj_id) {
-	if (data.getSize() != 0) {
+	if (data.getsize() != 0) {
 		Vector2 pos(x, y);
-		ID nearestObject = data[0]->GetId();
-		double minDist = data[0]->GetDistance(pos);
-		for (int i = 1; i < data.getSize(); ++i) {
-			double dist = data[i]->GetDistance(pos);
-			if (minDist > dist) {
+		data.MoveBegin();
+		ID nearestObject = data.GetCurrent()->GetId();
+		double minDist = data.GetCurrent()->GetDistance(pos);
+		while (data.MoveNext()) {
+			double dist = data.GetCurrent()->GetDistance(pos);
+			if (dist < minDist) {
 				minDist = dist;
-				nearestObject = data[i]->GetId();
+				nearestObject = data.GetCurrent()->GetId();
 			}
 		}
 		obj_id = nearestObject;

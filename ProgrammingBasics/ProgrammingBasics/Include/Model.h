@@ -11,7 +11,7 @@ class Primitive;
 class Model
 {
 private:
-	Array<Primitive*> data; //or another container
+	Dict<ID, Primitive*> data; //or another container
 	IDGenerator* idGen;
 public:
 	Model() {}
@@ -20,7 +20,6 @@ public:
 	bool getObjType(ID, Type&);
 	//Array<double> getObjSubs(ID); //?????
 	bool getObjParam(ID, Array<double>&);
-	Dict<const ID&, Primitive*> dict;
 };
 
 #endif
