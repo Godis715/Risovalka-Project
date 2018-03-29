@@ -31,8 +31,21 @@
 		<Compiler>
 			<Add option="-Wall" />
 			<Add option="-fexceptions" />
+			<Add directory="../Include" />
 		</Compiler>
-		<Unit filename="main.cpp" />
+		<Unit filename="../Include/Array.h" />
+		<Unit filename="../Include/Dictionary.h" />
+		<Unit filename="../Include/ID.h" />
+		<Unit filename="../Include/IDGenerator.h" />
+		<Unit filename="../Include/List.h" />
+		<Unit filename="../Include/Model.h" />
+		<Unit filename="../Include/Point.h" />
+		<Unit filename="../Include/Requirement.h" />
+		<Unit filename="../Include/RequirementPointsEq.h" />
+		<Unit filename="../Include/Type.h" />
+		<Unit filename="../Src/Model.cpp" />
+		<Unit filename="../Src/main.cpp" />
+		<Unit filename="../Src/type.cpp" />
 		<Extensions>
 			<code_completion />
 			<envvars />

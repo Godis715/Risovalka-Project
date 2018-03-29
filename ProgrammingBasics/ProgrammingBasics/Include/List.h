@@ -1,8 +1,6 @@
 #ifndef __LIST_H
 #define __LIST_H
 
-#include <stdexcept>
-
 template <typename T> class List
 {
 private:
@@ -65,7 +63,7 @@ public:
 		void operator <<(T NewValue);
 		T& operator >>(T& Temp);
 	};
-
+	
 	int getSize();
 	void addElementBeforeHead(T val);
 	void addElementAfterTail(T val);
@@ -169,7 +167,7 @@ template <typename T> T List<T>::Marker::getCurrent() const {
 		return current->getValue();
 	}
 	else {
-		throw std::runtime_error("Current was nullptr");
+		throw std::exception("Current was nullptr");
 	}
 }
 

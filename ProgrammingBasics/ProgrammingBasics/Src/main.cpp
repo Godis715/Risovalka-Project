@@ -1,98 +1,54 @@
 #include <iostream>
-#include <clocale>
-#include <string>
-#include "List.h"
-
-/*#include "list_util.h"
-#include <ctime>
-
-#include "Rational.h"
-*/
-using namespace std;
-#include "IDGenerator.h"
-
-class Person{
-public:
-    Person(const string&n):_name(n){}
-    virtual string hello()const{return _name + " is my name";}
-private:
-    string _name;
-};
-
-class Student: public Person{
-public:
-     Student():Person("Student "){}
-     string hello()const{ return Person::hello() + " - don't call me brick!!!";}
-     void doHomework(){cout << "Trying...";};
-};
-
+#include "Model.h"
+#include "Dictionary.h"
 
 int main()
 {
-    List<Person*> personList;
-    Person p("John");
-
-    personList.addElementAfterTail(&p);
-
-    Student s;
-
-    personList.addElementAfterTail(&s);
-
-    List<Person*>::Marker *m = personList.createMarker();
-    do{
-        cout << m->getCurrent()->hello() << endl;
-    }
-    while (m->moveNext());
-
-    cout << "================" << endl;
-    cout << p.hello() << endl;
-    cout << s.hello() << endl;
-
-
-
-
-    /*
-
-    IDGenerator *idgen = IDGenerator::getInstance();
-
-cout << idgen->generateID() << endl;
-
-cout << idgen->generateID() << endl;
-    //Point p1(10,20,);
-    /*Point p2(20,240,idgen.generateID());
-
-    IDGenerator idgen1;
-    Point p3(10,20,idgen1.generateID());
-
-
-
-
-
-    Rational r1(2,3);
-    Rational r2(5,4);
-
-    //Rational r3 = r1+r2;
-    Rational r3 = r1.operator+(r2);
-
-    r3++;
-
-
-	srand(time(nullptr));
-	List<int> list;
-	try {
-		std::setlocale(LC_ALL, "Russian");
-		for (int i = 0; i < 100; ++i) {
-			list.addElementAfterTail(rand()%1000);
-		}
-		printList(list);
+	/*Dict<int, int> dict;
+	dict.Add(5, 5);
+	dict.Add(3, 3);
+	dict.Add(7, 7);
+	dict.Add(1, 1);
+	dict.Add(2, 2);
+	dict.Add(4, 4);
+	dict.Add(6, 6);
+	dict.Add(8, 8);
+	dict.Add(9, 9);
+	dict.Erase(9);
+	dict.Erase(1);
+	dict.find(6);
+	int q = -1;
+	if (dict.IsCurrent()) {
+		q = dict.GetCurrent();
 	}
-	catch (std::exception e) {
-		std::cout << "baaad";
+	std::cout << std::endl << q;
+	int size = dict.getsize();
+	dict.MoveParent();
+	if (dict.IsCurrent()) {
+		q = dict.GetCurrent();
 	}
-	std::cout << std::endl;
-	BublesSort<int>(list);
-	printList<int>(list);
-	*/
-	system("pause");
+	std::cout << std::endl << q;
+	dict.MoveLeft();
+	if (dict.IsCurrent()) {
+		q = dict.GetCurrent();
+	}
+	dict.MoveParent();
+	dict.MoveRight();
+	if (dict.IsCurrent()) {
+		q = dict.GetCurrent();
+	}
+	std::cout << std::endl << q;
+	dict.MoveHead();
+	if (dict.IsCurrent()) {
+		q = dict.GetCurrent();
+	}
+	std::cout << std::endl << q;
+
+	dict.DeleteDict();
+	std::cout << std::endl << dict.getsize();
+	dict.Add(5, 5);
+	dict.Add(3, 3);
+	dict.Add(7, 7);
+	system("pause");*/
 	return 0;
 }

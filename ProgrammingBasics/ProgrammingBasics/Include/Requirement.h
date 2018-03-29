@@ -3,7 +3,7 @@
 
 class IRequirement{
 public :
-        virtual double error() = 0;
+	virtual double error() = 0;
 };
 
 #endif // REQUIREMENT_H

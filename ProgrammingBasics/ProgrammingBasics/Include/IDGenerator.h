@@ -1,23 +1,19 @@
 #ifndef IDGENERATOR_H
 #define IDGENERATOR_H
 
-#define ID int
+#include "ID.h"
 
 class IDGenerator
 {
-    public:
-        static IDGenerator * getInstance(){
-            if (_instance == nullptr )
-                _instance  = new IDGenerator;
-            return _instance;
-        };
+	public:
+	static IDGenerator * getInstance();
 
-        ID generateID();
-    private:
-    IDGenerator();
-    static IDGenerator *_instance;
+		ID generateID();
+	private:
+		IDGenerator() { }
+		static IDGenerator* _instance;
 
-    static ID _lastGiven;
+	static unsigned long long _lastGivenHash;
 };
 
 #endif // IDGENERATOR_H

@@ -1,6 +1,7 @@
-#pragma once
 #include <iostream>
-#include <stdexcept>
+
+#ifndef __ARRAY
+#define __ARRAY
 
 template <class T> class Array
 {
@@ -320,4 +321,6 @@ template <class T> std::ostream& operator<< (std::ostream& out, Array<T>& arr)
 	}
 	out << "\n";
 	return out;
-}//Flag
+}
+
+#endif
