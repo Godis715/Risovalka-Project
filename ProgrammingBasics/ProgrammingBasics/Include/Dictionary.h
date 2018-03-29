@@ -1,5 +1,6 @@
 #ifndef __DICT
 #define __DICT
+#include "Dequeue.h"
 
 template <class TKey, class TVal> class Pair
 {
@@ -496,7 +497,25 @@ public:
 	}
 
 	void DeleteDict() {
-
+		temp = head;
+		Deck<Node<TKey, TVal>*> deck;
+		deck.PushTail(temp);
+		while (deck.GetSize() > 0)
+		{
+			temp = deck.PopTail();
+			if (temp->leftChild != nullptr) {
+				deck.PushTail(temp->leftChild);
+			}
+			if (temp->rightChild != nullptr) {
+				deck.PushTail(temp->rightChild);
+			}
+			delete temp;
+		}
+		temp = nullptr;
+		head = nullptr;
+		current = nullptr;
+		support = nullptr;
+		size = 0;
 	}
 };
 #endif
