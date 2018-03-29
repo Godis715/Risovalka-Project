@@ -150,6 +150,7 @@ private:
 	const ID& segment2;
 	double angle;
 };
+<<<<<<< HEAD
 
 class RequirementDistanceBetweenPointArc : public IRequirement
 {
@@ -208,4 +209,6 @@ private:
 	const ID& arc;
 	const ID& first;
 };
+=======
+>>>>>>> Evg-Branch
 #endif // REQUIREMENT_H
