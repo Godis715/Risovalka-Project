@@ -11,25 +11,17 @@ public :
 class RequirementDistanceBetweenPoints : public IRequirement
 {
 public:
-	RequirementDistanceBetweenPoints(Point& _point1, Point& _point2, double dist) :
+	RequirementDistanceBetweenPoints(Point& _point1, Point& _point2, double _distance) :
 	point1(_point1), point2(_point2)
 	{
-		distance = dist;
+		distance = _distance;
 	}
 	~RequirementDistanceBetweenPoints() {}
-	virtual double error() {
-		//Model model;
-		//if (!model.dict.find(first)) {
-		//	// требование должно быть удалено, процесс удаления еще не сделан
-		//}
-		//Point* point1 = dynamic_cast<Point*>(model.dict.GetCurrent());
-		//if (!model.dict.find(second)) {
-		//	// требование должно быть удалено, процесс удаления еще не сделан
-		//}
+	double error() {
 		return abs(point1.GetDistance(point2.GetPosition()) - distance);
 	}
-	void ChangeDistance(double dist) {
-		distance = dist;
+	void ChangeDistance(double _distance) {
+		distance = _distance;
 	}
 private:
 	double distance;
@@ -40,13 +32,13 @@ private:
 class RequirementPointsOnTheOneHand : public IRequirement
 {
 public:
-	RequirementPointsOnTheOneHand( Segment& _segment, Point& _point1, Point& _point2, int dist) :
+	RequirementPointsOnTheOneHand( Segment& _segment, Point& _point1, Point& _point2) :
 		segment(_segment),
 		point1(_point1),
 		point2(_point2)
 	{}
 	~RequirementPointsOnTheOneHand() {}
-	virtual double error() {
+	double error() {
 
 		double Fx1 = segment.Inequality(point1.GetPosition());
 		double Fx2 = segment.Inequality(point2.GetPosition());
@@ -72,18 +64,18 @@ private:
 class RequirementDistanceBetweenPointSegment : public IRequirement
 {
 public:
-	RequirementDistanceBetweenPointSegment(Segment& _segment, Point& _point, double dist) :
+	RequirementDistanceBetweenPointSegment(Segment& _segment, Point& _point, double _distance) :
 		segment(_segment),
 		point(_point)
 	{
-		distance = dist;
+		distance = _distance;
 	}
 	~RequirementDistanceBetweenPointSegment() {}
-	virtual double error() {
+	double error() {
 		return abs(segment.GetDistance(point.GetPosition()) - distance);
 	}
-	void ChangeDistance(double dist) {
-		distance = dist;
+	void ChangeDistance(double _distance) {
+		distance = _distance;
 	}
 private:
 	Segment& segment;
@@ -94,26 +86,22 @@ private:
 class RequirementAngleBtweenSegments : public IRequirement
 {
 public:
-	RequirementAngleBtweenSegments(Segment& _seg1, Segment& _seg2, double ang) :
-		segment1(_seg1),
-		segment2(_seg2)
+	RequirementAngleBtweenSegments(Segment& _segment1, Segment& _segment2, double _andle) :
+		segment1(_segment1),
+		segment2(_segment2)
 	{
-		angle = ang;
+		angle = _andle;
 	}
 	~RequirementAngleBtweenSegments() {}
-	virtual double error() {
+	double error() {
 		Vector2 vec1 = segment1.GetPoint2_pos() - segment1.GetPoint1_pos();
 		Vector2 vec2 = segment2.GetPoint2_pos() - segment2.GetPoint1_pos();
-		double answer = Vector2::Dot(vec1, vec2);
-		double PI_d2 = PI / 2;
-		if (answer > PI_d2) {
-			answer = PI_d2 * 2 - answer;
-		}
-		// умножение нужно потому что для большого угла разность будет слишком малой
-		return abs(answer - angle) * PI_d2;
+		double angleReal = asin(Vector2::Cross(vec1, vec2) / (vec1.GetLength() * vec2.GetLength()));
+		angleReal = abs(angleReal);
+		return abs(angleReal - angle);
 	}
-	void ChangeAngle(double ang) {
-		angle = ang;
+	void ChangeAngle(double _andle) {
+		angle = _andle;
 	}
 private:
 	 Segment& segment1;
@@ -131,8 +119,7 @@ public:
 		distance = dist;
 	}
 	~RequirementDistanceBetweenPointArc() {}
-	virtual double error() {
-		
+	double error() {
 		Vector2 center = arc.GetCenter();
 		return abs(point.GetDistance(center) - distance);
 	}
@@ -153,9 +140,32 @@ public:
 		point(_point)
 	{}
 	~RequirementPointInArc() {}
-	virtual double error() {
+	// return distance to arc and angle
+	double error() {
 		Vector2 center = arc.GetCenter();
-		return abs(point.GetDistance(center));
+		Vector2 vec1 = arc.GetPoint1_pos() - center;
+		Vector2 vec2 = point.GetPosition() - center;
+		double angle = Vector2::Angle(vec1, vec2);
+		double angleArc = arc.GetAngle();
+		if (angle <= angleArc) {
+			return 0;
+		}
+		if (angle <= PI + angleArc / 2) {
+			if (angle < angleArc + PI / 2) {
+				return point.GetDistance(center) * sin(angle - angleArc) + angle;
+			}
+			else {
+				return point.GetDistance(center) + angle;
+			}
+		}
+		else {
+			if (angle < PI / 2) {
+				return point.GetDistance(center) * sin(angle) + angle;
+			}
+			else {
+				return point.GetDistance(center) + angle;
+			}
+		}
 	}
 private:
 	Arc& arc;

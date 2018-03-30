@@ -31,8 +31,20 @@ double Vector2::Cross(Vector2 vec1, Vector2 vec2) {
 	return (vec1.x * vec2.y - vec1.y * vec1.x);
 }
 
+double Vector2::Angle(Vector2 vec1, Vector2 vec2) {
+	double Cos = Vector2::Dot(vec1, vec2) / (vec1.GetLength() * vec2.GetLength());
+	double Sin = Vector2::Cross(vec1, vec2) / (vec1.GetLength() * vec2.GetLength());
+	if (Sin >= 0) {
+		return acos(Cos);
+	}
+	if (Cos >= 0) {
+		return asin(Sin);
+	}
+	double PI = 3.141592653589793;
+	double angle = acos(Cos);
+	return angle + 2 * (angle - PI);
+}
+
 Vector2 Vector2::operator*(double val) {
 	return Vector2(this->x * val, this->y * val);
 }
-
-

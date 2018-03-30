@@ -5,19 +5,15 @@
 ID::ID(unsigned long long h) {
 	hash = h;
 }
-
 bool ID::operator== (const ID& item) const {
 	return hash == item.hash;
 }
-
 bool ID::operator< (const ID& item) const {
 	return hash < item.hash;
 }
-
 bool ID::operator> (const ID& item) const {
 	return hash > item.hash;
 }
-
 ID::ID() {
 	hash = 0;
 }
@@ -29,8 +25,9 @@ ID IDGenerator::generateID() {
 }
 
 IDGenerator* IDGenerator::getInstance() {
-	if (_instance == nullptr)
+	if (_instance == nullptr) {
 		_instance = new IDGenerator;
+	}
 	return _instance;
 }
 

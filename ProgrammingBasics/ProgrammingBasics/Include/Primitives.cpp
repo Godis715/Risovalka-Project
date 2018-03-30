@@ -8,10 +8,10 @@ Primitive::Primitive(ID _id, Type _type) :
 	id(_id),
 	type(_type) {
 }
-
 Type Primitive::GetType() {
 	return type;
 }
+
 
 Point::Point(Vector2 pos) :
 	Primitive(IDGenerator::getInstance()->generateID(),
@@ -35,7 +35,6 @@ double Point::GetDistance(Vector2 point) const {
 	return sqrt((position.x - point.x)*(position.x - point.x) +
 		(position.y - point.y)*(position.y - point.y));
 }
-
 Vector2 Point::GetPosition() const {
 	return position;
 }
@@ -56,7 +55,6 @@ Segment::Segment(Vector2 _p1, Vector2 _p2) :
 {
 
 }
-
 Segment::Segment(double x1, double y1, double x2, double y2) :
 	Primitive(IDGenerator::getInstance()->generateID(),
 		Type(segment)),
@@ -65,7 +63,6 @@ Segment::Segment(double x1, double y1, double x2, double y2) :
 {
 
 }
-
 Vector2 Segment::GetPoint1_pos() const {
 	return point1.GetPosition();
 }
@@ -89,24 +86,6 @@ double Segment::Inequality(Vector2 vector) {
 	double answer = equation->a * vector.x + equation->b * vector.y + equation->c;
 	delete equation;
 	return answer;
-}
-
-Arc::Arc(double p1x, double p1y, double p2x, double p2y, double _angle) :
-	Primitive(IDGenerator::getInstance()->generateID(),
-		Type(arc)),
-	point1(Point(p1x, p1y)),
-	point2(Point(p2x, p2y))
-{
-	angle = _angle;
-}
-
-Arc::Arc(Vector2 _point1, Vector2 _point2, double _angle) :
-	Primitive(IDGenerator::getInstance()->generateID(),
-		Type(arc)),
-	point1(Point(_point1)),
-	point2(Point(_point2))
-{
-	angle = _angle;
 }
 double Segment::GetDistance(Vector2 point) const {
 	double dotProduct1 = 0.0;
@@ -135,10 +114,26 @@ double Segment::GetDistance(Vector2 point) const {
 	return answer;
 }
 
+
+Arc::Arc(double p1x, double p1y, double p2x, double p2y, double _angle) :
+	Primitive(IDGenerator::getInstance()->generateID(),
+		Type(arc)),
+	point1(Point(p1x, p1y)),
+	point2(Point(p2x, p2y))
+{
+	angle = _angle;
+}
+Arc::Arc(Vector2 _point1, Vector2 _point2, double _angle) :
+	Primitive(IDGenerator::getInstance()->generateID(),
+		Type(arc)),
+	point1(Point(_point1)),
+	point2(Point(_point2))
+{
+	angle = _angle;
+}
 double Arc::GetDistance(Vector2) const {
 	return 0.0;
 }
-
 Vector2 Arc::GetCenter() const {
 	Vector2 point1Pos = point1.GetPosition();
 	Vector2 point2Pos = point2.GetPosition();
@@ -158,7 +153,6 @@ Vector2 Arc::GetCenter() const {
 
 	return (Vector2::Cross(H1toPoint1, H1toPoint2) > 0) ? H1 : H2;
 }
-
 ID Arc::GetPoint1_ID() const {
 	return point1.GetId();
 }
