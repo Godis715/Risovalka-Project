@@ -1,7 +1,6 @@
 #ifndef REQUIREMENT_H
 #define REQUIREMENT_H
 #define PI 3.141592653589793 
-#include "Model.h"
 
 class IRequirement{
 public :

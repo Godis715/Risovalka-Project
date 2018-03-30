@@ -29,6 +29,10 @@ ID Model::createObject(Type T, Array<double> params) {
 	}
 }
 
+void Model::createRequirement() {
+
+}
+
 bool Model::getNearest(double x, double y, ID& obj_id) {
 	if (data.getsize() != 0) {
 		Vector2 pos(x, y);

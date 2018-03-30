@@ -467,11 +467,89 @@ public:
 	}
 
 	void MoveBegin() {
+		if (head == nullptr) {
+			return;
+		}
+		current = head;
+		while (current->leftChild != nullptr)
+		{
+			current = current->leftChild;
+		}
+	}
 
+	void MoveEnd() {
+		if (head == nullptr) {
+			return;
+		}
+		current = head;
+		while (current->rightChild != nullptr)
+		{
+			current = current->rightChild;
+		}
 	}
 
 	bool MoveNext() {
-		return true;
+		if (current == nullptr) {
+			return false;
+		}
+		if (current->rightChild != nullptr) {
+			current = current->rightChild;
+			return true;
+		}
+		if (current->parent != nullptr) {
+			if (current == current->parent->leftChild) {
+				current = current->parent;
+				return true;
+			}
+			temp = current;
+			current = current->parent;
+			while ((current != nullptr) && (current->rightChild == temp))
+			{
+				temp = current;
+				current = current->parent;
+			}
+			if (current == nullptr) {
+				current = head;
+				return false;
+			}
+			else {
+				return true;
+			}
+		}
+		return false;
+		// if false then current = head
+	}
+
+	bool MovePrev() {
+		if (current == nullptr) {
+			return false;
+		}
+		if (current->leftChild != nullptr) {
+			current = current->leftChild;
+			return true;
+		}
+		if (current->parent != nullptr) {
+			if (current == current->parent->rightChild) {
+				current = current->parent;
+				return true;
+			}
+			temp = current;
+			current = current->parent;
+			while ((current != nullptr) && (current->leftChild == temp))
+			{
+				temp = current;
+				current = current->parent;
+			}
+			if (current == nullptr) {
+				current = head;
+				return false;
+			}
+			else {
+				return true;
+			}
+		}
+		return false;
+		// if false then current = head
 	}
 
 	bool IsCurrent() {

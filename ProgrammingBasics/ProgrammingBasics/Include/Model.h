@@ -1,6 +1,7 @@
 #include "Array.h"
 #include "Primitives.h"
 #include "Dictionary.h"
+#include "Requirement.h"
 
 
 #ifndef __MODEL
@@ -12,10 +13,12 @@ class Model
 {
 private:
 	Dict<ID, Primitive*> data; //or another container
+	Array<IRequirement*> dataReq;
 	IDGenerator* idGen;
 public:
 	Model() {}
 	ID createObject(Type, Array<double>);
+	void createRequirement();
 	bool getNearest(double, double, ID&);
 	bool getObjType(ID, Type&);
 	//Array<double> getObjSubs(ID); //?????
