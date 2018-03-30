@@ -33,16 +33,28 @@ type_id Type::GetTypeId() const {
 TypeRequirement::TypeRequirement(const Requirement_id _id) {
 	switch (_id)
 	{
-	case point: {
-		name = "Point";
+	case distBetPoints: {
+		name = "DistBetPoints";
 		break;
 	}
-	case segment: {
-		name = "Segment";
+	case pointsOnTheOneHand: {
+		name = "PointsOnTheOneHand";
 		break;
 	}
-	case arc: {
-		name = "Arc";
+	case distBetPointSeg: {
+		name = "DistBetPointSeg";
+		break;
+	}
+	case angleBetSeg: {
+		name = "AngleBetSeg";
+		break;
+	}
+	case distBetPointArc: {
+		name = "DistBetPointArc";
+		break;
+	}
+	case pointInArc: {
+		name = "PointInArc";
 		break;
 	}
 	default:

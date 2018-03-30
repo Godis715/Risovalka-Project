@@ -29,8 +29,83 @@ ID Model::createObject(Type T, Array<double> params) {
 	}
 }
 
-void Model::createRequirement() {
+void Model::createRequirement(const Requirement_id _id, Array<Primitive*> primitives, Array<double>params) {
+	switch (_id)
+	{
+	case distBetPoints: {
+		DistanceBetweenPoints* Requirement;
+		try {
+			
+			Requirement = new DistanceBetweenPoints(*dynamic_cast<Point*>(primitives[0]), *dynamic_cast<Point*>(primitives[1]), params[0]);
+		}
+		catch (std::out_of_range) {
+			throw std::invalid_argument("Invalid parameters");
+		}
+		dataReq.pushBack(Requirement);
+		return;
+	}
+	case pointsOnTheOneHand: {
+		PointsOnTheOneHand* Requirement;
+		try {
+			Requirement = new PointsOnTheOneHand(*dynamic_cast<Segment*>(primitives[0]), *dynamic_cast<Point*>(primitives[1]), *dynamic_cast<Point*>(primitives[2]));
+		}
+		catch (std::out_of_range) {
+			throw std::invalid_argument("Invalid parameters");
+		}
+		dataReq.pushBack(Requirement);
+		return;
+	}
+	case distBetPointSeg: {
+		DistanceBetweenPointSegment* Requirement;
+		try {
 
+			Requirement = new DistanceBetweenPointSegment(*dynamic_cast<Segment*>(primitives[0]), *dynamic_cast<Point*>(primitives[1]), params[0]);
+		}
+		catch (std::out_of_range) {
+			throw std::invalid_argument("Invalid parameters");
+		}
+		dataReq.pushBack(Requirement);
+		return;
+	}
+	case angleBetSeg: {
+		AngleBetweenSegments* Requirement;
+		try {
+
+			Requirement = new AngleBetweenSegments(*dynamic_cast<Segment*>(primitives[0]), *dynamic_cast<Segment*>(primitives[1]), params[0]);
+		}
+		catch (std::out_of_range) {
+			throw std::invalid_argument("Invalid parameters");
+		}
+		dataReq.pushBack(Requirement);
+		return;
+	}
+	case distBetPointArc: {
+		DistanceBetweenPointArc* Requirement;
+		try {
+
+			Requirement = new DistanceBetweenPointArc(*dynamic_cast<Arc*>(primitives[0]), *dynamic_cast<Point*>(primitives[1]), params[0]);
+		}
+		catch (std::out_of_range) {
+			throw std::invalid_argument("Invalid parameters");
+		}
+		dataReq.pushBack(Requirement);
+		return;
+	}
+	case pointInArc: {
+		PointInArc* Requirement;
+		try {
+
+			Requirement = new PointInArc(*dynamic_cast<Arc*>(primitives[0]), *dynamic_cast<Point*>(primitives[1]));
+		}
+		catch (std::out_of_range) {
+			throw std::invalid_argument("Invalid parameters");
+		}
+		dataReq.pushBack(Requirement);
+		return;
+	}
+	default:
+		break;
+	}
 }
 
 bool Model::getNearest(double x, double y, ID& obj_id) {

@@ -18,7 +18,7 @@ private:
 public:
 	Model() {}
 	ID createObject(Type, Array<double>);
-	void createRequirement();
+	void createRequirement(const Requirement_id, Array<Primitive*>, Array<double>);
 	bool getNearest(double, double, ID&);
 	bool getObjType(ID, Type&);
 	//Array<double> getObjSubs(ID); //?????

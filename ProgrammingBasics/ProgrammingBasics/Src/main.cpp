@@ -3,7 +3,6 @@
 
 int main()
 {
-	
 	Model model;
 	Array<double> array;
 	array.pushBack(1);

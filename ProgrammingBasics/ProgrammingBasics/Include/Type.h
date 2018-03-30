@@ -15,7 +15,14 @@ public:
 	type_id GetTypeId() const;
 };
 
-enum Requirement_id { point = 1, segment, arc };
+enum Requirement_id {
+	distBetPoints = 1,
+	pointsOnTheOneHand,
+	distBetPointSeg,
+	angleBetSeg,
+	distBetPointArc,
+	pointInArc
+};
 
 class TypeRequirement {
 private:
