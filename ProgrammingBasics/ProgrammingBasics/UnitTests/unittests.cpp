@@ -638,12 +638,42 @@ namespace UnitTests
 			Assert::AreEqual(10, a);
 		}
 
+		TEST_METHOD(Test_Dictionary_findInBigDict)
+		{
+			Dict<char, int> dic;
+			dic.add('B', 10);
+			dic.add('A', 15);
+			int a;
+			dic.find('A', a);
+			Assert::AreEqual(15, a);
+		}
+
 		TEST_METHOD(Test_Dictionary_erase)
 		{
 			Dict<int, int> dic;
 			dic.add(5, 10);
 			dic.erase(5);
 			Assert::AreEqual(0, dic.getsize());
+		}
+
+		TEST_METHOD(Test_Dictionary_erase_SomeElements)
+		{
+			Dict<int, int> dic;
+			dic.add(5, 10);
+			dic.add(2, 11);
+			dic.add(4, 12);
+			dic.add(3, 13);
+			dic.add(1, 23);
+			dic.add(8, 14);
+			dic.add(6, 15);
+			dic.add(7, 26);
+			dic.add(9, 16);
+			int a = dic.getsize();
+			dic.erase(5);
+			a = dic.getsize();
+			Assert::AreEqual(8, dic.getsize());
+		
+			Assert::IsFalse(dic.find(5, a));
 		}
 
 	};

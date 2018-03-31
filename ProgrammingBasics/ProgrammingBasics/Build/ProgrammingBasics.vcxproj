@@ -69,7 +69,11 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
-  <PropertyGroup />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ExecutablePath>$(ExecutablePath)</ExecutablePath>
+    <IncludePath>../Include;$(IncludePath)</IncludePath>
+    <SourcePath>../src;$(VC_SourcePath);</SourcePath>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
@@ -115,13 +119,26 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="Include\Array.h" />
-    <ClInclude Include="Include\Dictionary.h" />
-    <ClInclude Include="Include\List.h" />
-    <ClInclude Include="Include\list_util.h" />
+    <ClCompile Include="..\Include\Primitives.cpp" />
+    <ClCompile Include="..\Src\ID.cpp" />
+    <ClCompile Include="..\Src\main.cpp" />
+    <ClCompile Include="..\Src\Model.cpp" />
+    <ClCompile Include="..\Src\Type.cpp" />
+    <ClCompile Include="..\Src\Vector2.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\Src\main.cpp" />
+    <ClInclude Include="..\Include\Array.h" />
+    <ClInclude Include="..\Include\Dequeue.h" />
+    <ClInclude Include="..\Include\Dictionary.h" />
+    <ClInclude Include="..\Include\ID.h" />
+    <ClInclude Include="..\Include\IDGenerator.h" />
+    <ClInclude Include="..\Include\List.h" />
+    <ClInclude Include="..\Include\Model.h" />
+    <ClInclude Include="..\Include\Primitives.h" />
+    <ClInclude Include="..\Include\Requirement.h" />
+    <ClInclude Include="..\Include\RequirementPointsEq.h" />
+    <ClInclude Include="..\Include\Type.h" />
+    <ClInclude Include="..\Include\Vector2.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
