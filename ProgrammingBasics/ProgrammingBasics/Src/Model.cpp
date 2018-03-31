@@ -1,7 +1,6 @@
 #include "Model.h"
 #include <stdexcept>
 
-
 bool Model::createObject(type_id type, Array<double>& params, ID& obj_id) {
 	switch (type)
 	{
@@ -140,8 +139,121 @@ bool Model::createRequirement(const Requirement_id _id, Array<ID>& id_arr, Array
 	}
 }
 
-void Model::Optimize() {
+double Model::GetError() {
+	double sum_error = 0;
+	for (size_t i = 0; i < dataReq.getSize(); i++)
+	{
+		sum_error += dataReq[i]->error();
+	}
+	return sum_error / dataReq.getSize();
+}
 
+void Model::Optimize() {
+	const double delta_increasing_k = 1.5;
+	double sum_error = 0;
+	sum_error = GetError();
+	int pointNum = 0;
+	while (sum_error > EPS) {
+		data.MoveBegin();
+		do {
+			Primitive* obj = data.GetCurrent();
+			switch (obj->GetType()) {
+			case point: {
+
+				Point* point = dynamic_cast<Point*>(obj);
+
+				double delta = sum_error;
+
+				Vector2 pos = point->GetPosition();
+
+				++pointNum;
+
+				while (delta > EPS) {
+
+					double shift_x[]{ delta, -delta, delta, -delta, delta, -delta, 0, 0 };
+					double shift_y[]{ delta, delta, -delta, -delta, 0, 0, delta, -delta };
+
+					double minFuncValue = sum_error;
+					Vector2 minFuncPos = pos;
+					bool hasChanged = false;
+
+					for (int i = 0; i < 8; ++i) {
+						point->SetPosition(pos.x + shift_x[i], pos.y + shift_y[i]);
+						double funcValue = GetError();
+						if (funcValue < minFuncValue) {
+							minFuncValue = funcValue;
+
+							minFuncPos = pos;
+							minFuncPos.x += shift_x[i];
+							minFuncPos.y += shift_y[i];
+
+							hasChanged = true;
+						}
+					}
+
+					if (!hasChanged) {
+						delta /= delta_increasing_k;
+					}
+					else {
+						sum_error = minFuncValue;
+						point->SetPosition(minFuncPos);
+						break;
+					}
+				}
+					
+
+				break;
+			}
+			case arc: {
+				Arc* arc = dynamic_cast<Arc*>(obj);
+				double delta = sum_error;
+
+				while (delta > EPS) {
+
+					double tempAngle = arc->GetAngle();
+
+					bool hasChanged = false;
+
+					double minFuncAngle = tempAngle;
+					double minFuncValue = sum_error;
+
+					arc->SetAngle(tempAngle - delta);
+					double funcValue = GetError();
+
+					if (funcValue < minFuncValue) {
+						minFuncValue = funcValue;
+						minFuncAngle = tempAngle - delta;
+						hasChanged = true;
+					}
+
+					arc->SetAngle(tempAngle + delta);
+					funcValue = GetError();
+
+					if (funcValue < minFuncAngle) {
+						minFuncValue = funcValue;
+						minFuncAngle = tempAngle + delta;
+						hasChanged = true;
+					}
+
+					if (!hasChanged) {
+						delta /= delta_increasing_k;
+					}
+					else {
+						arc->SetAngle(minFuncAngle);
+						sum_error = minFuncValue;
+						break;
+					}
+				}
+
+				break;
+			}
+			default: {
+			}
+			}
+
+		} while (data.MoveNext());
+
+	}
 }
 
 bool Model::getNearest(double x, double y, ID& obj_id) {
@@ -226,4 +338,13 @@ bool Model::getObjParam(const ID& obj_id, Array<double>& result) {
 	else {
 		return false;
 	}
+}
+
+void Model::GetSegmentPoints(ID obj_id, Array<ID>& arr) {
+	Primitive* obj;
+	data.find(obj_id);
+	obj = data.GetCurrent();
+	Segment* segment = dynamic_cast<Segment*>(obj);
+	arr.pushBack(segment->GetPoint1_ID());
+	arr.pushBack(segment->GetPoint2_ID());
 }

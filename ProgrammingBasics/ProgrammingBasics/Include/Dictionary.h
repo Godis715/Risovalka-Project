@@ -494,6 +494,10 @@ public:
 		}
 		if (current->rightChild != nullptr) {
 			current = current->rightChild;
+			while (current->leftChild != nullptr)
+			{
+				current = current->leftChild;
+			}
 			return true;
 		}
 		if (current->parent != nullptr) {

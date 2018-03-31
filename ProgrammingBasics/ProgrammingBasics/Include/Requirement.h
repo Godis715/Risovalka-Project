@@ -1,8 +1,7 @@
 #ifndef REQUIREMENT_H
 #define REQUIREMENT_H
-#define PI 3.141592653589793 
 
-class IRequirement{
+class IRequirement {
 public :
 	virtual double error() = 0;
 };

@@ -12,10 +12,11 @@ class Primitive;
 class Model
 {
 private:
+	const double EPS = 1e-6;
 	Dict<ID, Primitive*> data; //or another container
 	Array<IRequirement*> dataReq;
 	IDGenerator* idGen;
-	void Optimize();
+	double GetError();
 public:
 	Model() {}
 	bool createObject(type_id, Array<double>&, ID&);
@@ -24,6 +25,8 @@ public:
 	bool getObjType(const ID&, type_id&);
 	//Array<double> getObjSubs(ID); //?????
 	bool getObjParam(const ID&, Array<double>&);
+	void Optimize();
+	void GetSegmentPoints(ID, Array<ID>&); //sssssssssssssssssssss
 };
 
 #endif

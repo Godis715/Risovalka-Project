@@ -1,6 +1,6 @@
 #pragma once
 
-template<class Tpm_pu> class Deck
+template<class Type> class Deck
 {
 private:
 	class Element
@@ -8,7 +8,7 @@ private:
 	public:
 		Element * Next = nullptr;
 		Element* Prev = nullptr;
-		Tpm_pu value;
+		Type value;
 	};
 
 	Element* Head = nullptr;
@@ -50,11 +50,11 @@ public:
 		return;
 	}
 
-	Tpm_pu PopHead() {
+	Type PopHead() {
 		if (Size == 0) {
 			return 0;
 		}
-		Tpm_pu head = Head->value;
+		Type head = Head->value;
 		Element* temp = Head;
 		Head = Head->Next;
 		--Size;
@@ -62,11 +62,11 @@ public:
 		return head;
 	}
 
-	Tpm_pu PopTail() {
+	Type PopTail() {
 		if (Size == 0) {
 			return 0;
 		}
-		Tpm_pu tail = Tail->value;
+		Type tail = Tail->value;
 		Element* temp = Tail;
 		Tail = Tail->Prev;
 		--Size;

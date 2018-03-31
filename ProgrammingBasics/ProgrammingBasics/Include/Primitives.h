@@ -1,5 +1,7 @@
 #ifndef __PRIMITIVES
 #define __PRIMITIVES
+#define PI 3.141592653589793 
+
 
 #include "Vector2.h"
 #include "IDgenerator.h"
@@ -82,6 +84,7 @@ public:
 	void SetPoint1_pos(Vector2);
 	void SetPoint2_pos(Vector2);
 	double GetAngle() const;
+	void SetAngle(double);
 	/*Vector2 GetPoint1() const;
 	Vector2 GetPoint2() const;
 	other function for getting/setting

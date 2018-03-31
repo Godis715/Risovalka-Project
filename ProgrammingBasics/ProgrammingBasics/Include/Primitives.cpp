@@ -159,3 +159,14 @@ void Arc::SetPoint2_pos(Vector2 _pos) {
 double Arc::GetAngle() const {
 	return angle;
 }
+
+void Arc::SetAngle(double newAngle) {
+	if (newAngle > 2 * PI) {
+		angle = newAngle - (double)(int)(newAngle / (2 * PI)) * 2 * PI;
+		return;
+	}
+	if (newAngle < 0.0) {
+		angle = newAngle + ((double)((int)(abs(newAngle) / (2 * PI)) + 1) * 2 * PI);
+		return;
+	}
+}
