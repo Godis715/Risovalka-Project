@@ -74,6 +74,10 @@
     <IncludePath>../Include;$(IncludePath)</IncludePath>
     <SourcePath>../src;$(VC_SourcePath);</SourcePath>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);../include</IncludePath>
+    <SourcePath>$(VC_SourcePath);../src</SourcePath>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>

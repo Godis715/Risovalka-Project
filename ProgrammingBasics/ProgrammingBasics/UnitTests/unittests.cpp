@@ -3,7 +3,7 @@
 #include "../Include/Array.h"
 #include "../Include/List.h"
 #include "../Include/Dictionary.h"
-#include "../Include/List_util.h"
+#include "../Include/hidden/list_util(hidden).h"
 
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
@@ -625,55 +625,50 @@ namespace UnitTests
 		TEST_METHOD(Test_Dictionary_add)
 		{
 			Dict<int, int> dic;
-			dic.add(5, 10);
+			dic.Add(5, 10);
 			Assert::AreEqual(1, dic.getsize());
 		}
 
 		TEST_METHOD(Test_Dictionary_find)
 		{
 			Dict<char, int> dic;
-			dic.add('A', 10);
-			int a;
-			dic.find('A', a);
-			Assert::AreEqual(10, a);
+			dic.Add('A', 10);
+			bool a = dic.find('A');
+			Assert::AreEqual(true, a);
 		}
 
 		TEST_METHOD(Test_Dictionary_findInBigDict)
 		{
 			Dict<char, int> dic;
-			dic.add('B', 10);
-			dic.add('A', 15);
-			int a;
-			dic.find('A', a);
-			Assert::AreEqual(15, a);
+			dic.Add('B', 10);
+			dic.Add('A', 15);
+			bool a = dic.find('A');
+			Assert::AreEqual(true, a);
 		}
 
 		TEST_METHOD(Test_Dictionary_erase)
 		{
 			Dict<int, int> dic;
-			dic.add(5, 10);
-			dic.erase(5);
+			dic.Add(5, 10);
+			dic.Erase(5);
 			Assert::AreEqual(0, dic.getsize());
 		}
 
 		TEST_METHOD(Test_Dictionary_erase_SomeElements)
 		{
 			Dict<int, int> dic;
-			dic.add(5, 10);
-			dic.add(2, 11);
-			dic.add(4, 12);
-			dic.add(3, 13);
-			dic.add(1, 23);
-			dic.add(8, 14);
-			dic.add(6, 15);
-			dic.add(7, 26);
-			dic.add(9, 16);
-			int a = dic.getsize();
-			dic.erase(5);
-			a = dic.getsize();
+			dic.Add(5, 10);
+			dic.Add(2, 11);
+			dic.Add(4, 12);
+			dic.Add(3, 13);
+			dic.Add(1, 23);
+			dic.Add(8, 14);
+			dic.Add(6, 15);
+			dic.Add(7, 26);
+			dic.Add(9, 16);
+			dic.Erase(5);
 			Assert::AreEqual(8, dic.getsize());
-		
-			Assert::IsFalse(dic.find(5, a));
+			Assert::IsFalse(dic.find(5));
 		}
 
 	};
