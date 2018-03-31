@@ -4,10 +4,20 @@
 int main()
 {
 	Model model;
-	Array<double> array;
-	array.pushBack(1);
-	array.pushBack(2);
-	model.createObject(point, array);
+
+	Array<double> arr_arc;
+	arr_arc.pushBack(4.0);
+	arr_arc.pushBack(5.0);
+	arr_arc.pushBack(1.0);
+	arr_arc.pushBack(2.0);
+	arr_arc.pushBack(3.4 / 2.0);
+
+	ID myArc;
+	model.createObject(arc, arr_arc, myArc);
+
+	type_id type;
+	model.getObjType(myArc, type);
+
 	system("pause");
 	return 0;
 }

@@ -21,7 +21,7 @@ ID::ID() {
 // IDGENERATOR FUNCTIONS
 
 ID IDGenerator::generateID() {
-	return ID(_lastGivenHash++);
+	return ID(++_lastGivenHash);
 }
 
 IDGenerator* IDGenerator::getInstance() {
@@ -33,5 +33,5 @@ IDGenerator* IDGenerator::getInstance() {
 
 // IDGENERATOR'S STATIC MEMBERS INITIALIZING
 
-unsigned long long IDGenerator::_lastGivenHash = 1;
+unsigned long long IDGenerator::_lastGivenHash = 0;
 IDGenerator* IDGenerator::_instance = nullptr;

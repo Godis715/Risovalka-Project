@@ -7,7 +7,7 @@
 
 class Primitive {
 private:
-	ID& id;
+	const ID id;
 	//Type& type;
 	const type_id type;
 public:
@@ -32,8 +32,8 @@ public:
 
 class Segment : public Primitive {
 private:
-	Point point1;
-	Point point2;
+	Point* point1;
+	Point* point2;
 
 	class Equation {
 	public:
@@ -44,16 +44,15 @@ private:
 
 	Equation* CreateEquation() {
 		Equation* NewEquation = new Equation;
-		Vector2 vector1 = point1.GetPosition();
-		Vector2 vector2 = point2.GetPosition();
+		Vector2 vector1 = point1->GetPosition();
+		Vector2 vector2 = point2->GetPosition();
 		NewEquation->a = vector1.y - vector2.y;
 		NewEquation->b = vector2.x - vector1.x;
 		NewEquation->c = vector1.x * vector2.y - vector2.x  * vector1.y;
 		return NewEquation;
 	}
 public:
-	Segment(Vector2, Vector2);
-	Segment(double, double, double, double);
+	Segment(Point*, Point*);
 	double GetDistance(Vector2) const override;
 	ID GetPoint1_ID() const;
 	ID GetPoint2_ID() const;
@@ -69,12 +68,11 @@ public:
 // piece of circle
 class Arc : public Primitive {
 private:
-	Point point1;
-	Point point2;
+	Point* point1;
+	Point* point2;
 	double angle; // from 0 to 2pi
 public:
-	Arc(double, double, double, double, double); //size = sizeof(Arc);
-	Arc(Vector2, Vector2, double);
+	Arc(Point*, Point*, double);
 	double GetDistance(Vector2) const override;
 	Vector2 GetCenter() const;
 	ID GetPoint1_ID() const;
