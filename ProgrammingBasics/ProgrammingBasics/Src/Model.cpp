@@ -2,8 +2,8 @@
 #include <stdexcept>
 
 
-ID Model::createObject(Type T, Array<double> params) {
-	switch (T.GetTypeId())
+ID Model::createObject(type_id type, Array<double> params) {
+	switch (type)
 	{
 	case point: {
 		Point* _point;
@@ -108,6 +108,10 @@ void Model::createRequirement(const Requirement_id _id, Array<Primitive*> primit
 	}
 }
 
+void Model::Optimizer() {
+
+}
+
 bool Model::getNearest(double x, double y, ID& obj_id) {
 	if (data.getsize() != 0) {
 		Vector2 pos(x, y);
@@ -131,7 +135,7 @@ bool Model::getNearest(double x, double y, ID& obj_id) {
 }
 
 // NEED TO DEVELOP
-bool Model::getObjType(ID obg_id, Type& type) {
+bool Model::getObjType(ID obg_id, type_id& type) {
 	Primitive* obj = nullptr;
 	bool isFound = false;// = data.find(obj_id, obj);
 	if (isFound) {
@@ -147,7 +151,7 @@ bool Model::getObjParam(ID obj_id, Array<double>& result) {
 	Primitive* obj = nullptr;
 	bool isFound = false;// = data.find(obj_id, obj);
 	if (isFound) {
-		switch (obj->GetType().GetTypeId()) {
+		switch (obj->GetType()) {
 		case point: {
 			Point* point = dynamic_cast<Point*>(obj);
 			result.clear();

@@ -17,10 +17,11 @@ private:
 	IDGenerator* idGen;
 public:
 	Model() {}
-	ID createObject(Type, Array<double>);
+	ID createObject(type_id, Array<double>);
 	void createRequirement(const Requirement_id, Array<Primitive*>, Array<double>);
+	void Optimizer();
 	bool getNearest(double, double, ID&);
-	bool getObjType(ID, Type&);
+	bool getObjType(ID, type_id&);
 	//Array<double> getObjSubs(ID); //?????
 	bool getObjParam(ID, Array<double>&);
 };

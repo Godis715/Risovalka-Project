@@ -4,30 +4,26 @@
 ID Primitive::GetId() const {
 	return id;
 }
-Primitive::Primitive(ID _id, Type _type) :
+Primitive::Primitive(ID _id, type_id _type) :
 	id(_id),
-	type(_type) {
-}
-Type Primitive::GetType() {
+	type(_type) {}
+type_id Primitive::GetType() {
 	return type;
 }
 
 
 Point::Point(Vector2 pos) :
-	Primitive(IDGenerator::getInstance()->generateID(),
-		Type(point))
+	Primitive(IDGenerator::getInstance()->generateID(), point)
 {
 	this->position = pos;
 }
 Point::Point(double _x, double _y) :
-	Primitive(IDGenerator::getInstance()->generateID(),
-		Type(point))
+	Primitive(IDGenerator::getInstance()->generateID(), point)
 {
 	this->position = Vector2(_x, _y);
 }
 Point::Point(const Point& _p) :
-	Primitive(IDGenerator::getInstance()->generateID(),
-		Type(point))
+	Primitive(IDGenerator::getInstance()->generateID(), point)
 {
 	this->position = _p.position;
 }
@@ -48,16 +44,14 @@ void Point::SetPosition(double x, double y) {
 
 
 Segment::Segment(Vector2 _p1, Vector2 _p2) :
-	Primitive(IDGenerator::getInstance()->generateID(),
-		Type(segment)),
+	Primitive(IDGenerator::getInstance()->generateID(), segment),
 	point1(Point(_p1)),
 	point2(Point(_p2))
 {
 
 }
 Segment::Segment(double x1, double y1, double x2, double y2) :
-	Primitive(IDGenerator::getInstance()->generateID(),
-		Type(segment)),
+	Primitive(IDGenerator::getInstance()->generateID(), segment),
 	point1(Point(x1, y1)),
 	point2(Point(x2, y2))
 {
@@ -116,16 +110,14 @@ double Segment::GetDistance(Vector2 point) const {
 
 
 Arc::Arc(double p1x, double p1y, double p2x, double p2y, double _angle) :
-	Primitive(IDGenerator::getInstance()->generateID(),
-		Type(arc)),
+	Primitive(IDGenerator::getInstance()->generateID(), arc),
 	point1(Point(p1x, p1y)),
 	point2(Point(p2x, p2y))
 {
 	angle = _angle;
 }
 Arc::Arc(Vector2 _point1, Vector2 _point2, double _angle) :
-	Primitive(IDGenerator::getInstance()->generateID(),
-		Type(arc)),
+	Primitive(IDGenerator::getInstance()->generateID(), arc),
 	point1(Point(_point1)),
 	point2(Point(_point2))
 {
