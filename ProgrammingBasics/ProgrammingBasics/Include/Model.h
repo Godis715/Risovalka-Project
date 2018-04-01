@@ -20,13 +20,21 @@ private:
 	double GetError();
 
 public:
-	struct infoObject
+	class infoObject
 	{
+	public:
+		infoObject(){}
+		void operator=(infoObject input)
+		{
+			this->params = input.params;
+			this->type = input.type;
+
+		}
 		Array<double> params;
 		type_id type;
 	};
 	Model() { }
-	void DischargeInfoObjects(Array<infoObject>);
+	void DischargeInfoObjects(Array<infoObject>&);
 	bool createObject(type_id, Array<double>&, ID&);
 	bool createSegment(ID&, ID&, ID&);
 	bool createRequirement(const Requirement_id, Array<ID>&, Array<double>&);

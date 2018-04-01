@@ -11,6 +11,7 @@ private:
 	IView* view;
 	
 	ID CreatePoint(double, double);
+<<<<<<< HEAD
 	//ID CreateSegment(double, double, double, double);
 	ID CreateSegment(ID&, ID&);
 	ID CreateArc(double, double, double, double, double);
@@ -25,16 +26,37 @@ private:
 	bool CreateRequirmentCorrectTriangle(ID, ID, ID, double);
 	//bool CreateRequirmentNsAngle(Array<ID>&);
 	//bool CreateRequirmentCorrectNsAngle(Array<ID>&, double);
+=======
+	ID CreateSegment(double, double, double, double);
+	//ID CreateSegment(ID&, ID&);
+	ID CreateArc(double, double, double, double, double);
+
+	void CreateRequirmentDistBetPoints(ID, ID, double);
+	void CreateRequirmentPointsOnTheOneHand(ID, ID, ID);
+	void CreateRequirmentDistanceBetweenPointSegment(ID, ID, double);
+	void CreateRequirmentAngleBetweenSegments(ID, ID, double);
+	void CreateRequirmentDistanceBetweenPointArc(ID, ID, double);
+	void CreateRequirmentPointInArc(ID, ID);
+	void CreateRequirmentTriangle(ID, ID, ID);
+	void CreateRequirmentBestTriangle(ID, ID, ID, double);
+>>>>>>> DimaTereschenko
 
 	void DrawScene();
 
 public:
 	Presenter(IView*);
+<<<<<<< HEAD
 	Presenter() {
 		model = new Model;
 	}
 	//~Presenter();
 
+=======
+	Presenter();
+	//~Presenter();
+
+
+>>>>>>> DimaTereschenko
 	int Optimize();
 	void PrintSystemRequirement();
 	bool getObjParam(const ID&, Array<double>&);

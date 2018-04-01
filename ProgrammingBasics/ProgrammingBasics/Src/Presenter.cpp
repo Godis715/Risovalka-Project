@@ -2,6 +2,10 @@
 
 void Presenter::DrawScene() {
 	Array<Model::infoObject> scene;
+<<<<<<< HEAD
+=======
+	model->DischargeInfoObjects(scene);
+>>>>>>> DimaTereschenko
 	for (int i = 0; i < scene.getSize(); ++i) {
 		if (scene[i].type == segment) {
 			view->DrawLine(Vector2(scene[i].params[0], scene[i].params[1]),
@@ -29,11 +33,11 @@ ID Presenter::CreateSegment(double x1, double y1, double x2, double y2) {
 	model->createObject(segment, params, id);
 	return id;
 }
-ID Presenter::CreateSegment(ID& point1, ID& point2) {
+ /*ID Presenter::CreateSegment(ID& point1, ID& point2) {
 	ID id;
 	model->createSegment(point1, point2, id);
 	return id;
-}
+}*/
 ID Presenter::CreateArc(double x1, double y1, double x2, double y2, double angle)
 {
 	ID id;
@@ -50,6 +54,12 @@ ID Presenter::CreateArc(double x1, double y1, double x2, double y2, double angle
 Presenter::Presenter(IView* view)
 {
 	this->view = view;
+	model = new Model();
+}
+
+Presenter::Presenter()
+{
+	model = new Model();
 }
 
 bool Presenter::CreateRequirmentDistBetPoints(ID point1, ID point2, double d) 

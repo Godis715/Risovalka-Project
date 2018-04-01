@@ -1,7 +1,7 @@
 #include "Model.h"
 #include <stdexcept>
 
-void Model::DischargeInfoObjects(Array<infoObject> DataInfoObjects)
+void Model::DischargeInfoObjects(Array<infoObject>& DataInfoObjects)
 {
 	data.MoveBegin();
 	do
@@ -11,6 +11,7 @@ void Model::DischargeInfoObjects(Array<infoObject> DataInfoObjects)
 		getObjType(data.GetCurrentKey(), temp.type);
 		DataInfoObjects.pushBack(temp);
 	} while (data.MoveNext());
+	return;
 }
 
 bool Model::createObject(type_id type, Array<double>& params, ID& obj_id) {
@@ -387,9 +388,13 @@ int Model::Optimize() {
 			std::cout << sum_error << "   "<< iterInside << "\n";
 		}
 		if (prevError == sum_error) {
+<<<<<<< HEAD
 			if (iterInside < 1000000) {
 				iterInside *= 2;
 			}
+=======
+			iterInside *= 2;
+>>>>>>> DimaTereschenko
 		}
 		else {
 			if (iterInside > 2) {
