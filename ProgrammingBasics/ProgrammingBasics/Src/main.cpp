@@ -146,7 +146,7 @@ int main()
 	for (int i = 0; i < segNum - 1; ++i) {
 		CreateRequirmentDistBetPoints(arr[i]->point2, arr[i + 1]->point1, 0.0);
 	}
-	model.Optimize();
+	int countDown = model.Optimize();
 	PrintPoints(points);
 	system("pause");
 	return 0;
