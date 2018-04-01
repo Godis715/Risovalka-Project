@@ -51,6 +51,27 @@ bool Model::createObject(type_id type, Array<double>& params, ID& obj_id) {
 	}
 }
 
+bool Model::createSegment(ID& p1ID, ID& p2ID, ID& segID) {
+	Primitive* point1PR;
+	Primitive* point2PR;
+	bool error = false;
+	if (data.find(p1ID)) {
+		point1PR = data.GetCurrent();
+		if (data.find(p2ID)) {
+			point2PR = data.GetCurrent();
+			if ((point1PR->GetType() == point) && (point2PR->GetType() == point)) {
+				Point* point1 = dynamic_cast<Point*>(point1PR);
+				Point* point2 = dynamic_cast<Point*>(point2PR);
+				Segment* segment = new Segment(point1, point2);
+				segID = segment->GetId();
+				data.Add(segID, segment);
+				return true;
+			}
+		}
+	}
+	return false;
+}
+
 bool Model::createRequirement(const Requirement_id _id, Array<ID>& id_arr, Array<double>& params) {
 	Array<Primitive*> primitives;
 	for (int i = 0; i < id_arr.getSize(); ++i) {
@@ -127,6 +148,33 @@ bool Model::createRequirement(const Requirement_id _id, Array<ID>& id_arr, Array
 		try {
 
 			Requirement = new PointInArc(*dynamic_cast<Arc*>(primitives[0]), *dynamic_cast<Point*>(primitives[1]));
+		}
+		catch (std::out_of_range) {
+			throw std::invalid_argument("Invalid parameters");
+		}
+		dataReq.pushBack(Requirement);
+		return true;
+	}
+	case triangle: {
+		Triangle* Requirement;
+		try {
+			Requirement = new Triangle(dynamic_cast<Segment*>(primitives[0]),
+				dynamic_cast<Segment*>(primitives[1]),
+				dynamic_cast<Segment*>(primitives[2]));
+		}
+		catch (std::out_of_range) {
+			throw std::invalid_argument("Invalid parameters");
+		}
+		dataReq.pushBack(Requirement);
+		return true;
+	}
+	case bestTriangle: {
+		BestTriangle* Requirement;
+		try {
+			Requirement = new BestTriangle(dynamic_cast<Segment*>(primitives[0]),
+				dynamic_cast<Segment*>(primitives[1]),
+				dynamic_cast<Segment*>(primitives[2]),
+				params[0]);
 		}
 		catch (std::out_of_range) {
 			throw std::invalid_argument("Invalid parameters");
@@ -374,6 +422,8 @@ bool Model::GetArcPoints(ID obj_id, Array<ID>& arr) {
 
 void  Model::PrintSystemRequirement() {
 	for (int i = 0; i < dataReq.getSize(); ++i) {
+		std::cout << std::endl;
+		std::cout << i << ":\n";
 		dataReq[i]->Print();
 	}
 }

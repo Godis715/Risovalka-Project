@@ -12,7 +12,7 @@ class Primitive;
 class Model
 {
 private:
-	const double EPS = 1e-5;
+	double EPS = 1e-6;
 	Dict<ID, Primitive*> data; //or another container
 	Array<IRequirement*> dataReq;
 	IDGenerator* idGen;
@@ -20,6 +20,7 @@ private:
 public:
 	Model() { }
 	bool createObject(type_id, Array<double>&, ID&);
+	bool createSegment(ID&, ID&, ID&);
 	bool createRequirement(const Requirement_id, Array<ID>&, Array<double>&);
 	bool getNearest(double, double, ID&);
 	bool getObjType(const ID&, type_id&);

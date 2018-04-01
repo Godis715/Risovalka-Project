@@ -64,11 +64,11 @@ public:
 		Vector2 vec1 = segment.GetPoint1_pos();
 		Vector2 vec2 = segment.GetPoint2_pos();
 		
-		std::cout << " segment 1) " << vec1.x << ' ' << vec1.y << ' ' << vec2.x << ' ' << vec2.y << "/n";
+		std::cout << " segment 1) " << vec1.x << ' ' << vec1.y << " ; " << vec2.x << ' ' << vec2.y << "\n";
 		vec1 = point1.GetPosition();
 		vec2 = point2.GetPosition();
-		std::cout << " point1) " << vec1.x << ' ' << vec1.y << "/n";
-		std::cout << " point2) " << vec2.x << ' ' << vec2.y << "/n/n";
+		std::cout << " point1) " << vec1.x << ' ' << vec1.y << "\n";
+		std::cout << " point2) " << vec2.x << ' ' << vec2.y << "\n\n";
 	}
 private:
 	Segment& segment;
@@ -96,9 +96,9 @@ public:
 		Vector2 vec1 = segment.GetPoint1_pos();
 		Vector2 vec2 = segment.GetPoint2_pos();
 
-		std::cout << " segment 1) " << vec1.x << ' ' << vec1.y << ' ' << vec2.x << ' ' << vec2.y << "/n";
+		std::cout << " segment 1) " << vec1.x << ' ' << vec1.y << " ; " << vec2.x << ' ' << vec2.y << "\n";
 		vec1 = point.GetPosition();
-		std::cout << " point1) " << vec1.x << ' ' << vec1.y << "/n/n";
+		std::cout << " point1) " << vec1.x << ' ' << vec1.y << "\n\n";
 	}
 private:
 	Segment& segment;
@@ -129,10 +129,10 @@ public:
 	void Print() {
 		Vector2 vec1 = segment1.GetPoint1_pos();
 		Vector2 vec2 = segment1.GetPoint2_pos();
-		std::cout << " segment 1) " << vec1.x << ' ' << vec1.y << ' ' << vec2.x << ' ' << vec2.y << "/n";
+		std::cout << " segment 1) " << vec1.x << ' ' << vec1.y << " ; " << vec2.x << ' ' << vec2.y << "\n";
 		vec1 = segment2.GetPoint1_pos();
 		vec2 = segment2.GetPoint2_pos();
-		std::cout << " segment 2) " << vec1.x << ' ' << vec1.y << ' ' << vec2.x << ' ' << vec2.y << "/n/n";
+		std::cout << " segment 2) " << vec1.x << ' ' << vec1.y << " ; " << vec2.x << ' ' << vec2.y << "\n\n";
 		
 	}
 private:
@@ -206,7 +206,7 @@ private:
 	Point& point;
 };
 
-class Triangle
+class Triangle : public IRequirement
 {
 public:
 	Triangle(Segment* _segment1, Segment* _segment2, Segment* _segment3)
@@ -337,13 +337,13 @@ public:
 	void Print() {
 		Vector2 vec1 = segment1->GetPoint1_pos();
 		Vector2 vec2 = segment1->GetPoint2_pos();
-		std::cout << " segment 1) " << vec1.x << ' ' << vec1.y << ' ' << vec2.x << ' ' << vec2.y << "/n";
+		std::cout << " segment 1) " << vec1.x << ' ' << vec1.y << " ; " << vec2.x << ' ' << vec2.y << "\n";
 		vec1 = segment2->GetPoint1_pos();
 		vec2 = segment2->GetPoint2_pos();
-		std::cout << " segment 2) " << vec1.x << ' ' << vec1.y << ' ' << vec2.x << ' ' << vec2.y << "/n";
+		std::cout << " segment 2) " << vec1.x << ' ' << vec1.y << " ; " << vec2.x << ' ' << vec2.y << "\n";
 		vec1 = segment3->GetPoint1_pos();
 		vec2 = segment3->GetPoint2_pos();
-		std::cout << " segment 3) " << vec1.x << ' ' << vec1.y << ' ' << vec2.x << ' ' << vec2.y << "/n/n";
+		std::cout << " segment 3) " << vec1.x << ' ' << vec1.y << " ; " << vec2.x << ' ' << vec2.y << "\n\n";
 	}
 private:
 	Segment* segment1;
@@ -352,7 +352,7 @@ private:
 	bool bijection[6];
 };
 
-class BestTriangle
+class BestTriangle : public IRequirement
 {
 public:
 	BestTriangle(Segment* _segment1, Segment* _segment2, Segment* _segment3, double _size)
@@ -490,19 +490,20 @@ public:
 	void Print() {
 		Vector2 vec1 = segment1->GetPoint1_pos();
 		Vector2 vec2 = segment1->GetPoint2_pos();
-		std::cout << " segment 1) " << vec1.x << ' ' << vec1.y << ' ' << vec2.x << ' ' << vec2.y << "/n";
+		std::cout << " segment 1) " << vec1.x << ' ' << vec1.y << " ; " << vec2.x << ' ' << vec2.y << "\n";
 		vec1 = segment2->GetPoint1_pos();
 		vec2 = segment2->GetPoint2_pos();
-		std::cout << " segment 2) " << vec1.x << ' ' << vec1.y << ' ' << vec2.x << ' ' << vec2.y << "/n";
+		std::cout << " segment 2) " << vec1.x << ' ' << vec1.y << " ; " << vec2.x << ' ' << vec2.y << "\n";
 		vec1 = segment3->GetPoint1_pos();
 		vec2 = segment3->GetPoint2_pos();
-		std::cout << " segment 3) " << vec1.x << ' ' << vec1.y << ' ' << vec2.x << ' ' << vec2.y << "/n/n" ;
+		std::cout << " segment 3) " << vec1.x << ' ' << vec1.y << " ; " << vec2.x << ' ' << vec2.y << "\n\n" ;
 	}
 private:
-	Segment * segment1;
+	Segment* segment1;
 	Segment* segment2;
 	Segment* segment3;
 	double size;
 	bool bijection[6];
 };
+
 #endif // REQUIREMENT_H
