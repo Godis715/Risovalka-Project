@@ -8,8 +8,8 @@ private:
 	//Presenter* presenter = new Presenter(this);
 
 public:
-	View();
-	~View();
+	//View();
+	//~View();
 
 
 };

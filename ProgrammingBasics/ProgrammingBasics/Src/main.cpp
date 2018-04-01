@@ -1,5 +1,9 @@
-#include <iostream>
-#include "Model.h"
+// #include <iostream>
+// in Requirement
+#include "Presenter.h"
+#include <ctime>
+
+Presenter presenter;
 
  /*void PrintPoints(Array<ID> points) {
 	for (int i = 0; i < points.getSize(); ++i) {
@@ -13,8 +17,33 @@
 	}
 }*/
 
+void CreateDrowTriangles(int count) {
+	for (int i = 0; i < count; ++i) {
+		double x1 = (double)rand() / (rand() % 100);
+		double y1 = (double)rand() / (rand() % 100);
+		double x2 = (double)rand() / (rand() % 100);
+		double y2 = (double)rand() / (rand() % 100);
+		std::cout << count << " segment 1) " << x1 << ' ' << y1 << ' ' << x2 << ' ' << y2 << "/n";
+		ID segment1 = presenter.CreateSegment(x1, y1, x2, y2);
+		x1 = (double)rand() / (rand() % 100);
+		y1 = (double)rand() / (rand() % 100);
+		x2 = (double)rand() / (rand() % 100);
+		y2 = (double)rand() / (rand() % 100);
+		std::cout << count << " segment 2) " << x1 << ' ' << y1 << ' ' << x2 << ' ' << y2 << "/n";
+		ID segment2 = presenter.CreateSegment(x1, y1, x2, y2);
+		x1 = (double)rand() / (rand() % 100);
+		y1 = (double)rand() / (rand() % 100);
+		x2 = (double)rand() / (rand() % 100);
+		y2 = (double)rand() / (rand() % 100);
+		std::cout << count << " segment 3) " << x1 << ' ' << y1 << ' ' << x2 << ' ' << y2 << "/n";
+		ID segment3 = presenter.CreateSegment(x1, y1, x2, y2);
+		
+	}
+}
+
 int main()
 {
+	srand(time(nullptr));
 	system("pause");
 	return 0;
 }

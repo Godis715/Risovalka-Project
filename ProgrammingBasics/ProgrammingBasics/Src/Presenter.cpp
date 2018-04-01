@@ -107,6 +107,39 @@ void Presenter::CreateRequirmentPointInArc(ID arc, ID point)
 	model->createRequirement(pointInArc, components, params);
 	return;
 }
+void Presenter::CreateRequirmentTrianle(ID segment1, ID segment2, ID segment3) {
+	Array<double> params;//empty
+	Array<ID> components;
+
+	components.pushBack(segment1);
+	components.pushBack(segment2);
+	components.pushBack(segment3);
+
+	model->createRequirement(pointInArc, components, params);
+	return;
+}
+void Presenter::CreateRequirmentBestTrianle(ID segment1, ID segment2, ID segment3, double size) {
+	Array<double> params;
+	Array<ID> components;
+
+	components.pushBack(segment1);
+	components.pushBack(segment2);
+	components.pushBack(segment3);
+	params.pushBack(size);
+
+	model->createRequirement(pointInArc, components, params);
+	return;
+}
+
+int Presenter::Optimize() {
+	return model->Optimize();
+}
+void Presenter::PrintSystemRequirement() {
+	model->PrintSystemRequirement();
+}
+bool Presenter::getObjParam(const ID& id, Array<double>& array) {
+	model->getObjParam(id, array);
+}
 
 void Presenter::DrawPoint(double x, double y)
 {

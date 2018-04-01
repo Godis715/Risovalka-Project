@@ -9,6 +9,13 @@ class Presenter
 private:
 	Model* model;
 	View* view;
+	
+public:
+	Presenter(View*);
+	Presenter() {
+		model = new Model;
+	}
+	//~Presenter();
 
 	ID CreatePoint(double, double);
 	ID CreateSegment(double, double, double, double);
@@ -20,10 +27,12 @@ private:
 	void CreateRequirmentAngleBetweenSegments(ID, ID, double);
 	void CreateRequirmentDistanceBetweenPointArc(ID, ID, double);
 	void CreateRequirmentPointInArc(ID, ID);
-	
-public:
-	Presenter(View*);
-	~Presenter();
+	void CreateRequirmentTrianle(ID, ID, ID);
+	void CreateRequirmentBestTrianle(ID, ID, ID, double);
+
+	int Optimize();
+	void PrintSystemRequirement();
+	bool getObjParam(const ID&, Array<double>&);
 
 	void DrawPoint(double, double);
 	void DrawSegment(double, double, double, double);
