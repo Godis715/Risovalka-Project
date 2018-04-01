@@ -27,6 +27,7 @@ public:
 	bool GetArcPoints(ID, Array<ID>&);
 	bool getObjParam(const ID&, Array<double>&);
 	void Optimize();
+	void PrintSystemRequirement();
 };
 
 #endif

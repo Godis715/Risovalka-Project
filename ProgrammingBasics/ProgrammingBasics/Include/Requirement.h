@@ -1,9 +1,12 @@
 #ifndef REQUIREMENT_H
 #define REQUIREMENT_H
+#include "Primitives.h"
+#include <iostream>
 
 class IRequirement {
 public :
 	virtual double error() = 0;
+	virtual void Print() = 0;
 };
 
 class DistanceBetweenPoints : public IRequirement
@@ -15,12 +18,16 @@ public:
 		distance = _distance;
 	}
 	~DistanceBetweenPoints() {}
+	static double errorSt(Vector2 vec1, Vector2 vec2, double dist) {
+		return abs((vec1 - vec2).GetLength() - dist);
+	}
 	double error() {
 		return abs(point1.GetDistance(point2.GetPosition()) - distance);
 	}
 	void ChangeDistance(double _distance) {
 		distance = _distance;
 	}
+	void Print() {}
 private:
 	double distance;
 	Point& point1;
@@ -53,6 +60,16 @@ public:
 		}
 		return 0;
 	}
+	void Print() {
+		Vector2 vec1 = segment.GetPoint1_pos();
+		Vector2 vec2 = segment.GetPoint2_pos();
+		
+		std::cout << " segment 1) " << vec1.x << ' ' << vec1.y << ' ' << vec2.x << ' ' << vec2.y << "/n";
+		vec1 = point1.GetPosition();
+		vec2 = point2.GetPosition();
+		std::cout << " point1) " << vec1.x << ' ' << vec1.y << "/n";
+		std::cout << " point2) " << vec2.x << ' ' << vec2.y << "/n/n";
+	}
 private:
 	Segment& segment;
 	Point& point1;
@@ -74,6 +91,14 @@ public:
 	}
 	void ChangeDistance(double _distance) {
 		distance = _distance;
+	}
+	void Print() {
+		Vector2 vec1 = segment.GetPoint1_pos();
+		Vector2 vec2 = segment.GetPoint2_pos();
+
+		std::cout << " segment 1) " << vec1.x << ' ' << vec1.y << ' ' << vec2.x << ' ' << vec2.y << "/n";
+		vec1 = point.GetPosition();
+		std::cout << " point1) " << vec1.x << ' ' << vec1.y << "/n/n";
 	}
 private:
 	Segment& segment;
@@ -101,6 +126,15 @@ public:
 	void ChangeAngle(double _andle) {
 		angle = _andle;
 	}
+	void Print() {
+		Vector2 vec1 = segment1.GetPoint1_pos();
+		Vector2 vec2 = segment1.GetPoint2_pos();
+		std::cout << " segment 1) " << vec1.x << ' ' << vec1.y << ' ' << vec2.x << ' ' << vec2.y << "/n";
+		vec1 = segment2.GetPoint1_pos();
+		vec2 = segment2.GetPoint2_pos();
+		std::cout << " segment 2) " << vec1.x << ' ' << vec1.y << ' ' << vec2.x << ' ' << vec2.y << "/n/n";
+		
+	}
 private:
 	 Segment& segment1;
 	 Segment& segment2;
@@ -124,6 +158,7 @@ public:
 	void ChangeDistance(double dist) {
 		distance = dist;
 	}
+	void Print() {}
 private:
 	Arc& arc;
 	Point& point;
@@ -165,8 +200,309 @@ public:
 			}
 		}
 	}
+	void Print() {}
 private:
 	Arc& arc;
 	Point& point;
+};
+
+class Triangle
+{
+public:
+	Triangle(Segment* _segment1, Segment* _segment2, Segment* _segment3)
+	{
+		Vector2 points[6];
+		points[0] = _segment1->GetPoint1_pos();
+		points[1] = _segment1->GetPoint2_pos();
+		points[2] = _segment1->GetPoint1_pos();
+		points[3] = _segment1->GetPoint2_pos();
+		points[4] = _segment1->GetPoint1_pos();
+		points[5] = _segment1->GetPoint2_pos();
+		Vector2 temp;
+		double minDist = 0;
+		double dist = 0;
+		segment1 = _segment1;
+		minDist = (points[0] - points[2]).GetLength();
+		segment2 = _segment2;
+		bijection[0] = false;
+		bijection[2] = false;
+		int i = 3;
+		int index = i;
+		for (i; i < 6; ++i) {
+			bijection[i] = false;
+			dist = (points[0] - points[i]).GetLength();
+			if (dist < minDist) {
+				minDist = dist;
+				if (i == 3) {
+					bijection[0] = true;
+					
+					index = 2;
+				}
+				else {
+					segment2 = _segment3;
+					if (i == 4) {
+						bijection[0] = false;
+						index = 5;
+					}
+					else {
+						bijection[0] = true;
+						index = 4;
+					}
+				}
+			}
+		}
+		if (index < 4) {
+			segment3 = _segment3;
+			minDist = (points[index] - points[4]).GetLength();
+			dist = (points[index] - points[5]).GetLength();
+			if (minDist < dist) {
+				bijection[index] = false;
+				bijection[1] = true;
+				bijection[5] = true;
+				if (index == 2) {
+					bijection[4] = false;
+				}
+				else {
+					bijection[4] = true;
+				}
+			}
+			else {
+				bijection[index] = true;
+				bijection[1] = false;
+				bijection[4] = true;
+				if (index == 2) {
+					bijection[5] = false;
+				}
+				else {
+					bijection[5] = true;
+				}
+			}
+		}
+		else {
+			segment3 = _segment2;
+			minDist = (points[index] - points[2]).GetLength();
+			dist = (points[index] - points[3]).GetLength();
+			if (minDist < dist) {
+				bijection[index] = false;
+				bijection[1] = true;
+				bijection[3] = true;
+				if (index == 4) {
+					bijection[2] = false;
+				}
+				else {
+					bijection[2] = true;
+				}
+			}
+			else {
+				bijection[index] = true;
+				bijection[1] = false;
+				bijection[2] = true;
+				if (index == 4) {
+					bijection[3] = false;
+				}
+				else {
+					bijection[3] = true;
+				}
+			}
+		}
+		
+	}
+	~Triangle() {}
+	double error() {
+		double sumError = 0;
+		if (bijection[0]) {
+			sumError += DistanceBetweenPoints::errorSt(segment1->GetPoint1_pos(), segment2->GetPoint2_pos(), 0);
+			if (bijection[1]) {
+				sumError += DistanceBetweenPoints::errorSt(segment1->GetPoint2_pos(), segment3->GetPoint2_pos(), 0);
+				sumError += DistanceBetweenPoints::errorSt(segment2->GetPoint1_pos(), segment3->GetPoint1_pos(), 0);
+			}
+			else {
+				sumError += DistanceBetweenPoints::errorSt(segment1->GetPoint2_pos(), segment3->GetPoint1_pos(), 0);
+				sumError += DistanceBetweenPoints::errorSt(segment2->GetPoint1_pos(), segment3->GetPoint2_pos(), 0);
+			}
+		}
+		else {
+			sumError += DistanceBetweenPoints::errorSt(segment1->GetPoint1_pos(), segment2->GetPoint1_pos(), 0);
+			if (bijection[1]) {
+				sumError += DistanceBetweenPoints::errorSt(segment1->GetPoint2_pos(), segment3->GetPoint2_pos(), 0);
+				sumError += DistanceBetweenPoints::errorSt(segment2->GetPoint2_pos(), segment3->GetPoint1_pos(), 0);
+			}
+			else {
+				sumError += DistanceBetweenPoints::errorSt(segment1->GetPoint2_pos(), segment3->GetPoint1_pos(), 0);
+				sumError += DistanceBetweenPoints::errorSt(segment2->GetPoint2_pos(), segment3->GetPoint2_pos(), 0);
+			}
+		}
+		return sumError / 3;
+	}
+	void Print() {
+		Vector2 vec1 = segment1->GetPoint1_pos();
+		Vector2 vec2 = segment1->GetPoint2_pos();
+		std::cout << " segment 1) " << vec1.x << ' ' << vec1.y << ' ' << vec2.x << ' ' << vec2.y << "/n";
+		vec1 = segment2->GetPoint1_pos();
+		vec2 = segment2->GetPoint2_pos();
+		std::cout << " segment 2) " << vec1.x << ' ' << vec1.y << ' ' << vec2.x << ' ' << vec2.y << "/n";
+		vec1 = segment3->GetPoint1_pos();
+		vec2 = segment3->GetPoint2_pos();
+		std::cout << " segment 3) " << vec1.x << ' ' << vec1.y << ' ' << vec2.x << ' ' << vec2.y << "/n/n";
+	}
+private:
+	Segment* segment1;
+	Segment* segment2;
+	Segment* segment3;
+	bool bijection[6];
+};
+
+class BestTriangle
+{
+public:
+	BestTriangle(Segment* _segment1, Segment* _segment2, Segment* _segment3, double _size)
+	{
+		size = _size;
+		Vector2 points[6];
+		points[0] = _segment1->GetPoint1_pos();
+		points[1] = _segment1->GetPoint2_pos();
+		points[2] = _segment1->GetPoint1_pos();
+		points[3] = _segment1->GetPoint2_pos();
+		points[4] = _segment1->GetPoint1_pos();
+		points[5] = _segment1->GetPoint2_pos();
+		Vector2 temp;
+		double minDist = 0;
+		double dist = 0;
+		segment1 = _segment1;
+		minDist = (points[0] - points[2]).GetLength();
+		segment2 = _segment2;
+		bijection[0] = false;
+		bijection[2] = false;
+		int i = 3;
+		int index = i;
+		for (i; i < 6; ++i) {
+			bijection[i] = false;
+			dist = (points[0] - points[i]).GetLength();
+			if (dist < minDist) {
+				minDist = dist;
+				if (i == 3) {
+					bijection[0] = true;
+
+					index = 2;
+				}
+				else {
+					segment2 = _segment3;
+					if (i == 4) {
+						bijection[0] = false;
+						index = 5;
+					}
+					else {
+						bijection[0] = true;
+						index = 4;
+					}
+				}
+			}
+		}
+		if (index < 4) {
+			segment3 = _segment3;
+			minDist = (points[index] - points[4]).GetLength();
+			dist = (points[index] - points[5]).GetLength();
+			if (minDist < dist) {
+				bijection[index] = false;
+				bijection[1] = true;
+				bijection[5] = true;
+				if (index == 2) {
+					bijection[4] = false;
+				}
+				else {
+					bijection[4] = true;
+				}
+			}
+			else {
+				bijection[index] = true;
+				bijection[1] = false;
+				bijection[4] = true;
+				if (index == 2) {
+					bijection[5] = false;
+				}
+				else {
+					bijection[5] = true;
+				}
+			}
+		}
+		else {
+			segment3 = _segment2;
+			minDist = (points[index] - points[2]).GetLength();
+			dist = (points[index] - points[3]).GetLength();
+			if (minDist < dist) {
+				bijection[index] = false;
+				bijection[1] = true;
+				bijection[3] = true;
+				if (index == 4) {
+					bijection[2] = false;
+				}
+				else {
+					bijection[2] = true;
+				}
+			}
+			else {
+				bijection[index] = true;
+				bijection[1] = false;
+				bijection[2] = true;
+				if (index == 4) {
+					bijection[3] = false;
+				}
+				else {
+					bijection[3] = true;
+				}
+			}
+		}
+
+	}
+	~BestTriangle() {}
+	double error() {
+		double sumError = 0;
+		if (bijection[0]) {
+			sumError += DistanceBetweenPoints::errorSt(segment1->GetPoint1_pos(), segment2->GetPoint2_pos(), 0);
+			if (bijection[1]) {
+				sumError += DistanceBetweenPoints::errorSt(segment1->GetPoint2_pos(), segment3->GetPoint2_pos(), 0);
+				sumError += DistanceBetweenPoints::errorSt(segment2->GetPoint1_pos(), segment3->GetPoint1_pos(), 0);
+			}
+			else {
+				sumError += DistanceBetweenPoints::errorSt(segment1->GetPoint2_pos(), segment3->GetPoint1_pos(), 0);
+				sumError += DistanceBetweenPoints::errorSt(segment2->GetPoint1_pos(), segment3->GetPoint2_pos(), 0);
+			}
+		}
+		else {
+			sumError += DistanceBetweenPoints::errorSt(segment1->GetPoint1_pos(), segment2->GetPoint1_pos(), 0);
+			if (bijection[1]) {
+				sumError += DistanceBetweenPoints::errorSt(segment1->GetPoint2_pos(), segment3->GetPoint2_pos(), 0);
+				sumError += DistanceBetweenPoints::errorSt(segment2->GetPoint2_pos(), segment3->GetPoint1_pos(), 0);
+			}
+			else {
+				sumError += DistanceBetweenPoints::errorSt(segment1->GetPoint2_pos(), segment3->GetPoint1_pos(), 0);
+				sumError += DistanceBetweenPoints::errorSt(segment2->GetPoint2_pos(), segment3->GetPoint2_pos(), 0);
+			}
+		}
+		sumError += DistanceBetweenPoints::errorSt(segment1->GetPoint1_pos(), segment1->GetPoint2_pos(), size);
+		sumError += DistanceBetweenPoints::errorSt(segment2->GetPoint1_pos(), segment3->GetPoint2_pos(), size);
+		sumError += DistanceBetweenPoints::errorSt(segment3->GetPoint1_pos(), segment2->GetPoint2_pos(), size);
+		return sumError / 6;
+	}
+	void ChangeSize(double _size) {
+		size = _size;
+	}
+	void Print() {
+		Vector2 vec1 = segment1->GetPoint1_pos();
+		Vector2 vec2 = segment1->GetPoint2_pos();
+		std::cout << " segment 1) " << vec1.x << ' ' << vec1.y << ' ' << vec2.x << ' ' << vec2.y << "/n";
+		vec1 = segment2->GetPoint1_pos();
+		vec2 = segment2->GetPoint2_pos();
+		std::cout << " segment 2) " << vec1.x << ' ' << vec1.y << ' ' << vec2.x << ' ' << vec2.y << "/n";
+		vec1 = segment3->GetPoint1_pos();
+		vec2 = segment3->GetPoint2_pos();
+		std::cout << " segment 3) " << vec1.x << ' ' << vec1.y << ' ' << vec2.x << ' ' << vec2.y << "/n/n" ;
+	}
+private:
+	Segment * segment1;
+	Segment* segment2;
+	Segment* segment3;
+	double size;
+	bool bijection[6];
 };
 #endif // REQUIREMENT_H

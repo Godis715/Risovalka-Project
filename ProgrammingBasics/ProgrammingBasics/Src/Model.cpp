@@ -141,19 +141,21 @@ bool Model::createRequirement(const Requirement_id _id, Array<ID>& id_arr, Array
 
 double Model::GetError() {
 	double sum_error = 0;
-	for (size_t i = 0; i < dataReq.getSize(); i++)
+	for (int i = 0; i < dataReq.getSize(); i++)
 	{
 		sum_error += dataReq[i]->error();
 	}
 	return sum_error / dataReq.getSize();
 }
 
-void Model::Optimize() {
+int Model::Optimize() {
 	const double delta_increasing_k = 1.5;
 	double sum_error = 0;
 	sum_error = GetError();
 	int pointNum = 0;
+	int count = 0;
 	while (sum_error > EPS * dataReq.getSize()) {
+		++count;
 		data.MoveBegin();
 		do {
 			Primitive* obj = data.GetCurrent();
@@ -252,8 +254,8 @@ void Model::Optimize() {
 			}
 
 		} while (data.MoveNext());
-
 	}
+	return count;
 }
 
 bool Model::getNearest(double x, double y, ID& obj_id) {
@@ -368,4 +370,10 @@ bool Model::GetArcPoints(ID obj_id, Array<ID>& arr) {
 	arr.pushBack(arc->GetPoint1_ID());
 	arr.pushBack(arc->GetPoint2_ID());
 	return true;
+}
+
+void  Model::PrintSystemRequirement() {
+	for (int i = 0; i < dataReq.getSize(); ++i) {
+		dataReq[i]->Print();
+	}
 }
