@@ -22,11 +22,12 @@ public:
 	bool createObject(type_id, Array<double>&, ID&);
 	bool createRequirement(const Requirement_id, Array<ID>&, Array<double>&);
 	bool getNearest(double, double, ID&);
-	bool getObjType(const ID&, type_id&);
+	bool getObjType(const ID&, type_id&) const;
+	bool GetSegmentPoints(ID, Array<ID>&) const; //sssssssssssssssssssss
+	bool GetArcPoints(ID, Array<ID>&) const;
 	//Array<double> getObjSubs(ID); //?????
-	bool getObjParam(const ID&, Array<double>&);
+	bool getObjParam(const ID&, Array<double>&) const;
 	void Optimize();
-	void GetSegmentPoints(ID, Array<ID>&); //sssssssssssssssssssss
 };
 
 #endif
