@@ -1,6 +1,18 @@
 #include "Model.h"
 #include <stdexcept>
 
+void Model::DischargeInfoObjects(Array<infoObject> DataInfoObjects)
+{
+	data.MoveBegin();
+	do
+	{
+		infoObject temp;
+		getObjParam(data.GetCurrentKey(), temp.params);
+		getObjType(data.GetCurrentKey(), temp.type);
+		DataInfoObjects.pushBack(temp);
+	} while (data.MoveNext());
+}
+
 bool Model::createObject(type_id type, Array<double>& params, ID& obj_id) {
 	switch (type)
 	{
