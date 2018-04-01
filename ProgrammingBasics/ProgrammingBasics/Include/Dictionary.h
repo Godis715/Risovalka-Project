@@ -395,7 +395,7 @@ public:
 		}
 	}
 
-	bool find(const TKey &key) const
+	bool find(const TKey &key)
 	{
 		support = head;
 		while (support != nullptr)

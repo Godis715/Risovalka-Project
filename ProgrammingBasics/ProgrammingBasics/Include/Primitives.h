@@ -10,7 +10,6 @@
 class Primitive {
 private:
 	const ID id;
-	//Type& type;
 	const type_id type;
 public:
 	Primitive(ID, type_id);
@@ -25,7 +24,8 @@ private:
 public:
 	Point(Vector2);
 	Point(double, double);
-	Point(const Point&); //copying constructor
+	Point(const Point&);
+
 	double GetDistance(Vector2) const override;
 	Vector2 GetPosition() const;
 	void SetPosition(Vector2);
@@ -37,13 +37,13 @@ private:
 	Point* point1;
 	Point* point2;
 
+	//
 	class Equation {
 	public:
 		double a;
 		double b;
 		double c;
 	};
-
 	Equation* CreateEquation() {
 		Equation* NewEquation = new Equation;
 		Vector2 vector1 = point1->GetPosition();
@@ -53,6 +53,7 @@ private:
 		NewEquation->c = vector1.x * vector2.y - vector2.x  * vector1.y;
 		return NewEquation;
 	}
+
 public:
 	Segment(Point*, Point*);
 	double GetDistance(Vector2) const override;
@@ -64,10 +65,8 @@ public:
 	void SetPoint2_pos(Vector2);
 
 	double Inequality(Vector2);
-	/*functions for getting and setting coords*/
 };
 
-// piece of circle
 class Arc : public Primitive {
 private:
 	Point* point1;
@@ -85,10 +84,6 @@ public:
 	void SetPoint2_pos(Vector2);
 	double GetAngle() const;
 	void SetAngle(double);
-	/*Vector2 GetPoint1() const;
-	Vector2 GetPoint2() const;
-	other function for getting/setting
-	*/
 };
 
 #endif

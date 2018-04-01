@@ -153,7 +153,7 @@ void Model::Optimize() {
 	double sum_error = 0;
 	sum_error = GetError();
 	int pointNum = 0;
-	while (sum_error > EPS) {
+	while (sum_error > EPS * dataReq.getSize()) {
 		data.MoveBegin();
 		do {
 			Primitive* obj = data.GetCurrent();
@@ -278,7 +278,7 @@ bool Model::getNearest(double x, double y, ID& obj_id) {
 	}
 }
 
-bool Model::getObjType(const ID& obj_id, type_id& type) const {
+bool Model::getObjType(const ID& obj_id, type_id& type) {
 	Primitive* obj = nullptr;
 	bool isFound = data.find(obj_id);
 	obj = data.GetCurrent();
@@ -291,7 +291,7 @@ bool Model::getObjType(const ID& obj_id, type_id& type) const {
 	}
 }
 
-bool Model::getObjParam(const ID& obj_id, Array<double>& result) const {
+bool Model::getObjParam(const ID& obj_id, Array<double>& result) {
 	Primitive* obj = nullptr;
 	bool isFound = data.find(obj_id);
 	if (isFound) {
@@ -340,7 +340,7 @@ bool Model::getObjParam(const ID& obj_id, Array<double>& result) const {
 	}
 }
 
-bool Model::GetSegmentPoints(ID obj_id, Array<ID>& arr) const {
+bool Model::GetSegmentPoints(ID obj_id, Array<ID>& arr) {
 	Primitive* obj;
 	if (!data.find(obj_id)) {
 		return false;
@@ -355,7 +355,7 @@ bool Model::GetSegmentPoints(ID obj_id, Array<ID>& arr) const {
 	return true;
 }
 
-bool Model::GetArcPoints(ID obj_id, Array<ID>& arr) const {
+bool Model::GetArcPoints(ID obj_id, Array<ID>& arr) {
 	Primitive* obj;
 	if (!data.find(obj_id)) {
 		return false;

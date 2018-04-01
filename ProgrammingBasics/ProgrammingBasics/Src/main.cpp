@@ -1,5 +1,6 @@
 #include <iostream>
 #include "Model.h"
+#include <ctime>
 
 Model model;
 
@@ -44,33 +45,45 @@ void PrintPoints(Array<ID> points) {
 	}
 }
 
+class MySegment {
+public:
+	MySegment(double x1, double y1, double x2, double y2) {
+		segment = CreateSegment(x1, y1, x2, y2);
+		Array<ID> points;
+		model.GetSegmentPoints(segment, points);
+		point1 = points[0];
+		point2 = points[1];
+	}
+	ID segment;
+	ID point1;
+	ID point2;
+};
+
 int main()
 {
-	ID segment1 = CreateSegment(35.0, 1.0, -1.0, 0.0);
-	ID segment2 = CreateSegment(90.0, 60.0, 90.0, 0.0);
-	ID segment3 = CreateSegment(-5.0, -5.0, 20.0, 30.0);
+	const int segNum = 20;
+	const double segSize = 10.0;
+	const int height = 100;
+	const int width = 150;
+	srand(time(0));
+	MySegment** arr = new MySegment*[segNum];
+	Array<ID> points;
+	for (int i = 0; i < segNum; ++i) {
+		arr[i] = new MySegment(double(rand() % width), double(rand() % height),
+			double(rand() % width), double(rand() % height));
+		CreateRequirmentDistBetPoints(arr[i]->point1, arr[i]->point2, segSize);
+		points.pushBack(arr[i]->point1);
+		points.pushBack(arr[i]->point2);
+	}
 
-	Array<ID> points1;
-	Array<ID> points2;
-	Array<ID> points3;
-
-	model.GetSegmentPoints(segment1, points1);
-	model.GetSegmentPoints(segment2, points2);
-	model.GetSegmentPoints(segment3, points3);
-
-	CreateRequirmentDistBetPoints(points1[1], points3[0], 0.0);
-	CreateRequirmentDistBetPoints(points1[0], points2[1], 0.0);
-	CreateRequirmentDistBetPoints(points3[1], points2[0], 0.0);
-
-	CreateRequirmentDistBetPoints(points1[1], points1[0], 35.0);
-	CreateRequirmentDistBetPoints(points2[0], points2[1], 35.0);
-	CreateRequirmentDistBetPoints(points3[1], points3[0], 35.0);
+	for (int i = 0; i < segNum - 1; ++i) {
+		CreateRequirmentDistBetPoints(arr[i]->point2, arr[i + 1]->point1, 0.0);
+	}
 
 	model.Optimize();
 
-	PrintPoints(points1);
-	PrintPoints(points2);
-	PrintPoints(points3);
+	PrintPoints(points);
+
 
 	system("pause");
 	return 0;
