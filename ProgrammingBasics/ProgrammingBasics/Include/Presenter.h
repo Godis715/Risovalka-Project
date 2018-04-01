@@ -2,16 +2,16 @@
 #define __PRESENTER
 
 #include "Model.h"
-#include "View.h"
+#include "IView.h"
 
 class Presenter
 {
 private:
 	Model* model;
-	View* view;
+	IView* view;
 	
 public:
-	Presenter(View*);
+	Presenter(IView*);
 	Presenter() {
 		model = new Model;
 	}

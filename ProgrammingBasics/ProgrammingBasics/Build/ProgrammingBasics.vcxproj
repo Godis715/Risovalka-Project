@@ -132,6 +132,7 @@
     <ClInclude Include="..\Include\Dictionary.h" />
     <ClInclude Include="..\Include\ID.h" />
     <ClInclude Include="..\Include\IDGenerator.h" />
+    <ClInclude Include="..\Include\IView.h" />
     <ClInclude Include="..\Include\List.h" />
     <ClInclude Include="..\Include\Model.h" />
     <ClInclude Include="..\Include\Presenter.h" />

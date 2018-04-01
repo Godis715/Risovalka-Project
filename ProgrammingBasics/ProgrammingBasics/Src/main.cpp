@@ -238,20 +238,19 @@ public:
 
 int main()
 {
-	srand(time(nullptr));
-	CreateDrowTriangles(1);
-	//const int segNum = 50;
-	//const int height = 100;
-	//const double segSize = 10.0;
-	//const int width = 150;
-	//MySegment** arr = new MySegment*[segNum];
-	//Array<ID> points;
-	//for (int i = 0; i < segNum; ++i) {
-	//	arr[i] = new MySegment(double(rand() % width), double(rand() % height),
-	//		double(rand() % width), double(rand() % height));
-	//	points.pushBack(arr[i]->point1);
-	//	points.pushBack(arr[i]->point2);
-	//}
+	srand(time(0));
+	const int segNum = 50;
+	const int height = 100;
+	const double segSize = 10.0;
+	const int width = 150;
+	MySegment** arr = new MySegment*[segNum];
+	Array<ID> points;
+	for (int i = 0; i < segNum; ++i) {
+		arr[i] = new MySegment(double(rand() % width), double(rand() % height),
+			double(rand() % width), double(rand() % height));
+		points.pushBack(arr[i]->point1);
+		points.pushBack(arr[i]->point2);
+	}
 
 	for (int i = 0; i < segNum - 1; ++i) {
 		CreateRequirmentDistBetPoints(arr[i]->point2, arr[i + 1]->point1, 0.0);
