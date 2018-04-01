@@ -138,7 +138,12 @@ void Presenter::PrintSystemRequirement() {
 	model->PrintSystemRequirement();
 }
 bool Presenter::getObjParam(const ID& id, Array<double>& array) {
-	model->getObjParam(id, array);
+	if (model->getObjParam(id, array)) {
+		return true;
+	}
+	else {
+		return false;
+	}
 }
 
 void Presenter::DrawPoint(double x, double y)

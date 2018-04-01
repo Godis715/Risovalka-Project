@@ -65,8 +65,8 @@ public:
 		Vector2 vec2 = segment.GetPoint2_pos();
 		
 		std::cout << " segment 1) " << vec1.x << ' ' << vec1.y << ' ' << vec2.x << ' ' << vec2.y << "/n";
-		Vector2 vec1 = point1.GetPosition();
-		Vector2 vec2 = point2.GetPosition();
+		vec1 = point1.GetPosition();
+		vec2 = point2.GetPosition();
 		std::cout << " point1) " << vec1.x << ' ' << vec1.y << "/n";
 		std::cout << " point2) " << vec2.x << ' ' << vec2.y << "/n/n";
 	}
@@ -97,7 +97,7 @@ public:
 		Vector2 vec2 = segment.GetPoint2_pos();
 
 		std::cout << " segment 1) " << vec1.x << ' ' << vec1.y << ' ' << vec2.x << ' ' << vec2.y << "/n";
-		Vector2 vec1 = point.GetPosition();
+		vec1 = point.GetPosition();
 		std::cout << " point1) " << vec1.x << ' ' << vec1.y << "/n/n";
 	}
 private:

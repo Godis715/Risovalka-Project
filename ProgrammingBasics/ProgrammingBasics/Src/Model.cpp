@@ -141,7 +141,7 @@ bool Model::createRequirement(const Requirement_id _id, Array<ID>& id_arr, Array
 
 double Model::GetError() {
 	double sum_error = 0;
-	for (size_t i = 0; i < dataReq.getSize(); i++)
+	for (int i = 0; i < dataReq.getSize(); i++)
 	{
 		sum_error += dataReq[i]->error();
 	}
@@ -354,7 +354,6 @@ bool Model::GetSegmentPoints(ID obj_id, Array<ID>& arr) const {
 	Segment* segment = dynamic_cast<Segment*>(obj);
 	arr.pushBack(segment->GetPoint1_ID());
 	arr.pushBack(segment->GetPoint2_ID());
-<<<<<<< Updated upstream
 	return true;
 }
 
@@ -371,12 +370,10 @@ bool Model::GetArcPoints(ID obj_id, Array<ID>& arr) const {
 	arr.pushBack(arc->GetPoint1_ID());
 	arr.pushBack(arc->GetPoint2_ID());
 	return true;
-=======
 }
 
 void  Model::PrintSystemRequirement() {
 	for (int i = 0; i < dataReq.getSize(); ++i) {
 		dataReq[i]->Print();
 	}
->>>>>>> Stashed changes
 }
