@@ -64,11 +64,11 @@ public:
 		Vector2 vec1 = segment.GetPoint1_pos();
 		Vector2 vec2 = segment.GetPoint2_pos();
 		
-		std::cout << " segment 1) " << vec1.x << ' ' << vec1.y << ' ' << vec2.x << ' ' << vec2.y << "/n";
+		std::cout << " segment 1) " << vec1.x << ' ' << vec1.y << ' ' << vec2.x << ' ' << vec2.y << "\n";
 		vec1 = point1.GetPosition();
 		vec2 = point2.GetPosition();
-		std::cout << " point1) " << vec1.x << ' ' << vec1.y << "/n";
-		std::cout << " point2) " << vec2.x << ' ' << vec2.y << "/n/n";
+		std::cout << " point1) " << vec1.x << ' ' << vec1.y << "\n";
+		std::cout << " point2) " << vec2.x << ' ' << vec2.y << "\n\n";
 	}
 private:
 	Segment& segment;
@@ -96,9 +96,9 @@ public:
 		Vector2 vec1 = segment.GetPoint1_pos();
 		Vector2 vec2 = segment.GetPoint2_pos();
 
-		std::cout << " segment 1) " << vec1.x << ' ' << vec1.y << ' ' << vec2.x << ' ' << vec2.y << "/n";
+		std::cout << " segment 1) " << vec1.x << ' ' << vec1.y << ' ' << vec2.x << ' ' << vec2.y << "\n";
 		vec1 = point.GetPosition();
-		std::cout << " point1) " << vec1.x << ' ' << vec1.y << "/n/n";
+		std::cout << " point1) " << vec1.x << ' ' << vec1.y << "\n\n";
 	}
 private:
 	Segment& segment;
@@ -129,10 +129,10 @@ public:
 	void Print() {
 		Vector2 vec1 = segment1.GetPoint1_pos();
 		Vector2 vec2 = segment1.GetPoint2_pos();
-		std::cout << " segment 1) " << vec1.x << ' ' << vec1.y << ' ' << vec2.x << ' ' << vec2.y << "/n";
+		std::cout << " segment 1) " << vec1.x << ' ' << vec1.y << ' ' << vec2.x << ' ' << vec2.y << "\n";
 		vec1 = segment2.GetPoint1_pos();
 		vec2 = segment2.GetPoint2_pos();
-		std::cout << " segment 2) " << vec1.x << ' ' << vec1.y << ' ' << vec2.x << ' ' << vec2.y << "/n/n";
+		std::cout << " segment 2) " << vec1.x << ' ' << vec1.y << ' ' << vec2.x << ' ' << vec2.y << "\n\n";
 		
 	}
 private:
@@ -337,13 +337,13 @@ public:
 	void Print() {
 		Vector2 vec1 = segment1->GetPoint1_pos();
 		Vector2 vec2 = segment1->GetPoint2_pos();
-		std::cout << " segment 1) " << vec1.x << ' ' << vec1.y << ' ' << vec2.x << ' ' << vec2.y << "/n";
+		std::cout << " segment 1) " << vec1.x << ' ' << vec1.y << ' ' << vec2.x << ' ' << vec2.y << "\n";
 		vec1 = segment2->GetPoint1_pos();
 		vec2 = segment2->GetPoint2_pos();
-		std::cout << " segment 2) " << vec1.x << ' ' << vec1.y << ' ' << vec2.x << ' ' << vec2.y << "/n";
+		std::cout << " segment 2) " << vec1.x << ' ' << vec1.y << ' ' << vec2.x << ' ' << vec2.y << "\n";
 		vec1 = segment3->GetPoint1_pos();
 		vec2 = segment3->GetPoint2_pos();
-		std::cout << " segment 3) " << vec1.x << ' ' << vec1.y << ' ' << vec2.x << ' ' << vec2.y << "/n/n";
+		std::cout << " segment 3) " << vec1.x << ' ' << vec1.y << ' ' << vec2.x << ' ' << vec2.y << "\n\n";
 	}
 private:
 	Segment* segment1;
@@ -490,13 +490,13 @@ public:
 	void Print() {
 		Vector2 vec1 = segment1->GetPoint1_pos();
 		Vector2 vec2 = segment1->GetPoint2_pos();
-		std::cout << " segment 1) " << vec1.x << ' ' << vec1.y << ' ' << vec2.x << ' ' << vec2.y << "/n";
+		std::cout << " segment 1) " << vec1.x << ' ' << vec1.y << ' ' << vec2.x << ' ' << vec2.y << "\n";
 		vec1 = segment2->GetPoint1_pos();
 		vec2 = segment2->GetPoint2_pos();
-		std::cout << " segment 2) " << vec1.x << ' ' << vec1.y << ' ' << vec2.x << ' ' << vec2.y << "/n";
+		std::cout << " segment 2) " << vec1.x << ' ' << vec1.y << ' ' << vec2.x << ' ' << vec2.y << "\n";
 		vec1 = segment3->GetPoint1_pos();
 		vec2 = segment3->GetPoint2_pos();
-		std::cout << " segment 3) " << vec1.x << ' ' << vec1.y << ' ' << vec2.x << ' ' << vec2.y << "/n/n" ;
+		std::cout << " segment 3) " << vec1.x << ' ' << vec1.y << ' ' << vec2.x << ' ' << vec2.y << "\n\n" ;
 	}
 private:
 	Segment * segment1;

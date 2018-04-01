@@ -51,6 +51,27 @@ bool Model::createObject(type_id type, Array<double>& params, ID& obj_id) {
 	}
 }
 
+bool Model::createSegment(ID& p1ID, ID& p2ID, ID& segID) {
+	Primitive* point1PR;
+	Primitive* point2PR;
+	bool error = false;
+	if (data.find(p1ID)) {
+		point1PR = data.GetCurrent();
+		if (data.find(p2ID)) {
+			point2PR = data.GetCurrent();
+			if ((point1PR->GetType() == point) && (point2PR->GetType() == point)) {
+				Point* point1 = dynamic_cast<Point*>(point1PR);
+				Point* point2 = dynamic_cast<Point*>(point2PR);
+				Segment* segment = new Segment(point1, point2);
+				segID = segment->GetId();
+				data.Add(segID, segment);
+				return true;
+			}
+		}
+	}
+	return false;
+}
+
 bool Model::createRequirement(const Requirement_id _id, Array<ID>& id_arr, Array<double>& params) {
 	Array<Primitive*> primitives;
 	for (int i = 0; i < id_arr.getSize(); ++i) {

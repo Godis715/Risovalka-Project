@@ -19,6 +19,7 @@ public:
 
 	ID CreatePoint(double, double);
 	ID CreateSegment(double, double, double, double);
+	ID CreateSegment(ID&, ID&);
 	ID CreateArc(double, double, double, double, double);
 
 	void CreateRequirmentDistBetPoints(ID, ID, double);

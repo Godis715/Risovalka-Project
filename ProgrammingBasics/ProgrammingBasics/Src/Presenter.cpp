@@ -19,6 +19,11 @@ ID Presenter::CreateSegment(double x1, double y1, double x2, double y2) {
 	model->createObject(segment, params, id);
 	return id;
 }
+ID Presenter::CreateSegment(ID& point1, ID& point2) {
+	ID id;
+	model->createSegment(point1, point2, id);
+	return id;
+}
 ID Presenter::CreateArc(double x1, double y1, double x2, double y2, double angle)
 {
 	ID id;
