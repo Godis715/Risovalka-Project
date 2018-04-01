@@ -1,4 +1,4 @@
-#include "Presenter.h"
+#include "View.h"
 #include <ctime>
 
 Presenter presenter;
@@ -238,10 +238,12 @@ public:
 
 int main()
 {
-	srand(time(nullptr));
-	CreateDrowTriangles(5);
-	CreateDrowBestTriangles(5);
-	system("pause");
+	IView* view = new View();
+
+	while (true) {
+		
+	}
+
 	return 0;
 }
 

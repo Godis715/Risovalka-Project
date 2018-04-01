@@ -11,10 +11,11 @@ private:
 	Presenter* presenter;
 
 public:
-	//void DrawLine(Vector2 point1, Vector2 point2);
-	/*View() : presenter(new Presenter(this))
-	{
+	View();
+	void DrawLine(Vector2 point1, Vector2 point2);
+	void DrawArc(Vector2 point1, Vector2 point2);
+	void DrawPoint(Vector2 point);
 
-	}*/
+	void Run();
 };
 
