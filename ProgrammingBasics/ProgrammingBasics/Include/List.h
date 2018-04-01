@@ -251,9 +251,9 @@ public:
 	}
 
 	void PushHead(T newValue) {
-		Element* newElement = new Element;
+		Element<T>* newElement = new Element<T>;
 		if (size != 0) {
-			head->prev = NewElement;
+			head->prev = newElement;
 			newElement->next = head;
 		}
 		else {
@@ -288,7 +288,7 @@ public:
 			PushHead(newValue);
 			return;
 		}
-		Element* newElement = new Element;
+		Element<T>* newElement = new Element<T>;
 		newElement->value = newValue;
 		newElement->prev = tail;
 		tail->next = newElement;
@@ -393,7 +393,7 @@ public:
 			return;
 		}
 		if (label == current) {
-			label == nullptr;
+			label = nullptr;
 			DeleteCurrent();
 			return;
 		}

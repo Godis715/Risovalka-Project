@@ -143,7 +143,7 @@ void Presenter::CreateRequirmentBestTriangle(ID segment1, ID segment2, ID segmen
 	components.pushBack(segment3);
 	params.pushBack(size);
 
-	model->createRequirement(bestTriangle, components, params);
+	model->createRequirement(correctTriangle, components, params);
 	return;
 }
 

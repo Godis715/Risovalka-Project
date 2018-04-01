@@ -360,10 +360,10 @@ private:
 	bool bijection[6];
 };
 
-class BestTriangle : public IRequirement
+class ÑorrectTriangle : public IRequirement
 {
 public:
-	BestTriangle(Segment* _segment1, Segment* _segment2, Segment* _segment3, double _size)
+	ÑorrectTriangle(Segment* _segment1, Segment* _segment2, Segment* _segment3, double _size)
 	{
 		size = _size;
 		Vector2 points[6];
@@ -462,7 +462,7 @@ public:
 		}
 
 	}
-	~BestTriangle() {}
+	~ÑorrectTriangle() {}
 	double error() {
 		double sumError = 0;
 		if (bijection[0]) {

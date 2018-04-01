@@ -23,7 +23,7 @@ enum Requirement_id {
 	distBetPointArc,
 	pointInArc,
 	triangle,
-	bestTriangle,
+	correctTriangle,
 	nsAngle,
 	correctNsAngle
 };
