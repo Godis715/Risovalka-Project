@@ -1,12 +1,8 @@
 #include "View.h"
 #include <ctime>
-<<<<<<< HEAD
 
 Presenter presenter;
-=======
-//
-//Presenter presenter;
->>>>>>> DimaTereschenko
+
 //Model model;
 // /*void PrintPoints(Array<ID> points) {
 //	for (int i = 0; i < points.getSize(); ++i) {
@@ -236,7 +232,6 @@ Presenter presenter;
 //	ID point2;
 //};
 
-<<<<<<< HEAD
 void CreateNsAngle(int count) {
 	Array<ID> array;
 	double x1;
@@ -281,19 +276,10 @@ void CreateCorrectNsAngle(int count) {
 
 int main()
 {
-	CreateCorrectNsAngle(4);
-	HWND window = GetConsoleWindow();
-	IView* view = new View();
-	view->Run();
-
-=======
-int main()
-{
+	CreateNsAngle(4);
 	IView* view = new View();
 	view->Run();
 
 	system("pause");
->>>>>>> DimaTereschenko
 	return 0;
 }
-

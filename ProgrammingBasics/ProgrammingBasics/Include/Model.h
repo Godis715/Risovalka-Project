@@ -28,7 +28,6 @@ public:
 		{
 			this->params = input.params;
 			this->type = input.type;
-
 		}
 		Array<double> params;
 		type_id type;

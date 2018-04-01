@@ -380,21 +380,20 @@ int Model::Optimize() {
 				}
 			}
 		}
-		if (count % 100 == 0) {
-			EPS *= 2;
 
-		}
 		if (count % 25 == 0) {
 			std::cout << sum_error << "   "<< iterInside << "\n";
+			if (count % 100 == 0) {
+				EPS *= 2;
+				if (count > 1000) {
+					return count;
+				}
+			}
 		}
 		if (prevError == sum_error) {
-<<<<<<< HEAD
 			if (iterInside < 1000000) {
 				iterInside *= 2;
 			}
-=======
-			iterInside *= 2;
->>>>>>> DimaTereschenko
 		}
 		else {
 			if (iterInside > 2) {

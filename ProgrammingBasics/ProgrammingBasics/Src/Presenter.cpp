@@ -2,10 +2,7 @@
 
 void Presenter::DrawScene() {
 	Array<Model::infoObject> scene;
-<<<<<<< HEAD
-=======
 	model->DischargeInfoObjects(scene);
->>>>>>> DimaTereschenko
 	for (int i = 0; i < scene.getSize(); ++i) {
 		if (scene[i].type == segment) {
 			view->DrawLine(Vector2(scene[i].params[0], scene[i].params[1]),
