@@ -123,6 +123,7 @@
     <ClCompile Include="..\Src\ID.cpp" />
     <ClCompile Include="..\Src\main.cpp" />
     <ClCompile Include="..\Src\Model.cpp" />
+    <ClCompile Include="..\Src\Presenter.cpp" />
     <ClCompile Include="..\Src\Vector2.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -133,10 +134,12 @@
     <ClInclude Include="..\Include\IDGenerator.h" />
     <ClInclude Include="..\Include\List.h" />
     <ClInclude Include="..\Include\Model.h" />
+    <ClInclude Include="..\Include\Presenter.h" />
     <ClInclude Include="..\Include\Primitives.h" />
     <ClInclude Include="..\Include\Requirement.h" />
     <ClInclude Include="..\Include\Type.h" />
     <ClInclude Include="..\Include\Vector2.h" />
+    <ClInclude Include="..\Include\View.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
