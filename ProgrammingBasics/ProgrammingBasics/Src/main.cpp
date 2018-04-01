@@ -21,19 +21,19 @@ void CreateDrowTriangles(int count) {
 		double y1 = (double)rand() / (rand() % 100);
 		double x2 = (double)rand() / (rand() % 100);
 		double y2 = (double)rand() / (rand() % 100);
-		std::cout << count << " segment 1) " << x1 << ' ' << y1 << ' ' << x2 << ' ' << y2 << "\n";
+		std::cout << count << " segment 1) " << x1 << ' ' << y1 << " ; " << x2 << ' ' << y2 << "\n";
 		ID segment1 = presenter.CreateSegment(x1, y1, x2, y2);
 		x1 = (double)rand() / (rand() % 100);
 		y1 = (double)rand() / (rand() % 100);
 		x2 = (double)rand() / (rand() % 100);
 		y2 = (double)rand() / (rand() % 100);
-		std::cout << count << " segment 2) " << x1 << ' ' << y1 << ' ' << x2 << ' ' << y2 << "\n";
+		std::cout << count << " segment 2) " << x1 << ' ' << y1 << " ; " << x2 << ' ' << y2 << "\n";
 		ID segment2 = presenter.CreateSegment(x1, y1, x2, y2);
 		x1 = (double)rand() / (rand() % 100);
 		y1 = (double)rand() / (rand() % 100);
 		x2 = (double)rand() / (rand() % 100);
 		y2 = (double)rand() / (rand() % 100);
-		std::cout << count << " segment 3) " << x1 << ' ' << y1 << ' ' << x2 << ' ' << y2 << "\n";
+		std::cout << count << " segment 3) " << x1 << ' ' << y1 << " ; " << x2 << ' ' << y2 << "\n\n";
 		ID segment3 = presenter.CreateSegment(x1, y1, x2, y2);
 		presenter.CreateRequirmentTrianle(segment1, segment2, segment3);
 		std::cout << presenter.Optimize();
@@ -47,23 +47,24 @@ void CreateDrowBestTriangles(int count) {
 		double y1 = (double)rand() / (rand() % 100);
 		double x2 = (double)rand() / (rand() % 100);
 		double y2 = (double)rand() / (rand() % 100);
-		std::cout << count << " segment 1) " << x1 << ' ' << y1 << ' ' << x2 << ' ' << y2 << "\n";
+		std::cout << count << " segment 1) " << x1 << ' ' << y1 << " ; " << x2 << ' ' << y2 << "\n";
 		ID segment1 = presenter.CreateSegment(x1, y1, x2, y2);
 		x1 = (double)rand() / (rand() % 100);
 		y1 = (double)rand() / (rand() % 100);
 		x2 = (double)rand() / (rand() % 100);
 		y2 = (double)rand() / (rand() % 100);
-		std::cout << count << " segment 2) " << x1 << ' ' << y1 << ' ' << x2 << ' ' << y2 << "\n";
+		std::cout << count << " segment 2) " << x1 << ' ' << y1 << " ; " << x2 << ' ' << y2 << "\n";
 		ID segment2 = presenter.CreateSegment(x1, y1, x2, y2);
 		x1 = (double)rand() / (rand() % 100);
 		y1 = (double)rand() / (rand() % 100);
 		x2 = (double)rand() / (rand() % 100);
 		y2 = (double)rand() / (rand() % 100);
-		std::cout << count << " segment 3) " << x1 << ' ' << y1 << ' ' << x2 << ' ' << y2 << "\n\n";
+		std::cout << count << " segment 3) " << x1 << ' ' << y1 << " ; " << x2 << ' ' << y2 << "\n\n";
 		ID segment3 = presenter.CreateSegment(x1, y1, x2, y2);
 		double size = (double)(rand() % 100);
 		presenter.CreateRequirmentBestTrianle(segment1, segment2, segment3, size);
-		std::cout << presenter.Optimize() << "\n";
+		std::cout << presenter.Optimize();
+		std::cout << std::endl;
 		presenter.PrintSystemRequirement();
 	}
 }
@@ -74,19 +75,19 @@ void AngleSegments(int count) {
 		double y1 = (double)rand() / (rand() % 100);
 		double x2 = (double)rand() / (rand() % 100);
 		double y2 = (double)rand() / (rand() % 100);
-		std::cout << count << " segment 1) " << x1 << ' ' << y1 << ' ' << x2 << ' ' << y2 << "\n";
+		std::cout << count << " segment 1) " << x1 << ' ' << y1 << " ; " << x2 << ' ' << y2 << "\n";
 		ID segment1 = presenter.CreateSegment(x1, y1, x2, y2);
 		x1 = (double)rand() / (rand() % 100);
 		y1 = (double)rand() / (rand() % 100);
 		x2 = (double)rand() / (rand() % 100);
 		y2 = (double)rand() / (rand() % 100);
-		std::cout << count << " segment 2) " << x1 << ' ' << y1 << ' ' << x2 << ' ' << y2 << "\n";
+		std::cout << count << " segment 2) " << x1 << ' ' << y1 << " ; " << x2 << ' ' << y2 << "\n";
 		ID segment2 = presenter.CreateSegment(x1, y1, x2, y2);
 		x1 = (double)rand() / (rand() % 100);
 		y1 = (double)rand() / (rand() % 100);
 		x2 = (double)rand() / (rand() % 100);
 		y2 = (double)rand() / (rand() % 100);
-		std::cout << count << " segment 3) " << x1 << ' ' << y1 << ' ' << x2 << ' ' << y2 << "\n\n";
+		std::cout << count << " segment 3) " << x1 << ' ' << y1 << " ; " << x2 << ' ' << y2 << "\n\n";
 		ID segment3 = presenter.CreateSegment(x1, y1, x2, y2);
 		double angle = (double)rand();
 		if (angle > PI / 2) {
@@ -109,7 +110,7 @@ void PointsOnOneSide(int count) {
 		double y1 = (double)rand() / (rand() % 100);
 		double x2 = (double)rand() / (rand() % 100);
 		double y2 = (double)rand() / (rand() % 100);
-		std::cout << count << " segment 1) " << x1 << ' ' << y1 << ' ' << x2 << ' ' << y2 << "\n";
+		std::cout << count << " segment 1) " << x1 << ' ' << y1 << " ; " << x2 << ' ' << y2 << "\n";
 		ID segment = presenter.CreateSegment(x1, y1, x2, y2);
 		x1 = (double)rand() / (rand() % 100);
 		y1 = (double)rand() / (rand() % 100);
@@ -131,7 +132,7 @@ void DistancePointSegment(int count) {
 		double y1 = (double)rand() / (rand() % 100);
 		double x2 = (double)rand() / (rand() % 100);
 		double y2 = (double)rand() / (rand() % 100);
-		std::cout << count << " segment 1) " << x1 << ' ' << y1 << ' ' << x2 << ' ' << y2 << "\n";
+		std::cout << count << " segment 1) " << x1 << ' ' << y1 << " ; " << x2 << ' ' << y2 << "\n";
 		ID segment = presenter.CreateSegment(x1, y1, x2, y2);
 		x1 = (double)rand() / (rand() % 100);
 		y1 = (double)rand() / (rand() % 100);
@@ -157,7 +158,7 @@ void CreateBrokenLine(int count) {
 	p1 = presenter.CreatePoint(x1, y1);
 	p2 = presenter.CreatePoint(x2, y2);
 	presenter.CreateSegment(p1, p2);
-	std::cout << count << " segment 1) " << x1 << ' ' << y1 << ' ' << x2 << ' ' << y2 << "\n";
+	std::cout << count << " segment 1) " << x1 << ' ' << y1 << " ; " << x2 << ' ' << y2 << "\n";
 	prev = p2;
 	for (int i = 1; i < count; ++i) {
 		x1 = (double)rand() / (rand() % 100);
@@ -166,7 +167,7 @@ void CreateBrokenLine(int count) {
 		y2 = (double)rand() / (rand() % 100);
 		p1 = presenter.CreatePoint(x1, y1);
 		p2 = presenter.CreatePoint(x2, y2);
-		std::cout << count << " - #" << i << " segment) " << x1 << ' ' << y1 << ' ' << x2 << ' ' << y2 << "\n";
+		std::cout << count << " - #" << i << " segment) " << x1 << ' ' << y1 << " ; " << x2 << ' ' << y2 << "\n";
 		presenter.CreateRequirmentDistBetPoints(prev, p1, 0);
 		countOptimize += presenter.Optimize();
 		prev = p2;
@@ -238,7 +239,7 @@ public:
 int main()
 {
 	srand(time(nullptr));
-	//CreateDrowTriangles(1);
+	CreateDrowTriangles(1);
 	//const int segNum = 50;
 	//const int height = 100;
 	//const double segSize = 10.0;

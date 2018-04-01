@@ -120,7 +120,7 @@ void Presenter::CreateRequirmentTrianle(ID segment1, ID segment2, ID segment3) {
 	components.pushBack(segment2);
 	components.pushBack(segment3);
 
-	model->createRequirement(pointInArc, components, params);
+	model->createRequirement(triangle, components, params);
 	return;
 }
 void Presenter::CreateRequirmentBestTrianle(ID segment1, ID segment2, ID segment3, double size) {
@@ -132,7 +132,7 @@ void Presenter::CreateRequirmentBestTrianle(ID segment1, ID segment2, ID segment
 	components.pushBack(segment3);
 	params.pushBack(size);
 
-	model->createRequirement(pointInArc, components, params);
+	model->createRequirement(bestTriangle, components, params);
 	return;
 }
 

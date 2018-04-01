@@ -155,6 +155,33 @@ bool Model::createRequirement(const Requirement_id _id, Array<ID>& id_arr, Array
 		dataReq.pushBack(Requirement);
 		return true;
 	}
+	case triangle: {
+		Triangle* Requirement;
+		try {
+			Requirement = new Triangle(dynamic_cast<Segment*>(primitives[0]),
+				dynamic_cast<Segment*>(primitives[1]),
+				dynamic_cast<Segment*>(primitives[2]));
+		}
+		catch (std::out_of_range) {
+			throw std::invalid_argument("Invalid parameters");
+		}
+		dataReq.pushBack(Requirement);
+		return true;
+	}
+	case bestTriangle: {
+		BestTriangle* Requirement;
+		try {
+			Requirement = new BestTriangle(dynamic_cast<Segment*>(primitives[0]),
+				dynamic_cast<Segment*>(primitives[1]),
+				dynamic_cast<Segment*>(primitives[2]),
+				params[0]);
+		}
+		catch (std::out_of_range) {
+			throw std::invalid_argument("Invalid parameters");
+		}
+		dataReq.pushBack(Requirement);
+		return true;
+	}
 	default:
 		return false;
 	}
@@ -395,6 +422,8 @@ bool Model::GetArcPoints(ID obj_id, Array<ID>& arr) {
 
 void  Model::PrintSystemRequirement() {
 	for (int i = 0; i < dataReq.getSize(); ++i) {
+		std::cout << std::endl;
+		std::cout << i << ":\n";
 		dataReq[i]->Print();
 	}
 }
