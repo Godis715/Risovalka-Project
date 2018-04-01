@@ -278,7 +278,7 @@ bool Model::getNearest(double x, double y, ID& obj_id) {
 	}
 }
 
-bool Model::getObjType(const ID& obj_id, type_id& type) {
+bool Model::getObjType(const ID& obj_id, type_id& type) const {
 	Primitive* obj = nullptr;
 	bool isFound = data.find(obj_id);
 	obj = data.GetCurrent();
@@ -291,7 +291,7 @@ bool Model::getObjType(const ID& obj_id, type_id& type) {
 	}
 }
 
-bool Model::getObjParam(const ID& obj_id, Array<double>& result) {
+bool Model::getObjParam(const ID& obj_id, Array<double>& result) const {
 	Primitive* obj = nullptr;
 	bool isFound = data.find(obj_id);
 	if (isFound) {
@@ -340,11 +340,32 @@ bool Model::getObjParam(const ID& obj_id, Array<double>& result) {
 	}
 }
 
-void Model::GetSegmentPoints(ID obj_id, Array<ID>& arr) {
+bool Model::GetSegmentPoints(ID obj_id, Array<ID>& arr) const {
 	Primitive* obj;
-	data.find(obj_id);
+	if (!data.find(obj_id)) {
+		return false;
+	}
 	obj = data.GetCurrent();
+	if (obj->GetType() != segment) {
+		return false;
+	}
 	Segment* segment = dynamic_cast<Segment*>(obj);
 	arr.pushBack(segment->GetPoint1_ID());
 	arr.pushBack(segment->GetPoint2_ID());
+	return true;
+}
+
+bool Model::GetArcPoints(ID obj_id, Array<ID>& arr) const {
+	Primitive* obj;
+	if (!data.find(obj_id)) {
+		return false;
+	}
+	obj = data.GetCurrent();
+	if (obj->GetType() != arc) {
+		return false;
+	}
+	Arc* arc = dynamic_cast<Arc*>(obj);
+	arr.pushBack(arc->GetPoint1_ID());
+	arr.pushBack(arc->GetPoint2_ID());
+	return true;
 }
