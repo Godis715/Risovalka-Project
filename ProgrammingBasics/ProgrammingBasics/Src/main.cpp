@@ -2,7 +2,7 @@
 #include <ctime>
 
 Presenter presenter;
-
+Model model;
  /*void PrintPoints(Array<ID> points) {
 	for (int i = 0; i < points.getSize(); ++i) {
 		Array<double> params;
@@ -39,6 +39,80 @@ void CreateDrowTriangles(int count) {
 	}
 }
 
+ID CreatePoint(double x, double y) {
+
+	Array<double> params;
+
+	params.pushBack(x);
+
+	params.pushBack(y);
+
+
+
+	ID id;
+
+	model.createObject(point, params, id);
+
+	return id;
+
+}
+
+ID CreateSegment(double x1, double y1, double x2, double y2) {
+
+	ID id;
+
+	Array<double> params;
+
+	params.pushBack(x1);
+
+	params.pushBack(y1);
+
+	params.pushBack(x2);
+
+	params.pushBack(y2);
+
+	model.createObject(segment, params, id);
+
+	return id;
+
+}
+
+void CreateRequirmentDistBetPoints(ID point1, ID point2, double d) {
+
+	Array<double> dist;
+
+	Array<ID> points;
+
+
+
+	points.pushBack(point1);
+
+	points.pushBack(point2);
+
+
+
+	dist.pushBack(d);
+
+	model.createRequirement(distBetPoints, points, dist);
+
+}
+
+
+void PrintPoints(Array<ID> points) {
+
+	for (int i = 0; i < points.getSize(); ++i) {
+		Array<double> params;
+		std::cout << i << ")";
+		model.getObjParam(points[i], params);
+		for (int j = 0; j < params.getSize(); ++j) {
+			std::cout << params[j] << " ";
+		}
+		std::cout << "\n";
+	}
+
+}
+
+
 class MySegment {
 public:
 	MySegment(double x1, double y1, double x2, double y2) {
@@ -55,7 +129,7 @@ public:
 
 int main()
 {
-	const int segNum = 20;
+	const int segNum = 50;
 	const int height = 100;
 	const double segSize = 10.0;
 	const int width = 150;
@@ -64,6 +138,7 @@ int main()
 	Array<ID> points;
 	for (int i = 0; i < segNum; ++i) {
 		arr[i] = new MySegment(double(rand() % width), double(rand() % height),
+			double(rand() % width), double(rand() % height));
 		points.pushBack(arr[i]->point1);
 		points.pushBack(arr[i]->point2);
 	}

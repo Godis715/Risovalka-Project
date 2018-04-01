@@ -26,7 +26,7 @@ public:
 	bool GetSegmentPoints(ID, Array<ID>&); //sssssssssssssssssssss
 	bool GetArcPoints(ID, Array<ID>&);
 	bool getObjParam(const ID&, Array<double>&);
-	void Optimize();
+	int Optimize();
 	void PrintSystemRequirement();
 };
 
