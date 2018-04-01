@@ -197,120 +197,112 @@ double Model::GetError() {
 }
 
 int Model::Optimize() {
-	const double delta_increasing_k = 2;
+
+	if (data.getsize() == 0) {
+		return 0;
+	}
+
+	Array<Point*> points;
+	Array<Arc*> arcs;
+
+	data.MoveBegin();
+	do {
+		Primitive* obj = data.GetCurrent();
+		if (obj->GetType() == point) {
+			points.pushBack(dynamic_cast<Point*>(obj));
+		}
+		else if (obj->GetType() == arc) {
+			arcs.pushBack(dynamic_cast<Arc*>(obj));
+		}
+	} while (data.MoveNext());
+
+	const double delta_increasing_k = 2.0;
 	double sum_error = 0;
 	sum_error = GetError();
 	int count = 0;
-	int countMOD = 0;
-	while (sum_error > EPS * dataReq.getSize()) {
+
+	while (sum_error > EPS) {
 		++count;
-		++countMOD;
-		data.MoveBegin();
-		do {
-			Primitive* obj = data.GetCurrent();
-			switch (obj->GetType()) {
-			case point: {
+		for (int i = 0; i < points.getSize(); ++i) {
 
-				Point* point = dynamic_cast<Point*>(obj);
+			double delta = sum_error;
 
-				double delta = sum_error;
+			Vector2 pos = points[i]->GetPosition();
 
-				Vector2 pos = point->GetPosition();
+			while (delta > EPS)
+			{
+				double shift_x[]{ delta, -delta, delta, -delta, delta, -delta, 0, 0 };
+				double shift_y[]{ delta, delta, -delta, -delta, 0, 0, delta, -delta };
 
-				while (delta > EPS) {
+				double minFuncValue = sum_error;
+				Vector2 minFuncPos = pos;
+				bool hasChanged = false;
 
-					double shift_x[]{ delta, -delta, delta, -delta, delta, -delta, 0, 0 };
-					double shift_y[]{ delta, delta, -delta, -delta, 0, 0, delta, -delta };
+				for (int j = 0; j < 8; ++j) {
 
-					double minFuncValue = sum_error;
-					Vector2 minFuncPos = pos;
-					bool hasChanged = false;
+					points[i]->SetPosition(pos.x + shift_x[j], pos.y + shift_y[j]);
 
-					for (int i = 0; i < 8; ++i) {
-						point->SetPosition(pos.x + shift_x[i], pos.y + shift_y[i]);
-						double funcValue = GetError();
-						if (funcValue < minFuncValue) {
-							minFuncValue = funcValue;
-
-							minFuncPos = pos;
-							minFuncPos.x += shift_x[i];
-							minFuncPos.y += shift_y[i];
-
-							hasChanged = true;
-						}
-					}
-
-					if (!hasChanged) {
-						delta /= delta_increasing_k;
-					}
-					else {
-						sum_error = minFuncValue;
-						point->SetPosition(minFuncPos);
-						break;
-					}
-				}
-					
-
-				break;
-			}
-			case arc: {
-				Arc* arc = dynamic_cast<Arc*>(obj);
-				double delta = sum_error;
-
-				while (delta > EPS) {
-
-					double tempAngle = arc->GetAngle();
-
-					bool hasChanged = false;
-
-					double minFuncAngle = tempAngle;
-					double minFuncValue = sum_error;
-
-					arc->SetAngle(tempAngle - delta);
 					double funcValue = GetError();
 
 					if (funcValue < minFuncValue) {
+
 						minFuncValue = funcValue;
-						minFuncAngle = tempAngle - delta;
+
+						minFuncPos = pos;
+						minFuncPos.x += shift_x[j];
+						minFuncPos.y += shift_y[j];
+
 						hasChanged = true;
-					}
-
-					arc->SetAngle(tempAngle + delta);
-					funcValue = GetError();
-
-					if (funcValue < minFuncAngle) {
-						minFuncValue = funcValue;
-						minFuncAngle = tempAngle + delta;
-						hasChanged = true;
-					}
-
-					if (!hasChanged) {
-						delta /= delta_increasing_k;
-					}
-					else {
-						arc->SetAngle(minFuncAngle);
-						sum_error = minFuncValue;
-						break;
 					}
 				}
 
-				break;
+				if (!hasChanged) {
+					delta /= delta_increasing_k;
+				}
+				else {
+					sum_error = minFuncValue;
+					points[i]->SetPosition(minFuncPos);
+					break;
+				}
 			}
-			default: {
-			}
-			}
-
-		} while (data.MoveNext());
-		if (countMOD > 100) {
-			countMOD = 0;
-			EPS *= 2;
 		}
-		if (count > 1000) {
-			return count;
-		}
-		if (count % 25 == 0) {
-			std::cout << sum_error << "\n";
+		for (int i = 0; i < arcs.getSize(); ++i) {
+			double delta = sum_error;
+			while (delta > EPS) {
+				double tempAngle = arcs[i]->GetAngle();
 
+				bool hasChanged = false;
+
+				double minFuncAngle = tempAngle;
+				double minFuncValue = sum_error;
+
+				arcs[i]->SetAngle(tempAngle - delta);
+				double funcValue = GetError();
+
+				if (funcValue < minFuncValue) {
+					minFuncValue = funcValue;
+					minFuncAngle = tempAngle - delta;
+					hasChanged = true;
+				}
+
+				arcs[i]->SetAngle(tempAngle + delta);
+				funcValue = GetError();
+
+				if (funcValue < minFuncAngle) {
+					minFuncValue = funcValue;
+					minFuncAngle = tempAngle + delta;
+					hasChanged = true;
+				}
+
+				if (!hasChanged) {
+					delta /= delta_increasing_k;
+				}
+				else {
+					arcs[i]->SetAngle(minFuncAngle);
+					sum_error = minFuncValue;
+					break;
+				}
+			}
 		}
 	}
 	

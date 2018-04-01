@@ -1,18 +1,20 @@
-#ifndef __VIEW
-#define __VIEW
-#include "Presenter.h"
+#pragma once
 
-class View
+#include "Presenter.h"
+#include "IView.h"
+#include<windows.h>
+
+
+class View : public IView
 {
 private:
-	//Presenter* presenter = new Presenter(this);
+	Presenter* presenter;
 
 public:
-	//View();
-	//~View();
 
+	/*View() : presenter(new Presenter(this))
+	{
 
+	}*/
 };
 
-
-#endif // __VIEW

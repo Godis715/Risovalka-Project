@@ -12,11 +12,13 @@ class Primitive;
 class Model
 {
 private:
+
 	double EPS = 1e-6;
 	Dict<ID, Primitive*> data; //or another container
 	Array<IRequirement*> dataReq;
 	IDGenerator* idGen;
 	double GetError();
+
 public:
 	Model() { }
 	bool createObject(type_id, Array<double>&, ID&);
