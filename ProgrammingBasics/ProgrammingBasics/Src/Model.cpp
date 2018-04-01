@@ -197,13 +197,14 @@ double Model::GetError() {
 }
 
 int Model::Optimize() {
-	const double delta_increasing_k = 1.5;
+	const double delta_increasing_k = 2;
 	double sum_error = 0;
 	sum_error = GetError();
-	int pointNum = 0;
 	int count = 0;
+	int countMOD = 0;
 	while (sum_error > EPS * dataReq.getSize()) {
 		++count;
+		++countMOD;
 		data.MoveBegin();
 		do {
 			Primitive* obj = data.GetCurrent();
@@ -215,8 +216,6 @@ int Model::Optimize() {
 				double delta = sum_error;
 
 				Vector2 pos = point->GetPosition();
-
-				++pointNum;
 
 				while (delta > EPS) {
 
@@ -302,6 +301,21 @@ int Model::Optimize() {
 			}
 
 		} while (data.MoveNext());
+		if (countMOD > 100) {
+			countMOD = 0;
+			EPS *= 2;
+		}
+		if (count > 1000) {
+			return count;
+		}
+		if (count % 25 == 0) {
+			std::cout << sum_error << "\n";
+
+		}
+	}
+	
+	if (count < 50) {
+		EPS /= 2;
 	}
 	return count;
 }
