@@ -11,18 +11,20 @@ private:
 	IView* view;
 	
 	ID CreatePoint(double, double);
-	ID CreateSegment(double, double, double, double);
+	//ID CreateSegment(double, double, double, double);
 	ID CreateSegment(ID&, ID&);
 	ID CreateArc(double, double, double, double, double);
 
-	void CreateRequirmentDistBetPoints(ID, ID, double);
-	void CreateRequirmentPointsOnTheOneHand(ID, ID, ID);
-	void CreateRequirmentDistanceBetweenPointSegment(ID, ID, double);
-	void CreateRequirmentAngleBetweenSegments(ID, ID, double);
-	void CreateRequirmentDistanceBetweenPointArc(ID, ID, double);
-	void CreateRequirmentPointInArc(ID, ID);
-	void CreateRequirmentTriangle(ID, ID, ID);
-	void CreateRequirmentBestTriangle(ID, ID, ID, double);
+	bool CreateRequirmentDistBetPoints(ID, ID, double);
+	bool CreateRequirmentPointsOnTheOneHand(ID, ID, ID);
+	bool CreateRequirmentDistanceBetweenPointSegment(ID, ID, double);
+	bool CreateRequirmentAngleBetweenSegments(ID, ID, double);
+	bool CreateRequirmentDistanceBetweenPointArc(ID, ID, double);
+	bool CreateRequirmentPointInArc(ID, ID);
+	bool CreateRequirmentTriangle(ID, ID, ID);
+	bool CreateRequirmentCorrectTriangle(ID, ID, ID, double);
+	//bool CreateRequirmentNsAngle(Array<ID>&);
+	//bool CreateRequirmentCorrectNsAngle(Array<ID>&, double);
 
 	void DrawScene();
 
@@ -32,7 +34,6 @@ public:
 		model = new Model;
 	}
 	//~Presenter();
-
 
 	int Optimize();
 	void PrintSystemRequirement();
@@ -46,5 +47,22 @@ public:
 		double, double, double, double
 	);
 
+	//
+	//ID CreatePoint(double, double);
+	ID CreateSegment(double, double, double, double);
+	//ID CreateSegment(ID&, ID&);
+	//ID CreateArc(double, double, double, double, double);
+
+
+	/*bool CreateRequirmentDistBetPoints(ID, ID, double);
+	bool CreateRequirmentPointsOnTheOneHand(ID, ID, ID);
+	bool CreateRequirmentDistanceBetweenPointSegment(ID, ID, double);
+	bool CreateRequirmentAngleBetweenSegments(ID, ID, double);
+	bool CreateRequirmentDistanceBetweenPointArc(ID, ID, double);
+	bool CreateRequirmentPointInArc(ID, ID);
+	bool CreateRequirmentTriangle(ID, ID, ID);
+	bool CreateRequirmentCorrectTriangle(ID, ID, ID, double);*/
+	bool CreateRequirmentNsAngle(Array<ID>&);
+	bool CreateRequirmentCorrectNsAngle(Array<ID>&, double);
 };
 #endif // !__PRESENTER

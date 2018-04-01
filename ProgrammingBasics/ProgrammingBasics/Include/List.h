@@ -252,6 +252,7 @@ public:
 
 	void PushHead(T newValue) {
 		Element<T>* newElement = new Element<T>;
+		newElement->value = newValue;
 		if (size != 0) {
 			head->prev = newElement;
 			newElement->next = head;

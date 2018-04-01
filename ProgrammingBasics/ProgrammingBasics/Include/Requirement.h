@@ -152,7 +152,7 @@ private:
 class DistanceBetweenPointArc : public IRequirement
 {
 public:
-	DistanceBetweenPointArc( Arc& _arc, Point& _point, double dist) :
+	DistanceBetweenPointArc(Arc& _arc, Point& _point, double dist) :
 		arc(_arc),
 		point(_point)
 	{
@@ -587,13 +587,13 @@ public:
 				sumError += DistanceBetweenPoints::errorSt(vec1, vec2, 0);
 			}
 			if (bijection[i] && !bijection[i - 1]) {
-				vec1 = segments[i]->GetPoint1_pos();
-				vec2 = segments[i + 1]->GetPoint1_pos();
+				vec1 = segments[i]->GetPoint2_pos();
+				vec2 = segments[i + 1]->GetPoint2_pos();
 				sumError += DistanceBetweenPoints::errorSt(vec1, vec2, 0);
 			}
 			if (!bijection[i] && bijection[i - 1]) {
-				vec1 = segments[i]->GetPoint2_pos();
-				vec2 = segments[i + 1]->GetPoint2_pos();
+				vec1 = segments[i]->GetPoint1_pos();
+				vec2 = segments[i + 1]->GetPoint1_pos();
 				sumError += DistanceBetweenPoints::errorSt(vec1, vec2, 0);
 			}
 			if (!bijection[i] && !bijection[i - 1]) {
@@ -630,7 +630,7 @@ public:
 		for (int i = 0; i < count; ++i) {
 			vec1 = segments[i]->GetPoint1_pos();
 			vec2 = segments[i]->GetPoint2_pos();
-			std::cout << " segment 1) " << vec1.x << ' ' << vec1.y << " ; " << vec2.x << ' ' << vec2.y << "\n";
+			std::cout << i << " segment) " << vec1.x << ' ' << vec1.y << " ; " << vec2.x << ' ' << vec2.y << "\n";
 		}
 		std::cout << "\n";
 	}
@@ -649,8 +649,9 @@ public:
 		Segment* minSegment;
 		Vector2 prev;
 		count = list.GetSize();
+		size = _size;
 		radius = size / (2 * sin(PI / count));
-		list.MoveHead();
+	/*	list.MoveHead();
 		center.x = 0;
 		center.y = 0;
 		do
@@ -659,9 +660,9 @@ public:
 			center = center + temp->GetPoint1_pos();
 			center = center + temp->GetPoint2_pos();
 		} while (list.MoveNext());
-		center = center / (double)(count * 2);
+		center = center / (double)(count * 2);*/
+
 		segments = new Segment*[count];
-	
 		double minDist = 0;
 		double dist = 0;
 		int index = 0;
@@ -714,6 +715,14 @@ public:
 	}
 	~CorrectNsAngle() {}
 	double error() {
+		center.x = 0;
+		center.y = 0;
+		for (int i = 0; i < count; ++i) {
+			center = center + segments[i]->GetPoint1_pos();
+			center = center + segments[i]->GetPoint2_pos();
+		}
+		center = center / (double)(count * 2);
+
 		double sumError = 0;
 		Vector2 vec1;
 		Vector2 vec2;
@@ -724,13 +733,13 @@ public:
 				sumError += DistanceBetweenPoints::errorSt(vec1, vec2, 0);
 			}
 			if (bijection[i] && !bijection[i - 1]) {
-				vec1 = segments[i]->GetPoint1_pos();
-				vec2 = segments[i + 1]->GetPoint1_pos();
+				vec1 = segments[i]->GetPoint2_pos();
+				vec2 = segments[i + 1]->GetPoint2_pos();
 				sumError += DistanceBetweenPoints::errorSt(vec1, vec2, 0);
 			}
 			if (!bijection[i] && bijection[i - 1]) {
-				vec1 = segments[i]->GetPoint2_pos();
-				vec2 = segments[i + 1]->GetPoint2_pos();
+				vec1 = segments[i]->GetPoint1_pos();
+				vec2 = segments[i + 1]->GetPoint1_pos();
 				sumError += DistanceBetweenPoints::errorSt(vec1, vec2, 0);
 			}
 			if (!bijection[i] && !bijection[i - 1]) {
@@ -759,7 +768,13 @@ public:
 			vec2 = segments[1]->GetPoint1_pos();
 			sumError += DistanceBetweenPoints::errorSt(vec1, vec2, 0);
 		}
-		return sumError / count;
+		for (int i = 0; i < count; ++i) {
+			vec1 = segments[i]->GetPoint1_pos();
+			vec2 = segments[i]->GetPoint2_pos();
+			sumError += DistanceBetweenPoints::errorSt(vec1, vec2, size);
+			sumError += DistanceBetweenPoints::errorSt(vec1, center, radius);
+		}
+		return sumError / (count * 3);
 	}
 	void Print() {
 		Vector2 vec1;
@@ -767,9 +782,9 @@ public:
 		for (int i = 0; i < count; ++i) {
 			vec1 = segments[i]->GetPoint1_pos();
 			vec2 = segments[i]->GetPoint2_pos();
-			std::cout << " segment 1) " << vec1.x << ' ' << vec1.y << " ; " << vec2.x << ' ' << vec2.y << "\n";
+			std::cout << i << " segment) " << vec1.x << ' ' << vec1.y << " ; " << vec2.x << ' ' << vec2.y << "\n";
 		}
-		std::cout << "\n";
+		std::cout << "size- " << size << "\n\n";
 	}
 private:
 	Segment * * segments;

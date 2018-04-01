@@ -387,7 +387,9 @@ int Model::Optimize() {
 			std::cout << sum_error << "   "<< iterInside << "\n";
 		}
 		if (prevError == sum_error) {
-			iterInside *= 2;
+			if (iterInside < 1000000) {
+				iterInside *= 2;
+			}
 		}
 		else {
 			if (iterInside > 2) {

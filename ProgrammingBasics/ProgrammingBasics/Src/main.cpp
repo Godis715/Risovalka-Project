@@ -1,7 +1,7 @@
 #include "View.h"
 #include <ctime>
-//
-//Presenter presenter;
+
+Presenter presenter;
 //Model model;
 // /*void PrintPoints(Array<ID> points) {
 //	for (int i = 0; i < points.getSize(); ++i) {
@@ -231,9 +231,51 @@
 //	ID point2;
 //};
 
+void CreateNsAngle(int count) {
+	Array<ID> array;
+	double x1;
+	double y1;
+	double x2;
+	double y2;
+	for (int i = 0; i < count; ++i) {
+		x1 = (double)rand() / (rand() % 100 + 1);
+		y1 = (double)rand() / (rand() % 100 + 1);
+		x2 = (double)rand() / (rand() % 100 + 1);
+		y2 = (double)rand() / (rand() % 100 + 1);
+
+		std::cout << i << " segment) " << x1 << ' ' << y1 << " ; " << x2 << ' ' << y2 << "\n";
+		array.pushBack(presenter.CreateSegment(x1, y1, x2, y2));
+	}
+	presenter.CreateRequirmentNsAngle(array);
+	std::cout << presenter.Optimize() << "\n";
+	presenter.PrintSystemRequirement();
+}
+
+void CreateCorrectNsAngle(int count) {
+	Array<ID> array;
+	double x1;
+	double y1;
+	double x2;
+	double y2;
+	for (int i = 0; i < count; ++i) {
+		x1 = (double)rand() / (rand() % 1000 + 1);
+		y1 = (double)rand() / (rand() % 1000 + 1);
+		x2 = (double)rand() / (rand() % 1000 + 1);
+		y2 = (double)rand() / (rand() % 1000 + 1);
+
+		std::cout << i << " segment) " << x1 << ' ' << y1 << " ; " << x2 << ' ' << y2 << "\n";
+		array.pushBack(presenter.CreateSegment(x1, y1, x2, y2));
+	}
+	double size = (double)rand() / (rand() % 1000 + 1);
+	std::cout << " size) " << size << "\n\n";
+	presenter.CreateRequirmentCorrectNsAngle(array, size);
+	std::cout << presenter.Optimize() << "\n";
+	presenter.PrintSystemRequirement();
+}
+
 int main()
 {
-
+	CreateCorrectNsAngle(4);
 	HWND window = GetConsoleWindow();
 	IView* view = new View();
 	view->Run();
