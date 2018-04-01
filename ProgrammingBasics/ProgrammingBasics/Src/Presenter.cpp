@@ -112,7 +112,7 @@ void Presenter::CreateRequirmentPointInArc(ID arc, ID point)
 	model->createRequirement(pointInArc, components, params);
 	return;
 }
-void Presenter::CreateRequirmentTrianle(ID segment1, ID segment2, ID segment3) {
+void Presenter::CreateRequirmentTriangle(ID segment1, ID segment2, ID segment3) {
 	Array<double> params;//empty
 	Array<ID> components;
 
@@ -123,7 +123,7 @@ void Presenter::CreateRequirmentTrianle(ID segment1, ID segment2, ID segment3) {
 	model->createRequirement(triangle, components, params);
 	return;
 }
-void Presenter::CreateRequirmentBestTrianle(ID segment1, ID segment2, ID segment3, double size) {
+void Presenter::CreateRequirmentBestTriangle(ID segment1, ID segment2, ID segment3, double size) {
 	Array<double> params;
 	Array<ID> components;
 

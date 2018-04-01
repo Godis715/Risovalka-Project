@@ -28,8 +28,8 @@ public:
 	void CreateRequirmentAngleBetweenSegments(ID, ID, double);
 	void CreateRequirmentDistanceBetweenPointArc(ID, ID, double);
 	void CreateRequirmentPointInArc(ID, ID);
-	void CreateRequirmentTrianle(ID, ID, ID);
-	void CreateRequirmentBestTrianle(ID, ID, ID, double);
+	void CreateRequirmentTriangle(ID, ID, ID);
+	void CreateRequirmentBestTriangle(ID, ID, ID, double);
 
 	int Optimize();
 	void PrintSystemRequirement();

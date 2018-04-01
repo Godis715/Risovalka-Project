@@ -219,7 +219,6 @@ int Model::Optimize() {
 	const double delta_increasing_k = 2.0;
 	double sum_error = 0;
 	sum_error = GetError();
-	int pointNum = 0;
 	int count = 0;
 
 	while (sum_error > EPS) {
@@ -305,6 +304,10 @@ int Model::Optimize() {
 				}
 			}
 		}
+	}
+	
+	if (count < 50) {
+		EPS /= 2;
 	}
 	return count;
 }
