@@ -194,6 +194,36 @@ bool Model::createRequirement(const Requirement_id _id, Array<ID>& id_arr, Array
 		dataReq.pushBack(Requirement);
 		return true;
 	}
+	case nsAngle: {
+		NsAngle* Requirement;
+		ListE<Segment*> list;
+		for (int i = 0; i < primitives.getSize(); ++i) {
+			if (segment == primitives[i]->GetType()) {
+				list.PushTail(dynamic_cast<Segment*>(primitives[i]));
+			}
+			else {
+				return false;
+			}
+		}
+		Requirement = new NsAngle(list);
+		dataReq.pushBack(Requirement);
+		return true;
+	}
+	case correctNsAngle: {
+		CorrectNsAngle* Requirement;
+		ListE<Segment*> list;
+		for (int i = 0; i < primitives.getSize(); ++i) {
+			if (segment == primitives[i]->GetType()) {
+				list.PushTail(dynamic_cast<Segment*>(primitives[i]));
+			}
+			else {
+				return false;
+			}
+		}
+		Requirement = new CorrectNsAngle(list, params[0]);
+		dataReq.pushBack(Requirement);
+		return true;
+	}
 	default:
 		return false;
 	}
