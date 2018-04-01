@@ -9,12 +9,15 @@ class View : public IView
 {
 private:
 	Presenter* presenter;
-
+	HWND hWnd;
+	HDC hDC;
+	HPEN hPen;
+	RECT screen;
 public:
 	View();
-	void DrawLine(Vector2 point1, Vector2 point2);
-	void DrawArc(Vector2 point1, Vector2 point2);
-	void DrawPoint(Vector2 point);
+	void DrawLine(Vector2, Vector2);
+	void DrawArc(Vector2, Vector2);
+	void DrawPoint(Vector2);
 
 	void Run();
 };

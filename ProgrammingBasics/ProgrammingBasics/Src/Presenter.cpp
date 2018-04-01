@@ -1,5 +1,15 @@
 #include "Presenter.h"
 
+void Presenter::DrawScene() {
+	Array<Model::infoObject> scene;
+	for (int i = 0; i < scene.getSize(); ++i) {
+		if (scene[i].type == segment) {
+			view->DrawLine(Vector2(scene[i].params[0], scene[i].params[1]),
+				Vector2(scene[i].params[2], scene[i].params[3]));
+		}
+	}
+}
+
 ID Presenter::CreatePoint(double x, double y) {
 	Array<double> params;
 	params.pushBack(x);
@@ -155,12 +165,13 @@ bool Presenter::getObjParam(const ID& id, Array<double>& array) {
 void Presenter::DrawPoint(double x, double y)
 {
 	CreatePoint(x, y);
-	//Draw();
+	//DrawScene();
 }
+
 void Presenter::DrawSegment(double x1, double y1, double x2, double y2)
 {
 	CreateSegment(x1, y1, x2, y2);
-	//Draw();
+	DrawScene();
 }
 void Presenter::DrawTriangle(
 	double seg1x1, double seg1y1, double seg1x2, double seg1y2,
