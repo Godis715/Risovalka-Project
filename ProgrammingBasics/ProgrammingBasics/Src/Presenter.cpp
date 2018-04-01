@@ -1,5 +1,16 @@
 #include "Presenter.h"
 
+void Presenter::DrawScene() {
+	Array<Model::infoObject> scene;
+	model->DischargeInfoObjects(scene);
+	for (int i = 0; i < scene.getSize(); ++i) {
+		if (scene[i].type == segment) {
+			view->DrawLine(Vector2(scene[i].params[0], scene[i].params[1]),
+				Vector2(scene[i].params[2], scene[i].params[3]));
+		}
+	}
+}
+
 ID Presenter::CreatePoint(double x, double y) {
 	Array<double> params;
 	params.pushBack(x);
@@ -19,11 +30,11 @@ ID Presenter::CreateSegment(double x1, double y1, double x2, double y2) {
 	model->createObject(segment, params, id);
 	return id;
 }
-ID Presenter::CreateSegment(ID& point1, ID& point2) {
+ /*ID Presenter::CreateSegment(ID& point1, ID& point2) {
 	ID id;
 	model->createSegment(point1, point2, id);
 	return id;
-}
+}*/
 ID Presenter::CreateArc(double x1, double y1, double x2, double y2, double angle)
 {
 	ID id;
@@ -40,6 +51,12 @@ ID Presenter::CreateArc(double x1, double y1, double x2, double y2, double angle
 Presenter::Presenter(IView* view)
 {
 	this->view = view;
+	model = new Model();
+}
+
+Presenter::Presenter()
+{
+	model = new Model();
 }
 
 void Presenter::CreateRequirmentDistBetPoints(ID point1, ID point2, double d) 
@@ -59,6 +76,7 @@ void Presenter::CreateRequirmentPointsOnTheOneHand(ID segment, ID point1, ID poi
 	Array<double> params;//empty
 	Array<ID> components;
 
+	components.pushBack(segment);
 	components.pushBack(point1);
 	components.pushBack(point2);
 
@@ -154,12 +172,13 @@ bool Presenter::getObjParam(const ID& id, Array<double>& array) {
 void Presenter::DrawPoint(double x, double y)
 {
 	CreatePoint(x, y);
-	//Draw();
+	//DrawScene();
 }
+
 void Presenter::DrawSegment(double x1, double y1, double x2, double y2)
 {
 	CreateSegment(x1, y1, x2, y2);
-	//Draw();
+	DrawScene();
 }
 void Presenter::DrawTriangle(
 	double seg1x1, double seg1y1, double seg1x2, double seg1y2,

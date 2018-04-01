@@ -92,6 +92,15 @@ public:
 		return _size;
 	}
 
+	void operator=(Array& arr) {
+		this->_capacity = arr._capacity;
+		this->_size = arr._size;
+		this->_storage = new T[_capacity];
+		for (int i = 0; i < _size; ++i) {
+			this->_storage[i] = arr._storage[i];
+		}
+	}
+
 	Array(Array& arr) {
 		this->_capacity = arr._capacity;
 		this->_size = arr._size;

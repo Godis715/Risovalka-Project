@@ -10,16 +10,9 @@ private:
 	Model* model;
 	IView* view;
 	
-public:
-	Presenter(IView*);
-	Presenter() {
-		model = new Model;
-	}
-	//~Presenter();
-
 	ID CreatePoint(double, double);
 	ID CreateSegment(double, double, double, double);
-	ID CreateSegment(ID&, ID&);
+	//ID CreateSegment(ID&, ID&);
 	ID CreateArc(double, double, double, double, double);
 
 	void CreateRequirmentDistBetPoints(ID, ID, double);
@@ -30,6 +23,14 @@ public:
 	void CreateRequirmentPointInArc(ID, ID);
 	void CreateRequirmentTriangle(ID, ID, ID);
 	void CreateRequirmentBestTriangle(ID, ID, ID, double);
+
+	void DrawScene();
+
+public:
+	Presenter(IView*);
+	Presenter();
+	//~Presenter();
+
 
 	int Optimize();
 	void PrintSystemRequirement();
