@@ -59,6 +59,7 @@ void Presenter::CreateRequirmentPointsOnTheOneHand(ID segment, ID point1, ID poi
 	Array<double> params;//empty
 	Array<ID> components;
 
+	components.pushBack(segment);
 	components.pushBack(point1);
 	components.pushBack(point2);
 

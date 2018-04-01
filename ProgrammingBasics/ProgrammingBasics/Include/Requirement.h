@@ -27,7 +27,12 @@ public:
 	void ChangeDistance(double _distance) {
 		distance = _distance;
 	}
-	void Print() {}
+	void Print() {
+		Vector2 vec = point1.GetPosition();
+		std::cout << " point1) " << vec.x << ' ' << vec.y << "\n";
+		vec = point2.GetPosition();
+		std::cout << " point2) " << vec.x << ' ' << vec.y << "\n\n";
+	}
 private:
 	double distance;
 	Point& point1;
@@ -98,7 +103,8 @@ public:
 
 		std::cout << " segment 1) " << vec1.x << ' ' << vec1.y << " ; " << vec2.x << ' ' << vec2.y << "\n";
 		vec1 = point.GetPosition();
-		std::cout << " point1) " << vec1.x << ' ' << vec1.y << "\n\n";
+		std::cout << " point1) " << vec1.x << ' ' << vec1.y << "\n";
+		std::cout << " distance) " << distance << "\n\n";
 	}
 private:
 	Segment& segment;
@@ -132,7 +138,8 @@ public:
 		std::cout << " segment 1) " << vec1.x << ' ' << vec1.y << " ; " << vec2.x << ' ' << vec2.y << "\n";
 		vec1 = segment2.GetPoint1_pos();
 		vec2 = segment2.GetPoint2_pos();
-		std::cout << " segment 2) " << vec1.x << ' ' << vec1.y << " ; " << vec2.x << ' ' << vec2.y << "\n\n";
+		std::cout << " segment 2) " << vec1.x << ' ' << vec1.y << " ; " << vec2.x << ' ' << vec2.y << "\n";
+		std::cout << " angle) " << angle << "\n\n";
 		
 	}
 private:
@@ -496,7 +503,8 @@ public:
 		std::cout << " segment 2) " << vec1.x << ' ' << vec1.y << " ; " << vec2.x << ' ' << vec2.y << "\n";
 		vec1 = segment3->GetPoint1_pos();
 		vec2 = segment3->GetPoint2_pos();
-		std::cout << " segment 3) " << vec1.x << ' ' << vec1.y << " ; " << vec2.x << ' ' << vec2.y << "\n\n" ;
+		std::cout << " segment 3) " << vec1.x << ' ' << vec1.y << " ; " << vec2.x << ' ' << vec2.y << "\n";
+		std::cout << " size " << size << "\n\n";
 	}
 private:
 	Segment* segment1;

@@ -231,7 +231,9 @@ int Model::Optimize() {
 	const double delta_increasing_k = 2.0;
 	double sum_error = 0;
 	sum_error = GetError();
+	double prevError = sum_error;
 	int count = 0;
+	int iterInside = 2;
 
 	while (sum_error > EPS) {
 		++count;
@@ -240,8 +242,7 @@ int Model::Optimize() {
 			double delta = sum_error;
 
 			Vector2 pos = points[i]->GetPosition();
-
-			while (delta > EPS)
+			for (int k = 0; k < iterInside; ++k)
 			{
 				double shift_x[]{ delta, -delta, delta, -delta, delta, -delta, 0, 0 };
 				double shift_y[]{ delta, delta, -delta, -delta, 0, 0, delta, -delta };
@@ -274,6 +275,9 @@ int Model::Optimize() {
 				else {
 					sum_error = minFuncValue;
 					points[i]->SetPosition(minFuncPos);
+					break;
+				}
+				if (delta < EPS) {
 					break;
 				}
 			}
@@ -316,10 +320,29 @@ int Model::Optimize() {
 				}
 			}
 		}
+		if (count % 100 == 0) {
+			EPS *= 2;
+
+		}
+		if (count % 25 == 0) {
+			std::cout << sum_error << "   "<< iterInside << "\n";
+		}
+		if (prevError == sum_error) {
+			iterInside *= 2;
+		}
+		else {
+			if (iterInside > 2) {
+				iterInside /= 2;
+			}
+		}
+		prevError = sum_error;
 	}
 	
 	if (count < 50) {
 		EPS /= 2;
+		if (EPS < 1e-10) {
+			EPS = 1e-10;
+		}
 	}
 	return count;
 }
