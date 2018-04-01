@@ -142,35 +142,35 @@ Presenter presenter;
 //	//presenter.PrintSystemRequirement();
 //}
 //
-//void CreateBrokenLine(int count) {
-//	int countOptimize = 0;
-//	ID prev;
-//	ID p1;
-//	ID p2;
-//	double x1 = (double)rand() / (rand() % 100 + 1);
-//	double y1 = (double)rand() / (rand() % 100 + 1);
-//	double x2 = (double)rand() / (rand() % 100 + 1);
-//	double y2 = (double)rand() / (rand() % 100 + 1);
-//	p1 = presenter.CreatePoint(x1, y1);
-//	p2 = presenter.CreatePoint(x2, y2);
-//	presenter.CreateSegment(p1, p2);
-//	std::cout << 0 << " segment 1) " << x1 << ' ' << y1 << " ; " << x2 << ' ' << y2 << "\n";
-//	prev = p2;
-//	for (int i = 1; i < count; ++i) {
-//		x1 = (double)rand() / (rand() % 100 + 1);
-//		y1 = (double)rand() / (rand() % 100 + 1);
-//		x2 = (double)rand() / (rand() % 100 + 1);
-//		y2 = (double)rand() / (rand() % 100 + 1);
-//		p1 = presenter.CreatePoint(x1, y1);
-//		p2 = presenter.CreatePoint(x2, y2);
-//		std::cout << i << " segment) " << x1 << ' ' << y1 << " ; " << x2 << ' ' << y2 << "\n";
-//		presenter.CreateRequirmentDistBetPoints(prev, p1, 0);
-//		countOptimize += presenter.Optimize();
-//		prev = p2;
-//	}
-//	std::cout << "countOptimize - " << countOptimize << "\n";
-//	//presenter.PrintSystemRequirement();
-//}
+void CreateBrokenLine(int count) {
+	int countOptimize = 0;
+	ID prev;
+	ID p1;
+	ID p2;
+	double x1 = (double)rand() / (rand() % 100 + 1);
+	double y1 = (double)rand() / (rand() % 100 + 1);
+	double x2 = (double)rand() / (rand() % 100 + 1);
+	double y2 = (double)rand() / (rand() % 100 + 1);
+	p1 = presenter.CreatePoint(x1, y1);
+	p2 = presenter.CreatePoint(x2, y2);
+	presenter.CreateSegment(p1, p2);
+	std::cout << 0 << " segment 1) " << x1 << ' ' << y1 << " ; " << x2 << ' ' << y2 << "\n";
+	prev = p2;
+	for (int i = 1; i < count; ++i) {
+		x1 = (double)rand() / (rand() % 100 + 1);
+		y1 = (double)rand() / (rand() % 100 + 1);
+		x2 = (double)rand() / (rand() % 100 + 1);
+		y2 = (double)rand() / (rand() % 100 + 1);
+		p1 = presenter.CreatePoint(x1, y1);
+		p2 = presenter.CreatePoint(x2, y2);
+		std::cout << i << " segment) " << x1 << ' ' << y1 << " ; " << x2 << ' ' << y2 << "\n";
+		presenter.CreateRequirmentDistBetPoints(prev, p1, 0);
+		countOptimize += presenter.Optimize();
+		prev = p2;
+	}
+	std::cout << "countOptimize - " << countOptimize << "\n";
+	//presenter.PrintSystemRequirement();
+}
 //
 //
 //ID CreatePoint(double x, double y) {
@@ -276,7 +276,10 @@ void CreateCorrectNsAngle(int count) {
 
 int main()
 {
-	CreateNsAngle(4);
+	srand(time(nullptr));
+	//CreateCorrectNsAngle(4);
+	//CreateNsAngle(10);
+	CreateBrokenLine(50);
 	IView* view = new View();
 	view->Run();
 

@@ -337,7 +337,7 @@ int Model::Optimize() {
 					points[i]->SetPosition(minFuncPos);
 					break;
 				}
-				if (delta < EPS) {
+				if (delta < 1e-6) {
 					break;
 				}
 			}
@@ -382,16 +382,18 @@ int Model::Optimize() {
 		}
 
 		if (count % 25 == 0) {
-			std::cout << sum_error << "   "<< iterInside << "\n";
-			if (count % 100 == 0) {
-				EPS *= 2;
+			std::cout << sum_error << "   "<< iterInside << "   " << EPS << "\n";
+			if (count % 50 == 0) {
+				if (EPS < 0.01) {
+					EPS *= 2;
+				}
 				if (count > 1000) {
 					return count;
 				}
 			}
 		}
 		if (prevError == sum_error) {
-			if (iterInside < 1000000) {
+			if (iterInside < 1000) {
 				iterInside *= 2;
 			}
 		}
@@ -404,9 +406,8 @@ int Model::Optimize() {
 	}
 	
 	if (count < 50) {
-		EPS /= 2;
-		if (EPS < 1e-10) {
-			EPS = 1e-10;
+		if (EPS > 1e-6) {
+			EPS /= 2;
 		}
 	}
 	return count;

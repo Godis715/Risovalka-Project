@@ -609,7 +609,7 @@ public:
 		}
 		else {
 			vec1 = segments[count - 1]->GetPoint2_pos();
-			vec2 = segments[1]->GetPoint2_pos();
+			vec2 = segments[0]->GetPoint2_pos();
 			sumError += DistanceBetweenPoints::errorSt(vec1, vec2, 0);
 		}
 		if (bijection[0]) {
@@ -651,7 +651,7 @@ public:
 		count = list.GetSize();
 		size = _size;
 		radius = size / (2 * sin(PI / count));
-	/*	list.MoveHead();
+		list.MoveHead();
 		center.x = 0;
 		center.y = 0;
 		do
@@ -660,7 +660,7 @@ public:
 			center = center + temp->GetPoint1_pos();
 			center = center + temp->GetPoint2_pos();
 		} while (list.MoveNext());
-		center = center / (double)(count * 2);*/
+		center = center / (double)(count * 2);
 
 		segments = new Segment*[count];
 		double minDist = 0;
@@ -715,13 +715,13 @@ public:
 	}
 	~CorrectNsAngle() {}
 	double error() {
-		center.x = 0;
+		/*center.x = 0;
 		center.y = 0;
 		for (int i = 0; i < count; ++i) {
 			center = center + segments[i]->GetPoint1_pos();
 			center = center + segments[i]->GetPoint2_pos();
 		}
-		center = center / (double)(count * 2);
+		center = center / (double)(count * 2);*/
 
 		double sumError = 0;
 		Vector2 vec1;
@@ -755,7 +755,7 @@ public:
 		}
 		else {
 			vec1 = segments[count - 1]->GetPoint2_pos();
-			vec2 = segments[1]->GetPoint2_pos();
+			vec2 = segments[0]->GetPoint2_pos();
 			sumError += DistanceBetweenPoints::errorSt(vec1, vec2, 0);
 		}
 		if (bijection[0]) {
@@ -772,7 +772,7 @@ public:
 			vec1 = segments[i]->GetPoint1_pos();
 			vec2 = segments[i]->GetPoint2_pos();
 			sumError += DistanceBetweenPoints::errorSt(vec1, vec2, size);
-			sumError += DistanceBetweenPoints::errorSt(vec1, center, radius);
+			sumError += DistanceBetweenPoints::errorSt(vec2, center, radius);
 		}
 		return sumError / (count * 3);
 	}
