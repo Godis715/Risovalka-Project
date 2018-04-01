@@ -51,6 +51,27 @@ bool Model::createObject(type_id type, Array<double>& params, ID& obj_id) {
 	}
 }
 
+bool Model::createSegment(ID& p1ID, ID& p2ID, ID& segID) {
+	Primitive* point1PR;
+	Primitive* point2PR;
+	bool error = false;
+	if (data.find(p1ID)) {
+		point1PR = data.GetCurrent();
+		if (data.find(p2ID)) {
+			point2PR = data.GetCurrent();
+			if ((point1PR->GetType() == point) && (point2PR->GetType() == point)) {
+				Point* point1 = dynamic_cast<Point*>(point1PR);
+				Point* point2 = dynamic_cast<Point*>(point2PR);
+				Segment* segment = new Segment(point1, point2);
+				segID = segment->GetId();
+				data.Add(segID, segment);
+				return true;
+			}
+		}
+	}
+	return false;
+}
+
 bool Model::createRequirement(const Requirement_id _id, Array<ID>& id_arr, Array<double>& params) {
 	Array<Primitive*> primitives;
 	for (int i = 0; i < id_arr.getSize(); ++i) {
@@ -134,6 +155,33 @@ bool Model::createRequirement(const Requirement_id _id, Array<ID>& id_arr, Array
 		dataReq.pushBack(Requirement);
 		return true;
 	}
+	case triangle: {
+		Triangle* Requirement;
+		try {
+			Requirement = new Triangle(dynamic_cast<Segment*>(primitives[0]),
+				dynamic_cast<Segment*>(primitives[1]),
+				dynamic_cast<Segment*>(primitives[2]));
+		}
+		catch (std::out_of_range) {
+			throw std::invalid_argument("Invalid parameters");
+		}
+		dataReq.pushBack(Requirement);
+		return true;
+	}
+	case bestTriangle: {
+		BestTriangle* Requirement;
+		try {
+			Requirement = new BestTriangle(dynamic_cast<Segment*>(primitives[0]),
+				dynamic_cast<Segment*>(primitives[1]),
+				dynamic_cast<Segment*>(primitives[2]),
+				params[0]);
+		}
+		catch (std::out_of_range) {
+			throw std::invalid_argument("Invalid parameters");
+		}
+		dataReq.pushBack(Requirement);
+		return true;
+	}
 	default:
 		return false;
 	}
@@ -141,19 +189,22 @@ bool Model::createRequirement(const Requirement_id _id, Array<ID>& id_arr, Array
 
 double Model::GetError() {
 	double sum_error = 0;
-	for (size_t i = 0; i < dataReq.getSize(); i++)
+	for (int i = 0; i < dataReq.getSize(); i++)
 	{
 		sum_error += dataReq[i]->error();
 	}
 	return sum_error / dataReq.getSize();
 }
 
-void Model::Optimize() {
-	const double delta_increasing_k = 1.5;
+int Model::Optimize() {
+	const double delta_increasing_k = 2;
 	double sum_error = 0;
 	sum_error = GetError();
-	int pointNum = 0;
-	while (sum_error > EPS) {
+	int count = 0;
+	int countMOD = 0;
+	while (sum_error > EPS * dataReq.getSize()) {
+		++count;
+		++countMOD;
 		data.MoveBegin();
 		do {
 			Primitive* obj = data.GetCurrent();
@@ -165,8 +216,6 @@ void Model::Optimize() {
 				double delta = sum_error;
 
 				Vector2 pos = point->GetPosition();
-
-				++pointNum;
 
 				while (delta > EPS) {
 
@@ -252,8 +301,23 @@ void Model::Optimize() {
 			}
 
 		} while (data.MoveNext());
+		if (countMOD > 100) {
+			countMOD = 0;
+			EPS *= 2;
+		}
+		if (count > 1000) {
+			return count;
+		}
+		if (count % 25 == 0) {
+			std::cout << sum_error << "\n";
 
+		}
 	}
+	
+	if (count < 50) {
+		EPS /= 2;
+	}
+	return count;
 }
 
 bool Model::getNearest(double x, double y, ID& obj_id) {
@@ -340,11 +404,40 @@ bool Model::getObjParam(const ID& obj_id, Array<double>& result) {
 	}
 }
 
-void Model::GetSegmentPoints(ID obj_id, Array<ID>& arr) {
+bool Model::GetSegmentPoints(ID obj_id, Array<ID>& arr) {
 	Primitive* obj;
-	data.find(obj_id);
+	if (!data.find(obj_id)) {
+		return false;
+	}
 	obj = data.GetCurrent();
+	if (obj->GetType() != segment) {
+		return false;
+	}
 	Segment* segment = dynamic_cast<Segment*>(obj);
 	arr.pushBack(segment->GetPoint1_ID());
 	arr.pushBack(segment->GetPoint2_ID());
+	return true;
+}
+
+bool Model::GetArcPoints(ID obj_id, Array<ID>& arr) {
+	Primitive* obj;
+	if (!data.find(obj_id)) {
+		return false;
+	}
+	obj = data.GetCurrent();
+	if (obj->GetType() != arc) {
+		return false;
+	}
+	Arc* arc = dynamic_cast<Arc*>(obj);
+	arr.pushBack(arc->GetPoint1_ID());
+	arr.pushBack(arc->GetPoint2_ID());
+	return true;
+}
+
+void  Model::PrintSystemRequirement() {
+	for (int i = 0; i < dataReq.getSize(); ++i) {
+		std::cout << std::endl;
+		std::cout << i << ":\n";
+		dataReq[i]->Print();
+	}
 }

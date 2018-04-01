@@ -19,6 +19,11 @@ ID Presenter::CreateSegment(double x1, double y1, double x2, double y2) {
 	model->createObject(segment, params, id);
 	return id;
 }
+ID Presenter::CreateSegment(ID& point1, ID& point2) {
+	ID id;
+	model->createSegment(point1, point2, id);
+	return id;
+}
 ID Presenter::CreateArc(double x1, double y1, double x2, double y2, double angle)
 {
 	ID id;
@@ -106,6 +111,44 @@ void Presenter::CreateRequirmentPointInArc(ID arc, ID point)
 
 	model->createRequirement(pointInArc, components, params);
 	return;
+}
+void Presenter::CreateRequirmentTriangle(ID segment1, ID segment2, ID segment3) {
+	Array<double> params;//empty
+	Array<ID> components;
+
+	components.pushBack(segment1);
+	components.pushBack(segment2);
+	components.pushBack(segment3);
+
+	model->createRequirement(triangle, components, params);
+	return;
+}
+void Presenter::CreateRequirmentBestTriangle(ID segment1, ID segment2, ID segment3, double size) {
+	Array<double> params;
+	Array<ID> components;
+
+	components.pushBack(segment1);
+	components.pushBack(segment2);
+	components.pushBack(segment3);
+	params.pushBack(size);
+
+	model->createRequirement(bestTriangle, components, params);
+	return;
+}
+
+int Presenter::Optimize() {
+	return model->Optimize();
+}
+void Presenter::PrintSystemRequirement() {
+	model->PrintSystemRequirement();
+}
+bool Presenter::getObjParam(const ID& id, Array<double>& array) {
+	if (model->getObjParam(id, array)) {
+		return true;
+	}
+	else {
+		return false;
+	}
 }
 
 void Presenter::DrawPoint(double x, double y)

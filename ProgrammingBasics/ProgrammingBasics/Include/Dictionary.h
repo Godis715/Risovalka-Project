@@ -305,7 +305,7 @@ public:
 		size = 0;
 	}
 
-	int getsize()
+	int getsize() const
 	{
 		return size;
 	}
@@ -565,7 +565,7 @@ public:
 		}
 	}
 
-	TVal GetCurrent() {
+	TVal GetCurrent() const {
 		if (current == nullptr) {
 			throw std::exception("use is current, it was nullptr");
 		}

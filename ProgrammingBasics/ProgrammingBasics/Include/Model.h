@@ -12,21 +12,23 @@ class Primitive;
 class Model
 {
 private:
-	const double EPS = 1e-6;
+	double EPS = 1e-6;
 	Dict<ID, Primitive*> data; //or another container
 	Array<IRequirement*> dataReq;
 	IDGenerator* idGen;
 	double GetError();
 public:
-	Model() {}
+	Model() { }
 	bool createObject(type_id, Array<double>&, ID&);
+	bool createSegment(ID&, ID&, ID&);
 	bool createRequirement(const Requirement_id, Array<ID>&, Array<double>&);
 	bool getNearest(double, double, ID&);
 	bool getObjType(const ID&, type_id&);
-	//Array<double> getObjSubs(ID); //?????
+	bool GetSegmentPoints(ID, Array<ID>&); //sssssssssssssssssssss
+	bool GetArcPoints(ID, Array<ID>&);
 	bool getObjParam(const ID&, Array<double>&);
-	void Optimize();
-	void GetSegmentPoints(ID, Array<ID>&); //sssssssssssssssssssss
+	int Optimize();
+	void PrintSystemRequirement();
 };
 
 #endif
