@@ -1,6 +1,7 @@
 #include "Presenter.h"
 
 void Presenter::DrawScene() {
+	view->Clear();
 	Array<Model::infoObject> scene;
 	model->DischargeInfoObjects(scene);
 	for (int i = 0; i < scene.getSize(); ++i) {
@@ -28,6 +29,11 @@ ID Presenter::CreateSegment(double x1, double y1, double x2, double y2) {
 	params.pushBack(x2);
 	params.pushBack(y2);
 	model->createObject(segment, params, id);
+	return id;
+}
+ID Presenter::CreateSegment(ID& p1ID, ID& p2ID) {
+	ID id;
+	model->createSegment(p1ID, p2ID, id);
 	return id;
 }
  /*ID Presenter::CreateSegment(ID& point1, ID& point2) {
@@ -59,19 +65,23 @@ Presenter::Presenter()
 	model = new Model();
 }
 
-void Presenter::CreateRequirmentDistBetPoints(ID point1, ID point2, double d) 
+bool Presenter::CreateRequirmentDistBetPoints(ID point1, ID point2, double d) 
 {
-	Array<double> dist;
-	Array<ID> points;
+	Array<double> params;
+	Array<ID> components;
 
-	points.pushBack(point1);
-	points.pushBack(point2);
+	components.pushBack(point1);
+	components.pushBack(point2);
+	params.pushBack(d);
 
-	dist.pushBack(d);
-	model->createRequirement(distBetPoints, points, dist);
-	return;
+	if (model->createRequirement(distBetPoints, components, params)) {
+		return true;
+	}
+	else {
+		return false;
+	}
 }
-void Presenter::CreateRequirmentPointsOnTheOneHand(ID segment, ID point1, ID point2)
+bool Presenter::CreateRequirmentPointsOnTheOneHand(ID segment, ID point1, ID point2)
 {
 	Array<double> params;//empty
 	Array<ID> components;
@@ -80,46 +90,62 @@ void Presenter::CreateRequirmentPointsOnTheOneHand(ID segment, ID point1, ID poi
 	components.pushBack(point1);
 	components.pushBack(point2);
 
-	model->createRequirement(pointsOnTheOneHand, components, params);
-	return;
+	if (model->createRequirement(pointsOnTheOneHand, components, params)) {
+		return true;
+	}
+	else {
+		return false;
+	}
 }
-void Presenter::CreateRequirmentDistanceBetweenPointSegment(ID segment, ID point, double d)
+bool Presenter::CreateRequirmentDistanceBetweenPointSegment(ID segment, ID point, double d)
 {
-	Array<double> dist;
+	Array<double> params;
 	Array<ID> components;
 
 	components.pushBack(segment);
 	components.pushBack(point);
+	params.pushBack(d);
 
-	dist.pushBack(d);
-	model->createRequirement(distBetPointSeg, components, dist);
-	return;
+	if (model->createRequirement(distBetPointSeg, components, params)) {
+		return true;
+	}
+	else {
+		return false;
+	}
 }
-void Presenter::CreateRequirmentAngleBetweenSegments(ID segment1, ID segment2, double a)
+bool Presenter::CreateRequirmentAngleBetweenSegments(ID segment1, ID segment2, double a)
 {
-	Array<double> angle;
-	Array<ID> segments;
+	Array<double> params;
+	Array<ID> components;
 
-	segments.pushBack(segment1);
-	segments.pushBack(segment2);
+	components.pushBack(segment1);
+	components.pushBack(segment2);
+	params.pushBack(a);
 
-	angle.pushBack(a);
-	model->createRequirement(angleBetSeg, segments, angle);
-	return;
+	if (model->createRequirement(angleBetSeg, components, params)) {
+		return true;
+	}
+	else {
+		return false;
+	}
 }
-void Presenter::CreateRequirmentDistanceBetweenPointArc(ID arc, ID point, double d)
+bool Presenter::CreateRequirmentDistanceBetweenPointArc(ID arc, ID point, double d)
 {
-	Array<double> dist;
+	Array<double> params;
 	Array<ID> components;
 
 	components.pushBack(arc);
 	components.pushBack(point);
+	params.pushBack(d);
 
-	dist.pushBack(d);
-	model->createRequirement(distBetPointArc, components, dist);
-	return;
+	if (model->createRequirement(distBetPointArc, components, params)) {
+		return true;
+	}
+	else {
+		return false;
+	}
 }
-void Presenter::CreateRequirmentPointInArc(ID arc, ID point)
+bool Presenter::CreateRequirmentPointInArc(ID arc, ID point)
 {
 	Array<double> params;//empty
 	Array<ID> components;
@@ -127,10 +153,15 @@ void Presenter::CreateRequirmentPointInArc(ID arc, ID point)
 	components.pushBack(arc);
 	components.pushBack(point);
 
-	model->createRequirement(pointInArc, components, params);
-	return;
+
+	if (model->createRequirement(pointInArc, components, params)) {
+		return true;
+	}
+	else {
+		return false;
+	}
 }
-void Presenter::CreateRequirmentTriangle(ID segment1, ID segment2, ID segment3) {
+bool Presenter::CreateRequirmentTriangle(ID segment1, ID segment2, ID segment3) {
 	Array<double> params;//empty
 	Array<ID> components;
 
@@ -138,10 +169,15 @@ void Presenter::CreateRequirmentTriangle(ID segment1, ID segment2, ID segment3) 
 	components.pushBack(segment2);
 	components.pushBack(segment3);
 
-	model->createRequirement(triangle, components, params);
-	return;
+
+	if (model->createRequirement(triangle, components, params)) {
+		return true;
+	}
+	else {
+		return false;
+	}
 }
-void Presenter::CreateRequirmentBestTriangle(ID segment1, ID segment2, ID segment3, double size) {
+bool Presenter::CreateRequirmentCorrectTriangle(ID segment1, ID segment2, ID segment3, double size) {
 	Array<double> params;
 	Array<ID> components;
 
@@ -150,9 +186,37 @@ void Presenter::CreateRequirmentBestTriangle(ID segment1, ID segment2, ID segmen
 	components.pushBack(segment3);
 	params.pushBack(size);
 
-	model->createRequirement(bestTriangle, components, params);
-	return;
+	if (model->createRequirement(correctTriangle, components, params)) {
+		return true;
+	}
+	else {
+		return false;
+	}
 }
+bool Presenter::CreateRequirmentNsAngle(Array<ID>& components) {
+	Array<double> params;
+
+	if (model->createRequirement(nsAngle, components, params)) {
+		return true;
+	}
+	else {
+		return false;
+	}
+}
+bool Presenter::CreateRequirmentCorrectNsAngle(Array<ID>& components, double size) {
+	Array<double> params;
+
+	params.pushBack(size);
+
+	if (model->createRequirement(correctNsAngle, components, params)) {
+		return true;
+	}
+	else {
+		return false;
+	}
+}
+
+
 
 int Presenter::Optimize() {
 	return model->Optimize();

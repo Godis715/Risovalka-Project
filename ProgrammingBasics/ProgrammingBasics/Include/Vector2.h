@@ -12,6 +12,7 @@ public:
 	Vector2 operator -(const Vector2&);
 	Vector2 operator +(const Vector2&);
 	Vector2 operator *(double);
+	Vector2 operator /(double);
 	double GetLength() const;
 
 	double x;

@@ -99,101 +99,160 @@ bool Model::createRequirement(const Requirement_id _id, Array<ID>& id_arr, Array
 	{
 	case distBetPoints: {
 		DistanceBetweenPoints* Requirement;
-		try {
-			Requirement = new DistanceBetweenPoints(*dynamic_cast<Point*>(primitives[0]), *dynamic_cast<Point*>(primitives[1]), params[0]);
-		}
-		catch (std::out_of_range) {
-			throw std::invalid_argument("Invalid parameters");
-		}
+
+		if ((primitives[0]->GetType() == point)
+			&& (primitives[1]->GetType() == point)
+			&& (params.getSize() > 0)) {
+		Requirement = new DistanceBetweenPoints(*dynamic_cast<Point*>(primitives[0]),
+			*dynamic_cast<Point*>(primitives[1]),
+			params[0]);
 		dataReq.pushBack(Requirement);
 		return true;
+		}
+		else {
+			return false;
+		}
 	}
 	case pointsOnTheOneHand: {
 		PointsOnTheOneHand* Requirement;
-		try {
+		if ((primitives[0]->GetType() == segment)
+			&& (primitives[1]->GetType() == point)
+			&& (primitives[2]->GetType() == point)) {
 			Requirement = new PointsOnTheOneHand(*dynamic_cast<Segment*>(primitives[0]),
-				*dynamic_cast<Point*>(primitives[1]), *dynamic_cast<Point*>(primitives[2]));
+				*dynamic_cast<Point*>(primitives[1]),
+				*dynamic_cast<Point*>(primitives[2]));
+			dataReq.pushBack(Requirement);
+			return true;
 		}
-		catch (std::out_of_range) {
-			throw std::invalid_argument("Invalid parameters");
+		else {
+			return false;
 		}
-		dataReq.pushBack(Requirement);
-		return true;
 	}
 	case distBetPointSeg: {
 		DistanceBetweenPointSegment* Requirement;
-		try {
-
-			Requirement = new DistanceBetweenPointSegment(*dynamic_cast<Segment*>(primitives[0]), *dynamic_cast<Point*>(primitives[1]), params[0]);
+		if ((primitives[0]->GetType() == segment)
+			&& (primitives[1]->GetType() == point)
+			&& (params.getSize() > 0)) {
+			Requirement = new DistanceBetweenPointSegment(*dynamic_cast<Segment*>(primitives[0]),
+				*dynamic_cast<Point*>(primitives[1]),
+				params[0]);
+			dataReq.pushBack(Requirement);
+			return true;
 		}
-		catch (std::out_of_range) {
-			throw std::invalid_argument("Invalid parameters");
+		else {
+			return false;
 		}
-		dataReq.pushBack(Requirement);
-		return true;
 	}
 	case angleBetSeg: {
 		AngleBetweenSegments* Requirement;
-		try {
-
-			Requirement = new AngleBetweenSegments(*dynamic_cast<Segment*>(primitives[0]), *dynamic_cast<Segment*>(primitives[1]), params[0]);
+		if ((primitives[0]->GetType() == segment)
+			&& (primitives[1]->GetType() == segment)
+			&& (params.getSize() > 0)) {
+			Requirement = new AngleBetweenSegments(*dynamic_cast<Segment*>(primitives[0]),
+				*dynamic_cast<Segment*>(primitives[1]),
+				params[0]);
+			dataReq.pushBack(Requirement);
+			return true;
 		}
-		catch (std::out_of_range) {
-			throw std::invalid_argument("Invalid parameters");
+		else {
+			return false;
 		}
-		dataReq.pushBack(Requirement);
-		return true;
 	}
 	case distBetPointArc: {
 		DistanceBetweenPointArc* Requirement;
-		try {
-
-			Requirement = new DistanceBetweenPointArc(*dynamic_cast<Arc*>(primitives[0]), *dynamic_cast<Point*>(primitives[1]), params[0]);
+		if ((primitives[0]->GetType() == arc)
+			&& (primitives[1]->GetType() == point)
+			&& (params.getSize() > 0)) {
+			Requirement = new DistanceBetweenPointArc(*dynamic_cast<Arc*>(primitives[0]),
+				*dynamic_cast<Point*>(primitives[1]),
+				params[0]);
+			dataReq.pushBack(Requirement);
+			return true;
 		}
-		catch (std::out_of_range) {
-			throw std::invalid_argument("Invalid parameters");
+		else {
+			return false;
 		}
-		dataReq.pushBack(Requirement);
-		return true;
 	}
 	case pointInArc: {
 		PointInArc* Requirement;
-		try {
-
-			Requirement = new PointInArc(*dynamic_cast<Arc*>(primitives[0]), *dynamic_cast<Point*>(primitives[1]));
+		if ((primitives[0]->GetType() == arc)
+			&& (primitives[1]->GetType() == point)) {
+			Requirement = new PointInArc(*dynamic_cast<Arc*>(primitives[0]),
+				*dynamic_cast<Point*>(primitives[1]));
+			dataReq.pushBack(Requirement);
+			return true;
 		}
-		catch (std::out_of_range) {
-			throw std::invalid_argument("Invalid parameters");
+		else {
+			return false;
 		}
-		dataReq.pushBack(Requirement);
-		return true;
 	}
 	case triangle: {
 		Triangle* Requirement;
-		try {
+		if ((primitives[0]->GetType() == segment)
+			&& (primitives[1]->GetType() == segment)
+			&& (primitives[2]->GetType() == segment)) {
 			Requirement = new Triangle(dynamic_cast<Segment*>(primitives[0]),
 				dynamic_cast<Segment*>(primitives[1]),
 				dynamic_cast<Segment*>(primitives[2]));
+			dataReq.pushBack(Requirement);
+			return true;
 		}
-		catch (std::out_of_range) {
-			throw std::invalid_argument("Invalid parameters");
+		else {
+			return false;
 		}
-		dataReq.pushBack(Requirement);
-		return true;
 	}
-	case bestTriangle: {
-		BestTriangle* Requirement;
-		try {
-			Requirement = new BestTriangle(dynamic_cast<Segment*>(primitives[0]),
+	case correctTriangle: {
+		ÑorrectTriangle* Requirement;
+		if ((primitives[0]->GetType() == segment)
+			&& (primitives[1]->GetType() == segment)
+			&& (primitives[2]->GetType() == segment)
+			&& (params.getSize() > 0)) {
+			Requirement = new ÑorrectTriangle(dynamic_cast<Segment*>(primitives[0]),
 				dynamic_cast<Segment*>(primitives[1]),
 				dynamic_cast<Segment*>(primitives[2]),
 				params[0]);
+			dataReq.pushBack(Requirement);
+			return true;
 		}
-		catch (std::out_of_range) {
-			throw std::invalid_argument("Invalid parameters");
+		else {
+			return false;
 		}
+	}
+	case nsAngle: {
+		NsAngle* Requirement;
+		ListE<Segment*> list;
+		for (int i = 0; i < primitives.getSize(); ++i) {
+			if (segment == primitives[i]->GetType()) {
+				list.PushTail(dynamic_cast<Segment*>(primitives[i]));
+			}
+			else {
+				return false;
+			}
+		}
+		Requirement = new NsAngle(list);
 		dataReq.pushBack(Requirement);
 		return true;
+	}
+	case correctNsAngle: {
+		CorrectNsAngle* Requirement;
+		
+		if (params.getSize() > 0) {
+			ListE<Segment*> list;
+			for (int i = 0; i < primitives.getSize(); ++i) {
+				if (segment == primitives[i]->GetType()) {
+					list.PushTail(dynamic_cast<Segment*>(primitives[i]));
+				}
+				else {
+					return false;
+				}
+			}
+			Requirement = new CorrectNsAngle(list, params[0]);
+			dataReq.pushBack(Requirement);
+			return true;
+		}
+		else {
+			return false;
+		}
 	}
 	default:
 		return false;
@@ -278,7 +337,7 @@ int Model::Optimize() {
 					points[i]->SetPosition(minFuncPos);
 					break;
 				}
-				if (delta < EPS) {
+				if (delta < 1e-6) {
 					break;
 				}
 			}
@@ -321,15 +380,22 @@ int Model::Optimize() {
 				}
 			}
 		}
-		if (count % 100 == 0) {
-			EPS *= 2;
 
-		}
 		if (count % 25 == 0) {
-			std::cout << sum_error << "   "<< iterInside << "\n";
+			std::cout << sum_error << "   "<< iterInside << "   " << EPS << "\n";
+			if (count % 50 == 0) {
+				if (EPS < 0.01) {
+					EPS *= 2;
+				}
+				if (count > 1000) {
+					return count;
+				}
+			}
 		}
 		if (prevError == sum_error) {
-			iterInside *= 2;
+			if (iterInside < 1000) {
+				iterInside *= 2;
+			}
 		}
 		else {
 			if (iterInside > 2) {
@@ -340,9 +406,8 @@ int Model::Optimize() {
 	}
 	
 	if (count < 50) {
-		EPS /= 2;
-		if (EPS < 1e-10) {
-			EPS = 1e-10;
+		if (EPS > 1e-6) {
+			EPS /= 2;
 		}
 	}
 	return count;

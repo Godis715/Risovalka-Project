@@ -135,9 +135,7 @@ public:
 
 	~Array()
 	{
-		if (_storage != nullptr && _size != 0) {
-			delete[] _storage;
-		}
+		delete[] _storage;
 	}
 
 	T& operator[](int index)

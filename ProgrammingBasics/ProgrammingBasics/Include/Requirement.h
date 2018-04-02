@@ -2,6 +2,7 @@
 #define REQUIREMENT_H
 #include "Primitives.h"
 #include <iostream>
+#include "List.h"
 
 class IRequirement {
 public :
@@ -151,7 +152,7 @@ private:
 class DistanceBetweenPointArc : public IRequirement
 {
 public:
-	DistanceBetweenPointArc( Arc& _arc, Point& _point, double dist) :
+	DistanceBetweenPointArc(Arc& _arc, Point& _point, double dist) :
 		arc(_arc),
 		point(_point)
 	{
@@ -359,10 +360,10 @@ private:
 	bool bijection[6];
 };
 
-class BestTriangle : public IRequirement
+class ÑorrectTriangle : public IRequirement
 {
 public:
-	BestTriangle(Segment* _segment1, Segment* _segment2, Segment* _segment3, double _size)
+	ÑorrectTriangle(Segment* _segment1, Segment* _segment2, Segment* _segment3, double _size)
 	{
 		size = _size;
 		Vector2 points[6];
@@ -461,7 +462,7 @@ public:
 		}
 
 	}
-	~BestTriangle() {}
+	~ÑorrectTriangle() {}
 	double error() {
 		double sumError = 0;
 		if (bijection[0]) {
@@ -512,6 +513,286 @@ private:
 	Segment* segment3;
 	double size;
 	bool bijection[6];
+};
+
+class NsAngle : public IRequirement
+{
+public:
+	NsAngle(ListE<Segment*>& list)
+	{
+		count = count = list.GetSize();
+		segments = new Segment*[count];
+		Segment* temp;
+		Segment* minSegment;
+		Vector2 prev;
+		double minDist = 0;
+		double dist = 0;
+		int index = 0;
+		bijection = new bool[count];
+		list.MoveHead();
+		segments[index] = list.GetCurrent();
+		list.DeleteCurrent();
+		prev = segments[index]->GetPoint1_pos();
+		do
+		{
+			list.MoveHead();
+			temp = list.GetCurrent();
+			minSegment = temp;
+			minDist = (prev - temp->GetPoint1_pos()).GetLength();
+			dist = (prev - temp->GetPoint2_pos()).GetLength();
+			if (dist < minDist) {
+				minDist = dist;
+			}
+			list.CreateLabel();
+			while (list.MoveNext())
+			{
+				temp = list.GetCurrent();
+				dist = (prev - temp->GetPoint1_pos()).GetLength();
+				if (dist < minDist) {
+					minDist = dist;
+					minSegment = temp;
+					list.CreateLabel();
+				}
+				dist = (prev - temp->GetPoint2_pos()).GetLength();
+				if (dist < minDist) {
+					minDist = dist;
+					minSegment = temp;
+					list.CreateLabel();
+				}
+			}
+			dist = (prev - minSegment->GetPoint2_pos()).GetLength();
+			if (dist > minDist){
+				bijection[index] = false;
+				prev = minSegment->GetPoint2_pos();
+			}
+			else {
+				bijection[index] = true;
+				prev = minSegment->GetPoint1_pos();
+			}
+			list.DeleteLabel();
+			++index;
+			segments[index] = minSegment;
+		} while (list.GetSize() != 0);
+		bijection[index] = true;
+	}
+	~NsAngle() {}
+	double error() {
+		double sumError = 0;
+		Vector2 vec1;
+		Vector2 vec2;
+		for (int i = 1; i < count - 1; ++i) {
+			if (bijection[i] && bijection[i - 1]) {
+				vec1 = segments[i]->GetPoint1_pos();
+				vec2 = segments[i + 1]->GetPoint2_pos();
+				sumError += DistanceBetweenPoints::errorSt(vec1, vec2, 0);
+			}
+			if (bijection[i] && !bijection[i - 1]) {
+				vec1 = segments[i]->GetPoint2_pos();
+				vec2 = segments[i + 1]->GetPoint2_pos();
+				sumError += DistanceBetweenPoints::errorSt(vec1, vec2, 0);
+			}
+			if (!bijection[i] && bijection[i - 1]) {
+				vec1 = segments[i]->GetPoint1_pos();
+				vec2 = segments[i + 1]->GetPoint1_pos();
+				sumError += DistanceBetweenPoints::errorSt(vec1, vec2, 0);
+			}
+			if (!bijection[i] && !bijection[i - 1]) {
+				vec1 = segments[i]->GetPoint2_pos();
+				vec2 = segments[i + 1]->GetPoint1_pos();
+				sumError += DistanceBetweenPoints::errorSt(vec1, vec2, 0);
+			}
+		}
+		if (bijection[count - 2]) {
+			vec1 = segments[count - 1]->GetPoint1_pos();
+			vec2 = segments[0]->GetPoint2_pos();
+			sumError += DistanceBetweenPoints::errorSt(vec1, vec2, 0);
+		}
+		else {
+			vec1 = segments[count - 1]->GetPoint2_pos();
+			vec2 = segments[0]->GetPoint2_pos();
+			sumError += DistanceBetweenPoints::errorSt(vec1, vec2, 0);
+		}
+		if (bijection[0]) {
+			vec1 = segments[0]->GetPoint1_pos();
+			vec2 = segments[1]->GetPoint2_pos();
+			sumError += DistanceBetweenPoints::errorSt(vec1, vec2, 0);
+		}
+		else {
+			vec1 = segments[0]->GetPoint1_pos();
+			vec2 = segments[1]->GetPoint1_pos();
+			sumError += DistanceBetweenPoints::errorSt(vec1, vec2, 0);
+		}
+		return sumError / count;
+	}
+	void Print() {
+		Vector2 vec1;
+		Vector2 vec2;
+		for (int i = 0; i < count; ++i) {
+			vec1 = segments[i]->GetPoint1_pos();
+			vec2 = segments[i]->GetPoint2_pos();
+			std::cout << i << " segment) " << vec1.x << ' ' << vec1.y << " ; " << vec2.x << ' ' << vec2.y << "\n";
+		}
+		std::cout << "\n";
+	}
+private:
+	Segment** segments;
+	bool* bijection;
+	int count;
+};
+
+class CorrectNsAngle : public IRequirement
+{
+public:
+	CorrectNsAngle(ListE<Segment*>& list, double _size)
+	{
+		Segment* temp;
+		Segment* minSegment;
+		Vector2 prev;
+		count = list.GetSize();
+		size = _size;
+		radius = size / (2 * sin(PI / count));
+		list.MoveHead();
+		center.x = 0;
+		center.y = 0;
+		do
+		{
+			temp = list.GetCurrent();
+			center = center + temp->GetPoint1_pos();
+			center = center + temp->GetPoint2_pos();
+		} while (list.MoveNext());
+		center = center / (double)(count * 2);
+
+		segments = new Segment*[count];
+		double minDist = 0;
+		double dist = 0;
+		int index = 0;
+		bijection = new bool[count];
+		list.MoveHead();
+		segments[index] = list.GetCurrent();
+		list.DeleteCurrent();
+		prev = segments[index]->GetPoint1_pos();
+		do
+		{
+			list.MoveHead();
+			temp = list.GetCurrent();
+			minSegment = temp;
+			minDist = (prev - temp->GetPoint1_pos()).GetLength();
+			dist = (prev - temp->GetPoint2_pos()).GetLength();
+			if (dist < minDist) {
+				minDist = dist;
+			}
+			list.CreateLabel();
+			while (list.MoveNext())
+			{
+				temp = list.GetCurrent();
+				dist = (prev - temp->GetPoint1_pos()).GetLength();
+				if (dist < minDist) {
+					minDist = dist;
+					minSegment = temp;
+					list.CreateLabel();
+				}
+				dist = (prev - temp->GetPoint2_pos()).GetLength();
+				if (dist < minDist) {
+					minDist = dist;
+					minSegment = temp;
+					list.CreateLabel();
+				}
+			}
+			dist = (prev - minSegment->GetPoint2_pos()).GetLength();
+			if (dist > minDist) {
+				bijection[index] = false;
+				prev = minSegment->GetPoint2_pos();
+			}
+			else {
+				bijection[index] = true;
+				prev = minSegment->GetPoint1_pos();
+			}
+			list.DeleteLabel();
+			++index;
+			segments[index] = minSegment;
+		} while (list.GetSize() != 0);
+		bijection[index] = true;
+	}
+	~CorrectNsAngle() {}
+	double error() {
+		/*center.x = 0;
+		center.y = 0;
+		for (int i = 0; i < count; ++i) {
+			center = center + segments[i]->GetPoint1_pos();
+			center = center + segments[i]->GetPoint2_pos();
+		}
+		center = center / (double)(count * 2);*/
+
+		double sumError = 0;
+		Vector2 vec1;
+		Vector2 vec2;
+		for (int i = 1; i < count - 1; ++i) {
+			if (bijection[i] && bijection[i - 1]) {
+				vec1 = segments[i]->GetPoint1_pos();
+				vec2 = segments[i + 1]->GetPoint2_pos();
+				sumError += DistanceBetweenPoints::errorSt(vec1, vec2, 0);
+			}
+			if (bijection[i] && !bijection[i - 1]) {
+				vec1 = segments[i]->GetPoint2_pos();
+				vec2 = segments[i + 1]->GetPoint2_pos();
+				sumError += DistanceBetweenPoints::errorSt(vec1, vec2, 0);
+			}
+			if (!bijection[i] && bijection[i - 1]) {
+				vec1 = segments[i]->GetPoint1_pos();
+				vec2 = segments[i + 1]->GetPoint1_pos();
+				sumError += DistanceBetweenPoints::errorSt(vec1, vec2, 0);
+			}
+			if (!bijection[i] && !bijection[i - 1]) {
+				vec1 = segments[i]->GetPoint2_pos();
+				vec2 = segments[i + 1]->GetPoint1_pos();
+				sumError += DistanceBetweenPoints::errorSt(vec1, vec2, 0);
+			}
+		}
+		if (bijection[count - 2]) {
+			vec1 = segments[count - 1]->GetPoint1_pos();
+			vec2 = segments[0]->GetPoint2_pos();
+			sumError += DistanceBetweenPoints::errorSt(vec1, vec2, 0);
+		}
+		else {
+			vec1 = segments[count - 1]->GetPoint2_pos();
+			vec2 = segments[0]->GetPoint2_pos();
+			sumError += DistanceBetweenPoints::errorSt(vec1, vec2, 0);
+		}
+		if (bijection[0]) {
+			vec1 = segments[0]->GetPoint1_pos();
+			vec2 = segments[1]->GetPoint2_pos();
+			sumError += DistanceBetweenPoints::errorSt(vec1, vec2, 0);
+		}
+		else {
+			vec1 = segments[0]->GetPoint1_pos();
+			vec2 = segments[1]->GetPoint1_pos();
+			sumError += DistanceBetweenPoints::errorSt(vec1, vec2, 0);
+		}
+		for (int i = 0; i < count; ++i) {
+			vec1 = segments[i]->GetPoint1_pos();
+			vec2 = segments[i]->GetPoint2_pos();
+			sumError += DistanceBetweenPoints::errorSt(vec1, vec2, size);
+			sumError += DistanceBetweenPoints::errorSt(vec2, center, radius);
+		}
+		return sumError / (count * 3);
+	}
+	void Print() {
+		Vector2 vec1;
+		Vector2 vec2;
+		for (int i = 0; i < count; ++i) {
+			vec1 = segments[i]->GetPoint1_pos();
+			vec2 = segments[i]->GetPoint2_pos();
+			std::cout << i << " segment) " << vec1.x << ' ' << vec1.y << " ; " << vec2.x << ' ' << vec2.y << "\n";
+		}
+		std::cout << "size- " << size << "\n\n";
+	}
+private:
+	Segment * * segments;
+	bool* bijection;
+	int count;
+	double size;
+	double radius;
+	Vector2 center;
 };
 
 #endif // REQUIREMENT_H
