@@ -12,5 +12,7 @@ public:
 	virtual void DrawPoint(Vector2) = 0;
 
 	virtual void Run() = 0;
+	virtual void Clear() = 0;
+
 };
 

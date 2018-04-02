@@ -276,10 +276,10 @@ void CreateCorrectNsAngle(int count) {
 
 int main()
 {
-	srand(time(nullptr));
-	//CreateCorrectNsAngle(4);
-	//CreateNsAngle(10);
-	CreateBrokenLine(50);
+	//srand(time(nullptr));
+	////CreateCorrectNsAngle(4);
+	////CreateNsAngle(10);
+	//CreateBrokenLine(50);
 	IView* view = new View();
 	view->Run();
 

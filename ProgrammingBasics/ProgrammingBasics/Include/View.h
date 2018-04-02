@@ -20,5 +20,6 @@ public:
 	void DrawPoint(Vector2);
 
 	void Run();
+	void Clear();
 };
 

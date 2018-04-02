@@ -1,6 +1,7 @@
 #include "Presenter.h"
 
 void Presenter::DrawScene() {
+	view->Clear();
 	Array<Model::infoObject> scene;
 	model->DischargeInfoObjects(scene);
 	for (int i = 0; i < scene.getSize(); ++i) {
