@@ -1,11 +1,11 @@
 #include "Model.h"
 #include <stdexcept>
-
 void Model::DischargeInfoObjects(Array<infoObject>& DataInfoObjects)
 {
 	data.MoveBegin();
 	do
 	{
+		
 		infoObject temp;
 		getObjParam(data.GetCurrentKey(), temp.params);
 		getObjType(data.GetCurrentKey(), temp.type);
@@ -413,7 +413,7 @@ int Model::Optimize() {
 	return count;
 }
 
-bool Model::getNearest(double x, double y, ID& obj_id) {
+bool Model::getNearest(double x, double y, ID& obj_id, double& distance) {
 	if (data.getsize() != 0) {
 		Vector2 pos(x, y);
 		data.MoveBegin();
@@ -421,11 +421,17 @@ bool Model::getNearest(double x, double y, ID& obj_id) {
 		double minDist = data.GetCurrent()->GetDistance(pos);
 		while (data.MoveNext()) {
 			double dist = data.GetCurrent()->GetDistance(pos);
-			if (dist < minDist) {
+			if (data.GetCurrent()->GetType() == point) {
+				if (dist < 5.0f) {
+					dist = 0.0;
+				}
+			}
+			if (dist < minDist && data.GetCurrent()->GetType() == point) {
 				minDist = dist;
 				nearestObject = data.GetCurrent()->GetId();
 			}
 		}
+		distance = minDist;
 		obj_id = nearestObject;
 		return true;
 	}

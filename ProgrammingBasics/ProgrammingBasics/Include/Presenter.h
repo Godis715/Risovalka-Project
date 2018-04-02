@@ -34,11 +34,11 @@ public:
 	Presenter();
 	//~Presenter();
 
-
-
 	int Optimize();
 	void PrintSystemRequirement();
 	bool getObjParam(const ID&, Array<double>&);
+
+	bool GetClickedObjectID(double, double, ID&);
 
 	void DrawPoint(double, double);
 	void DrawSegment(double, double, double, double);

@@ -273,3 +273,13 @@ void Presenter::DrawTriangle(
 	model->Optimize();
 	//Draw();
 }
+
+bool Presenter::GetClickedObjectID(double x, double y, ID& obj_id) {
+	double dist;
+	if (model->getNearest(x, y, obj_id, dist)) {
+		if (dist < 1.0) {
+			return true;
+		}
+	}
+	return false;
+}
