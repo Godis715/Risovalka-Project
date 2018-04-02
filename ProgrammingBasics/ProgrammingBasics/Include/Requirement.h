@@ -365,7 +365,10 @@ class ÑorrectTriangle : public IRequirement
 public:
 	ÑorrectTriangle(Segment* _segment1, Segment* _segment2, Segment* _segment3, double _size)
 	{
-		size = _size;
+		size = _segment1->GetLength() + _segment2->GetLength() + _segment2->GetLength();
+
+
+
 		Vector2 points[6];
 		points[0] = _segment1->GetPoint1_pos();
 		points[1] = _segment1->GetPoint2_pos();
@@ -649,18 +652,19 @@ public:
 		Segment* minSegment;
 		Vector2 prev;
 		count = list.GetSize();
-		size = _size;
-		radius = size / (2 * sin(PI / count));
 		list.MoveHead();
 		center.x = 0;
 		center.y = 0;
+		size = 0;
 		do
 		{
 			temp = list.GetCurrent();
 			center = center + temp->GetPoint1_pos();
 			center = center + temp->GetPoint2_pos();
+			size += temp->GetLength();
 		} while (list.MoveNext());
 		center = center / (double)(count * 2);
+		radius = size / (2 * sin(PI / count));
 
 		segments = new Segment*[count];
 		double minDist = 0;
