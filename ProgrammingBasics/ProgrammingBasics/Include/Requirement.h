@@ -1,7 +1,6 @@
 #ifndef REQUIREMENT_H
 #define REQUIREMENT_H
-#include "Hash-Table.h"
-#include <iostream>
+#include "Dictionary.h"
 
 
 class IRequirement {

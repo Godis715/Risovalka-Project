@@ -1,8 +1,6 @@
 #ifndef __TYPE
 #define __TYPE
 
-#include <string>
-
 enum type_id { point = 1, segment, arc };
 
 //class Type {

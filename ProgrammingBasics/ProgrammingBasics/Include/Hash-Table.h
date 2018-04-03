@@ -1,6 +1,5 @@
 #pragma once
 #include "Primitives.h"
-
 // в таблице хранится сортированный список
 
 using namespace std;
