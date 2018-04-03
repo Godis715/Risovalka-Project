@@ -292,14 +292,18 @@ int Model::Optimize() {
 	double sum_error = 0;
 	sum_error = GetError();
 	double prevError = sum_error;
+	double prevLastError = sum_error;
 	int count = 0;
 	int iterInside = 2;
+	double delta = sum_error;
+	EPS = 1e-5;
+	std::cout << sum_error << "   " << iterInside << "   " << EPS << "  " << delta << "\n";
 
 	while (sum_error > EPS) {
 		++count;
 		for (int i = 0; i < points.getSize(); ++i) {
 
-			double delta = sum_error;
+			delta = sum_error;
 
 			Vector2 pos = points[i]->GetPosition();
 			for (int k = 0; k < iterInside; ++k)
@@ -382,18 +386,23 @@ int Model::Optimize() {
 		}
 
 		if (count % 25 == 0) {
-			std::cout << sum_error << "   "<< iterInside << "   " << EPS << "\n";
+			std::cout << sum_error << "   "<< iterInside << "   " << EPS << "  " << delta << "\n";
 			if (count % 50 == 0) {
 				if (EPS < 0.01) {
 					EPS *= 2;
 				}
-				if (count > 1000) {
+				if (count > 400) {
+					//std::cout << sum_error << "   " << iterInside << "   " << EPS << "  " << delta << "\n";
 					return count;
 				}
+				if (prevLastError == sum_error) {
+					return count;
+				}
+				prevLastError = sum_error;
 			}
 		}
 		if (prevError == sum_error) {
-			if (iterInside < 1000) {
+			if (iterInside < 32) {
 				iterInside *= 2;
 			}
 		}
@@ -404,12 +413,7 @@ int Model::Optimize() {
 		}
 		prevError = sum_error;
 	}
-	
-	if (count < 50) {
-		if (EPS > 1e-6) {
-			EPS /= 2;
-		}
-	}
+	std::cout << sum_error << "   " << iterInside << "   " << EPS << "  " << delta << "\n";
 	return count;
 }
 

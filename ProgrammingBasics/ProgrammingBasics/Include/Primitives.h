@@ -57,6 +57,7 @@ private:
 public:
 	Segment(Point*, Point*);
 	double GetDistance(Vector2) const override;
+	double GetLength() const;
 	ID GetPoint1_ID() const;
 	ID GetPoint2_ID() const;
 	Vector2 GetPoint1_pos() const;

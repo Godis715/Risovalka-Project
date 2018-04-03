@@ -56,7 +56,9 @@ Segment::Segment(Point* _p1, Point* _p2) :
 	point1 = _p1;
 	point2 = _p2;
 }
-
+double Segment::GetLength() const {
+	return (point1->GetPosition() - point2->GetPosition()).GetLength();
+}
 Vector2 Segment::GetPoint1_pos() const {
 	return point1->GetPosition();
 }
