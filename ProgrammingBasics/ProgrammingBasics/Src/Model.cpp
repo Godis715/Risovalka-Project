@@ -294,7 +294,7 @@ int Model::Optimize() {
 	double prevError = sum_error;
 	double prevLastError = sum_error;
 	int count = 0;
-	int iterInside = 2;
+	int iterInside = 3;
 	double delta = sum_error;
 	EPS = 1e-5;
 	std::cout << sum_error << "   " << iterInside << "   " << EPS << "  " << delta << "\n";
@@ -402,12 +402,12 @@ int Model::Optimize() {
 			}
 		}
 		if (prevError == sum_error) {
-			if (iterInside < 32) {
+			if (iterInside < 24) {
 				iterInside *= 2;
 			}
 		}
 		else {
-			if (iterInside > 2) {
+			if (iterInside > 3) {
 				iterInside /= 2;
 			}
 		}

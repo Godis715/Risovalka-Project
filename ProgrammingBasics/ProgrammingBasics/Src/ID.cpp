@@ -14,6 +14,9 @@ bool ID::operator< (const ID& item) const {
 bool ID::operator> (const ID& item) const {
 	return hash > item.hash;
 }
+int ID::operator %(int value) const {
+	return this->hash % value;
+}
 ID::ID() {
 	hash = 0;
 }

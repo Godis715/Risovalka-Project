@@ -1,8 +1,8 @@
 #ifndef REQUIREMENT_H
 #define REQUIREMENT_H
-#include "Primitives.h"
+#include "Hash-Table.h"
 #include <iostream>
-#include "List.h"
+
 
 class IRequirement {
 public :
