@@ -419,7 +419,7 @@ int Model::Optimize1() {
 
 void Model::Optimize2(Array<IRequirement>& requirments) {
 	// get parameters number
-	int params_number;
+	int params_number = 0;
 	for (int i = 0; i < requirments.getSize(); ++i) {
 		
 	}
