@@ -202,12 +202,12 @@ bool Model::createRequirement(const Requirement_id _id, Array<ID>& id_arr, Array
 		}
 	}
 	case correctTriangle: {
-		ÑorrectTriangle* Requirement;
+		ï¿½orrectTriangle* Requirement;
 		if ((primitives[0]->GetType() == segment)
 			&& (primitives[1]->GetType() == segment)
 			&& (primitives[2]->GetType() == segment)
 			&& (params.getSize() > 0)) {
-			Requirement = new ÑorrectTriangle(dynamic_cast<Segment*>(primitives[0]),
+			Requirement = new ï¿½orrectTriangle(dynamic_cast<Segment*>(primitives[0]),
 				dynamic_cast<Segment*>(primitives[1]),
 				dynamic_cast<Segment*>(primitives[2]),
 				params[0]);

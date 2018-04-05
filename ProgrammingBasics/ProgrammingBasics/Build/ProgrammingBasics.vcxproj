@@ -125,7 +125,7 @@
     <ClCompile Include="..\Src\Model.cpp" />
     <ClCompile Include="..\Src\Presenter.cpp" />
     <ClCompile Include="..\Src\Vector2.cpp" />
-    <ClCompile Include="View.cpp" />
+    <ClCompile Include="..\Src\View.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Include\Array.h" />
@@ -142,6 +142,7 @@
     <ClInclude Include="..\Include\Presenter.h" />
     <ClInclude Include="..\Include\Primitives.h" />
     <ClInclude Include="..\Include\Requirement.h" />
+    <ClInclude Include="..\Include\Set.h" />
     <ClInclude Include="..\Include\Type.h" />
     <ClInclude Include="..\Include\Vector2.h" />
     <ClInclude Include="..\Include\View.h" />
