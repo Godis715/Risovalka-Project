@@ -418,7 +418,11 @@ int Model::Optimize1() {
 }
 
 void Model::Optimize2(Array<IRequirement>& requirments) {
-	
+	// get parameters number
+	int params_number;
+	for (int i = 0; i < requirments.getSize(); ++i) {
+		
+	}
 }
 
 bool Model::getNearest(double x, double y, ID& obj_id, double& distance) {

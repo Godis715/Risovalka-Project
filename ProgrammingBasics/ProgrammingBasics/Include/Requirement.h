@@ -8,14 +8,36 @@ private:
 	int num;
 public:
 	Parameters(int);
-	double**& operator[](int);
+	Parameters();
+	Parameters(Parameters&);
+	double*& operator[](int);
+	int GetSize() const;
 };
+
+Parameters::Parameters() { }
+Parameters::Parameters(Parameters& p) {
+	num = p.num;
+	params = new double*[num];
+	for (int i = 0; i < num; ++i) {
+		params[i] = p.params[i];
+	}
+}
+Parameters::Parameters(int _size) {
+	params = new double*[_size];
+	num = _size;
+}
+double*& Parameters::operator[](int index) {
+	return params[index];
+}
+int Parameters::GetSize() const {
+	return num;
+}
 
 class IRequirement {
 private:
 	const ID id;
 protected:
-	double** params;
+	Parameters params;
 	int params_num;
 public :
 	IRequirement(ID _id) : id(_id) {}
@@ -24,8 +46,12 @@ public :
 	ID GetID() const {
 		return id;
 	}
-
+	Parameters GetParams();
 };
+
+Parameters IRequirement::GetParams() {
+	return params;
+}
 
 class DistanceBetweenPoints : public IRequirement
 {
@@ -35,8 +61,8 @@ public:
 	{
 		Vector2* pos1;
 		Vector2* pos2;
-		params = new double*[5];
-		params[4] = nullptr;
+		
+		params = Parameters(4);
 
 		params[0] = &pos1->x;
 		params[1] = &pos1->y;
