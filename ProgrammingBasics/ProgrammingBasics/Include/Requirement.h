@@ -2,26 +2,47 @@
 #define REQUIREMENT_H
 #include "Dictionary.h"
 
+class Parameters {
+private:
+	double** params;
+	int num;
+public:
+	Parameters(int);
+	double**& operator[](int);
+};
 
 class IRequirement {
 private:
-	const IDReq id;
+	const ID id;
+protected:
+	double** params;
+	int params_num;
 public :
-	IRequirement(IDReq _id) : id(_id) {}
+	IRequirement(ID _id) : id(_id) {}
 	virtual double error() = 0;
 	virtual void Print() = 0;
-	IDReq GetID() const {
+	ID GetID() const {
 		return id;
 	}
+
 };
 
 class DistanceBetweenPoints : public IRequirement
 {
 public:
 	DistanceBetweenPoints(Point& _point1, Point& _point2, double _distance) :
-		point1(_point1), point2(_point2),
-		IRequirement(IDReqGenerator::getInstance()->generateIDReq())
+		IRequirement(IDGenerator::getInstance()->generateID())
 	{
+		Vector2* pos1;
+		Vector2* pos2;
+		params = new double*[5];
+		params[4] = nullptr;
+
+		params[0] = &pos1->x;
+		params[1] = &pos1->y;
+		params[2] = &pos2->x;
+		params[3] = &pos2->y;
+
 		distance = _distance;
 	}
 	~DistanceBetweenPoints() {}
@@ -29,21 +50,18 @@ public:
 		return abs((vec1 - vec2).GetLength() - dist);
 	}
 	double error() {
-		return abs(point1.GetDistance(point2.GetPosition()) - distance);
+		return (params[0] - params[2]) * (params[0] - params[2]) + 
+			(params[1] - params[3]) * (params[1] - params[3]);
 	}
 	void ChangeDistance(double _distance) {
 		distance = _distance;
 	}
 	void Print() {
-		Vector2 vec = point1.GetPosition();
-		std::cout << " point1) " << vec.x << ' ' << vec.y << "\n";
-		vec = point2.GetPosition();
-		std::cout << " point2) " << vec.x << ' ' << vec.y << "\n\n";
+		std::cout << " point1) " << params[0] << ' ' << params[1] << "\n";
+		std::cout << " point2) " << params[2] << ' ' << params[3] << "\n\n";
 	}
 private:
 	double distance;
-	Point& point1;
-	Point& point2;
 };
 
 class PointsOnTheOneHand : public IRequirement
@@ -53,7 +71,7 @@ public:
 		segment(_segment),
 		point1(_point1),
 		point2(_point2),
-		IRequirement(IDReqGenerator::getInstance()->generateIDReq()) {}
+		IRequirement(IDGenerator::getInstance()->generateID()) {}
 	~PointsOnTheOneHand() {}
 	double error() {
 
@@ -94,7 +112,7 @@ public:
 	DistanceBetweenPointSegment(Segment& _segment, Point& _point, double _distance) :
 		segment(_segment),
 		point(_point),
-		IRequirement(IDReqGenerator::getInstance()->generateIDReq())
+		IRequirement(IDGenerator::getInstance()->generateID())
 	{
 		distance = _distance;
 	}
@@ -126,7 +144,7 @@ public:
 	AngleBetweenSegments(Segment& _segment1, Segment& _segment2, double _andle) :
 		segment1(_segment1),
 		segment2(_segment2),
-		IRequirement(IDReqGenerator::getInstance()->generateIDReq())
+		IRequirement(IDGenerator::getInstance()->generateID())
 	{
 		angle = _andle;
 	}
@@ -163,7 +181,7 @@ public:
 	DistanceBetweenPointArc(Arc& _arc, Point& _point, double dist) :
 		arc(_arc),
 		point(_point),
-		IRequirement(IDReqGenerator::getInstance()->generateIDReq())
+		IRequirement(IDGenerator::getInstance()->generateID())
 	{
 		distance = dist;
 	}
@@ -188,7 +206,7 @@ public:
 	PointInArc(Arc& _arc,  Point& _point) :
 		arc(_arc),
 		point(_point),
-		IRequirement(IDReqGenerator::getInstance()->generateIDReq()) {}
+		IRequirement(IDGenerator::getInstance()->generateID()) {}
 	~PointInArc() {}
 	// return distance to arc and angle
 	double error() {
@@ -227,7 +245,7 @@ class Triangle : public IRequirement
 {
 public:
 	Triangle(Segment* _segment1, Segment* _segment2, Segment* _segment3) :
-		IRequirement(IDReqGenerator::getInstance()->generateIDReq())
+		IRequirement(IDGenerator::getInstance()->generateID())
 	{
 		Vector2 points[6];
 		points[0] = _segment1->GetPoint1_pos();
@@ -374,7 +392,7 @@ class ÑorrectTriangle : public IRequirement
 {
 public:
 	ÑorrectTriangle(Segment* _segment1, Segment* _segment2, Segment* _segment3, double _size) :
-		IRequirement(IDReqGenerator::getInstance()->generateIDReq())
+		IRequirement(IDGenerator::getInstance()->generateID())
 	{
 		size = _segment1->GetLength() + _segment2->GetLength() + _segment2->GetLength();
 
@@ -533,7 +551,7 @@ class NsAngle : public IRequirement
 {
 public:
 	NsAngle(ListE<Segment*>& list) :
-		IRequirement(IDReqGenerator::getInstance()->generateIDReq())
+		IRequirement(IDGenerator::getInstance()->generateID())
 	{
 		count = count = list.GetSize();
 		segments = new Segment*[count];
@@ -659,7 +677,7 @@ class CorrectNsAngle : public IRequirement
 {
 public:
 	CorrectNsAngle(ListE<Segment*>& list, double _size) :
-		IRequirement(IDReqGenerator::getInstance()->generateIDReq())
+		IRequirement(IDGenerator::getInstance()->generateID())
 	{
 		Segment* temp;
 		Segment* minSegment;

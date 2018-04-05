@@ -268,7 +268,7 @@ double Model::GetError() {
 	return sum_error / dataReq.getSize();
 }
 
-int Model::Optimize() {
+int Model::Optimize1() {
 
 	if (data.getsize() == 0) {
 		return 0;
@@ -415,6 +415,10 @@ int Model::Optimize() {
 	}
 	std::cout << sum_error << "   " << iterInside << "   " << EPS << "  " << delta << "\n";
 	return count;
+}
+
+void Model::Optimize2(Array<IRequirement>& requirments) {
+	
 }
 
 bool Model::getNearest(double x, double y, ID& obj_id, double& distance) {
