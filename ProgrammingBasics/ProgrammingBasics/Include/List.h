@@ -268,11 +268,11 @@ public:
 
 	void PushAfterCurrent(T newValue) {
 		if (size == 0) {
-			PushNewHead(newValue);
+			PushHead(newValue);
 			return;
 		}
 		if (current == tail) {
-			PushNewTail(newValue);
+			PushTail(newValue);
 			return;
 		}
 		Element<T>* newElement = new Element<T>;
@@ -286,11 +286,11 @@ public:
 
 	void PushBeforeCurrent(T newValue) {
 		if (size == 0) {
-			PushNewHead(newValue);
+			PushHead(newValue);
 			return;
 		}
 		if (current == head) {
-			PushNewHead(newValue);
+			PushHead(newValue);
 			return;
 		}
 		MovePrev();

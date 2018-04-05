@@ -219,7 +219,7 @@ bool Presenter::CreateRequirmentCorrectNsAngle(Array<ID>& components, double siz
 
 
 int Presenter::Optimize() {
-	return model->Optimize();
+	return model->Optimize1();
 }
 void Presenter::PrintSystemRequirement() {
 	model->PrintSystemRequirement();
@@ -270,7 +270,7 @@ void Presenter::DrawTriangle(
 	CreateRequirmentDistBetPoints(points2[0], points2[1], 35.0);
 	CreateRequirmentDistBetPoints(points3[1], points3[0], 35.0);
 
-	model->Optimize();
+	model->Optimize1();
 	//Draw();
 }
 

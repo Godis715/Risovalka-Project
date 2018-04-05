@@ -2,8 +2,6 @@
 #include "Primitives.h"
 // в таблице хранится сортированный список
 
-using namespace std;
-
 template <class Tkey, class Tval> class HashTable
 {
 private:
@@ -11,18 +9,23 @@ private:
 	{
 	public:
 		Pair() {}
+		Pair(int _key, int _val) {
+			key = _key;
+			value = _val;
+		}
 		~Pair() {}
 		Tkey key;
-		Tval Tval;
+		Tval value;
 	};
 
 	// массив указателей на списки
-	ListE<Pair<Tkey, Tval>>** table;
+	ListE<Pair<Tkey, Tval>*>** table;
 	int hashSize = 0;
 	int countElements = 0;
 
 	// запись нового слова в определенный список таблицы
-	void PushToColumn(int index , Pair<Tkey, Tval> pair) {
+	void PushToColumn(int index, Pair<Tkey, Tval>* pair) {
+		++countElements;
 		if (table[index]->GetSize() == 0) {
 			table[index]->PushHead(pair);
 			return;
@@ -30,16 +33,16 @@ private:
 		table[index]->MoveTail();
 		do
 		{
-			if (pair.key > table[index]->GetCurrent().key) {
+			if (pair->key > table[index]->GetCurrent()->key) {
 				table[index]->PushAfterCurrent(pair);
 				return;
 			}
-		} while (table[index]->MoveTail());
+		} while (table[index]->MovePrev());
 		table[index]->PushHead(pair);
 	}
 
 	int HashFunction_1(Tkey key) {
-		return key % size;
+		return key % hashSize;
 	}
 
 	int HashFunction_2(Pair pair) {
@@ -53,17 +56,17 @@ private:
 	void ChangeHashTable() {
 		int prevSize = hashSize;
 		hashSize *= 2;
-		ListE<Pair<Tkey, Tval>>** temp = table;
-		table = new ListE<Pair<Tkey, Tval>>*[hashSize];
+		ListE<Pair<Tkey, Tval>*>** temp = table;
+		table = new ListE<Pair<Tkey, Tval>*>*[hashSize];
 		for (int i = 0; i < hashSize; ++i) {
-			table[i] = new ListE<Pair<Tkey, Tval>>;
+			table[i] = new ListE<Pair<Tkey, Tval>*>;
 		}
 		for (int i = 0; i < prevSize; ++i) {
 			if (temp[i]->GetSize() != 0) {
 				do
 				{
-					Tval value = temp[i]->GetCurrent().value;
-					Tkey key = temp[i]->GetCurrent().key;
+					Tval value = temp[i]->GetCurrent()->value;
+					Tkey key = temp[i]->GetCurrent()->key;
 					Input(key, value);
 				} while (temp[i]->MovePrev() != 0);
 				temp[i]->DeleteList();
@@ -74,9 +77,11 @@ private:
 public:
 	HashTable(int size) {
 		hashSize = size;
-		table = new ListE<Pair<Tkey, Tval>>*[hashSize];
+		Tkey* temp = new Tkey;
+		int t = *temp % 5;
+		table = new ListE<Pair<Tkey, Tval>*>*[hashSize];
 		for (int i = 0; i < hashSize; ++i) {
-			table[i] = new ListE<Pair<Tkey, Tval>>;
+			table[i] = new ListE<Pair<Tkey, Tval>*>;
 		}
 
 	}
@@ -87,15 +92,15 @@ public:
 	}
 
 	void Input(Tkey key, Tval value) {
-		Pair<Tkey, Tval> pair(key, value);
-		int index = HashFunction_1(pair);
+		Pair<Tkey, Tval>* pair = new Pair<Tkey, Tval>(key, value);
+		int index = HashFunction_1(key);
 		PushToColumn(index, pair);
 		if (hashSize <= countElements * 2) {
 			ChangeHashTable();
 		}
 	}
 
-	bool Searching(Tkey key, Tval& value){
+	bool Searching(Tkey key, Tval& value) {
 		int index = HashFunction_1(key);
 		if (table[index]->GetSize() == 0) {
 			return false;
@@ -103,11 +108,11 @@ public:
 		table->MoveHead();
 		do
 		{
-			if (key == table[index]->GetCurrent().key) {
-				value = table[index]->GetCurrent().value;
+			if (key == table[index]->GetCurrent()->key) {
+				value = table[index]->GetCurrent()->value;
 				return true;
 			}
-			if (key < table[index]->GetCurrent().key) {
+			if (key < table[index]->GetCurrent()->key) {
 				return false;
 			}
 		} while (table[index]->MoveNext());
@@ -122,11 +127,11 @@ public:
 		table[index]->MoveHead();
 		do
 		{
-			if (key == table[index]->GetCurrent().key) {
+			if (key == table[index]->GetCurrent()->key) {
 				table[index]->DeleteCurrent();
 				return;
 			}
-			if (key < table[index]->GetCurrent().key) {
+			if (key < table[index]->GetCurrent()->key) {
 				return;
 			}
 		} while (table[index]->MoveNext());
