@@ -1,8 +1,8 @@
 #ifndef __PRIMITIVES
 #define __PRIMITIVES
 #define PI 3.141592653589793 
-
-
+#include "List.h"
+#include "Array.h"
 #include "Vector2.h"
 #include "IDgenerator.h"
 #include "Type.h"

@@ -1,20 +1,26 @@
 #ifndef REQUIREMENT_H
 #define REQUIREMENT_H
-#include "Primitives.h"
-#include <iostream>
-#include "List.h"
+#include "Dictionary.h"
+
 
 class IRequirement {
+private:
+	const IDReq id;
 public :
+	IRequirement(IDReq _id) : id(_id) {}
 	virtual double error() = 0;
 	virtual void Print() = 0;
+	IDReq GetID() const {
+		return id;
+	}
 };
 
 class DistanceBetweenPoints : public IRequirement
 {
 public:
 	DistanceBetweenPoints(Point& _point1, Point& _point2, double _distance) :
-	point1(_point1), point2(_point2)
+		point1(_point1), point2(_point2),
+		IRequirement(IDReqGenerator::getInstance()->generateIDReq())
 	{
 		distance = _distance;
 	}
@@ -46,8 +52,8 @@ public:
 	PointsOnTheOneHand( Segment& _segment, Point& _point1, Point& _point2) :
 		segment(_segment),
 		point1(_point1),
-		point2(_point2)
-	{}
+		point2(_point2),
+		IRequirement(IDReqGenerator::getInstance()->generateIDReq()) {}
 	~PointsOnTheOneHand() {}
 	double error() {
 
@@ -87,7 +93,8 @@ class DistanceBetweenPointSegment : public IRequirement
 public:
 	DistanceBetweenPointSegment(Segment& _segment, Point& _point, double _distance) :
 		segment(_segment),
-		point(_point)
+		point(_point),
+		IRequirement(IDReqGenerator::getInstance()->generateIDReq())
 	{
 		distance = _distance;
 	}
@@ -118,7 +125,8 @@ class AngleBetweenSegments : public IRequirement
 public:
 	AngleBetweenSegments(Segment& _segment1, Segment& _segment2, double _andle) :
 		segment1(_segment1),
-		segment2(_segment2)
+		segment2(_segment2),
+		IRequirement(IDReqGenerator::getInstance()->generateIDReq())
 	{
 		angle = _andle;
 	}
@@ -144,8 +152,8 @@ public:
 		
 	}
 private:
-	 Segment& segment1;
-	 Segment& segment2;
+	Segment& segment1;
+	Segment& segment2;
 	double angle;
 };
 
@@ -154,7 +162,8 @@ class DistanceBetweenPointArc : public IRequirement
 public:
 	DistanceBetweenPointArc(Arc& _arc, Point& _point, double dist) :
 		arc(_arc),
-		point(_point)
+		point(_point),
+		IRequirement(IDReqGenerator::getInstance()->generateIDReq())
 	{
 		distance = dist;
 	}
@@ -178,8 +187,8 @@ class PointInArc : public IRequirement
 public:
 	PointInArc(Arc& _arc,  Point& _point) :
 		arc(_arc),
-		point(_point)
-	{}
+		point(_point),
+		IRequirement(IDReqGenerator::getInstance()->generateIDReq()) {}
 	~PointInArc() {}
 	// return distance to arc and angle
 	double error() {
@@ -217,7 +226,8 @@ private:
 class Triangle : public IRequirement
 {
 public:
-	Triangle(Segment* _segment1, Segment* _segment2, Segment* _segment3)
+	Triangle(Segment* _segment1, Segment* _segment2, Segment* _segment3) :
+		IRequirement(IDReqGenerator::getInstance()->generateIDReq())
 	{
 		Vector2 points[6];
 		points[0] = _segment1->GetPoint1_pos();
@@ -363,7 +373,8 @@ private:
 class ÑorrectTriangle : public IRequirement
 {
 public:
-	ÑorrectTriangle(Segment* _segment1, Segment* _segment2, Segment* _segment3, double _size)
+	ÑorrectTriangle(Segment* _segment1, Segment* _segment2, Segment* _segment3, double _size) :
+		IRequirement(IDReqGenerator::getInstance()->generateIDReq())
 	{
 		size = _segment1->GetLength() + _segment2->GetLength() + _segment2->GetLength();
 
@@ -521,7 +532,8 @@ private:
 class NsAngle : public IRequirement
 {
 public:
-	NsAngle(ListE<Segment*>& list)
+	NsAngle(ListE<Segment*>& list) :
+		IRequirement(IDReqGenerator::getInstance()->generateIDReq())
 	{
 		count = count = list.GetSize();
 		segments = new Segment*[count];
@@ -646,7 +658,8 @@ private:
 class CorrectNsAngle : public IRequirement
 {
 public:
-	CorrectNsAngle(ListE<Segment*>& list, double _size)
+	CorrectNsAngle(ListE<Segment*>& list, double _size) :
+		IRequirement(IDReqGenerator::getInstance()->generateIDReq())
 	{
 		Segment* temp;
 		Segment* minSegment;

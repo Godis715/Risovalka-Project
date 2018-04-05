@@ -1,6 +1,7 @@
 #ifndef __DICT
 #define __DICT
 #include "Dequeue.h"
+#include "Hash-Table.h"
 
 template <class TKey, class TVal> class Pair
 {

@@ -2,6 +2,7 @@
 #define IDGENERATOR_H
 
 #include "ID.h"
+#include "IDReq.h"
 
 class IDGenerator
 {
@@ -15,5 +16,19 @@ class IDGenerator
 
 	static unsigned long long _lastGivenHash;
 };
+
+class IDReqGenerator
+{
+public:
+	static IDReqGenerator * getInstance();
+
+	IDReq generateIDReq();
+private:
+	IDReqGenerator() { }
+	static IDReqGenerator* _instance;
+
+	static unsigned long long _lastGivenHashReq;
+};
+
 
 #endif // IDGENERATOR_H

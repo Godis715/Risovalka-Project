@@ -21,7 +21,7 @@ private:
 	bool CreateRequirmentAngleBetweenSegments(ID, ID, double);
 	bool CreateRequirmentDistanceBetweenPointArc(ID, ID, double);
 	bool CreateRequirmentPointInArc(ID, ID);
-//	bool CreateRequirmentTriangle(ID, ID, ID);
+	//bool CreateRequirmentTriangle(ID, ID, ID);
 	//bool CreateRequirmentCorrectTriangle(ID, ID, ID, double);
 	//bool CreateRequirmentNsAngle(Array<ID>&);
 	//bool CreateRequirmentCorrectNsAngle(Array<ID>&, double);
