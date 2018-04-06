@@ -14,7 +14,7 @@ private:
 public:
 	Primitive(ID, type_id);
 	virtual double GetDistance(Vector2) const = 0;
-	ID GetId() const;
+	ID GetID() const;
 	type_id GetType();
 };
 
@@ -74,8 +74,8 @@ class Arc : public Primitive {
 private:
 	Point* point1;
 	Point* point2;
-	double angle; // from 0 to 2pi
 public:
+	double angle; // from 0 to 2pi
 	Arc(Point*, Point*, double);
 	double GetDistance(Vector2) const override;
 	Vector2 GetCenter() const;

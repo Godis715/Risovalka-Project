@@ -30,3 +30,15 @@ template <typename T> int Parameters<T>::GetSize() const {
 Parameters<double*> IRequirement::GetParams() {
 	return params;
 }
+
+Parameters<double> IRequirement::gradient() {
+	Parameters<double> grad(params_num);
+	double err = error();
+	for (int i = 0; i < params_num; ++i) {
+		(*params[i]) += EPS;
+		double delta_error = error() - err;
+		(*params[i]) -= EPS;
+		grad[i] = delta_error / EPS;
+	}
+	return grad;
+}

@@ -23,8 +23,8 @@ bool Model::createObject(type_id type, Array<double>& params, ID& obj_id) {
 		}
 		Point* _point;
 		_point = new Point(params[0], params[1]);
-		data.Add(_point->GetId(),_point);
-		obj_id = _point->GetId();
+		data.Add(_point->GetID(),_point);
+		obj_id = _point->GetID();
 		return true;
 	}
 	case segment: {
@@ -36,11 +36,11 @@ bool Model::createObject(type_id type, Array<double>& params, ID& obj_id) {
 
 		Segment* _seg = new Segment(p1, p2);
 
-		data.Add(p1->GetId(), p1);
-		data.Add(p2->GetId(), p2);
-		data.Add(_seg->GetId(), _seg);
+		data.Add(p1->GetID(), p1);
+		data.Add(p2->GetID(), p2);
+		data.Add(_seg->GetID(), _seg);
 
-		obj_id = _seg->GetId();
+		obj_id = _seg->GetID();
 		return true;
 	}
 	case arc: {
@@ -52,11 +52,11 @@ bool Model::createObject(type_id type, Array<double>& params, ID& obj_id) {
 
 		Arc* _arc = new Arc(p1, p2, params[4]);
 
-		data.Add(p1->GetId(), p1);
-		data.Add(p2->GetId(), p2);
-		data.Add(_arc->GetId(), _arc);
+		data.Add(p1->GetID(), p1);
+		data.Add(p2->GetID(), p2);
+		data.Add(_arc->GetID(), _arc);
 
-		obj_id = _arc->GetId();
+		obj_id = _arc->GetID();
 		return true;
 	}
 	default:
@@ -76,7 +76,7 @@ bool Model::createSegment(ID& p1ID, ID& p2ID, ID& segID) {
 				Point* point1 = dynamic_cast<Point*>(point1PR);
 				Point* point2 = dynamic_cast<Point*>(point2PR);
 				Segment* segment = new Segment(point1, point2);
-				segID = segment->GetId();
+				segID = segment->GetID();
 				data.Add(segID, segment);
 				return true;
 			}
@@ -417,7 +417,6 @@ int Model::Optimize1() {
 	return count;
 }
 
-
 double Model::GetError(Array<IRequirement*>& requirments) {
 	double error = 0.0;
 	for (int i = 0; i < requirments.getSize(); ++i) {
@@ -428,7 +427,8 @@ double Model::GetError(Array<IRequirement*>& requirments) {
 
 double Model::ErrorByAlpha(Array<IRequirement*>& req, Parameters<double*> params, Parameters<double> aGrad, double alpha) {
 	for (int i = 0; i < params.GetSize(); ++i) {
-		*(params[i]) += aGrad[i] * alpha;
+		double delta = aGrad[i];
+		*(params[i]) += delta * alpha;
 	}
 	double error = GetError(req);
 	for (int i = 0; i < params.GetSize(); ++i) {
@@ -456,7 +456,7 @@ void Model::OptimizeByGradient(Array<IRequirement*>& requirments, Parameters<dou
 		double x2 = left + (right - left) / k;
 
 		double x1_Value = ErrorByAlpha(requirments, params, aGradient, x1);
-		double x2_Value = ErrorByAlpha(requirments, params, aGradient, x1);
+		double x2_Value = ErrorByAlpha(requirments, params, aGradient, x2);
 
 		if (x1 > x2) {
 			left = x1;
@@ -469,7 +469,7 @@ void Model::OptimizeByGradient(Array<IRequirement*>& requirments, Parameters<dou
 	}
 }
 
-void Model::Optimize2(Array<IRequirement*>& requirments) {
+void Model::OptimizeRequirements(Array<IRequirement*>& requirments) {
 
 	// get parameters number
 	int params_number = 0;
@@ -501,7 +501,7 @@ void Model::Optimize2(Array<IRequirement*>& requirments) {
 		int gradSize = currentGradient.GetSize();
 		
 		for (int j = 0; j < gradSize; ++j) {
-
+			aGradient[param_iterator] = 0.0;
 			aGradient[param_iterator] -= currentGradient[j];
 			param_iterator++;
 		}
@@ -510,12 +510,19 @@ void Model::Optimize2(Array<IRequirement*>& requirments) {
 	OptimizeByGradient(requirments, parameters, aGradient);
 }
 
+void Model::OptimizeAllRequirements() {
+	Array<IRequirement*> req;
+	for (int i = 0; i < dataReq.getSize(); ++i) {
+		req.pushBack(dataReq[i]);
+	}
+	OptimizeRequirements(req);
+}
 
 bool Model::getNearest(double x, double y, ID& obj_id, double& distance) {
 	if (data.getsize() != 0) {
 		Vector2 pos(x, y);
 		data.MoveBegin();
-		ID nearestObject = data.GetCurrent()->GetId();
+		ID nearestObject = data.GetCurrent()->GetID();
 		double minDist = data.GetCurrent()->GetDistance(pos);
 		while (data.MoveNext()) {
 			double dist = data.GetCurrent()->GetDistance(pos);
@@ -526,7 +533,7 @@ bool Model::getNearest(double x, double y, ID& obj_id, double& distance) {
 			}
 			if (dist < minDist && data.GetCurrent()->GetType() == point) {
 				minDist = dist;
-				nearestObject = data.GetCurrent()->GetId();
+				nearestObject = data.GetCurrent()->GetID();
 			}
 		}
 		distance = minDist;

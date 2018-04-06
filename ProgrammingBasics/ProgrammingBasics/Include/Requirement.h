@@ -22,7 +22,7 @@ protected:
 	Parameters<double*> params;
 	int params_num;
 public :
-	IRequirement(ID _id) : id(_id) {}
+	IRequirement(ID _id) : id(_id) { }
 	virtual double error() = 0;
 	Parameters<double> gradient();
 	virtual void Print() = 0;
@@ -30,6 +30,7 @@ public :
 		return id;
 	}
 	Parameters<double*> GetParams();
+	bool Contains(ID&) const;
 };
 
 class DistanceBetweenPoints : public IRequirement
@@ -39,7 +40,7 @@ public:
 		IRequirement(IDGenerator::getInstance()->generateID())
 	{
 		Vector2* pos1 = &_point1.position;
-		Vector2* pos2 = &_point1.position;
+		Vector2* pos2 = &_point2.position;
 		
 		params = Parameters<double*>(4);
 
@@ -48,6 +49,7 @@ public:
 		params[2] = &pos2->x;
 		params[3] = &pos2->y;
 
+		params_num = 4;
 		distance = _distance;
 	}
 	~DistanceBetweenPoints() {}
@@ -55,9 +57,9 @@ public:
 		return abs((vec1 - vec2).GetLength() - dist);
 	}
 	double error() {
-		return (*(params[0]) - *(params[2])) * (*(params[0]) - *(params[2])) +
-			(*(params[1]) - *(params[3]) - distance) *
-			(*(params[1]) - *(params[3]) + distance * distance);
+		double dist = (*(params[0]) - *(params[2])) * (*(params[0]) - *(params[2])) +
+			(*(params[1]) - *(params[3])) * (*(params[1]) - *(params[3])) - distance * distance;
+		return dist * dist;
 	}
 	void ChangeDistance(double _distance) {
 		distance = _distance;
@@ -71,17 +73,6 @@ private:
 	double distance;
 };
 
-Parameters<double> IRequirement::gradient() {
-	Parameters<double> grad(params_num);
-	double err = error();
-	for (int i = 0; i < params_num; ++i) {
-		(*params[i]) += EPS;
-		double delta_error = error() - err;
-		(*params[i]) -= EPS;
-		grad[i] = delta_error / EPS;
-	}
-	return grad;
-}
 
 class PointsOnTheOneHand : public IRequirement
 {

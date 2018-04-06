@@ -330,6 +330,18 @@ public:
 		}
 		return index;
 	}
+
+	bool find(T value)
+	{
+		for (size_t i = 0; i < _size; i++)
+		{
+			if (value = _storage[i])
+			{
+				return true;
+			}
+		}
+		return false;
+	}
 };
 
 template <class T> std::ostream& operator<< (std::ostream& out, Array<T>& arr)
