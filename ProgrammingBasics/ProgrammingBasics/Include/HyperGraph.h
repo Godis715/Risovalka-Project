@@ -7,6 +7,7 @@ private:
 	class Component
 	{
 	private:
+		const ID id;
 		Dict<ID, Primitive*> dataPrimitive;
 		Dict<ID, IRequirement*> dataRequirement;
 	public:
@@ -16,11 +17,12 @@ private:
 		bool Delete(ID&);
 		Array<double*> GetParams();
 		double GetError();
+		ID GetID() const;
 	};
 
 	int currentIndex;
 
-	Array<Component> components;
+	Dict<ID, Component> components;
 	void SplitingAndBFS(int index);
 	void MergeComponents(int array[], int size);
 public:
