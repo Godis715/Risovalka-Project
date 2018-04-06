@@ -14,9 +14,9 @@ private:
 		~Component() {}
 		bool SearchPrimitive(ID&) const;
 		void DeletePrimitive(ID&);
-		bool SearchRequirement(IDReq&) const;
-		void DeleteRequirement(IDReq&);
 	};
+
+	int currentIndex;
 
 	Array<Component> components;
 	void SplitingAndBFS(int index);
@@ -25,13 +25,8 @@ private:
 public:
 	HyperGraph() {}
 	~HyperGraph() {}
-	int Optimize(int index);
-	int Optimize_2(int index);
 	bool SearchPrimitive(ID&) const;
 	void DeletePrimitive(ID&);
-	bool SearchRequirement(IDReq&) const;
-	void DeleteRequirement(IDReq&);
-	void Add(IDReq&, Array<ID&>);
 	void Add(IRequirement*, Array<Primitive*>);
 	Array<Primitive*> UploadingDataPrimitive();
 	Array<IRequirement*> UploadingDataRequirement();
