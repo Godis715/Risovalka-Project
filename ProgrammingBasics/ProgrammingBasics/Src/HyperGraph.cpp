@@ -58,13 +58,13 @@ double HyperGraph::Component::GetError()
 
 bool HyperGraph::Component::Delete(ID& _id) {
 
-	if (dataRequirement.find(_id)) {
+	if (dataRequirement.Find(_id)) {
 		delete dataRequirement.GetCurrent();
 		dataRequirement.Erase(_id);
 		return true;
 	}
 
-	if (dataPrimitive.find(_id)) {
+	if (dataPrimitive.Find(_id)) {
 		Primitive* primitive = dataPrimitive.GetCurrent();
 		dataRequirement.MoveBegin();
 		do

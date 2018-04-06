@@ -30,13 +30,13 @@ public:
 	~HyperGraph() {}
 	
 	int GetSize() {
-		return components.getSize();
+		return components.GetSize();
 	}
 	int GetCurrent() {
 		return currentIndex;
 	}
 	void SetCurrent(int index) {
-		currentIndex = abs(index) % components.getSize();
+		currentIndex = abs(index) % components.GetSize();
 	}
 	void DeleteComponent(int index);
 	int Search(ID&);

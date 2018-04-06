@@ -68,9 +68,9 @@ bool Model::createSegment(ID& p1ID, ID& p2ID, ID& segID) {
 	Primitive* point1PR;
 	Primitive* point2PR;
 	bool error = false;
-	if (data.find(p1ID)) {
+	if (data.Find(p1ID)) {
 		point1PR = data.GetCurrent();
-		if (data.find(p2ID)) {
+		if (data.Find(p2ID)) {
 			point2PR = data.GetCurrent();
 			if ((point1PR->GetType() == point) && (point2PR->GetType() == point)) {
 				Point* point1 = dynamic_cast<Point*>(point1PR);
@@ -88,7 +88,7 @@ bool Model::createSegment(ID& p1ID, ID& p2ID, ID& segID) {
 bool Model::createRequirement(const Requirement_id _id, Array<ID>& id_arr, Array<double>& params) {
 	Array<Primitive*> primitives;
 	for (int i = 0; i < id_arr.getSize(); ++i) {
-		if (data.find(id_arr[i])) {
+		if (data.Find(id_arr[i])) {
 			primitives.pushBack(data.GetCurrent());
 		}
 		else {
@@ -270,7 +270,7 @@ double Model::GetError() {
 
 int Model::Optimize1() {
 
-	if (data.getsize() == 0) {
+	if (data.GetSize() == 0) {
 		return 0;
 	}
 
@@ -519,7 +519,7 @@ void Model::OptimizeAllRequirements() {
 }
 
 bool Model::getNearest(double x, double y, ID& obj_id, double& distance) {
-	if (data.getsize() != 0) {
+	if (data.GetSize() != 0) {
 		Vector2 pos(x, y);
 		data.MoveBegin();
 		ID nearestObject = data.GetCurrent()->GetID();
@@ -548,7 +548,7 @@ bool Model::getNearest(double x, double y, ID& obj_id, double& distance) {
 
 bool Model::getObjType(const ID& obj_id, type_id& type) {
 	Primitive* obj = nullptr;
-	bool isFound = data.find(obj_id);
+	bool isFound = data.Find(obj_id);
 	obj = data.GetCurrent();
 	if (isFound) {
 		type = obj->GetType();
@@ -561,7 +561,7 @@ bool Model::getObjType(const ID& obj_id, type_id& type) {
 
 bool Model::getObjParam(const ID& obj_id, Array<double>& result) {
 	Primitive* obj = nullptr;
-	bool isFound = data.find(obj_id);
+	bool isFound = data.Find(obj_id);
 	if (isFound) {
 		obj = data.GetCurrent();
 		switch (obj->GetType()) {
@@ -610,7 +610,7 @@ bool Model::getObjParam(const ID& obj_id, Array<double>& result) {
 
 bool Model::GetSegmentPoints(ID obj_id, Array<ID>& arr) {
 	Primitive* obj;
-	if (!data.find(obj_id)) {
+	if (!data.Find(obj_id)) {
 		return false;
 	}
 	obj = data.GetCurrent();
@@ -625,7 +625,7 @@ bool Model::GetSegmentPoints(ID obj_id, Array<ID>& arr) {
 
 bool Model::GetArcPoints(ID obj_id, Array<ID>& arr) {
 	Primitive* obj;
-	if (!data.find(obj_id)) {
+	if (!data.Find(obj_id)) {
 		return false;
 	}
 	obj = data.GetCurrent();
