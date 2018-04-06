@@ -140,7 +140,21 @@ int HyperGraph::GetSize() {
 
 void HyperGraph::DeleteComponent(ID id)
 {
-	//
+	components.Find(id);
+	components.GetCurrent()->dataPrimitive.MoveHead();
+	do
+	{
+		delete components.GetCurrent()->dataPrimitive.GetCurrent();
+	} while (components.GetCurrent()->dataPrimitive.MoveNext());
+	components.GetCurrent()->dataPrimitive.DeleteDict();
+
+	components.GetCurrent()->dataRequirement.MoveHead();
+	do
+	{
+		delete components.GetCurrent()->dataRequirement.GetCurrent();
+	} while (components.GetCurrent()->dataRequirement.MoveNext());
+	components.GetCurrent()->dataRequirement.DeleteDict();
+	components.Erase(id);
 }
 
 void HyperGraph::MergeComponents(Array<ID>& idComponets)
