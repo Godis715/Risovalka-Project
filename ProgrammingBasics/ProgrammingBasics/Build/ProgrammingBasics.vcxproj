@@ -120,6 +120,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\Include\Primitives.cpp" />
+    <ClCompile Include="..\Src\HyperGraph.cpp" />
     <ClCompile Include="..\Src\ID.cpp" />
     <ClCompile Include="..\Src\main.cpp" />
     <ClCompile Include="..\Src\Model.cpp" />
