@@ -14,7 +14,6 @@ public:
 	int GetSize() const;
 };
 
-
 class IRequirement {
 private:
 	const ID id;
@@ -78,7 +77,7 @@ Parameters<double> IRequirement::gradient() {
 	for (int i = 0; i < params_num; ++i) {
 		(*params[i]) += EPS;
 		double delta_error = error() - err;
-		(*params[i]) += EPS;
+		(*params[i]) -= EPS;
 		grad[i] = delta_error / EPS;
 	}
 	return grad;
