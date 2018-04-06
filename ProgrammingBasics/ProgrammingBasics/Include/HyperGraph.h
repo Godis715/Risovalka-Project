@@ -1,4 +1,5 @@
-#pragma once
+#ifndef __HYPERGRAPH
+#define __HYPERGRAPH
 #include "Requirement.h"
 #include "Set.h"
 
@@ -39,3 +40,7 @@ public:
 	Array<Primitive*> UploadingDataPrimitive();
 	Array<IRequirement*> UploadingDataRequirement();
 };
+
+
+
+#endif

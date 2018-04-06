@@ -137,7 +137,6 @@
     <ClInclude Include="..\Include\HyperGraph.h" />
     <ClInclude Include="..\Include\ID.h" />
     <ClInclude Include="..\Include\IDGenerator.h" />
-    <ClInclude Include="..\Include\IDReq.h" />
     <ClInclude Include="..\Include\IView.h" />
     <ClInclude Include="..\Include\List.h" />
     <ClInclude Include="..\Include\Model.h" />

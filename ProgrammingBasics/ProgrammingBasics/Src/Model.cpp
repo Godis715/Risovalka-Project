@@ -583,6 +583,7 @@ bool Model::getObjParam(const ID& obj_id, Array<double>& result) {
 			result.pushBack(pos1.y);
 			result.pushBack(pos2.x);
 			result.pushBack(pos2.y);
+			return true;
 			break;
 		}
 		case arc: {
@@ -596,6 +597,7 @@ bool Model::getObjParam(const ID& obj_id, Array<double>& result) {
 			result.pushBack(pos2.x);
 			result.pushBack(pos2.y);
 			result.pushBack(angle);
+			return true;
 			break;
 		}
 		default: {
@@ -603,9 +605,8 @@ bool Model::getObjParam(const ID& obj_id, Array<double>& result) {
 		}
 		}
 	}
-	else {
-		return false;
-	}
+	return false;
+
 }
 
 bool Model::GetSegmentPoints(ID obj_id, Array<ID>& arr) {

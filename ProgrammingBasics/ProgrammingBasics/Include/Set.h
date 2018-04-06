@@ -103,8 +103,7 @@ public:
 			head = new Node<TKey, TValue>;
 			head->key = key;
 			head->value = value;
-			current = head;
-			return;
+			return true;
 		}
 
 		support = head;
@@ -144,6 +143,7 @@ public:
 				}
 			}
 		}
+		return false;
 	}
 
 	bool GetByKey(TKey key, TValue& value) {
@@ -180,9 +180,14 @@ public:
 	}
 
 	TValue PopElement() {
+		TValue value;
 		if (size == 1) {
 			--size;
-			return head->value;
+			value = head->value;
+			delete head;
+			head = nullptr;
+			support = nullptr;
+			return value;
 		}
 		--size;
 		support = head;
@@ -196,14 +201,14 @@ public:
 			}
 		}
 		if (support == support->parent->leftChild) {
-			support->parent->leftChild == nullptr;
-			TValue value = support->value;
+			support->parent->leftChild = nullptr;
+			value = support->value;
 			delete support;
 			return value;
 		}
 		if (support == support->parent->rightChild) {
-			support->parent->rightChild == nullptr;
-			TValue value = support->value;
+			support->parent->rightChild = nullptr;
+			value = support->value;
 			delete support;
 			return value;
 		}

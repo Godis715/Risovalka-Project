@@ -178,12 +178,12 @@ Array<Primitive*> HyperGraph::SplitingAndBFS(ID id) {
 			if (component->dataPrimitive.Find(ID_In_Req[i])) {
 				Primitive* tempPrimitive = component->dataPrimitive.GetCurrent();
 				component->dataPrimitive.DeleteCurrent();
-				set.Push(tempPrimitive->GetID, tempPrimitive);
+				set.Push(tempPrimitive->GetID(), tempPrimitive);
 			}
 		}
 		IRequirement* Req = component->dataRequirement.GetCurrent();
 		component->dataRequirement.DeleteCurrent();
-		newComponent->dataRequirement.Add(Req->GetID, Req);
+		newComponent->dataRequirement.Add(Req->GetID(), Req);
 		//
 		do
 		{
@@ -197,18 +197,18 @@ Array<Primitive*> HyperGraph::SplitingAndBFS(ID id) {
 						if (component->dataPrimitive.Find(ID_In_Req[i])) {
 							Primitive* tempPrimitive = component->dataPrimitive.GetCurrent();
 							component->dataPrimitive.DeleteCurrent();
-							set.Push(tempPrimitive->GetID, tempPrimitive);
+							set.Push(tempPrimitive->GetID(), tempPrimitive);
 						}
 					}
 					IRequirement* Req = component->dataRequirement.GetCurrent();
 					component->dataRequirement.DeleteCurrent();
-					newComponent->dataRequirement.Add(Req->GetID, Req);
+					newComponent->dataRequirement.Add(Req->GetID(), Req);
 					component->dataRequirement.MovePrev();
 				}
 			} while (component->dataRequirement.MoveNext());
 			newComponent->dataPrimitive.Add(primitive->GetID(), primitive);
 		} while (set.getsize() > 0);
-		components.Add(newComponent->GetID, newComponent);
+		components.Add(newComponent->GetID(), newComponent);
 	} while (component->dataRequirement.GetSize() > 0);
 	if (component->dataPrimitive.GetSize() != 0) {
 		component->dataPrimitive.MoveBegin();
