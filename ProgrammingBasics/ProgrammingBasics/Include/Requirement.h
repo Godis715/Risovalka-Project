@@ -30,6 +30,7 @@ public :
 		return id;
 	}
 	Parameters<double*> GetParams();
+	bool Contains(ID&) const;
 };
 
 class DistanceBetweenPoints : public IRequirement

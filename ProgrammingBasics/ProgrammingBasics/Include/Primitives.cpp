@@ -1,7 +1,7 @@
 #include "Primitives.h"
 #include <cmath>
 
-ID Primitive::GetId() const {
+ID Primitive::GetID() const {
 	return id;
 }
 Primitive::Primitive(ID _id, type_id _type) :

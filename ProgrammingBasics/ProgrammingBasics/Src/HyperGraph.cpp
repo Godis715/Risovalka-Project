@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 #include "HyperGraph.h"
 
 bool HyperGraph::Component::Search(ID& id)
@@ -54,4 +55,79 @@ double HyperGraph::Component::GetError()
 
 	} while (dataRequirement.MoveNext());
 	return error;
+=======
+#include "HyperGraph.h"
+
+bool HyperGraph::Component::Delete(ID& _id) {
+
+	if (dataRequirement.find(_id)) {
+		delete dataRequirement.GetCurrent();
+		dataRequirement.Erase(_id);
+		return true;
+	}
+
+	if (dataPrimitive.find(_id)) {
+		Primitive* primitive = dataPrimitive.GetCurrent();
+		dataRequirement.MoveBegin();
+		do
+		{
+			if (dataRequirement.GetCurrent()->Contains(_id)) {
+				delete dataRequirement.GetCurrent();
+				dataRequirement.Erase(_id);
+			}
+		} while (dataRequirement.MoveNext());
+		switch (primitive->GetType)
+		{
+		case point: {
+			dataPrimitive.MoveBegin();
+			do
+			{
+				if (dataPrimitive.GetCurrent()->GetType() == segment) {
+					Segment* seg = dynamic_cast<Segment*>(dataPrimitive.GetCurrent());
+					if (seg->GetPoint1_ID() == primitive->GetID()) {
+						dataPrimitive.Erase(seg->GetPoint1_ID());
+						dataPrimitive.Erase(seg->GetID());
+						delete primitive;
+						delete seg;
+						return true;
+					}
+					if (seg->GetPoint2_ID() == primitive->GetID()) {
+						dataPrimitive.Erase(seg->GetPoint2_ID());
+						dataPrimitive.Erase(seg->GetID());
+						delete primitive;
+						delete seg;
+						return true;
+					}
+				}
+				if (dataPrimitive.GetCurrent()->GetType() == arc) {
+					Segment* _arc = dynamic_cast<Segment*>(dataPrimitive.GetCurrent());
+					if (_arc->GetPoint1_ID() == primitive->GetID()) {
+						dataPrimitive.Erase(seg->GetPoint1_ID());
+						dataPrimitive.Erase(seg->GetID());
+						delete primitive;
+						delete seg;
+						return true;
+					}
+					if (_arc->GetPoint2_ID() == primitive->GetID()) {
+						dataPrimitive.Erase(seg->GetPoint2_ID());
+						dataPrimitive.Erase(seg->GetID());
+						delete primitive;
+						delete seg;
+						return true;
+					}
+				}
+			} while (dataPrimitive.MoveNext());
+		}
+		default:
+			break;
+		}
+		delete dataRequirement.GetCurrent();
+		dataRequirement.Erase(_id);
+		return true;
+	}
+}
+
+double HyperGraph::Component::GetError() {
+
+>>>>>>> Stashed changes
 }

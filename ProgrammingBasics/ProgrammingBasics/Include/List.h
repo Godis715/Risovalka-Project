@@ -243,7 +243,7 @@ public:
 		head = nullptr;
 		tail = nullptr;
 		current = nullptr;
-		current = nullptr;
+		label = nullptr;
 	}
 
 	int GetSize() {

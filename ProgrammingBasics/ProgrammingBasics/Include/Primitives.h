@@ -14,7 +14,7 @@ private:
 public:
 	Primitive(ID, type_id);
 	virtual double GetDistance(Vector2) const = 0;
-	ID GetId() const;
+	ID GetID() const;
 	type_id GetType();
 };
 
