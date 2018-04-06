@@ -9,7 +9,8 @@ template <class T> class Array
 private:
 	T * _storage = nullptr;
 	int _size = 0;
-	int _capacity = 512;
+	int _capacity;
+	int _first_capacity = 512;
 
 	void doubleCapacity()
 	{
@@ -113,7 +114,7 @@ public:
 
 	Array()
 	{
-		_capacity = 512;
+		_capacity = _first_capacity;
 		_size = 0;
 		_storage = new T[_capacity];
 	}
@@ -125,13 +126,11 @@ public:
 			std::cout << "Bad array size!\n";
 			throw std::invalid_argument("Bad array size!");
 		}
-		if (size > _capacity)
-		{
-			_capacity = 2 * size;
-		}
-		_size = size;
+		_first_capacity = size;
+		_capacity = _first_capacity;
+		_size = 0;
 		_storage = new T[_capacity];
-		fillDefault(0, _size - 1);
+		//fillDefault(0, _size - 1);
 	}
 
 	~Array()

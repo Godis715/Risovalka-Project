@@ -103,7 +103,6 @@ public:
 			head = new Node<TKey, TValue>;
 			head->key = key;
 			head->value = value;
-			head->high = 1;
 			current = head;
 			return;
 		}
@@ -126,8 +125,6 @@ public:
 					support->rightChild->key = key;
 					support->rightChild->value = value;
 					support->rightChild->parent = support;
-					support->rightChild->high = 1;
-					RestoreHigh();
 					return true;
 				}
 			}
@@ -143,7 +140,6 @@ public:
 					support->leftChild->key = key;
 					support->leftChild->value = value;
 					support->leftChild->parent = support;
-					RestoreHigh();
 					return true;
 				}
 			}
