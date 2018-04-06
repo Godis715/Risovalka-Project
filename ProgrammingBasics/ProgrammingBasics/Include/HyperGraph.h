@@ -30,4 +30,5 @@ public:
 	void Add(IRequirement*, Array<Primitive*>);
 	Array<Primitive*> UploadingDataPrimitive();
 	Array<IRequirement*> UploadingDataRequirement();
+	int GetSize();
 };

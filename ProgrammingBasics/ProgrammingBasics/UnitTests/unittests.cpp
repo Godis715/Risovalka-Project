@@ -1,10 +1,11 @@
 #include "stdafx.h"
 #include "CppUnitTest.h"
 #include "../Include/Array.h"
-#include "../Include/List.h"
 #include "../Include/Dictionary.h"
 #include "../Include/hidden/list_util(hidden).h"
-
+#include "../Include/List.h"
+#include "../Include/Requirement.h"
+#include "../Include/HyperGraph.h"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
@@ -669,6 +670,243 @@ namespace UnitTests
 			dic.Erase(5);
 			Assert::AreEqual(8, dic.getsize());
 			Assert::IsFalse(dic.find(5));
+		}
+
+	};
+
+	TEST_CLASS(ListE_BasicFunctionality)
+	{
+	public:
+
+		TEST_METHOD(Test_ListE_GetSize)
+		{
+			ListE<int> list;
+			Assert::AreEqual(0, list.GetSize());
+			list.PushHead(1);
+			Assert::AreEqual(1, list.GetSize());
+			list.PushTail(2);
+			Assert::AreEqual(2, list.GetSize());
+			list.MoveHead();
+			list.PushAfterCurrent(3);
+			Assert::AreEqual(3, list.GetSize());
+			list.MoveTail();
+			list.PushBeforeCurrent(4);
+			Assert::AreEqual(4, list.GetSize());
+		}
+
+		TEST_METHOD(Test_ListE_PushHead)
+		{
+			ListE<int> list;
+			list.PushHead(1);
+			Assert::AreEqual(1, list.GetSize());
+			list.PushHead(2);
+			Assert::AreEqual(2, list.GetSize());
+			list.MoveHead();
+			Assert::AreEqual(2, list.GetCurrent());
+			list.MoveNext();
+			Assert::AreEqual(1, list.GetCurrent());
+		}
+
+		TEST_METHOD(Test_ListE_PushAfterCurrent)
+		{
+			ListE<int> list;
+			list.PushAfterCurrent(1);
+			Assert::AreEqual(1, list.GetSize());
+			Assert::AreEqual(1, list.GetCurrent());
+			list.PushAfterCurrent(2);
+			Assert::AreEqual(2, list.GetSize());
+			Assert::AreEqual(2, list.GetCurrent());
+		}
+
+		TEST_METHOD(Test_ListE_PushBeforeCurrent)
+		{
+			ListE<int> list;
+			list.PushBeforeCurrent(1);
+			Assert::AreEqual(1, list.GetSize());
+			Assert::AreEqual(1, list.GetCurrent());
+			list.PushBeforeCurrent(2);
+			Assert::AreEqual(2, list.GetSize());
+			Assert::AreEqual(1, list.GetCurrent());
+			list.MovePrev();
+			Assert::AreEqual(2, list.GetCurrent());
+		}
+
+		TEST_METHOD(Test_ListE_PushTail)
+		{
+			ListE<int> list;
+			list.PushTail(1);
+			Assert::AreEqual(1, list.GetSize());
+			list.MoveTail();
+			Assert::AreEqual(1, list.GetCurrent());
+			list.PushTail(2);
+			Assert::AreEqual(2, list.GetSize());
+			list.MoveTail();
+			Assert::AreEqual(2, list.GetCurrent());
+		}
+
+		TEST_METHOD(Test_ListE_DeleteCurrent)
+		{
+			ListE<int> list;
+			list.PushTail(1);
+			list.PushTail(2);
+			list.PushTail(3);
+			list.MoveHead();
+			list.MoveNext();
+			list.DeleteCurrent();
+			Assert::AreEqual(2, list.GetSize());
+			list.MoveHead();
+			list.DeleteCurrent();
+			Assert::AreEqual(1, list.GetSize());
+			list.MoveHead();
+			list.DeleteCurrent();
+			Assert::AreEqual(0, list.GetSize());
+		}
+
+		TEST_METHOD(Test_ListE_DeleteList)
+		{
+			ListE<int> list;
+			list.PushHead(1);
+			list.PushHead(2);
+			list.DeleteList();
+			Assert::AreEqual(0, list.GetSize());
+			list.DeleteList();
+			Assert::AreEqual(0, list.GetSize());
+		}
+
+		TEST_METHOD(Test_ListE_IsCurrent)
+		{
+			ListE<int> list;
+			Assert::AreEqual(false, list.IsCurrent());
+			list.PushHead(2);
+			Assert::AreEqual(true, list.IsCurrent());
+			list.DeleteList();
+			Assert::AreEqual(false, list.IsCurrent());
+		}
+
+		TEST_METHOD(Test_ListE_GetCurrent)
+		{
+			ListE<int> list;
+			list.PushTail(1);
+			list.PushTail(2);
+			list.PushTail(3);
+			Assert::AreEqual(1, list.GetCurrent());
+			list.MoveNext();
+			Assert::AreEqual(2, list.GetCurrent());
+			list.MoveNext();
+			Assert::AreEqual(3, list.GetCurrent());
+		}
+
+		TEST_METHOD(Test_ListE_MoveHead)
+		{
+			ListE<int> list;
+			list.PushTail(1);
+			list.PushTail(2);
+			list.MoveHead();
+			Assert::AreEqual(1, list.GetCurrent());
+		}
+
+		TEST_METHOD(Test_ListE_MoveTail)
+		{
+			ListE<int> list;
+			list.PushTail(1);
+			list.PushTail(2);
+			list.MoveTail();
+			Assert::AreEqual(2, list.GetCurrent());
+		}
+
+		TEST_METHOD(Test_ListE_MoveNext)
+		{
+			ListE<int> list;
+			list.PushTail(1);
+			list.PushTail(2);
+			Assert::AreEqual(1, list.GetCurrent());
+			list.MoveNext();
+			Assert::AreEqual(2, list.GetCurrent());
+		}
+
+		TEST_METHOD(Test_ListE_MovePrev)
+		{
+			ListE<int> list;
+			list.PushTail(1);
+			list.PushTail(2);
+			list.MoveTail();
+			Assert::AreEqual(2, list.GetCurrent());
+			list.MovePrev();
+			Assert::AreEqual(1, list.GetCurrent());
+		}
+
+	};
+
+	TEST_CLASS(HyperGraph_BasicFuctionality)
+	{
+	public:
+
+		TEST_METHOD(Test_HyperGraph_Add)
+		{
+			HyperGraph hg;
+			Assert::AreEqual(0, hg.GetSize());
+			Point p1(1, 1);
+			Point p2(2, 2);
+			Array<Primitive*> arp;
+			arp.pushBack(&p1);
+			arp.pushBack(&p2);
+			DistanceBetweenPoints req(p1, p2, 5);
+			hg.Add(&req, arp);
+			Assert::AreEqual(1, hg.GetSize());
+			Point p3(3, 3);
+			Point p4(4, 4);
+			Array<Primitive*> arp2;
+			arp2.pushBack(&p3);
+			arp2.pushBack(&p4);
+			DistanceBetweenPoints req2(p3, p4, 2);
+			hg.Add(&req2, arp2);
+			Assert::AreEqual(2, hg.GetSize());
+			DistanceBetweenPoints req1(p2, p4, 2);
+			Array<Primitive*> arp1;
+			arp1.pushBack(&p2);
+			arp1.pushBack(&p4);
+			hg.Add(&req1, arp1);
+			Assert::AreEqual(1, hg.GetSize());
+		}
+
+		TEST_METHOD(Test_HyperGraph_SearchPrimitive)
+		{
+			HyperGraph hg;
+			Point p1(1, 1);
+			Point p2(2, 2);
+			Array<Primitive*> arp;
+			arp.pushBack(&p1);
+			arp.pushBack(&p2);
+			DistanceBetweenPoints req(p1, p2, 5);
+			hg.Add(&req, arp);
+			Assert::AreEqual(true, hg.SearchPrimitive(p1.GetId()));
+			Assert::AreEqual(true, hg.SearchPrimitive(p2.GetId()));
+			Point p3(3, 2);
+			Assert::AreEqual(false, hg.SearchPrimitive(p3.GetId()));
+		}
+
+		TEST_METHOD(Test_HyperGraph_DeletePrimitive)
+		{
+			HyperGraph hg;
+			Point p1(1, 1);
+			Point p2(2, 2);
+			Array<Primitive*> arp;
+			arp.pushBack(&p1);
+			arp.pushBack(&p2);
+			DistanceBetweenPoints req(p1, p2, 5);
+			hg.Add(&req, arp);
+			hg.DeletePrimitive(p1.GetId());
+			Assert::AreEqual(0, hg.GetSize());
+		}
+
+		TEST_METHOD(Test_HyperGraph_UploadingDataPrimitive)
+		{
+
+		}
+
+		TEST_METHOD(Test_HyperGraph_UploadingDataRequirement)
+		{
+
 		}
 
 	};
