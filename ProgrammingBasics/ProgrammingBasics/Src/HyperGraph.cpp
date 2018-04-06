@@ -124,3 +124,37 @@ int HyperGraph::Search(ID& _id) {
 
 	return -1;
 }
+
+void HyperGraph::DeleteComponent(ID id)
+{
+	//
+}
+
+void HyperGraph::MergeComponents(Array<ID> idComponets)
+{
+	components.Find(idComponets[0]);
+	Component* input = components.GetCurrent();
+	for (int i = 1; i < idComponets.getSize(); i++)
+	{
+		components.Find(idComponets[i]);
+		components.GetCurrent()->dataPrimitive.MoveHead();
+		do
+		{
+			input->dataPrimitive.Add(components.GetCurrent()->dataPrimitive.GetCurrentKey(),
+				components.GetCurrent()->dataPrimitive.GetCurrent()
+			);
+		} while (components.GetCurrent()->dataPrimitive.MoveNext());
+		components.GetCurrent()->dataPrimitive.DeleteDict();
+
+		components.GetCurrent()->dataRequirement.MoveHead();
+		do
+		{
+			input->dataRequirement.Add(components.GetCurrent()->dataRequirement.GetCurrentKey(),
+				components.GetCurrent()->dataRequirement.GetCurrent()
+			);
+		} while (components.GetCurrent()->dataRequirement.MoveNext());
+		components.GetCurrent()->dataRequirement.DeleteDict();
+		components.Erase(idComponets[i]);
+	}
+	
+}

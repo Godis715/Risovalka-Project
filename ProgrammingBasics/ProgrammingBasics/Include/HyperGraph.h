@@ -8,9 +8,9 @@ private:
 	{
 	private:
 		const ID id;
+	public:
 		Dict<ID, Primitive*> dataPrimitive;
 		Dict<ID, IRequirement*> dataRequirement;
-	public:
 		Component() {}
 		~Component() {}
 		bool Search(ID&);
@@ -22,9 +22,9 @@ private:
 
 	int currentIndex;
 
-	Dict<ID, Component> components;
-	void SplitingAndBFS(int index);
-	void MergeComponents();
+	Dict<ID, Component*> components;
+	void SplitingAndBFS(int);
+	void MergeComponents(Array<ID>);
 public:
 	HyperGraph() {}
 	~HyperGraph() {}
@@ -38,7 +38,7 @@ public:
 	void SetCurrent(int index) {
 		currentIndex = abs(index) % components.GetSize();
 	}
-	void DeleteComponent(int index);
+	void DeleteComponent(ID id);
 	int Search(ID&);
 	void Delete(ID&);
 	void Add(IRequirement*, Array<Primitive*>);
