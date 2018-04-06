@@ -1,6 +1,5 @@
 #include "Requirement.h"
 
-
 #ifndef __MODEL
 #define __MODEL
 
@@ -15,6 +14,10 @@ private:
 	Array<IRequirement*> dataReq;
 	IDGenerator* idGen;
 	double GetError();
+	double GetError(Array<IRequirement*>&);
+	double ErrorByAlpha(Array<IRequirement*>&, Parameters<double*>, Parameters<double>, double);
+
+	void OptimizeByGradient(Array<IRequirement*>&, Parameters<double*>, Parameters<double>);
 
 public:
 	class infoObject
@@ -40,7 +43,7 @@ public:
 	bool GetArcPoints(ID, Array<ID>&);
 	bool getObjParam(const ID&, Array<double>&);
 	int Optimize1();
-	void Optimize2(Array<IRequirement>&);
+	void Optimize2(Array<IRequirement*>&);
 	void PrintSystemRequirement();
 };
 

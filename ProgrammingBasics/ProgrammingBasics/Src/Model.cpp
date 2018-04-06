@@ -1,11 +1,11 @@
 #include "Model.h"
 #include <stdexcept>
+
 void Model::DischargeInfoObjects(Array<infoObject>& DataInfoObjects)
 {
 	data.MoveBegin();
 	do
 	{
-		
 		infoObject temp;
 		getObjParam(data.GetCurrentKey(), temp.params);
 		getObjType(data.GetCurrentKey(), temp.type);
@@ -417,13 +417,99 @@ int Model::Optimize1() {
 	return count;
 }
 
-void Model::Optimize2(Array<IRequirement>& requirments) {
-	// get parameters number
-	int params_number = 0;
+
+double Model::GetError(Array<IRequirement*>& requirments) {
+	double error = 0.0;
 	for (int i = 0; i < requirments.getSize(); ++i) {
-		
+		error += requirments[i]->error();
+	}
+	return error / requirments.getSize();
+}
+
+double Model::ErrorByAlpha(Array<IRequirement*>& req, Parameters<double*> params, Parameters<double> aGrad, double alpha) {
+	for (int i = 0; i < params.GetSize(); ++i) {
+		*(params[i]) += aGrad[i] * alpha;
+	}
+	double error = GetError(req);
+	for (int i = 0; i < params.GetSize(); ++i) {
+		*(params[i]) -= aGrad[i] * alpha;
+	}
+	return error;
+}
+
+void Model::OptimizeByGradient(Array<IRequirement*>& requirments, Parameters<double*> params, Parameters<double> aGradient) {
+	
+	const double k = 1.6180339887498;
+	int reqSize = requirments.getSize();
+
+	double error = GetError(requirments);
+
+	double left = 0.0;
+	double right = 0.5 * (double)reqSize;
+
+	double leftValue = ErrorByAlpha(requirments, params, aGradient, left);
+	double rightValue = ErrorByAlpha(requirments, params, aGradient, right);
+
+	while (error > EPS) {
+	
+	double x1 = right - (right - left) / k;
+		double x2 = left + (right - left) / k;
+
+		double x1_Value = ErrorByAlpha(requirments, params, aGradient, x1);
+		double x2_Value = ErrorByAlpha(requirments, params, aGradient, x1);
+
+		if (x1 > x2) {
+			left = x1;
+			leftValue = x1_Value;
+		}
+		else {
+			right = x2;
+			rightValue = x2_Value;
+		}
 	}
 }
+
+void Model::Optimize2(Array<IRequirement*>& requirments) {
+
+	// get parameters number
+	int params_number = 0;
+	int reqSize = requirments.getSize();
+	
+	for (int i = 0; i < reqSize; ++i) {
+		Parameters<double*> curParams = requirments[i]->GetParams();
+		params_number = curParams.GetSize();
+	}
+
+	Parameters<double> aGradient(params_number);
+	Parameters<double*> parameters(params_number);
+
+	int param_iterator = 0;
+
+	for (int i = 0; i < reqSize; ++i) {
+		Parameters<double*> curParams = requirments[i]->GetParams();
+		for (int j = 0; j < curParams.GetSize(); ++j) {
+			parameters[param_iterator] = curParams[j];
+			param_iterator++;
+		}
+	}
+
+	param_iterator = 0;
+	
+	for (int i = 0; i < reqSize; ++i) {
+		
+		Parameters<double> currentGradient = requirments[i]->gradient();
+		int gradSize = currentGradient.GetSize();
+		
+		for (int j = 0; j < gradSize; ++j) {
+
+			aGradient[param_iterator] -= currentGradient[j];
+			param_iterator++;
+		}
+	}
+
+	OptimizeByGradient(requirments, parameters, aGradient);
+}
+
 
 bool Model::getNearest(double x, double y, ID& obj_id, double& distance) {
 	if (data.getsize() != 0) {

@@ -1,8 +1,10 @@
 #pragma once
 #include "Primitives.h"
-// в таблице хранится сортированный список
 
-using namespace std;
+// в таблице хранится сортированный список
+#define TABLE_I ((ListE<Pair<Tkey, Tval>>*)table[i])
+#define TABLE_INDEX ((ListE<Pair<Tkey, Tval>>*)table[index])
+// JUST FOOOOOR FUUUUUUUN
 
 template <class Tkey, class Tval> class HashTable
 {

@@ -20,8 +20,10 @@ public:
 
 class Point : public Primitive {
 private:
-	Vector2 position;
 public:
+
+	Vector2 position;
+
 	Point(Vector2);
 	Point(double, double);
 	Point(const Point&);
