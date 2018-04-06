@@ -72,10 +72,10 @@ void Segment::SetPoint2_pos(Vector2 _pos) {
 	point2->SetPosition(_pos);
 }
 ID Segment::GetPoint1_ID() const {
-	return point1->GetId();
+	return point1->GetID();
 }
 ID Segment::GetPoint2_ID() const {
-	return point2->GetId();
+	return point2->GetID();
 }
 double Segment::Inequality(Vector2 vector) {
 	Equation* equation = this->CreateEquation();
@@ -141,10 +141,10 @@ Vector2 Arc::GetCenter() const {
 	return (Vector2::Cross(H1toPoint1, H1toPoint2) > 0) ? H1 : H2;
 }
 ID Arc::GetPoint1_ID() const {
-	return point1->GetId();
+	return point1->GetID();
 }
 ID Arc::GetPoint2_ID() const {
-	return point2->GetId();
+	return point2->GetID();
 }
 Vector2 Arc::GetPoint1_pos() const {
 	return point1->GetPosition();

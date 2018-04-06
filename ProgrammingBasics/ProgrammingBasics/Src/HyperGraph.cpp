@@ -1,4 +1,3 @@
-<<<<<<< Updated upstream
 #include "HyperGraph.h"
 
 bool HyperGraph::Component::Search(ID& id)
@@ -55,8 +54,7 @@ double HyperGraph::Component::GetError()
 
 	} while (dataRequirement.MoveNext());
 	return error;
-=======
-#include "HyperGraph.h"
+}
 
 bool HyperGraph::Component::Delete(ID& _id) {
 
@@ -125,9 +123,4 @@ bool HyperGraph::Component::Delete(ID& _id) {
 		dataRequirement.Erase(_id);
 		return true;
 	}
-}
-
-double HyperGraph::Component::GetError() {
-
->>>>>>> Stashed changes
 }

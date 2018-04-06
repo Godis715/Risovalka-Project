@@ -12,13 +12,8 @@ private:
 	public:
 		Component() {}
 		~Component() {}
-<<<<<<< Updated upstream
 		bool Search(ID&);
-		void Delete(ID&);
-=======
-		bool Search(ID&) const;
 		bool Delete(ID&);
->>>>>>> Stashed changes
 		Array<double*> GetParams();
 		double GetError();
 	};

@@ -23,8 +23,8 @@ bool Model::createObject(type_id type, Array<double>& params, ID& obj_id) {
 		}
 		Point* _point;
 		_point = new Point(params[0], params[1]);
-		data.Add(_point->GetId(),_point);
-		obj_id = _point->GetId();
+		data.Add(_point->GetID(),_point);
+		obj_id = _point->GetID();
 		return true;
 	}
 	case segment: {
@@ -36,11 +36,11 @@ bool Model::createObject(type_id type, Array<double>& params, ID& obj_id) {
 
 		Segment* _seg = new Segment(p1, p2);
 
-		data.Add(p1->GetId(), p1);
-		data.Add(p2->GetId(), p2);
-		data.Add(_seg->GetId(), _seg);
+		data.Add(p1->GetID(), p1);
+		data.Add(p2->GetID(), p2);
+		data.Add(_seg->GetID(), _seg);
 
-		obj_id = _seg->GetId();
+		obj_id = _seg->GetID();
 		return true;
 	}
 	case arc: {
@@ -52,11 +52,11 @@ bool Model::createObject(type_id type, Array<double>& params, ID& obj_id) {
 
 		Arc* _arc = new Arc(p1, p2, params[4]);
 
-		data.Add(p1->GetId(), p1);
-		data.Add(p2->GetId(), p2);
-		data.Add(_arc->GetId(), _arc);
+		data.Add(p1->GetID(), p1);
+		data.Add(p2->GetID(), p2);
+		data.Add(_arc->GetID(), _arc);
 
-		obj_id = _arc->GetId();
+		obj_id = _arc->GetID();
 		return true;
 	}
 	default:
@@ -76,7 +76,7 @@ bool Model::createSegment(ID& p1ID, ID& p2ID, ID& segID) {
 				Point* point1 = dynamic_cast<Point*>(point1PR);
 				Point* point2 = dynamic_cast<Point*>(point2PR);
 				Segment* segment = new Segment(point1, point2);
-				segID = segment->GetId();
+				segID = segment->GetID();
 				data.Add(segID, segment);
 				return true;
 			}
@@ -522,7 +522,7 @@ bool Model::getNearest(double x, double y, ID& obj_id, double& distance) {
 	if (data.getsize() != 0) {
 		Vector2 pos(x, y);
 		data.MoveBegin();
-		ID nearestObject = data.GetCurrent()->GetId();
+		ID nearestObject = data.GetCurrent()->GetID();
 		double minDist = data.GetCurrent()->GetDistance(pos);
 		while (data.MoveNext()) {
 			double dist = data.GetCurrent()->GetDistance(pos);
@@ -533,7 +533,7 @@ bool Model::getNearest(double x, double y, ID& obj_id, double& distance) {
 			}
 			if (dist < minDist && data.GetCurrent()->GetType() == point) {
 				minDist = dist;
-				nearestObject = data.GetCurrent()->GetId();
+				nearestObject = data.GetCurrent()->GetID();
 			}
 		}
 		distance = minDist;
