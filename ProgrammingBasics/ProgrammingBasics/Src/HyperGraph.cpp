@@ -83,7 +83,7 @@ bool HyperGraph::Component::Delete(ID& _id) {
 				if (dataPrimitive.GetCurrent()->GetType() == segment) {
 					Segment* seg = dynamic_cast<Segment*>(dataPrimitive.GetCurrent());
 					if ((seg->GetPoint1_ID() == primitive->GetID()) || (seg->GetPoint2_ID() == primitive->GetID())) {
-						dataPrimitive.Erase(primitive->GetID();
+						dataPrimitive.Erase(primitive->GetID());
 						dataPrimitive.Erase(seg->GetID());
 						delete primitive;
 						delete seg;
@@ -118,4 +118,13 @@ bool HyperGraph::Component::Delete(ID& _id) {
 		}
 	}
 	return false;
+}
+
+int HyperGraph::Search(ID& _id) {
+	for (int i = 0; i < components.getSize(); ++i) {
+		if (components[i].Search(_id)) {
+			return i;
+		}
+	}
+	return -1;
 }

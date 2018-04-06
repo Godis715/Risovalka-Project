@@ -23,12 +23,22 @@ private:
 	Array<Component> components;
 	void SplitingAndBFS(int index);
 	void MergeComponents(int array[], int size);
-	void DeleteComponent(int index);
 public:
 	HyperGraph() {}
 	~HyperGraph() {}
-	bool SearchPrimitive(ID&) const;
-	void DeletePrimitive(ID&);
+	
+	int GetSize() {
+		return components.getSize();
+	}
+	int GetCurrent() {
+		return currentIndex;
+	}
+	void SetCurrent(int index) {
+		currentIndex = abs(index) % components.getSize();
+	}
+	void DeleteComponent(int index);
+	int Search(ID&);
+	void Delete(ID&);
 	void Add(IRequirement*, Array<Primitive*>);
 	Array<Primitive*> UploadingDataPrimitive();
 	Array<IRequirement*> UploadingDataRequirement();
