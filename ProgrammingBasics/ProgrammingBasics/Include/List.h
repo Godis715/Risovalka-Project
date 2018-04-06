@@ -318,6 +318,7 @@ public:
 			head = nullptr;
 			tail = nullptr;
 			delete current;
+			current = nullptr;
 			--size;
 			return;
 		}

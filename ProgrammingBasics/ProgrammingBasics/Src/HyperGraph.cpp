@@ -74,7 +74,7 @@ bool HyperGraph::Component::Delete(ID& _id) {
 				dataRequirement.Erase(_id);
 			}
 		} while (dataRequirement.MoveNext());
-		switch (primitive->GetType)
+		switch (primitive->GetType())
 		{
 		case point: {
 			dataPrimitive.MoveBegin();
@@ -82,15 +82,8 @@ bool HyperGraph::Component::Delete(ID& _id) {
 			{
 				if (dataPrimitive.GetCurrent()->GetType() == segment) {
 					Segment* seg = dynamic_cast<Segment*>(dataPrimitive.GetCurrent());
-					if (seg->GetPoint1_ID() == primitive->GetID()) {
-						dataPrimitive.Erase(seg->GetPoint1_ID());
-						dataPrimitive.Erase(seg->GetID());
-						delete primitive;
-						delete seg;
-						return true;
-					}
-					if (seg->GetPoint2_ID() == primitive->GetID()) {
-						dataPrimitive.Erase(seg->GetPoint2_ID());
+					if ((seg->GetPoint1_ID() == primitive->GetID()) || (seg->GetPoint2_ID() == primitive->GetID())) {
+						dataPrimitive.Erase(primitive->GetID();
 						dataPrimitive.Erase(seg->GetID());
 						delete primitive;
 						delete seg;
@@ -99,28 +92,30 @@ bool HyperGraph::Component::Delete(ID& _id) {
 				}
 				if (dataPrimitive.GetCurrent()->GetType() == arc) {
 					Segment* _arc = dynamic_cast<Segment*>(dataPrimitive.GetCurrent());
-					if (_arc->GetPoint1_ID() == primitive->GetID()) {
-						dataPrimitive.Erase(seg->GetPoint1_ID());
-						dataPrimitive.Erase(seg->GetID());
-						delete primitive;
-						delete seg;
-						return true;
-					}
-					if (_arc->GetPoint2_ID() == primitive->GetID()) {
-						dataPrimitive.Erase(seg->GetPoint2_ID());
-						dataPrimitive.Erase(seg->GetID());
-						delete primitive;
-						delete seg;
+					if ((_arc->GetPoint1_ID() == primitive->GetID()) || (_arc->GetPoint2_ID() == primitive->GetID())) {
+						dataPrimitive.Erase(primitive->GetID());
+						dataPrimitive.Erase(_arc->GetID());
+						delete dynamic_cast<Point*>(primitive);
+						delete _arc;
 						return true;
 					}
 				}
 			} while (dataPrimitive.MoveNext());
+			return true;
+		}
+		case segment: {
+			dataPrimitive.Erase(primitive->GetID());
+			delete dynamic_cast<Segment*>(primitive);
+			return true;
+		}
+		case arc: {
+			dataPrimitive.Erase(primitive->GetID());
+			delete dynamic_cast<Arc*>(primitive);
+			return true;
 		}
 		default:
 			break;
 		}
-		delete dataRequirement.GetCurrent();
-		dataRequirement.Erase(_id);
-		return true;
 	}
+	return false;
 }
