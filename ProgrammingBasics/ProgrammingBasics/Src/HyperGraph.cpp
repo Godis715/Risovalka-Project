@@ -1,5 +1,7 @@
-<<<<<<< Updated upstream
 #include "HyperGraph.h"
+
+
+HyperGraph::Component::Component(ID _id) : id(_id) {}
 
 bool HyperGraph::Component::Search(ID& id)
 {
@@ -55,66 +57,6 @@ double HyperGraph::Component::GetError()
 
 	} while (dataRequirement.MoveNext());
 	return error;
-=======
-#include "HyperGraph.h"
-
-HyperGraph::Component::Component(ID _id) : id(_id){}
-
-bool HyperGraph::Component::Search(ID& id)
-{
-	if (dataPrimitive.Find(id))
-	{
-		return true;
-	}
-	else if (dataRequirement.Find(id))
-	{
-		return true;
-	}
-	else
-	{
-		return false;
-	}
-}
-
-Array<double*> HyperGraph::Component::GetParams()
-{
-	Array<double*> output;
-	dataPrimitive.MoveHead();
-	do
-	{
-		switch (dataPrimitive.GetCurrent()->GetType())
-		{
-			case point:
-			{
-				Point* point = dynamic_cast<Point*>(dataPrimitive.GetCurrent());
-				output.pushBack(&point->position.x);
-				output.pushBack(&point->position.y);
-				return true;
-				break;
-			}
-			case arc:
-			{
-				Arc* arc = dynamic_cast<Arc*>(dataPrimitive.GetCurrent());
-				output.pushBack(&arc->angle);
-				return true;
-				break;
-			}
-		}
-	} while (dataPrimitive.MoveNext());
-	return output;
-}
-
-double HyperGraph::Component::GetError()
-{
-	dataRequirement.MoveHead();
-	double error = 0;
-	do
-	{
-		error += dataRequirement.GetCurrent()->error();
-
-	} while (dataRequirement.MoveNext());
-	return error;
->>>>>>> Stashed changes
 }
 
 bool HyperGraph::Component::Delete(ID& _id) {
@@ -186,17 +128,14 @@ bool HyperGraph::Search(ID _id, ID& component) {
 	do {
 		if (components.GetCurrent()->Search(_id)) {
 			component = components.GetCurrentKey();
-			return;
+			return true;
 		}
 	} while (components.MoveNext());
+	return false;
 }
 
 int HyperGraph::GetSize() {
 	return components.GetSize();
-}
-
-<<<<<<< Updated upstream
-	return -1;
 }
 
 void HyperGraph::DeleteComponent(ID id)
@@ -204,7 +143,7 @@ void HyperGraph::DeleteComponent(ID id)
 	//
 }
 
-void HyperGraph::MergeComponents(Array<ID> idComponets)
+void HyperGraph::MergeComponents(Array<ID>& idComponets)
 {
 	components.Find(idComponets[0]);
 	Component* input = components.GetCurrent();
@@ -230,8 +169,8 @@ void HyperGraph::MergeComponents(Array<ID> idComponets)
 		components.GetCurrent()->dataRequirement.DeleteDict();
 		components.Erase(idComponets[i]);
 	}
-	
-=======
+}
+
 void HyperGraph::Add(IRequirement* requirement, Array<Primitive*>& primitives) {
 	Array<ID> IDArrray(primitives.getSize());
 	int maxComponent = 0;
@@ -261,6 +200,5 @@ void HyperGraph::Add(IRequirement* requirement, Array<Primitive*>& primitives) {
 		component->dataPrimitive.Add(primitives[i]->GetID(), primitives[i]);
 	}
 	component->dataRequirement.Add(requirement->GetID(), requirement);
-	components.Add(component->GetID, component);
->>>>>>> Stashed changes
+	components.Add(component->GetID(), component);
 }
