@@ -10,6 +10,7 @@ public:
 	bool operator== (const ID&) const;
 	bool operator< (const ID&) const;
 	bool operator> (const ID&) const;
+	int operator %(int) const;
 };
 
 #endif

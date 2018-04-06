@@ -1,6 +1,7 @@
 #ifndef __DICT
 #define __DICT
 #include "Dequeue.h"
+#include "Hash-Table.h"
 
 template <class TKey, class TVal> class Pair
 {
@@ -305,7 +306,7 @@ public:
 		size = 0;
 	}
 
-	int getsize()
+	int getsize() const
 	{
 		return size;
 	}
@@ -494,6 +495,10 @@ public:
 		}
 		if (current->rightChild != nullptr) {
 			current = current->rightChild;
+			while (current->leftChild != nullptr)
+			{
+				current = current->leftChild;
+			}
 			return true;
 		}
 		if (current->parent != nullptr) {
@@ -561,7 +566,7 @@ public:
 		}
 	}
 
-	TVal GetCurrent() {
+	TVal GetCurrent() const {
 		if (current == nullptr) {
 			throw std::exception("use is current, it was nullptr");
 		}

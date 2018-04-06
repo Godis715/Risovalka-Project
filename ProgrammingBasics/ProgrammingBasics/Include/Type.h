@@ -1,8 +1,6 @@
 #ifndef __TYPE
 #define __TYPE
 
-#include <string>
-
 enum type_id { point = 1, segment, arc };
 
 //class Type {
@@ -21,7 +19,11 @@ enum Requirement_id {
 	distBetPointSeg,
 	angleBetSeg,
 	distBetPointArc,
-	pointInArc
+	pointInArc,
+	triangle,
+	correctTriangle,
+	nsAngle,
+	correctNsAngle
 };
 
 //class TypeRequirement {

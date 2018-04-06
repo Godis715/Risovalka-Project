@@ -48,3 +48,7 @@ double Vector2::Angle(Vector2 vec1, Vector2 vec2) {
 Vector2 Vector2::operator*(double val) {
 	return Vector2(this->x * val, this->y * val);
 }
+
+Vector2 Vector2::operator /(double val) {
+	return Vector2(this->x / val, this->y / val);
+}
