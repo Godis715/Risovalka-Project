@@ -24,7 +24,7 @@ private:
 
 	Dict<ID, Component> components;
 	void SplitingAndBFS(int index);
-	void MergeComponents(int array[], int size);
+	void MergeComponents();
 public:
 	HyperGraph() {}
 	~HyperGraph() {}

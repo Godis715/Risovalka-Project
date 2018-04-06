@@ -2,11 +2,11 @@
 
 bool HyperGraph::Component::Search(ID& id)
 {
-	if (dataPrimitive.find(id))
+	if (dataPrimitive.Find(id))
 	{
 		return true;
 	}
-	else if (dataRequirement.find(id))
+	else if (dataRequirement.Find(id))
 	{
 		return true;
 	}
@@ -121,10 +121,6 @@ bool HyperGraph::Component::Delete(ID& _id) {
 }
 
 int HyperGraph::Search(ID& _id) {
-	for (int i = 0; i < components.getSize(); ++i) {
-		if (components[i].Search(_id)) {
-			return i;
-		}
-	}
+
 	return -1;
 }

@@ -306,7 +306,7 @@ public:
 		size = 0;
 	}
 
-	int getsize() const
+	int GetSize() const
 	{
 		return size;
 	}
@@ -396,7 +396,7 @@ public:
 		}
 	}
 
-	bool find(const TKey &key)
+	bool Find(const TKey &key)
 	{
 		support = head;
 		while (support != nullptr)
