@@ -268,7 +268,7 @@ double Model::GetError() {
 	return sum_error / dataReq.getSize();
 }
 
-int Model::Optimize() {
+int Model::Optimize1() {
 
 	if (data.getsize() == 0) {
 		return 0;
@@ -292,14 +292,18 @@ int Model::Optimize() {
 	double sum_error = 0;
 	sum_error = GetError();
 	double prevError = sum_error;
+	double prevLastError = sum_error;
 	int count = 0;
-	int iterInside = 2;
+	int iterInside = 3;
+	double delta = sum_error;
+	EPS = 1e-5;
+	std::cout << sum_error << "   " << iterInside << "   " << EPS << "  " << delta << "\n";
 
 	while (sum_error > EPS) {
 		++count;
 		for (int i = 0; i < points.getSize(); ++i) {
 
-			double delta = sum_error;
+			delta = sum_error;
 
 			Vector2 pos = points[i]->GetPosition();
 			for (int k = 0; k < iterInside; ++k)
@@ -382,38 +386,139 @@ int Model::Optimize() {
 		}
 
 		if (count % 25 == 0) {
-			std::cout << sum_error << "   "<< iterInside << "   " << EPS << "\n";
+			std::cout << sum_error << "   "<< iterInside << "   " << EPS << "  " << delta << "\n";
 			if (count % 50 == 0) {
 				if (EPS < 0.01) {
 					EPS *= 2;
 				}
-				if (count > 1000) {
+				if (count > 400) {
+					//std::cout << sum_error << "   " << iterInside << "   " << EPS << "  " << delta << "\n";
 					return count;
 				}
+				if (prevLastError == sum_error) {
+					return count;
+				}
+				prevLastError = sum_error;
 			}
 		}
 		if (prevError == sum_error) {
-			if (iterInside < 1000) {
+			if (iterInside < 24) {
 				iterInside *= 2;
 			}
 		}
 		else {
-			if (iterInside > 2) {
+			if (iterInside > 3) {
 				iterInside /= 2;
 			}
 		}
 		prevError = sum_error;
 	}
-	
-	if (count < 50) {
-		if (EPS > 1e-6) {
-			EPS /= 2;
-		}
-	}
+	std::cout << sum_error << "   " << iterInside << "   " << EPS << "  " << delta << "\n";
 	return count;
 }
 
-bool Model::getNearest(double x, double y, ID& obj_id) {
+double Model::GetError(Array<IRequirement*>& requirments) {
+	double error = 0.0;
+	for (int i = 0; i < requirments.getSize(); ++i) {
+		error += requirments[i]->error();
+	}
+	return error / requirments.getSize();
+}
+
+double Model::ErrorByAlpha(Array<IRequirement*>& req, Parameters<double*> params, Parameters<double> aGrad, double alpha) {
+	for (int i = 0; i < params.GetSize(); ++i) {
+		double delta = aGrad[i];
+		*(params[i]) += delta * alpha;
+	}
+	double error = GetError(req);
+	for (int i = 0; i < params.GetSize(); ++i) {
+		*(params[i]) -= aGrad[i] * alpha;
+	}
+	return error;
+}
+
+void Model::OptimizeByGradient(Array<IRequirement*>& requirments, Parameters<double*> params, Parameters<double> aGradient) {
+	
+	const double k = 1.6180339887498;
+	int reqSize = requirments.getSize();
+
+	double error = GetError(requirments);
+
+	double left = 0.0;
+	double right = 0.5 * (double)reqSize;
+
+	double leftValue = ErrorByAlpha(requirments, params, aGradient, left);
+	double rightValue = ErrorByAlpha(requirments, params, aGradient, right);
+
+	while (error > EPS) {
+	
+	double x1 = right - (right - left) / k;
+		double x2 = left + (right - left) / k;
+
+		double x1_Value = ErrorByAlpha(requirments, params, aGradient, x1);
+		double x2_Value = ErrorByAlpha(requirments, params, aGradient, x2);
+
+		if (x1 > x2) {
+			left = x1;
+			leftValue = x1_Value;
+		}
+		else {
+			right = x2;
+			rightValue = x2_Value;
+		}
+	}
+}
+
+void Model::OptimizeRequirements(Array<IRequirement*>& requirments) {
+
+	// get parameters number
+	int params_number = 0;
+	int reqSize = requirments.getSize();
+	
+	for (int i = 0; i < reqSize; ++i) {
+		Parameters<double*> curParams = requirments[i]->GetParams();
+		params_number = curParams.GetSize();
+	}
+
+	Parameters<double> aGradient(params_number);
+	Parameters<double*> parameters(params_number);
+
+	int param_iterator = 0;
+
+	for (int i = 0; i < reqSize; ++i) {
+		Parameters<double*> curParams = requirments[i]->GetParams();
+		for (int j = 0; j < curParams.GetSize(); ++j) {
+			parameters[param_iterator] = curParams[j];
+			param_iterator++;
+		}
+	}
+
+	param_iterator = 0;
+	
+	for (int i = 0; i < reqSize; ++i) {
+		
+		Parameters<double> currentGradient = requirments[i]->gradient();
+		int gradSize = currentGradient.GetSize();
+		
+		for (int j = 0; j < gradSize; ++j) {
+			aGradient[param_iterator] = 0.0;
+			aGradient[param_iterator] -= currentGradient[j];
+			param_iterator++;
+		}
+	}
+
+	OptimizeByGradient(requirments, parameters, aGradient);
+}
+
+void Model::OptimizeAllRequirements() {
+	Array<IRequirement*> req;
+	for (int i = 0; i < dataReq.getSize(); ++i) {
+		req.pushBack(dataReq[i]);
+	}
+	OptimizeRequirements(req);
+}
+
+bool Model::getNearest(double x, double y, ID& obj_id, double& distance) {
 	if (data.getsize() != 0) {
 		Vector2 pos(x, y);
 		data.MoveBegin();
@@ -421,11 +526,17 @@ bool Model::getNearest(double x, double y, ID& obj_id) {
 		double minDist = data.GetCurrent()->GetDistance(pos);
 		while (data.MoveNext()) {
 			double dist = data.GetCurrent()->GetDistance(pos);
-			if (dist < minDist) {
+			if (data.GetCurrent()->GetType() == point) {
+				if (dist < 5.0f) {
+					dist = 0.0;
+				}
+			}
+			if (dist < minDist && data.GetCurrent()->GetType() == point) {
 				minDist = dist;
 				nearestObject = data.GetCurrent()->GetId();
 			}
 		}
+		distance = minDist;
 		obj_id = nearestObject;
 		return true;
 	}

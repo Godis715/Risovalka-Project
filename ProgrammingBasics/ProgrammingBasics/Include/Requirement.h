@@ -1,21 +1,54 @@
 #ifndef REQUIREMENT_H
 #define REQUIREMENT_H
-#include "Primitives.h"
-#include <iostream>
-#include "List.h"
+#include "Dictionary.h"
+
+template <typename T> class Parameters {
+private:
+	T* params;
+	int num;
+public:
+	Parameters(int);
+	Parameters();
+	Parameters(const Parameters&);
+	T& operator[](int);
+	int GetSize() const;
+};
 
 class IRequirement {
+private:
+	const ID id;
+protected:
+	const double EPS = 1e-8;
+	Parameters<double*> params;
+	int params_num;
 public :
+	IRequirement(ID _id) : id(_id) { }
 	virtual double error() = 0;
+	Parameters<double> gradient();
 	virtual void Print() = 0;
+	ID GetID() const {
+		return id;
+	}
+	Parameters<double*> GetParams();
 };
 
 class DistanceBetweenPoints : public IRequirement
 {
 public:
 	DistanceBetweenPoints(Point& _point1, Point& _point2, double _distance) :
-	point1(_point1), point2(_point2)
+		IRequirement(IDGenerator::getInstance()->generateID())
 	{
+		Vector2* pos1 = &_point1.position;
+		Vector2* pos2 = &_point2.position;
+		
+		params = Parameters<double*>(4);
+
+		params[0] = &pos1->x;
+		params[1] = &pos1->y;
+		params[2] = &pos2->x;
+		params[3] = &pos2->y;
+
+		params_num = 4;
 		distance = _distance;
 	}
 	~DistanceBetweenPoints() {}
@@ -23,22 +56,22 @@ public:
 		return abs((vec1 - vec2).GetLength() - dist);
 	}
 	double error() {
-		return abs(point1.GetDistance(point2.GetPosition()) - distance);
+		double dist = (*(params[0]) - *(params[2])) * (*(params[0]) - *(params[2])) +
+			(*(params[1]) - *(params[3])) * (*(params[1]) - *(params[3])) - distance * distance;
+		return dist * dist;
 	}
 	void ChangeDistance(double _distance) {
 		distance = _distance;
 	}
 	void Print() {
-		Vector2 vec = point1.GetPosition();
-		std::cout << " point1) " << vec.x << ' ' << vec.y << "\n";
-		vec = point2.GetPosition();
-		std::cout << " point2) " << vec.x << ' ' << vec.y << "\n\n";
+		std::cout << " point1) " << params[0] << ' ' << params[1] << "\n";
+		std::cout << " point2) " << params[2] << ' ' << params[3] << "\n\n";
 	}
+	Parameters<double> gradient() { return Parameters<double>(); }
 private:
 	double distance;
-	Point& point1;
-	Point& point2;
 };
+
 
 class PointsOnTheOneHand : public IRequirement
 {
@@ -46,8 +79,8 @@ public:
 	PointsOnTheOneHand( Segment& _segment, Point& _point1, Point& _point2) :
 		segment(_segment),
 		point1(_point1),
-		point2(_point2)
-	{}
+		point2(_point2),
+		IRequirement(IDGenerator::getInstance()->generateID()) {}
 	~PointsOnTheOneHand() {}
 	double error() {
 
@@ -66,6 +99,10 @@ public:
 		}
 		return 0;
 	}
+
+
+	Parameters<double> gradient() { return Parameters<double>(); }
+
 	void Print() {
 		Vector2 vec1 = segment.GetPoint1_pos();
 		Vector2 vec2 = segment.GetPoint2_pos();
@@ -87,7 +124,8 @@ class DistanceBetweenPointSegment : public IRequirement
 public:
 	DistanceBetweenPointSegment(Segment& _segment, Point& _point, double _distance) :
 		segment(_segment),
-		point(_point)
+		point(_point),
+		IRequirement(IDGenerator::getInstance()->generateID())
 	{
 		distance = _distance;
 	}
@@ -98,6 +136,9 @@ public:
 	void ChangeDistance(double _distance) {
 		distance = _distance;
 	}
+
+	Parameters<double> gradient() { return Parameters<double>(); }
+
 	void Print() {
 		Vector2 vec1 = segment.GetPoint1_pos();
 		Vector2 vec2 = segment.GetPoint2_pos();
@@ -118,7 +159,8 @@ class AngleBetweenSegments : public IRequirement
 public:
 	AngleBetweenSegments(Segment& _segment1, Segment& _segment2, double _andle) :
 		segment1(_segment1),
-		segment2(_segment2)
+		segment2(_segment2),
+		IRequirement(IDGenerator::getInstance()->generateID())
 	{
 		angle = _andle;
 	}
@@ -133,6 +175,9 @@ public:
 	void ChangeAngle(double _andle) {
 		angle = _andle;
 	}
+
+	Parameters<double> gradient() { return Parameters<double>(); }
+
 	void Print() {
 		Vector2 vec1 = segment1.GetPoint1_pos();
 		Vector2 vec2 = segment1.GetPoint2_pos();
@@ -144,8 +189,8 @@ public:
 		
 	}
 private:
-	 Segment& segment1;
-	 Segment& segment2;
+	Segment& segment1;
+	Segment& segment2;
 	double angle;
 };
 
@@ -154,7 +199,8 @@ class DistanceBetweenPointArc : public IRequirement
 public:
 	DistanceBetweenPointArc(Arc& _arc, Point& _point, double dist) :
 		arc(_arc),
-		point(_point)
+		point(_point),
+		IRequirement(IDGenerator::getInstance()->generateID())
 	{
 		distance = dist;
 	}
@@ -167,6 +213,9 @@ public:
 		distance = dist;
 	}
 	void Print() {}
+
+	Parameters<double> gradient() { return Parameters<double>(); }
+
 private:
 	Arc& arc;
 	Point& point;
@@ -178,8 +227,8 @@ class PointInArc : public IRequirement
 public:
 	PointInArc(Arc& _arc,  Point& _point) :
 		arc(_arc),
-		point(_point)
-	{}
+		point(_point),
+		IRequirement(IDGenerator::getInstance()->generateID()) {}
 	~PointInArc() {}
 	// return distance to arc and angle
 	double error() {
@@ -208,6 +257,9 @@ public:
 			}
 		}
 	}
+
+	Parameters<double> gradient() { return Parameters<double>(); }
+
 	void Print() {}
 private:
 	Arc& arc;
@@ -217,7 +269,8 @@ private:
 class Triangle : public IRequirement
 {
 public:
-	Triangle(Segment* _segment1, Segment* _segment2, Segment* _segment3)
+	Triangle(Segment* _segment1, Segment* _segment2, Segment* _segment3) :
+		IRequirement(IDGenerator::getInstance()->generateID())
 	{
 		Vector2 points[6];
 		points[0] = _segment1->GetPoint1_pos();
@@ -342,6 +395,9 @@ public:
 		}
 		return sumError / 3;
 	}
+
+	Parameters<double> gradient() { return Parameters<double>(); }
+
 	void Print() {
 		Vector2 vec1 = segment1->GetPoint1_pos();
 		Vector2 vec2 = segment1->GetPoint2_pos();
@@ -363,9 +419,13 @@ private:
 class ÑorrectTriangle : public IRequirement
 {
 public:
-	ÑorrectTriangle(Segment* _segment1, Segment* _segment2, Segment* _segment3, double _size)
+	ÑorrectTriangle(Segment* _segment1, Segment* _segment2, Segment* _segment3, double _size) :
+		IRequirement(IDGenerator::getInstance()->generateID())
 	{
-		size = _size;
+		size = _segment1->GetLength() + _segment2->GetLength() + _segment2->GetLength();
+
+
+
 		Vector2 points[6];
 		points[0] = _segment1->GetPoint1_pos();
 		points[1] = _segment1->GetPoint2_pos();
@@ -495,6 +555,9 @@ public:
 	void ChangeSize(double _size) {
 		size = _size;
 	}
+
+	Parameters<double> gradient() { return Parameters<double>(); }
+
 	void Print() {
 		Vector2 vec1 = segment1->GetPoint1_pos();
 		Vector2 vec2 = segment1->GetPoint2_pos();
@@ -518,7 +581,8 @@ private:
 class NsAngle : public IRequirement
 {
 public:
-	NsAngle(ListE<Segment*>& list)
+	NsAngle(ListE<Segment*>& list) :
+		IRequirement(IDGenerator::getInstance()->generateID())
 	{
 		count = count = list.GetSize();
 		segments = new Segment*[count];
@@ -624,6 +688,9 @@ public:
 		}
 		return sumError / count;
 	}
+
+	Parameters<double> gradient() { return Parameters<double>(); }
+
 	void Print() {
 		Vector2 vec1;
 		Vector2 vec2;
@@ -643,24 +710,26 @@ private:
 class CorrectNsAngle : public IRequirement
 {
 public:
-	CorrectNsAngle(ListE<Segment*>& list, double _size)
+	CorrectNsAngle(ListE<Segment*>& list, double _size) :
+		IRequirement(IDGenerator::getInstance()->generateID())
 	{
 		Segment* temp;
 		Segment* minSegment;
 		Vector2 prev;
 		count = list.GetSize();
-		size = _size;
-		radius = size / (2 * sin(PI / count));
 		list.MoveHead();
 		center.x = 0;
 		center.y = 0;
+		size = 0;
 		do
 		{
 			temp = list.GetCurrent();
 			center = center + temp->GetPoint1_pos();
 			center = center + temp->GetPoint2_pos();
+			size += temp->GetLength();
 		} while (list.MoveNext());
 		center = center / (double)(count * 2);
+		radius = size / (2 * sin(PI / count));
 
 		segments = new Segment*[count];
 		double minDist = 0;
@@ -776,6 +845,9 @@ public:
 		}
 		return sumError / (count * 3);
 	}
+
+	Parameters<double> gradient() { return Parameters<double>(); }
+
 	void Print() {
 		Vector2 vec1;
 		Vector2 vec2;

@@ -1,8 +1,4 @@
-#include "Array.h"
-#include "Primitives.h"
-#include "Dictionary.h"
 #include "Requirement.h"
-
 
 #ifndef __MODEL
 #define __MODEL
@@ -18,6 +14,10 @@ private:
 	Array<IRequirement*> dataReq;
 	IDGenerator* idGen;
 	double GetError();
+	double GetError(Array<IRequirement*>&);
+	double ErrorByAlpha(Array<IRequirement*>&, Parameters<double*>, Parameters<double>, double);
+
+	void OptimizeByGradient(Array<IRequirement*>&, Parameters<double*>, Parameters<double>);
 
 public:
 	class infoObject
@@ -37,13 +37,17 @@ public:
 	bool createObject(type_id, Array<double>&, ID&);
 	bool createSegment(ID&, ID&, ID&);
 	bool createRequirement(const Requirement_id, Array<ID>&, Array<double>&);
-	bool getNearest(double, double, ID&);
+	bool getNearest(double, double, ID&, double&);
 	bool getObjType(const ID&, type_id&);
 	bool GetSegmentPoints(ID, Array<ID>&);
 	bool GetArcPoints(ID, Array<ID>&);
 	bool getObjParam(const ID&, Array<double>&);
-	int Optimize();
+	int Optimize1();
+	void OptimizeRequirements(Array<IRequirement*>&);
 	void PrintSystemRequirement();
+
+	//temp function
+	void OptimizeAllRequirements();
 };
 
 #endif

@@ -14,7 +14,8 @@ View::View()
 }
 
 void View::Clear() {
-	UpdateWindow(hWnd);
+	HBRUSH brush = CreateSolidBrush(0);
+	FillRect(hDC, &screen, brush);
 }
 
 void View::Run() {
@@ -22,6 +23,11 @@ void View::Run() {
 	Vector2 point1;
 	Vector2 point2;
 	bool isFirstPressed = false;
+	bool isPointSelected = false;
+
+	ID id_p1;
+	ID id_p2;
+
 	HANDLE hStdin = GetStdHandle(STD_INPUT_HANDLE);
 	while (true) {
 		WaitForSingleObject(hStdin, INFINITE);
@@ -33,20 +39,35 @@ void View::Run() {
 		if (NumEvents != 0 && InRec.EventType == MOUSE_EVENT && InRec.Event.MouseEvent.dwButtonState == RI_MOUSE_BUTTON_1_DOWN) {
 			GetCursorPos(&pos);
 			ScreenToClient(hWnd, &pos);
-			if (!isFirstPressed) {
-				point1.x = pos.x;
-				point1.y = pos.y;
-				isFirstPressed = true;
+			ID clickedObject;
+			if (presenter->GetClickedObjectID(pos.x, pos.y, clickedObject)) {
+				if (isPointSelected) {
+					id_p2 = clickedObject;
+					presenter->CreateRequirmentDistBetPoints(id_p1, id_p2, 0.0);
+					presenter->Optimize();
+				}
+				else {
+					id_p1 = clickedObject;
+				}
+				isPointSelected = !isPointSelected;
+
 			}
 			else {
-				point2.x = pos.x;
-				point2.y = pos.y;
-				isFirstPressed = false;
-				presenter->DrawSegment(point1.x, point1.y, point2.x, point2.y);
+				if (!isFirstPressed) {
+					point1.x = pos.x;
+					point1.y = pos.y;
+					isFirstPressed = true;
+				}
+				else {
+					point2.x = pos.x;
+					point2.y = pos.y;
+					isFirstPressed = false;
+					presenter->DrawSegment(point1.x, point1.y, point2.x, point2.y);
+				}
 			}
 		}
-	}
 
+	}
 }
 
 void View::DrawArc(Vector2 point1, Vector2 point2) {

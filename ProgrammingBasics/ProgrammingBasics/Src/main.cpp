@@ -3,7 +3,7 @@
 
 Presenter presenter;
 
-//Model model;
+Model model;
 // /*void PrintPoints(Array<ID> points) {
 //	for (int i = 0; i < points.getSize(); ++i) {
 //		Array<double> params;
@@ -16,59 +16,59 @@ Presenter presenter;
 //	}
 //}*/
 //
-//void CreateDrowTriangles(int count) {
-//	for (int i = 0; i < count; ++i) {
-//		double x1 = (double)rand() / (rand() % 100 + 1);
-//		double y1 = (double)rand() / (rand() % 100 + 1);
-//		double x2 = (double)rand() / (rand() % 100 + 1);
-//		double y2 = (double)rand() / (rand() % 100 + 1);
-//		std::cout << i << " segment 1) " << x1 << ' ' << y1 << " ; " << x2 << ' ' << y2 << "\n";
-//		ID segment1 = presenter.CreateSegment(x1, y1, x2, y2);
-//		x1 = (double)rand() / (rand() % 100 + 1);
-//		y1 = (double)rand() / (rand() % 100 + 1);
-//		x2 = (double)rand() / (rand() % 100 + 1);
-//		y2 = (double)rand() / (rand() % 100 + 1);
-//		std::cout << i << " segment 2) " << x1 << ' ' << y1 << " ; " << x2 << ' ' << y2 << "\n";
-//		ID segment2 = presenter.CreateSegment(x1, y1, x2, y2);
-//		x1 = (double)rand() / (rand() % 100 + 1);
-//		y1 = (double)rand() / (rand() % 100 + 1);
-//		x2 = (double)rand() / (rand() % 100 + 1);
-//		y2 = (double)rand() / (rand() % 100 + 1);
-//		std::cout << i << " segment 3) " << x1 << ' ' << y1 << " ; " << x2 << ' ' << y2 << "\n\n";
-//		ID segment3 = presenter.CreateSegment(x1, y1, x2, y2);
-//		presenter.CreateRequirmentTriangle(segment1, segment2, segment3);
-//	}
-//	std::cout << presenter.Optimize();
-//	//presenter.PrintSystemRequirement();
-//}
+void CreateDrowTriangles(int count) {
+	for (int i = 0; i < count; ++i) {
+		double x1 = (double)rand() / (rand() % 100 + 1);
+		double y1 = (double)rand() / (rand() % 100 + 1);
+		double x2 = (double)rand() / (rand() % 100 + 1);
+		double y2 = (double)rand() / (rand() % 100 + 1);
+		std::cout << i << " segment 1) " << x1 << ' ' << y1 << " ; " << x2 << ' ' << y2 << "\n";
+		ID segment1 = presenter.CreateSegment(x1, y1, x2, y2);
+		x1 = (double)rand() / (rand() % 100 + 1);
+		y1 = (double)rand() / (rand() % 100 + 1);
+		x2 = (double)rand() / (rand() % 100 + 1);
+		y2 = (double)rand() / (rand() % 100 + 1);
+		std::cout << i << " segment 2) " << x1 << ' ' << y1 << " ; " << x2 << ' ' << y2 << "\n";
+		ID segment2 = presenter.CreateSegment(x1, y1, x2, y2);
+		x1 = (double)rand() / (rand() % 100 + 1);
+		y1 = (double)rand() / (rand() % 100 + 1);
+		x2 = (double)rand() / (rand() % 100 + 1);
+		y2 = (double)rand() / (rand() % 100 + 1);
+		std::cout << i << " segment 3) " << x1 << ' ' << y1 << " ; " << x2 << ' ' << y2 << "\n\n";
+		ID segment3 = presenter.CreateSegment(x1, y1, x2, y2);
+		presenter.CreateRequirmentTriangle(segment1, segment2, segment3);
+	}
+	std::cout << presenter.Optimize();
+	//presenter.PrintSystemRequirement();
+}
 //
-//void CreateDrowBestTriangles(int count) {
-//	for (int i = 0; i < count; ++i) {
-//		double x1 = (double)rand() / (rand() % 100 + 1);
-//		double y1 = (double)rand() / (rand() % 100 + 1);
-//		double x2 = (double)rand() / (rand() % 100 + 1);
-//		double y2 = (double)rand() / (rand() % 100 + 1);
-//		std::cout << i << " segment 1) " << x1 << ' ' << y1 << " ; " << x2 << ' ' << y2 << "\n";
-//		ID segment1 = presenter.CreateSegment(x1, y1, x2, y2);
-//		x1 = (double)rand() / (rand() % 100 + 1);
-//		y1 = (double)rand() / (rand() % 100 + 1);
-//		x2 = (double)rand() / (rand() % 100 + 1);
-//		y2 = (double)rand() / (rand() % 100 + 1);
-//		std::cout << i << " segment 2) " << x1 << ' ' << y1 << " ; " << x2 << ' ' << y2 << "\n";
-//		ID segment2 = presenter.CreateSegment(x1, y1, x2, y2);
-//		x1 = (double)rand() / (rand() % 100 + 1);
-//		y1 = (double)rand() / (rand() % 100 + 1);
-//		x2 = (double)rand() / (rand() % 100 + 1);
-//		y2 = (double)rand() / (rand() % 100 + 1);
-//		std::cout << i << " segment 3) " << x1 << ' ' << y1 << " ; " << x2 << ' ' << y2 << "\n";
-//		ID segment3 = presenter.CreateSegment(x1, y1, x2, y2);
-//		double size = (double)(rand() % 100 + 1);
-//		std::cout << i << " size " << size << "\n\n";
-//		presenter.CreateRequirmentBestTriangle(segment1, segment2, segment3, size);
-//	}
-//	std::cout << presenter.Optimize();
-//	//presenter.PrintSystemRequirement();
-//}
+void CreateDrowBestTriangles(int count) {
+	for (int i = 0; i < count; ++i) {
+		double x1 = (double)rand() / (rand() % 100 + 1);
+		double y1 = (double)rand() / (rand() % 100 + 1);
+		double x2 = (double)rand() / (rand() % 100 + 1);
+		double y2 = (double)rand() / (rand() % 100 + 1);
+		std::cout << i << " segment 1) " << x1 << ' ' << y1 << " ; " << x2 << ' ' << y2 << "\n";
+		ID segment1 = presenter.CreateSegment(x1, y1, x2, y2);
+		x1 = (double)rand() / (rand() % 100 + 1);
+		y1 = (double)rand() / (rand() % 100 + 1);
+		x2 = (double)rand() / (rand() % 100 + 1);
+		y2 = (double)rand() / (rand() % 100 + 1);
+		std::cout << i << " segment 2) " << x1 << ' ' << y1 << " ; " << x2 << ' ' << y2 << "\n";
+		ID segment2 = presenter.CreateSegment(x1, y1, x2, y2);
+		x1 = (double)rand() / (rand() % 100 + 1);
+		y1 = (double)rand() / (rand() % 100 + 1);
+		x2 = (double)rand() / (rand() % 100 + 1);
+		y2 = (double)rand() / (rand() % 100 + 1);
+		std::cout << i << " segment 3) " << x1 << ' ' << y1 << " ; " << x2 << ' ' << y2 << "\n";
+		ID segment3 = presenter.CreateSegment(x1, y1, x2, y2);
+		double size = (double)(rand() % 100 + 1);
+		std::cout << i << " size " << size << "\n\n";
+		presenter.CreateRequirmentCorrectTriangle(segment1, segment2, segment3, size);
+	}
+	std::cout << presenter.Optimize();
+	//presenter.PrintSystemRequirement();
+}
 //
 //void AngleSegments(int count) {
 //	for (int i = 0; i < count; ++i) {
@@ -142,69 +142,41 @@ Presenter presenter;
 //	//presenter.PrintSystemRequirement();
 //}
 //
-void CreateBrokenLine(int count) {
-	int countOptimize = 0;
-	ID prev;
-	ID p1;
-	ID p2;
-	double x1 = (double)rand() / (rand() % 100 + 1);
-	double y1 = (double)rand() / (rand() % 100 + 1);
-	double x2 = (double)rand() / (rand() % 100 + 1);
-	double y2 = (double)rand() / (rand() % 100 + 1);
-	p1 = presenter.CreatePoint(x1, y1);
-	p2 = presenter.CreatePoint(x2, y2);
-	presenter.CreateSegment(p1, p2);
-	std::cout << 0 << " segment 1) " << x1 << ' ' << y1 << " ; " << x2 << ' ' << y2 << "\n";
-	prev = p2;
-	for (int i = 1; i < count; ++i) {
-		x1 = (double)rand() / (rand() % 100 + 1);
-		y1 = (double)rand() / (rand() % 100 + 1);
-		x2 = (double)rand() / (rand() % 100 + 1);
-		y2 = (double)rand() / (rand() % 100 + 1);
-		p1 = presenter.CreatePoint(x1, y1);
-		p2 = presenter.CreatePoint(x2, y2);
-		std::cout << i << " segment) " << x1 << ' ' << y1 << " ; " << x2 << ' ' << y2 << "\n";
-		presenter.CreateRequirmentDistBetPoints(prev, p1, 0);
-		countOptimize += presenter.Optimize();
-		prev = p2;
-	}
-	std::cout << "countOptimize - " << countOptimize << "\n";
-	//presenter.PrintSystemRequirement();
+
+//
+//
+ID CreatePoint(double x, double y) {
+	Array<double> params;
+	params.pushBack(x);
+	params.pushBack(y);
+	ID id;
+
+	model.createObject(point, params, id);
+	return id;
+
 }
-//
-//
-//ID CreatePoint(double x, double y) {
-//	Array<double> params;
-//	params.pushBack(x);
-//	params.pushBack(y);
-//	ID id;
-//
-//	model.createObject(point, params, id);
-//	return id;
-//
-//}
-//
-//ID CreateSegment(double x1, double y1, double x2, double y2) {
-//	ID id;
-//	Array<double> params;
-//	params.pushBack(x1);
-//	params.pushBack(y1);
-//	params.pushBack(x2);
-//	params.pushBack(y2);
-//
-//	model.createObject(segment, params, id);
-//	return id;
-//}
-//
-//void CreateRequirmentDistBetPoints(ID point1, ID point2, double d) {
-//	Array<double> dist;
-//	Array<ID> points;
-//	points.pushBack(point1);
-//	points.pushBack(point2);
-//	dist.pushBack(d);
-//
-//	model.createRequirement(distBetPoints, points, dist);
-//}
+
+ID CreateSegment(double x1, double y1, double x2, double y2) {
+	ID id;
+	Array<double> params;
+	params.pushBack(x1);
+	params.pushBack(y1);
+	params.pushBack(x2);
+	params.pushBack(y2);
+
+	model.createObject(segment, params, id);
+	return id;
+}
+
+void CreateRequirmentDistBetPoints(ID point1, ID point2, double d) {
+	Array<double> dist;
+	Array<ID> points;
+	points.pushBack(point1);
+	points.pushBack(point2);
+	dist.pushBack(d);
+
+	model.createRequirement(distBetPoints, points, dist);
+}
 //
 //void PrintPoints(Array<ID> points) {
 //	for (int i = 0; i < points.getSize(); ++i) {
@@ -276,12 +248,11 @@ void CreateCorrectNsAngle(int count) {
 
 int main()
 {
-	//srand(time(nullptr));
-	////CreateCorrectNsAngle(4);
-	////CreateNsAngle(10);
-	//CreateBrokenLine(50);
-	IView* view = new View();
-	view->Run();
+	ID point1 = CreatePoint(1.0, 1.0);
+	ID point2 = CreatePoint(5.0, 10.0);
+
+	CreateRequirmentDistBetPoints(point1, point2, 3.0);
+	model.OptimizeAllRequirements();
 
 	system("pause");
 	return 0;

@@ -266,23 +266,38 @@ public:
 		return;
 	}
 
-	/*void PushAfterCurrent(T newValue) {
+	void PushAfterCurrent(T newValue) {
 		if (size == 0) {
-			PushNewHead(list, newValue);
+			PushHead(newValue);
 			return;
 		}
 		if (current == tail) {
-			PushNewTail(newValue);
+			PushTail(newValue);
+			return;
 		}
-		Element* newElement = new Element;
+		Element<T>* newElement = new Element<T>;
 		newElement->next = current->next;
 		newElement->prev = current;
-		current->next->prev = NewElement;
-		current->next = NewElement;
-
-		++list->size;
+		current->next->prev = newElement;
+		current->next = newElement;
+		++size;
 		return;
-	}*/
+	}
+
+	void PushBeforeCurrent(T newValue) {
+		if (size == 0) {
+			PushHead(newValue);
+			return;
+		}
+		if (current == head) {
+			PushHead(newValue);
+			return;
+		}
+		MovePrev();
+		PushAfterCurrent();
+		MoveNext();
+		MoveNext();
+	}
 
 	void PushTail(T newValue) {
 		if (size == 0) {
@@ -327,13 +342,14 @@ public:
 		return;
 	}
 
-	/*void DeleteList() {
+	void DeleteList() {
 		while (size != 0)
 		{
-			DeleteElement();
+			current = head;
+			DeleteCurrent();
 		}
 		return;
-	}*/
+	}
 
 	bool IsCurrent() {
 		if (current == nullptr) {
@@ -352,9 +368,9 @@ public:
 		current = head;
 	}
 
-	/*void MoveTail() {
+	void MoveTail() {
 		current =tail;
-	}*/
+	}
 
 	bool MoveNext() {
 		if (current->next == nullptr) {
@@ -366,7 +382,7 @@ public:
 		}
 	}
 
-	/*bool MovePrev() {
+	bool MovePrev() {
 		if (current->prev == nullptr) {
 			return false;
 		}
@@ -374,7 +390,7 @@ public:
 			current = current->prev;
 			return true;
 		}
-	}*/
+	}
 
 	void CreateLabel() {
 		if (current != nullptr) {

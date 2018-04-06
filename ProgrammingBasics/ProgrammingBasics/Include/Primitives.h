@@ -1,8 +1,8 @@
 #ifndef __PRIMITIVES
 #define __PRIMITIVES
 #define PI 3.141592653589793 
-
-
+#include "List.h"
+#include "Array.h"
 #include "Vector2.h"
 #include "IDgenerator.h"
 #include "Type.h"
@@ -20,8 +20,10 @@ public:
 
 class Point : public Primitive {
 private:
-	Vector2 position;
 public:
+
+	Vector2 position;
+
 	Point(Vector2);
 	Point(double, double);
 	Point(const Point&);
@@ -57,6 +59,7 @@ private:
 public:
 	Segment(Point*, Point*);
 	double GetDistance(Vector2) const override;
+	double GetLength() const;
 	ID GetPoint1_ID() const;
 	ID GetPoint2_ID() const;
 	Vector2 GetPoint1_pos() const;
