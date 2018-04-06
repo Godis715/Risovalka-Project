@@ -30,7 +30,8 @@ public :
 		return id;
 	}
 	Parameters<double*> GetParams();
-	bool Contains(ID&) const;
+	bool Contains(ID) const;
+	void GetPrimitivesID(Array<ID>&);
 };
 
 class DistanceBetweenPoints : public IRequirement

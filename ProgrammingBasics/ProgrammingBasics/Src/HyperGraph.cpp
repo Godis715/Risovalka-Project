@@ -123,6 +123,10 @@ bool HyperGraph::Component::Delete(ID& _id) {
 	return false;
 }
 
+ID  HyperGraph::Component::GetID() const {
+	return this->id;
+}
+
 bool HyperGraph::Search(ID _id, ID& component) {
 	components.MoveBegin();
 	do {
@@ -157,6 +161,70 @@ void HyperGraph::DeleteComponent(ID id)
 	components.Erase(id);
 }
 
+Array<Primitive*> HyperGraph::SplitingAndBFS(ID id) {
+	components.Find(id);
+	Component* component = components.GetCurrent();
+	components.DeleteCurrent();
+	Set<ID, Primitive*> set;
+	do
+	{
+		Array<ID> ID_In_Req;
+		Component* newComponent = new Component(IDGenerator::getInstance()->generateID());
+		Primitive* primitive;;
+		//
+		component->dataRequirement.MoveHead();
+		component->dataRequirement.GetCurrent()->GetPrimitivesID(ID_In_Req);
+		for (int i = 0; i < ID_In_Req.getSize(); ++i) {
+			if (component->dataPrimitive.Find(ID_In_Req[i])) {
+				Primitive* tempPrimitive = component->dataPrimitive.GetCurrent();
+				component->dataPrimitive.DeleteCurrent();
+				set.Push(tempPrimitive->GetID, tempPrimitive);
+			}
+		}
+		IRequirement* Req = component->dataRequirement.GetCurrent();
+		component->dataRequirement.DeleteCurrent();
+		newComponent->dataRequirement.Add(Req->GetID, Req);
+		//
+		do
+		{
+			primitive = set.PopElement();
+			component->dataRequirement.MoveBegin();
+			do
+			{
+				if (component->dataRequirement.GetCurrent()->Contains(primitive->GetID())) {
+					component->dataRequirement.GetCurrent()->GetPrimitivesID(ID_In_Req);
+					for (int i = 0; i < ID_In_Req.getSize(); ++i) {
+						if (component->dataPrimitive.Find(ID_In_Req[i])) {
+							Primitive* tempPrimitive = component->dataPrimitive.GetCurrent();
+							component->dataPrimitive.DeleteCurrent();
+							set.Push(tempPrimitive->GetID, tempPrimitive);
+						}
+					}
+					IRequirement* Req = component->dataRequirement.GetCurrent();
+					component->dataRequirement.DeleteCurrent();
+					newComponent->dataRequirement.Add(Req->GetID, Req);
+					component->dataRequirement.MovePrev();
+				}
+			} while (component->dataRequirement.MoveNext());
+			newComponent->dataPrimitive.Add(primitive->GetID(), primitive);
+		} while (set.getsize() > 0);
+		components.Add(newComponent->GetID, newComponent);
+	} while (component->dataRequirement.GetSize() > 0);
+	if (component->dataPrimitive.GetSize() != 0) {
+		component->dataPrimitive.MoveBegin();
+		Array<Primitive*> answer(component->dataPrimitive.GetSize());
+		do
+		{
+			answer.pushBack(component->dataPrimitive.GetCurrent());
+		} while (component->dataPrimitive.MoveNext());
+		DeleteComponent(component->GetID());
+		return answer;
+	}
+	Array<Primitive*> answer(0);
+	DeleteComponent(component->GetID());
+	return answer;
+}
+
 void HyperGraph::MergeComponents(Array<ID>& idComponets)
 {
 	components.Find(idComponets[0]);
@@ -168,8 +236,7 @@ void HyperGraph::MergeComponents(Array<ID>& idComponets)
 		do
 		{
 			input->dataPrimitive.Add(components.GetCurrent()->dataPrimitive.GetCurrentKey(),
-				components.GetCurrent()->dataPrimitive.GetCurrent()
-			);
+				components.GetCurrent()->dataPrimitive.GetCurrent());
 		} while (components.GetCurrent()->dataPrimitive.MoveNext());
 		components.GetCurrent()->dataPrimitive.DeleteDict();
 
@@ -186,18 +253,26 @@ void HyperGraph::MergeComponents(Array<ID>& idComponets)
 }
 
 void HyperGraph::Add(IRequirement* requirement, Array<Primitive*>& primitives) {
-	Array<ID> IDArrray(primitives.getSize());
+	Set<ID, Component*> set;
 	int maxComponent = 0;
 	int tempMax;
 	ID componentID;
 	for (int i = 0; i < primitives.getSize(); ++i) {
 		if (Search(primitives[i]->GetID(), componentID)) {
 			tempMax = components.GetCurrent()->dataPrimitive.GetSize();
-			IDArrray.pushBack(componentID);
+			set.Push(componentID, components.GetCurrent());
 			if (tempMax > maxComponent) {
 				maxComponent = tempMax;
-				IDArrray.swap(0, IDArrray.getSize() - 1);
 			}
+		}
+	}
+	Array<ID> IDArrray(set.getsize());
+	while (set.getsize() > 0)
+	{
+		Component* component = set.PopElement();
+		IDArrray.pushBack(component->GetID());
+		if (component->dataPrimitive.GetSize() == maxComponent) {
+			IDArrray.swap(0, IDArrray.getSize() - 1);
 		}
 	}
 	if (IDArrray.getSize() > 0) {
@@ -215,4 +290,23 @@ void HyperGraph::Add(IRequirement* requirement, Array<Primitive*>& primitives) {
 	}
 	component->dataRequirement.Add(requirement->GetID(), requirement);
 	components.Add(component->GetID(), component);
+}
+
+void HyperGraph::Delete(Array<ID>& IDArray) {
+	Set<ID, Component*> set;
+	ID componentID;
+	Component* component;
+	for (int i = 0; i < IDArray.getSize(); ++i) {
+		if (Search(IDArray[i], componentID)) {
+			components.Find(componentID);
+			component = components.GetCurrent();
+			set.Push(componentID, component);
+			component->Delete(IDArray[i]);
+		}
+	}
+	while (set.getsize() > 0)
+	{
+		component = set.PopElement();
+		SplitingAndBFS(component->GetID());
+	}
 }

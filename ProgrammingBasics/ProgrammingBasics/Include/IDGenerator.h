@@ -2,7 +2,6 @@
 #define IDGENERATOR_H
 
 #include "ID.h"
-#include "IDReq.h"
 
 class IDGenerator
 {

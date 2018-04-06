@@ -1,5 +1,6 @@
 #pragma once
 #include "Requirement.h"
+#include "Set.h"
 
 class HyperGraph
 {
@@ -23,7 +24,7 @@ private:
 
 	Dict<ID, Component*> components;
 
-	void SplitingAndBFS();
+	Array<Primitive*> SplitingAndBFS(ID);
 	void MergeComponents(Array<ID>&);
 public:
 	HyperGraph() {}
@@ -33,7 +34,7 @@ public:
 	int GetSize();
 	void DeleteComponent(ID id);
 	bool Search(ID, ID&);
-	void Delete(ID&);
+	void Delete(Array<ID>&);
 	void Add(IRequirement*, Array<Primitive*>&);
 	Array<Primitive*> UploadingDataPrimitive();
 	Array<IRequirement*> UploadingDataRequirement();

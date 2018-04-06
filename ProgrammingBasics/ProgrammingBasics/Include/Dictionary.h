@@ -396,6 +396,15 @@ public:
 		}
 	}
 
+	void DeleteCurrent() {
+		if (current == nullptr) {
+			return;
+		}
+		support = current;
+		MoveNext();
+		Erase();
+	}
+
 	bool Find(const TKey &key)
 	{
 		support = head;
