@@ -43,8 +43,11 @@ public:
 	bool GetArcPoints(ID, Array<ID>&);
 	bool getObjParam(const ID&, Array<double>&);
 	int Optimize1();
-	void Optimize2(Array<IRequirement*>&);
+	void OptimizeRequirements(Array<IRequirement*>&);
 	void PrintSystemRequirement();
+
+	//temp function
+	void OptimizeAllRequirements();
 };
 
 #endif

@@ -3,7 +3,7 @@
 
 Presenter presenter;
 
-//Model model;
+Model model;
 // /*void PrintPoints(Array<ID> points) {
 //	for (int i = 0; i < points.getSize(); ++i) {
 //		Array<double> params;
@@ -145,38 +145,38 @@ void CreateDrowBestTriangles(int count) {
 
 //
 //
-//ID CreatePoint(double x, double y) {
-//	Array<double> params;
-//	params.pushBack(x);
-//	params.pushBack(y);
-//	ID id;
-//
-//	model.createObject(point, params, id);
-//	return id;
-//
-//}
-//
-//ID CreateSegment(double x1, double y1, double x2, double y2) {
-//	ID id;
-//	Array<double> params;
-//	params.pushBack(x1);
-//	params.pushBack(y1);
-//	params.pushBack(x2);
-//	params.pushBack(y2);
-//
-//	model.createObject(segment, params, id);
-//	return id;
-//}
-//
-//void CreateRequirmentDistBetPoints(ID point1, ID point2, double d) {
-//	Array<double> dist;
-//	Array<ID> points;
-//	points.pushBack(point1);
-//	points.pushBack(point2);
-//	dist.pushBack(d);
-//
-//	model.createRequirement(distBetPoints, points, dist);
-//}
+ID CreatePoint(double x, double y) {
+	Array<double> params;
+	params.pushBack(x);
+	params.pushBack(y);
+	ID id;
+
+	model.createObject(point, params, id);
+	return id;
+
+}
+
+ID CreateSegment(double x1, double y1, double x2, double y2) {
+	ID id;
+	Array<double> params;
+	params.pushBack(x1);
+	params.pushBack(y1);
+	params.pushBack(x2);
+	params.pushBack(y2);
+
+	model.createObject(segment, params, id);
+	return id;
+}
+
+void CreateRequirmentDistBetPoints(ID point1, ID point2, double d) {
+	Array<double> dist;
+	Array<ID> points;
+	points.pushBack(point1);
+	points.pushBack(point2);
+	dist.pushBack(d);
+
+	model.createRequirement(distBetPoints, points, dist);
+}
 //
 //void PrintPoints(Array<ID> points) {
 //	for (int i = 0; i < points.getSize(); ++i) {
@@ -248,10 +248,11 @@ void CreateCorrectNsAngle(int count) {
 
 int main()
 {
-	//srand(time(nullptr));
-	////CreateNsAngle(10);
-	IView* view = new View();
-	view->Run();
+	ID point1 = CreatePoint(1.0, 1.0);
+	ID point2 = CreatePoint(5.0, 10.0);
+
+	CreateRequirmentDistBetPoints(point1, point2, 3.0);
+	model.OptimizeAllRequirements();
 
 	system("pause");
 	return 0;

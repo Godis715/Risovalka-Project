@@ -417,7 +417,6 @@ int Model::Optimize1() {
 	return count;
 }
 
-
 double Model::GetError(Array<IRequirement*>& requirments) {
 	double error = 0.0;
 	for (int i = 0; i < requirments.getSize(); ++i) {
@@ -428,7 +427,8 @@ double Model::GetError(Array<IRequirement*>& requirments) {
 
 double Model::ErrorByAlpha(Array<IRequirement*>& req, Parameters<double*> params, Parameters<double> aGrad, double alpha) {
 	for (int i = 0; i < params.GetSize(); ++i) {
-		*(params[i]) += aGrad[i] * alpha;
+		double delta = aGrad[i];
+		*(params[i]) += delta * alpha;
 	}
 	double error = GetError(req);
 	for (int i = 0; i < params.GetSize(); ++i) {
@@ -456,7 +456,7 @@ void Model::OptimizeByGradient(Array<IRequirement*>& requirments, Parameters<dou
 		double x2 = left + (right - left) / k;
 
 		double x1_Value = ErrorByAlpha(requirments, params, aGradient, x1);
-		double x2_Value = ErrorByAlpha(requirments, params, aGradient, x1);
+		double x2_Value = ErrorByAlpha(requirments, params, aGradient, x2);
 
 		if (x1 > x2) {
 			left = x1;
@@ -469,7 +469,7 @@ void Model::OptimizeByGradient(Array<IRequirement*>& requirments, Parameters<dou
 	}
 }
 
-void Model::Optimize2(Array<IRequirement*>& requirments) {
+void Model::OptimizeRequirements(Array<IRequirement*>& requirments) {
 
 	// get parameters number
 	int params_number = 0;
@@ -501,7 +501,7 @@ void Model::Optimize2(Array<IRequirement*>& requirments) {
 		int gradSize = currentGradient.GetSize();
 		
 		for (int j = 0; j < gradSize; ++j) {
-
+			aGradient[param_iterator] = 0.0;
 			aGradient[param_iterator] -= currentGradient[j];
 			param_iterator++;
 		}
@@ -510,6 +510,13 @@ void Model::Optimize2(Array<IRequirement*>& requirments) {
 	OptimizeByGradient(requirments, parameters, aGradient);
 }
 
+void Model::OptimizeAllRequirements() {
+	Array<IRequirement*> req;
+	for (int i = 0; i < dataReq.getSize(); ++i) {
+		req.pushBack(dataReq[i]);
+	}
+	OptimizeRequirements(req);
+}
 
 bool Model::getNearest(double x, double y, ID& obj_id, double& distance) {
 	if (data.getsize() != 0) {
