@@ -7,13 +7,15 @@ private:
 	class Component
 	{
 	private:
-		Array<Primitive*> dataPrimitive;
-		Array<IRequirement*> dataRequirement;
+		Dict<ID, Primitive*> dataPrimitive;
+		Dict<ID, IRequirement*> dataRequirement;
 	public:
 		Component() {}
 		~Component() {}
-		bool SearchPrimitive(ID&) const;
-		void DeletePrimitive(ID&);
+		bool Search(ID&);
+		void Delete(ID&);
+		Array<double*> GetParams();
+		double GetError();
 	};
 
 	int currentIndex;
