@@ -439,7 +439,7 @@ double Model::ErrorByAlpha(Array<IRequirement*>& req, Parameters<double*> params
 
 void Model::OptimizeByGradient(Array<IRequirement*>& requirments, Parameters<double*> params, Parameters<double> aGradient) {
 	
-	const double k = 1.6180339887498;
+	const double gold_section = 1.6180339887498;
 	int reqSize = requirments.getSize();
 
 	double error = GetError(requirments);
@@ -452,8 +452,8 @@ void Model::OptimizeByGradient(Array<IRequirement*>& requirments, Parameters<dou
 
 	while (error > EPS) {
 	
-	double x1 = right - (right - left) / k;
-		double x2 = left + (right - left) / k;
+	double x1 = right - (right - left) / gold_section;
+		double x2 = left + (right - left) / gold_section;
 
 		double x1_Value = ErrorByAlpha(requirments, params, aGradient, x1);
 		double x2_Value = ErrorByAlpha(requirments, params, aGradient, x2);

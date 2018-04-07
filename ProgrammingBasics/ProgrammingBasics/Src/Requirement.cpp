@@ -42,3 +42,18 @@ Parameters<double> IRequirement::gradient() {
 	}
 	return grad;
 }
+
+bool IRequirement::Contains(ID id) {
+	for (int i = 0; i < primitives.getSize(); ++i) {
+		if (primitives[i]->GetID() == id) {
+			return true;
+		}
+	}
+	return false;
+}
+
+void IRequirement::GetPrimitivesID(Array<ID>& IDArray) {
+	for (int i = 0; i < primitives.getSize(); ++i) {
+		IDArray.pushBack(primitives[i]->GetID());
+	}
+}

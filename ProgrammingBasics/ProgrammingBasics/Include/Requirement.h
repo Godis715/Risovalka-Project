@@ -18,6 +18,7 @@ class IRequirement {
 private:
 	const ID id;
 protected:
+	Array<Primitive*> primitives;
 	const double EPS = 1e-8;
 	Parameters<double*> params;
 	int params_num;
@@ -30,7 +31,7 @@ public :
 		return id;
 	}
 	Parameters<double*> GetParams();
-	bool Contains(ID) const;
+	bool Contains(ID);
 	void GetPrimitivesID(Array<ID>&);
 };
 
@@ -73,7 +74,6 @@ public:
 private:
 	double distance;
 };
-
 
 class PointsOnTheOneHand : public IRequirement
 {
