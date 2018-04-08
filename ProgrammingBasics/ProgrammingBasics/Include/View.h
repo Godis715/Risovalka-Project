@@ -4,12 +4,12 @@
 #include "IView.h"
 #include <windows.h>
 
-
 class View : public IView
 {
 private:
 	Presenter* presenter;
 	HWND hWnd;
+
 	HDC hDC;
 	HPEN hPen;
 	RECT screen;

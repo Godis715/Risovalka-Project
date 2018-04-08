@@ -9,7 +9,7 @@ class Model
 {
 private:
 
-	double EPS = 1e-10;
+	double EPS = 1e-12;
 	Dict<ID, Primitive*> data; //or another container
 	Array<IRequirement*> dataReq;
 	IDGenerator* idGen;

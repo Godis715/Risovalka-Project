@@ -3,22 +3,60 @@
 
 void Presenter::DrawScene() {
 	view->Clear();
+	view->SetColor(white);
 	Array<Model::infoObject> scene;
-	if (!model->DischargeInfoObjects(scene)) {
-		return;
-	}
-	for (int i = 0; i < scene.getSize(); ++i) {
-		view->SetColor(white);
-		if (scene[i].type == segment) {
-			view->DrawLine(Vector2(scene[i].params[0], scene[i].params[1]),
-				Vector2(scene[i].params[2], scene[i].params[3]));
-		}
-		if (scene[i].type == point) {
-			view->DrawPoint(Vector2(scene[i].params[0], scene[i].params[1]));
+	if (model->DischargeInfoObjects(scene)) {
+		for (int i = 0; i < scene.getSize(); ++i) {
+			if (scene[i].type == segment) {
+				view->DrawLine(Vector2(scene[i].params[0], scene[i].params[1]),
+					Vector2(scene[i].params[2], scene[i].params[3]));
+			}
+			if (scene[i].type == point) {
+				view->DrawPoint(Vector2(scene[i].params[0], scene[i].params[1]));
+			}
 		}
 	}
 
+	for (int i = 0; i < controller->buttons.getSize(); ++i) {
 
+		view->DrawLine(controller->buttons[i].leftUp,
+			Vector2(controller->buttons[i].leftUp.x, controller->buttons[i].rightDown.y));
+		view->DrawLine(controller->buttons[i].leftUp,
+			Vector2(controller->buttons[i].rightDown.x, controller->buttons[i].leftUp.y));
+		view->DrawLine(controller->buttons[i].rightDown,
+			Vector2(controller->buttons[i].leftUp.x, controller->buttons[i].rightDown.y));
+		view->DrawLine(controller->buttons[i].rightDown,
+			Vector2(controller->buttons[i].rightDown.x, controller->buttons[i].leftUp.y));
+	}
+
+	view->SetColor(red);
+	for (int i = 0; i < controller->clickedPoints.getSize(); ++i) {
+		view->DrawPoint(controller->clickedPoints[i]);
+	}
+
+	for (int i = 0; i < controller->selectedObjects.getSize(); ++i) {
+		type_id type;
+		if (model->getObjType(controller->selectedObjects[i], type)) {
+			switch (type) {
+			case point: {
+				Array<double> params;
+				if (model->getObjParam(controller->selectedObjects[i], params)) {
+					view->DrawPoint(Vector2(params[0], params[1]));
+				}
+				break;
+			}
+			case segment:
+			{
+				Array<double> params;
+				if (model->getObjParam(controller->selectedObjects[i], params)) {
+					view->DrawLine(Vector2(params[0], params[1]),
+						Vector2(params[2], params[3]));
+				}
+				break;
+			}
+			}
+		}
+	}
 
 	// drawing selected object
 }
@@ -70,6 +108,10 @@ Presenter::Presenter(IView* view)
 	this->view = view;
 	model = new Model();
 	controller = new Controller(this);
+
+	controller->AddButton(single_selecting, Vector2(10, 300), Vector2(30, 280));
+	controller->AddButton(segment_creating, Vector2(50, 300), Vector2(70, 280));
+	controller->AddButton(merging_points, Vector2(90, 300), Vector2(110, 280));
 }
 
 Presenter::Presenter()

@@ -459,7 +459,7 @@ void Model::OptimizeByGradient(Array<IRequirement*>& requirments, Parameters<dou
 	double x1_Value = ErrorByAlpha(requirments, params, aGradient, x1);
 	double x2_Value = ErrorByAlpha(requirments, params, aGradient, x2);
 
-	while (abs(leftValue - rightValue) > EPS) {
+	while (abs(leftValue - rightValue) > OPTIM_GRAD_EPS * error) {
 
 		if (x1_Value > x2_Value) {
 			left = x1;
@@ -552,7 +552,7 @@ void Model::OptimizeRequirements(Array<IRequirement*>& requirments) {
 
 	//filling anti gradient
 	double err = GetError(requirments);
-	while (GetError(requirments) > 1e-4) {
+	while (GetError(requirments) > OPTIM_EPS) {
 		int match_array_iterator = 0;
 		for (int i = 0; i < requirments.getSize(); ++i) {
 			Parameters<double> currentGradient = requirments[i]->gradient();

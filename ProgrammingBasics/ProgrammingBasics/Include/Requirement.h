@@ -2,6 +2,10 @@
 #define REQUIREMENT_H
 #include "Dictionary.h"
 
+#define OPTIM_EPS 1e-7
+#define OPTIM_GRAD_EPS 1e-5
+#define DELTA_X 1e-6
+
 template <typename T> class Parameters {
 private:
 	T* params;
@@ -20,7 +24,7 @@ private:
 	const ID id;
 protected:
 	Array<Primitive*> primitives;
-	const double EPS = 1e-8;
+	const double EPS = 1e-4;
 	Parameters<double*> params;
 	int params_num;
 public :

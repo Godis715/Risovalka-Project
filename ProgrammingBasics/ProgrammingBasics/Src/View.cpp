@@ -11,8 +11,6 @@ View::View()
 	DWORD Mode;
 	GetConsoleMode(hWnd, &Mode);
 	SetConsoleMode(hWnd, Mode | ENABLE_MOUSE_INPUT);
-
-
 }
 
 void View::Clear() {
@@ -44,7 +42,6 @@ void View::Run() {
 			presenter->ClickSceneEvent(pos.x, pos.y);
 
 		}
-
 	}
 }
 
@@ -77,7 +74,7 @@ void View::SetColor(color col) {
 		pen_color = RGB(255, 255, 255);
 	}
 
-	/*hPen = CreatePen(PS_SOLID, 1, pen_color);
+	hPen = CreatePen(PS_SOLID, 1, pen_color);
 
-	SelectObject(hDC, hPen);*/
+	SelectObject(hDC, hPen);
 }
