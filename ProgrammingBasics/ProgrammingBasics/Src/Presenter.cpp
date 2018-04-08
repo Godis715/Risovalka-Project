@@ -1,15 +1,26 @@
 #include "Presenter.h"
+#include "Controller.h"
 
 void Presenter::DrawScene() {
 	view->Clear();
 	Array<Model::infoObject> scene;
-	model->DischargeInfoObjects(scene);
+	if (!model->DischargeInfoObjects(scene)) {
+		return;
+	}
 	for (int i = 0; i < scene.getSize(); ++i) {
+		view->SetColor(white);
 		if (scene[i].type == segment) {
 			view->DrawLine(Vector2(scene[i].params[0], scene[i].params[1]),
 				Vector2(scene[i].params[2], scene[i].params[3]));
 		}
+		if (scene[i].type == point) {
+			view->DrawPoint(Vector2(scene[i].params[0], scene[i].params[1]));
+		}
 	}
+
+
+
+	// drawing selected object
 }
 
 ID Presenter::CreatePoint(double x, double y) {
@@ -36,10 +47,10 @@ ID Presenter::CreateSegment(ID& p1ID, ID& p2ID) {
 	model->createSegment(p1ID, p2ID, id);
 	return id;
 }
- /*ID Presenter::CreateSegment(ID& point1, ID& point2) {
-	ID id;
-	model->createSegment(point1, point2, id);
-	return id;
+/*ID Presenter::CreateSegment(ID& point1, ID& point2) {
+ID id;
+model->createSegment(point1, point2, id);
+return id;
 }*/
 ID Presenter::CreateArc(double x1, double y1, double x2, double y2, double angle)
 {
@@ -58,14 +69,16 @@ Presenter::Presenter(IView* view)
 {
 	this->view = view;
 	model = new Model();
+	controller = new Controller(this);
 }
 
 Presenter::Presenter()
 {
 	model = new Model();
+	controller = new Controller(this);
 }
 
-bool Presenter::CreateRequirmentDistBetPoints(ID point1, ID point2, double d) 
+bool Presenter::CreateRequirmentDistBetPoints(ID point1, ID point2, double d)
 {
 	Array<double> params;
 	Array<ID> components;
@@ -218,8 +231,9 @@ bool Presenter::CreateRequirmentCorrectNsAngle(Array<ID>& components, double siz
 
 
 
-int Presenter::Optimize() {
-	return model->Optimize1();
+void Presenter::Optimize() {
+	model->OptimizeAllRequirements();
+	DrawScene();
 }
 void Presenter::PrintSystemRequirement() {
 	model->PrintSystemRequirement();
@@ -277,9 +291,33 @@ void Presenter::DrawTriangle(
 bool Presenter::GetClickedObjectID(double x, double y, ID& obj_id) {
 	double dist;
 	if (model->getNearest(x, y, obj_id, dist)) {
-		if (dist < 1.0) {
+		if (dist < 5.0) {
 			return true;
 		}
 	}
 	return false;
 }
+
+bool Presenter::GetObjType(const ID& id, type_id& type) {
+	if (model->getObjType(id, type)) {
+		return true;
+	}
+	return false;
+}
+
+void Presenter::ClickSceneEvent(double x, double y) {
+	controller->ClickAt(x, y);
+	DrawScene();
+}
+void Presenter::KeyPressedEvent(char c) {
+	if (c == ' ') {
+		controller->SetState(segment_creating);
+	}
+	if (c == 'd') {
+		controller->SetState(merging_points);
+	}
+	DrawScene();
+}
+
+
+//void Prese

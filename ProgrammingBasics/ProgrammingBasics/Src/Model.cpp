@@ -1,8 +1,11 @@
 #include "Model.h"
 #include <stdexcept>
 
-void Model::DischargeInfoObjects(Array<infoObject>& DataInfoObjects)
+bool Model::DischargeInfoObjects(Array<infoObject>& DataInfoObjects)
 {
+	if (data.GetSize() == 0) {
+		return false;
+	}
 	data.MoveBegin();
 	do
 	{
@@ -11,7 +14,7 @@ void Model::DischargeInfoObjects(Array<infoObject>& DataInfoObjects)
 		getObjType(data.GetCurrentKey(), temp.type);
 		DataInfoObjects.pushBack(temp);
 	} while (data.MoveNext());
-	return;
+	return true;
 }
 
 bool Model::createObject(type_id type, Array<double>& params, ID& obj_id) {
@@ -438,113 +441,133 @@ double Model::ErrorByAlpha(Array<IRequirement*>& req, Parameters<double*> params
 }
 
 void Model::OptimizeByGradient(Array<IRequirement*>& requirments, Parameters<double*> params, Parameters<double> aGradient) {
-	
+
 	const double gold_section = 1.6180339887498;
 	int reqSize = requirments.getSize();
 
 	double error = GetError(requirments);
 
 	double left = 0.0;
-	double right = 0.5 * (double)reqSize;
+	double right = 0.1 * (double)reqSize;
 
 	double leftValue = ErrorByAlpha(requirments, params, aGradient, left);
 	double rightValue = ErrorByAlpha(requirments, params, aGradient, right);
 
-	while (error > EPS) {
-	
 	double x1 = right - (right - left) / gold_section;
-		double x2 = left + (right - left) / gold_section;
+	double x2 = left + (right - left) / gold_section;
 
-		double x1_Value = ErrorByAlpha(requirments, params, aGradient, x1);
-		double x2_Value = ErrorByAlpha(requirments, params, aGradient, x2);
+	double x1_Value = ErrorByAlpha(requirments, params, aGradient, x1);
+	double x2_Value = ErrorByAlpha(requirments, params, aGradient, x2);
 
-		if (x1 > x2) {
+	while (abs(leftValue - rightValue) > EPS) {
+
+		if (x1_Value > x2_Value) {
 			left = x1;
 			leftValue = x1_Value;
+			x1 = x2;
+			x1_Value = x2_Value;
+			x2 = left + (right - left) / gold_section;
+			x2_Value = ErrorByAlpha(requirments, params, aGradient, x2);
 		}
 		else {
 			right = x2;
 			rightValue = x2_Value;
+			x2 = x1;
+			x1 = right - (right - left) / gold_section;
+			x2_Value = x1_Value;
+			x1_Value = ErrorByAlpha(requirments, params, aGradient, x1);
 		}
+	}
+
+	double alpha = (leftValue < rightValue) ? left : right;
+
+	for (int i = 0; i < params.GetSize(); ++i) {
+		(*params[i]) += aGradient[i] * alpha;
 	}
 }
 
 void Model::OptimizeRequirements(Array<IRequirement*>& requirments) {
-
 	// get parameters number
 	int params_number = 0;
-	int reqSize = requirments.getSize();
-	
-	for (int i = 0; i < reqSize; ++i) {
-		Parameters<double*> curParams = requirments[i]->GetParams();
-		params_number = curParams.GetSize();
+	for (int i = 0; i < requirments.getSize(); ++i) {
+		Parameters<double*> params = requirments[i]->GetParams();
+		params_number += params.GetSize();
 	}
 
-	Parameters<double> aGradient(params_number);
-	Parameters<double*> parameters(params_number);
+	class UniqueParam {
+	private:
+	public:
+		double* param;
+		int unique_number;
+	};
 
-	int param_iterator = 0;
+	//ctreating match_array, which will establish a correspondence
+	//between not-unique parameters and their unique numbers
 
-	for (int i = 0; i < reqSize; ++i) {
-		Parameters<double*> curParams = requirments[i]->GetParams();
-		for (int j = 0; j < curParams.GetSize(); ++j) {
-			parameters[param_iterator] = curParams[j];
-			param_iterator++;
-		}
-	}
+	Parameters<double*> all_parameters(params_number);
+	Set<double*, UniqueParam> set;
+	int* match_array = new int[params_number];
 
-	param_iterator = 0;
-	
-	for (int i = 0; i < reqSize; ++i) {
-		
-		Parameters<double> currentGradient = requirments[i]->gradient();
-		int gradSize = currentGradient.GetSize();
-		
-		for (int j = 0; j < gradSize; ++j) {
-			aGradient[param_iterator] = 0.0;
-			aGradient[param_iterator] -= currentGradient[j];
-			param_iterator++;
-		}
-	}
+	// from 0 to params_number
+	int all_parameters_iterator = 0;
 
-	OptimizeByGradient(requirments, parameters, aGradient);
-}
+	// from 0 to number of unique double*
+	int uniq_numbers_iterator = 0;
 
-void Model::OptimizeAllRequirements() {
-	Array<IRequirement*> req;
-	for (int i = 0; i < dataReq.getSize(); ++i) {
-		req.pushBack(dataReq[i]);
-	}
-	OptimizeRequirements(req);
-}
+	// filling match_array
+	for (int i = 0; i < requirments.getSize(); ++i) {
 
-bool Model::getNearest(double x, double y, ID& obj_id, double& distance) {
-	if (data.GetSize() != 0) {
-		Vector2 pos(x, y);
-		data.MoveBegin();
-		ID nearestObject = data.GetCurrent()->GetID();
-		double minDist = data.GetCurrent()->GetDistance(pos);
-		while (data.MoveNext()) {
-			double dist = data.GetCurrent()->GetDistance(pos);
-			if (data.GetCurrent()->GetType() == point) {
-				if (dist < 5.0f) {
-					dist = 0.0;
-				}
+		Parameters<double*> currentRequirmentParams = requirments[i]->GetParams();
+
+		for (int j = 0; j < currentRequirmentParams.GetSize(); ++j) {
+
+			double* currentParameter = currentRequirmentParams[j];
+			all_parameters[all_parameters_iterator] = currentParameter;
+
+			UniqueParam unique_param;
+			bool notUniqueParam = set.GetByKey(currentParameter, unique_param);
+
+			if (notUniqueParam) {
+				match_array[all_parameters_iterator] = unique_param.unique_number;
 			}
-			if (dist < minDist && data.GetCurrent()->GetType() == point) {
-				minDist = dist;
-				nearestObject = data.GetCurrent()->GetID();
+			else {
+				unique_param = UniqueParam{ currentParameter, uniq_numbers_iterator };
+				set.Push(currentParameter, unique_param);
+				match_array[all_parameters_iterator] = uniq_numbers_iterator;
+				uniq_numbers_iterator++;
+			}
+			all_parameters_iterator++;
+		}
+	}
+
+	// array of unique_parameters
+	Parameters<double*> unique_parameters(uniq_numbers_iterator, nullptr);
+
+	for (int i = 0; i < params_number; ++i) {
+		unique_parameters[match_array[i]] = all_parameters[i];
+	}
+
+	// anti gradient
+	Parameters<double> aGradient(uniq_numbers_iterator, 0.0);
+
+	//filling anti gradient
+	double err = GetError(requirments);
+	while (GetError(requirments) > 1e-4) {
+		int match_array_iterator = 0;
+		for (int i = 0; i < requirments.getSize(); ++i) {
+			Parameters<double> currentGradient = requirments[i]->gradient();
+			for (int j = 0; j < currentGradient.GetSize(); ++j) {
+				aGradient[match_array[match_array_iterator]] -= currentGradient[j];
+				++match_array_iterator;
 			}
 		}
-		distance = minDist;
-		obj_id = nearestObject;
-		return true;
-	}
-	else
-	{
-		return false;
+
+		OptimizeByGradient(requirments, unique_parameters, aGradient);
+		aGradient = Parameters<double>(uniq_numbers_iterator, 0.0);
+		err = GetError(requirments);
 	}
 }
+
 
 bool Model::getObjType(const ID& obj_id, type_id& type) {
 	Primitive* obj = nullptr;
@@ -645,4 +668,40 @@ void  Model::PrintSystemRequirement() {
 		std::cout << i << ":\n";
 		dataReq[i]->Print();
 	}
+}
+
+bool Model::getNearest(double x, double y, ID& obj_id, double& distance) {
+	if (data.GetSize() != 0) {
+		Vector2 pos(x, y);
+		data.MoveBegin();
+		ID nearestObject = data.GetCurrent()->GetID();
+		double minDist = data.GetCurrent()->GetDistance(pos);
+		while (data.MoveNext()) {
+			double dist = data.GetCurrent()->GetDistance(pos);
+			if (data.GetCurrent()->GetType() == point) {
+				if (dist < 5.0f) {
+					dist = 0.0;
+				}
+			}
+			if (dist < minDist && data.GetCurrent()->GetType() == point) {
+				minDist = dist;
+				nearestObject = data.GetCurrent()->GetID();
+			}
+		}
+		distance = minDist;
+		obj_id = nearestObject;
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
+void Model::OptimizeAllRequirements() {
+	Array<IRequirement*> req;
+	for (int i = 0; i < dataReq.getSize(); ++i) {
+		req.pushBack(dataReq[i]);
+	}
+	OptimizeRequirements(req);
 }

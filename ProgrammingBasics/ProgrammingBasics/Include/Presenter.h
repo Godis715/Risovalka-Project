@@ -4,12 +4,15 @@
 #include "Model.h"
 #include "IView.h"
 
+class Controller;
+
+
 class Presenter
 {
 private:
 	Model* model;
 	IView* view;
-	
+	Controller* controller;
 	//ID CreatePoint(double, double);
 	//ID CreateSegment(double, double, double, double);
 	//ID CreateSegment(ID&, ID&);
@@ -34,9 +37,10 @@ public:
 	Presenter();
 	//~Presenter();
 
-	int Optimize();
+	void Optimize();
 	void PrintSystemRequirement();
 	bool getObjParam(const ID&, Array<double>&);
+	bool GetObjType(const ID&, type_id&);
 
 	bool GetClickedObjectID(double, double, ID&);
 
@@ -66,5 +70,8 @@ public:
 	bool CreateRequirmentCorrectTriangle(ID, ID, ID, double);
 	bool CreateRequirmentNsAngle(Array<ID>&);
 	bool CreateRequirmentCorrectNsAngle(Array<ID>&, double);
+
+	void ClickSceneEvent(double, double);
+	void KeyPressedEvent(char);
 };
 #endif // !__PRESENTER

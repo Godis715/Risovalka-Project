@@ -23,6 +23,15 @@ template <typename T> T& Parameters<T>::operator[](int index) {
 		throw std::out_of_range("Index out of parameters' number");
 	}
 }
+
+template <typename T> Parameters<T>::Parameters(int _size, T val) {
+	params = new T[_size];
+	num = _size;
+	for (int i = 0; i < _size; ++i) {
+		params[i] = val;
+	}
+}
+
 template <typename T> int Parameters<T>::GetSize() const {
 	return num;
 }

@@ -8,6 +8,7 @@ private:
 	int num;
 public:
 	Parameters(int);
+	Parameters(int, T);
 	Parameters();
 	Parameters(const Parameters&);
 	T& operator[](int);

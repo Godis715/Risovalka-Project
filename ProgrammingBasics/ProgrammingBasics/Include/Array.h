@@ -193,7 +193,7 @@ public:
 		_storage = newStorage;
 		if (newSize > _size)
 		{
-			fillDefault(_size, newSize - 1);
+			//fillDefault(_size, newSize - 1);
 		}
 		_size = newSize;
 	}

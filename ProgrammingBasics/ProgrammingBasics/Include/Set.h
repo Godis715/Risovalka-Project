@@ -36,7 +36,7 @@ private:
 				head = nullptr;
 				delete support;
 			}
-			return;
+			return true;
 		}
 
 		if (support->rightChild != nullptr) {
@@ -177,6 +177,7 @@ public:
 				}
 			}
 		}
+		return false;
 	}
 
 	TValue PopElement() {

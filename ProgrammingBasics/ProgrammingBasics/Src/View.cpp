@@ -7,10 +7,12 @@ View::View()
 	hPen = CreatePen(PS_SOLID, 1, RGB(255, 255, 255));
 	SelectObject(hDC, hPen);
 	GetClientRect(hWnd, &screen);
-	
+
 	DWORD Mode;
 	GetConsoleMode(hWnd, &Mode);
 	SetConsoleMode(hWnd, Mode | ENABLE_MOUSE_INPUT);
+
+
 }
 
 void View::Clear() {
@@ -19,14 +21,6 @@ void View::Clear() {
 }
 
 void View::Run() {
-
-	Vector2 point1;
-	Vector2 point2;
-	bool isFirstPressed = false;
-	bool isPointSelected = false;
-
-	ID id_p1;
-	ID id_p2;
 
 	HANDLE hStdin = GetStdHandle(STD_INPUT_HANDLE);
 	while (true) {
@@ -39,47 +33,51 @@ void View::Run() {
 		if (NumEvents != 0 && InRec.EventType == MOUSE_EVENT && InRec.Event.MouseEvent.dwButtonState == RI_MOUSE_BUTTON_1_DOWN) {
 			GetCursorPos(&pos);
 			ScreenToClient(hWnd, &pos);
-			ID clickedObject;
-			if (presenter->GetClickedObjectID(pos.x, pos.y, clickedObject)) {
-				if (isPointSelected) {
-					id_p2 = clickedObject;
-					presenter->CreateRequirmentDistBetPoints(id_p1, id_p2, 0.0);
-					presenter->Optimize();
-				}
-				else {
-					id_p1 = clickedObject;
-				}
-				isPointSelected = !isPointSelected;
+			if (pos.x <= 20 && pos.y <= 20) {
+				presenter->KeyPressedEvent(' ');
+				continue;
+			}
+			if (pos.x <= 20) {
+				presenter->KeyPressedEvent('d');
+				continue;
+			}
+			presenter->ClickSceneEvent(pos.x, pos.y);
 
-			}
-			else {
-				if (!isFirstPressed) {
-					point1.x = pos.x;
-					point1.y = pos.y;
-					isFirstPressed = true;
-				}
-				else {
-					point2.x = pos.x;
-					point2.y = pos.y;
-					isFirstPressed = false;
-					presenter->DrawSegment(point1.x, point1.y, point2.x, point2.y);
-				}
-			}
 		}
 
 	}
 }
+
 
 void View::DrawArc(Vector2 point1, Vector2 point2) {
 	
 }
 
 void View::DrawLine(Vector2 point1, Vector2 point2) {
-
 	MoveToEx(hDC, (int)point1.x, (int)point1.y, NULL);
 	LineTo(hDC,(int)point2.x, (int)point2.y);
 }
 
 void View::DrawPoint(Vector2 point) {
+	const double size = 3.0;
+	MoveToEx(hDC, (int)point.x - size, (int)point.y - size, NULL);
+	LineTo(hDC, (int)point.x + size, (int)point.y + size);
+
+	MoveToEx(hDC, (int)point.x + size, (int)point.y - size, NULL);
+	LineTo(hDC, (int)point.x - size, (int)point.y + size);
+}
+
+void View::SetColor(color col) {
 	
+	COLORREF pen_color;
+	if (col == red) {
+		pen_color = RGB(255, 0, 0);
+	}
+	if (col == white) {
+		pen_color = RGB(255, 255, 255);
+	}
+
+	/*hPen = CreatePen(PS_SOLID, 1, pen_color);
+
+	SelectObject(hDC, hPen);*/
 }

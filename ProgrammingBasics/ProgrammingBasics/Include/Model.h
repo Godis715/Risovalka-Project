@@ -9,7 +9,7 @@ class Model
 {
 private:
 
-	double EPS = 1e-6;
+	double EPS = 1e-10;
 	Dict<ID, Primitive*> data; //or another container
 	Array<IRequirement*> dataReq;
 	IDGenerator* idGen;
@@ -33,7 +33,7 @@ public:
 		type_id type;
 	};
 	Model() { }
-	void DischargeInfoObjects(Array<infoObject>&);
+	bool DischargeInfoObjects(Array<infoObject>&);
 	bool createObject(type_id, Array<double>&, ID&);
 	bool createSegment(ID&, ID&, ID&);
 	bool createRequirement(const Requirement_id, Array<ID>&, Array<double>&);

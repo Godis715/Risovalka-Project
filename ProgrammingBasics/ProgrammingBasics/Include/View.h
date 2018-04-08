@@ -18,6 +18,7 @@ public:
 	void DrawLine(Vector2, Vector2);
 	void DrawArc(Vector2, Vector2);
 	void DrawPoint(Vector2);
+	void SetColor(color);
 
 	void Run();
 	void Clear();
