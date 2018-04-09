@@ -58,7 +58,7 @@ private:
 
 public:
 	Segment(Point*, Point*);
-	double GetDistance(Vector2) const override;
+	double GetDistance(Vector2) const;
 	double GetLength() const;
 	ID GetPoint1_ID() const;
 	ID GetPoint2_ID() const;
@@ -77,7 +77,7 @@ private:
 public:
 	double angle; // from 0 to 2pi
 	Arc(Point*, Point*, double);
-	double GetDistance(Vector2) const override;
+	double GetDistance(Vector2) const;
 	Vector2 GetCenter() const;
 	ID GetPoint1_ID() const;
 	ID GetPoint2_ID() const;

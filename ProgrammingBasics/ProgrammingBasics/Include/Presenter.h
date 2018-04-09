@@ -38,7 +38,7 @@ public:
 	//~Presenter();
 
 	void Optimize();
-	void PrintSystemRequirement();
+	// void PrintSystemRequirement();
 	bool getObjParam(const ID&, Array<double>&);
 	bool GetObjType(const ID&, type_id&);
 

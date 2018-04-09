@@ -1,8 +1,7 @@
-#include <iostream>
-
-
 #ifndef __ARRAY
 #define __ARRAY
+
+#include <stdexcept>
 
 template <class T> class Array
 {
@@ -359,13 +358,13 @@ public:
 	} */
 }; 
 
-template <class T> std::ostream& operator<< (std::ostream& out, Array<T>& arr)
-{
-	for (size_t i = 0; i < arr.GetSize(); i++)
-	{
-		out << arr[i] << " ";
-	}
-	out << "\n";
-	return out;
-}
+//template <class T> std::ostream& operator<< (std::ostream& out, Array<T>& arr)
+//{
+//	for (size_t i = 0; i < arr.GetSize(); i++)
+//	{
+//		out << arr[i] << " ";
+//	}
+//	out << "\n";
+//	return out;
+//}
 #endif

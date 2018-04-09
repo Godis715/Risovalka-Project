@@ -1,4 +1,5 @@
 #include "Model.h"
+#include <iostream>
 #include <stdexcept>
 
 bool Model::DischargeInfoObjects(Array<infoObject>& DataInfoObjects)
@@ -662,13 +663,13 @@ bool Model::GetArcPoints(ID obj_id, Array<ID>& arr) {
 	return true;
 }
 
-void  Model::PrintSystemRequirement() {
-	for (int i = 0; i < dataReq.GetSize(); ++i) {
-		std::cout << std::endl;
-		std::cout << i << ":\n";
-		dataReq[i]->Print();
-	}
-}
+//void  Model::PrintSystemRequirement() {
+//	for (int i = 0; i < dataReq.GetSize(); ++i) {
+//		std::cout << std::endl;
+//		std::cout << i << ":\n";
+//		//dataReq[i]->Print();
+//	}
+//}
 
 bool Model::getNearest(double x, double y, ID& obj_id, double& distance) {
 	if (data.GetSize() != 0) {

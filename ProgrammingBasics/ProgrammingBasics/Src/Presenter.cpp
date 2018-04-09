@@ -277,9 +277,9 @@ void Presenter::Optimize() {
 	model->OptimizeAllRequirements();
 	DrawScene();
 }
-void Presenter::PrintSystemRequirement() {
-	model->PrintSystemRequirement();
-}
+//void Presenter::PrintSystemRequirement() {
+//	model->PrintSystemRequirement();
+//}
 bool Presenter::getObjParam(const ID& id, Array<double>& array) {
 	if (model->getObjParam(id, array)) {
 		return true;

@@ -1,6 +1,7 @@
 #ifndef REQUIREMENT_H
 #define REQUIREMENT_H
 #include "Dictionary.h"
+#include <cmath>
 
 #define OPTIM_EPS 1e-3
 #define OPTIM_GRAD_EPS 1e-3
@@ -18,7 +19,6 @@ public :
 	IRequirement(ID _id) : id(_id) { }
 	virtual double error() = 0;
 	Array<double> gradient();
-	virtual void Print() = 0;
 	ID GetID() const {
 		return id;
 	}
@@ -58,10 +58,7 @@ public:
 	void ChangeDistance(double _distance) {
 		distance = _distance;
 	}
-	void Print() {
-		std::cout << " point1) " << params[0] << ' ' << params[1] << "\n";
-		std::cout << " point2) " << params[2] << ' ' << params[3] << "\n\n";
-	}
+
 	Array<double> gradient() { return Array<double>(); }
 private:
 	double distance;
@@ -100,12 +97,6 @@ public:
 	void Print() {
 		Vector2 vec1 = segment.GetPoint1_pos();
 		Vector2 vec2 = segment.GetPoint2_pos();
-		
-		std::cout << " segment 1) " << vec1.x << ' ' << vec1.y << " ; " << vec2.x << ' ' << vec2.y << "\n";
-		vec1 = point1.GetPosition();
-		vec2 = point2.GetPosition();
-		std::cout << " point1) " << vec1.x << ' ' << vec1.y << "\n";
-		std::cout << " point2) " << vec2.x << ' ' << vec2.y << "\n\n";
 	}
 private:
 	Segment& segment;
@@ -132,16 +123,6 @@ public:
 	}
 
 	Array<double> gradient() { return Array<double>(); }
-
-	void Print() {
-		Vector2 vec1 = segment.GetPoint1_pos();
-		Vector2 vec2 = segment.GetPoint2_pos();
-
-		std::cout << " segment 1) " << vec1.x << ' ' << vec1.y << " ; " << vec2.x << ' ' << vec2.y << "\n";
-		vec1 = point.GetPosition();
-		std::cout << " point1) " << vec1.x << ' ' << vec1.y << "\n";
-		std::cout << " distance) " << distance << "\n\n";
-	}
 private:
 	Segment& segment;
 	Point& point;
@@ -171,17 +152,6 @@ public:
 	}
 
 	Array<double> gradient() { return Array<double>(); }
-
-	void Print() {
-		Vector2 vec1 = segment1.GetPoint1_pos();
-		Vector2 vec2 = segment1.GetPoint2_pos();
-		std::cout << " segment 1) " << vec1.x << ' ' << vec1.y << " ; " << vec2.x << ' ' << vec2.y << "\n";
-		vec1 = segment2.GetPoint1_pos();
-		vec2 = segment2.GetPoint2_pos();
-		std::cout << " segment 2) " << vec1.x << ' ' << vec1.y << " ; " << vec2.x << ' ' << vec2.y << "\n";
-		std::cout << " angle) " << angle << "\n\n";
-		
-	}
 private:
 	Segment& segment1;
 	Segment& segment2;
@@ -214,7 +184,7 @@ private:
 	Arc& arc;
 	Point& point;
 	double distance;
-};
+}; 
 
 class PointInArc : public IRequirement
 {
@@ -391,18 +361,6 @@ public:
 	}
 
 	Array<double> gradient() { return Array<double>(); }
-
-	void Print() {
-		Vector2 vec1 = segment1->GetPoint1_pos();
-		Vector2 vec2 = segment1->GetPoint2_pos();
-		std::cout << " segment 1) " << vec1.x << ' ' << vec1.y << " ; " << vec2.x << ' ' << vec2.y << "\n";
-		vec1 = segment2->GetPoint1_pos();
-		vec2 = segment2->GetPoint2_pos();
-		std::cout << " segment 2) " << vec1.x << ' ' << vec1.y << " ; " << vec2.x << ' ' << vec2.y << "\n";
-		vec1 = segment3->GetPoint1_pos();
-		vec2 = segment3->GetPoint2_pos();
-		std::cout << " segment 3) " << vec1.x << ' ' << vec1.y << " ; " << vec2.x << ' ' << vec2.y << "\n\n";
-	}
 private:
 	Segment* segment1;
 	Segment* segment2;
@@ -551,19 +509,6 @@ public:
 	}
 
 	Array<double> gradient() { return Array<double>(); }
-
-	void Print() {
-		Vector2 vec1 = segment1->GetPoint1_pos();
-		Vector2 vec2 = segment1->GetPoint2_pos();
-		std::cout << " segment 1) " << vec1.x << ' ' << vec1.y << " ; " << vec2.x << ' ' << vec2.y << "\n";
-		vec1 = segment2->GetPoint1_pos();
-		vec2 = segment2->GetPoint2_pos();
-		std::cout << " segment 2) " << vec1.x << ' ' << vec1.y << " ; " << vec2.x << ' ' << vec2.y << "\n";
-		vec1 = segment3->GetPoint1_pos();
-		vec2 = segment3->GetPoint2_pos();
-		std::cout << " segment 3) " << vec1.x << ' ' << vec1.y << " ; " << vec2.x << ' ' << vec2.y << "\n";
-		std::cout << " size " << size << "\n\n";
-	}
 private:
 	Segment* segment1;
 	Segment* segment2;
@@ -684,17 +629,6 @@ public:
 	}
 
 	Array<double> gradient() { return Array<double>(); }
-
-	void Print() {
-		Vector2 vec1;
-		Vector2 vec2;
-		for (int i = 0; i < count; ++i) {
-			vec1 = segments[i]->GetPoint1_pos();
-			vec2 = segments[i]->GetPoint2_pos();
-			std::cout << i << " segment) " << vec1.x << ' ' << vec1.y << " ; " << vec2.x << ' ' << vec2.y << "\n";
-		}
-		std::cout << "\n";
-	}
 private:
 	Segment** segments;
 	bool* bijection;
@@ -841,17 +775,6 @@ public:
 	}
 
 	Array<double> gradient() { return Array<double>(); }
-
-	void Print() {
-		Vector2 vec1;
-		Vector2 vec2;
-		for (int i = 0; i < count; ++i) {
-			vec1 = segments[i]->GetPoint1_pos();
-			vec2 = segments[i]->GetPoint2_pos();
-			std::cout << i << " segment) " << vec1.x << ' ' << vec1.y << " ; " << vec2.x << ' ' << vec2.y << "\n";
-		}
-		std::cout << "size- " << size << "\n\n";
-	}
 private:
 	Segment * * segments;
 	bool* bijection;

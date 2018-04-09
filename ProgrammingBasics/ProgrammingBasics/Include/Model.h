@@ -45,7 +45,7 @@ public:
 	bool getObjParam(const ID&, Array<double>&);
 	int Optimize1();
 	void OptimizeRequirements(const Array<IRequirement*>&);
-	void PrintSystemRequirement();
+	// void PrintSystemRequirement();
 
 	//temp function
 	void OptimizeAllRequirements();
