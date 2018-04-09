@@ -1,7 +1,6 @@
 #pragma once
 #include "Primitives.h"
 
-// � ������� �������� ������������� ������
 #define TABLE_I ((ListE<Pair<Tkey, Tval>>*)table[i])
 #define TABLE_INDEX ((ListE<Pair<Tkey, Tval>>*)table[index])
 // JUST FOOOOOR FUUUUUUUN
@@ -18,7 +17,6 @@ private:
 		Tval Tval;
 	};
 
-	// ������ ���������� �� ������
 	ListE<Pair<Tkey, Tval>*>** table;
 	int hashSize = 0;
 	int countElements = 0;

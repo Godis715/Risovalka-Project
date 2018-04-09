@@ -306,7 +306,7 @@ public:
 		size = 0;
 	}
 
-	int getsize() const
+	int GetSize() const
 	{
 		return size;
 	}
@@ -396,7 +396,16 @@ public:
 		}
 	}
 
-	bool find(const TKey &key)
+	void DeleteCurrent() {
+		if (current == nullptr) {
+			return;
+		}
+		support = current;
+		MoveNext();
+		Erase();
+	}
+
+	bool Find(const TKey &key)
 	{
 		support = head;
 		while (support != nullptr)
@@ -428,6 +437,7 @@ public:
 				}
 			}
 		}
+		return false;
 	}
 
 	void MoveHead() {

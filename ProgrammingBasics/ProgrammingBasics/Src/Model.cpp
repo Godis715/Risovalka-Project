@@ -1,8 +1,11 @@
 #include "Model.h"
 #include <stdexcept>
 
-void Model::DischargeInfoObjects(Array<infoObject>& DataInfoObjects)
+bool Model::DischargeInfoObjects(Array<infoObject>& DataInfoObjects)
 {
+	if (data.GetSize() == 0) {
+		return false;
+	}
 	data.MoveBegin();
 	do
 	{
@@ -11,7 +14,7 @@ void Model::DischargeInfoObjects(Array<infoObject>& DataInfoObjects)
 		getObjType(data.GetCurrentKey(), temp.type);
 		DataInfoObjects.pushBack(temp);
 	} while (data.MoveNext());
-	return;
+	return true;
 }
 
 bool Model::createObject(type_id type, Array<double>& params, ID& obj_id) {
@@ -68,9 +71,9 @@ bool Model::createSegment(ID& p1ID, ID& p2ID, ID& segID) {
 	Primitive* point1PR;
 	Primitive* point2PR;
 	bool error = false;
-	if (data.find(p1ID)) {
+	if (data.Find(p1ID)) {
 		point1PR = data.GetCurrent();
-		if (data.find(p2ID)) {
+		if (data.Find(p2ID)) {
 			point2PR = data.GetCurrent();
 			if ((point1PR->GetType() == point) && (point2PR->GetType() == point)) {
 				Point* point1 = dynamic_cast<Point*>(point1PR);
@@ -88,7 +91,7 @@ bool Model::createSegment(ID& p1ID, ID& p2ID, ID& segID) {
 bool Model::createRequirement(const Requirement_id _id, Array<ID>& id_arr, Array<double>& params) {
 	Array<Primitive*> primitives;
 	for (int i = 0; i < id_arr.getSize(); ++i) {
-		if (data.find(id_arr[i])) {
+		if (data.Find(id_arr[i])) {
 			primitives.pushBack(data.GetCurrent());
 		}
 		else {
@@ -270,7 +273,7 @@ double Model::GetError() {
 
 int Model::Optimize1() {
 
-	if (data.getsize() == 0) {
+	if (data.GetSize() == 0) {
 		return 0;
 	}
 
@@ -438,88 +441,237 @@ double Model::ErrorByAlpha(Array<IRequirement*>& req, Parameters<double*> params
 }
 
 void Model::OptimizeByGradient(Array<IRequirement*>& requirments, Parameters<double*> params, Parameters<double> aGradient) {
-	
-	const double k = 1.6180339887498;
+
+	const double gold_section = 1.6180339887498;
 	int reqSize = requirments.getSize();
 
 	double error = GetError(requirments);
 
 	double left = 0.0;
-	double right = 0.5 * (double)reqSize;
+	double right = 0.1;
 
 	double leftValue = ErrorByAlpha(requirments, params, aGradient, left);
 	double rightValue = ErrorByAlpha(requirments, params, aGradient, right);
 
-	while (error > EPS) {
-	
-	double x1 = right - (right - left) / k;
-		double x2 = left + (right - left) / k;
+	double x1 = right - (right - left) / gold_section;
+	double x2 = left + (right - left) / gold_section;
 
-		double x1_Value = ErrorByAlpha(requirments, params, aGradient, x1);
-		double x2_Value = ErrorByAlpha(requirments, params, aGradient, x2);
+	double x1_Value = ErrorByAlpha(requirments, params, aGradient, x1);
+	double x2_Value = ErrorByAlpha(requirments, params, aGradient, x2);
 
-		if (x1 > x2) {
+	while (abs(leftValue - rightValue) > OPTIM_GRAD_EPS * error) {
+
+		if (x1_Value > x2_Value) {
 			left = x1;
 			leftValue = x1_Value;
+			x1 = x2;
+			x1_Value = x2_Value;
+			x2 = left + (right - left) / gold_section;
+			x2_Value = ErrorByAlpha(requirments, params, aGradient, x2);
 		}
 		else {
 			right = x2;
 			rightValue = x2_Value;
+			x2 = x1;
+			x1 = right - (right - left) / gold_section;
+			x2_Value = x1_Value;
+			x1_Value = ErrorByAlpha(requirments, params, aGradient, x1);
 		}
+	}
+
+	double alpha = (leftValue < rightValue) ? left : right;
+
+	for (int i = 0; i < params.GetSize(); ++i) {
+		(*params[i]) += aGradient[i] * alpha;
 	}
 }
 
 void Model::OptimizeRequirements(Array<IRequirement*>& requirments) {
-
 	// get parameters number
 	int params_number = 0;
-	int reqSize = requirments.getSize();
-	
-	for (int i = 0; i < reqSize; ++i) {
-		Parameters<double*> curParams = requirments[i]->GetParams();
-		params_number = curParams.GetSize();
+	for (int i = 0; i < requirments.getSize(); ++i) {
+		Parameters<double*> params = requirments[i]->GetParams();
+		params_number += params.GetSize();
 	}
 
-	Parameters<double> aGradient(params_number);
-	Parameters<double*> parameters(params_number);
+	class UniqueParam {
+	private:
+	public:
+		double* param;
+		int unique_number;
+	};
 
-	int param_iterator = 0;
+	//ctreating match_array, which will establish a correspondence
+	//between not-unique parameters and their unique numbers
 
-	for (int i = 0; i < reqSize; ++i) {
-		Parameters<double*> curParams = requirments[i]->GetParams();
-		for (int j = 0; j < curParams.GetSize(); ++j) {
-			parameters[param_iterator] = curParams[j];
-			param_iterator++;
+	Parameters<double*> all_parameters(params_number);
+	Set<double*, UniqueParam> set;
+	int* match_array = new int[params_number];
+
+	// from 0 to params_number
+	int all_parameters_iterator = 0;
+
+	// from 0 to number of unique double*
+	int uniq_numbers_iterator = 0;
+
+	// filling match_array
+	for (int i = 0; i < requirments.getSize(); ++i) {
+
+		Parameters<double*> currentRequirmentParams = requirments[i]->GetParams();
+
+		for (int j = 0; j < currentRequirmentParams.GetSize(); ++j) {
+
+			double* currentParameter = currentRequirmentParams[j];
+			all_parameters[all_parameters_iterator] = currentParameter;
+
+			UniqueParam unique_param;
+			bool notUniqueParam = set.GetByKey(currentParameter, unique_param);
+
+			if (notUniqueParam) {
+				match_array[all_parameters_iterator] = unique_param.unique_number;
+			}
+			else {
+				unique_param = UniqueParam{ currentParameter, uniq_numbers_iterator };
+				set.Push(currentParameter, unique_param);
+				match_array[all_parameters_iterator] = uniq_numbers_iterator;
+				uniq_numbers_iterator++;
+			}
+			all_parameters_iterator++;
 		}
 	}
 
-	param_iterator = 0;
-	
-	for (int i = 0; i < reqSize; ++i) {
-		
-		Parameters<double> currentGradient = requirments[i]->gradient();
-		int gradSize = currentGradient.GetSize();
-		
-		for (int j = 0; j < gradSize; ++j) {
-			aGradient[param_iterator] = 0.0;
-			aGradient[param_iterator] -= currentGradient[j];
-			param_iterator++;
-		}
+	// array of unique_parameters
+	Parameters<double*> unique_parameters(uniq_numbers_iterator, nullptr);
+
+	for (int i = 0; i < params_number; ++i) {
+		unique_parameters[match_array[i]] = all_parameters[i];
 	}
 
-	OptimizeByGradient(requirments, parameters, aGradient);
+	// anti gradient
+	Parameters<double> aGradient(uniq_numbers_iterator, 0.0);
+
+	//filling anti gradient
+	double err = GetError(requirments);
+	while (GetError(requirments) > OPTIM_EPS) {
+		int match_array_iterator = 0;
+		for (int i = 0; i < requirments.getSize(); ++i) {
+			Parameters<double> currentGradient = requirments[i]->gradient();
+			for (int j = 0; j < currentGradient.GetSize(); ++j) {
+				aGradient[match_array[match_array_iterator]] -= currentGradient[j] / requirments.getSize();
+				++match_array_iterator;
+			}
+		}
+
+		OptimizeByGradient(requirments, unique_parameters, aGradient);
+		aGradient = Parameters<double>(uniq_numbers_iterator, 0.0);
+		err = GetError(requirments);
+	}
 }
 
-void Model::OptimizeAllRequirements() {
-	Array<IRequirement*> req;
-	for (int i = 0; i < dataReq.getSize(); ++i) {
-		req.pushBack(dataReq[i]);
+
+bool Model::getObjType(const ID& obj_id, type_id& type) {
+	Primitive* obj = nullptr;
+	bool isFound = data.Find(obj_id);
+	obj = data.GetCurrent();
+	if (isFound) {
+		type = obj->GetType();
+		return true;
 	}
-	OptimizeRequirements(req);
+	else {
+		return false;
+	}
+}
+
+bool Model::getObjParam(const ID& obj_id, Array<double>& result) {
+	Primitive* obj = nullptr;
+	bool isFound = data.Find(obj_id);
+	if (isFound) {
+		obj = data.GetCurrent();
+		switch (obj->GetType()) {
+		case point: {
+			Point* point = dynamic_cast<Point*>(obj);
+			result.clear();
+			Vector2 pos = point->GetPosition();
+			result.pushBack(pos.x);
+			result.pushBack(pos.y);
+			return true;
+			break;
+		}
+		case segment: {
+			Segment* segment = dynamic_cast<Segment*>(obj);
+			result.clear();
+			Vector2 pos1 = segment->GetPoint1_pos();
+			Vector2 pos2 = segment->GetPoint2_pos();
+			result.pushBack(pos1.x);
+			result.pushBack(pos1.y);
+			result.pushBack(pos2.x);
+			result.pushBack(pos2.y);
+			return true;
+			break;
+		}
+		case arc: {
+			Arc* arc = dynamic_cast<Arc*>(obj);
+			result.clear();
+			Vector2 pos1 = arc->GetPoint1_pos();
+			Vector2 pos2 = arc->GetPoint2_pos();
+			double angle = arc->GetAngle();
+			result.pushBack(pos1.x);
+			result.pushBack(pos1.y);
+			result.pushBack(pos2.x);
+			result.pushBack(pos2.y);
+			result.pushBack(angle);
+			return true;
+			break;
+		}
+		default: {
+			return false;
+		}
+		}
+	}
+	return false;
+
+}
+
+bool Model::GetSegmentPoints(ID obj_id, Array<ID>& arr) {
+	Primitive* obj;
+	if (!data.Find(obj_id)) {
+		return false;
+	}
+	obj = data.GetCurrent();
+	if (obj->GetType() != segment) {
+		return false;
+	}
+	Segment* segment = dynamic_cast<Segment*>(obj);
+	arr.pushBack(segment->GetPoint1_ID());
+	arr.pushBack(segment->GetPoint2_ID());
+	return true;
+}
+
+bool Model::GetArcPoints(ID obj_id, Array<ID>& arr) {
+	Primitive* obj;
+	if (!data.Find(obj_id)) {
+		return false;
+	}
+	obj = data.GetCurrent();
+	if (obj->GetType() != arc) {
+		return false;
+	}
+	Arc* arc = dynamic_cast<Arc*>(obj);
+	arr.pushBack(arc->GetPoint1_ID());
+	arr.pushBack(arc->GetPoint2_ID());
+	return true;
+}
+
+void  Model::PrintSystemRequirement() {
+	for (int i = 0; i < dataReq.getSize(); ++i) {
+		std::cout << std::endl;
+		std::cout << i << ":\n";
+		dataReq[i]->Print();
+	}
 }
 
 bool Model::getNearest(double x, double y, ID& obj_id, double& distance) {
-	if (data.getsize() != 0) {
+	if (data.GetSize() != 0) {
 		Vector2 pos(x, y);
 		data.MoveBegin();
 		ID nearestObject = data.GetCurrent()->GetID();
@@ -546,102 +698,10 @@ bool Model::getNearest(double x, double y, ID& obj_id, double& distance) {
 	}
 }
 
-bool Model::getObjType(const ID& obj_id, type_id& type) {
-	Primitive* obj = nullptr;
-	bool isFound = data.find(obj_id);
-	obj = data.GetCurrent();
-	if (isFound) {
-		type = obj->GetType();
-		return true;
-	}
-	else {
-		return false;
-	}
-}
-
-bool Model::getObjParam(const ID& obj_id, Array<double>& result) {
-	Primitive* obj = nullptr;
-	bool isFound = data.find(obj_id);
-	if (isFound) {
-		obj = data.GetCurrent();
-		switch (obj->GetType()) {
-		case point: {
-			Point* point = dynamic_cast<Point*>(obj);
-			result.clear();
-			Vector2 pos = point->GetPosition();
-			result.pushBack(pos.x);
-			result.pushBack(pos.y);
-			return true;
-			break;
-		}
-		case segment: {
-			Segment* segment = dynamic_cast<Segment*>(obj);
-			result.clear();
-			Vector2 pos1 = segment->GetPoint1_pos();
-			Vector2 pos2 = segment->GetPoint2_pos();
-			result.pushBack(pos1.x);
-			result.pushBack(pos1.y);
-			result.pushBack(pos2.x);
-			result.pushBack(pos2.y);
-			break;
-		}
-		case arc: {
-			Arc* arc = dynamic_cast<Arc*>(obj);
-			result.clear();
-			Vector2 pos1 = arc->GetPoint1_pos();
-			Vector2 pos2 = arc->GetPoint2_pos();
-			double angle = arc->GetAngle();
-			result.pushBack(pos1.x);
-			result.pushBack(pos1.y);
-			result.pushBack(pos2.x);
-			result.pushBack(pos2.y);
-			result.pushBack(angle);
-			break;
-		}
-		default: {
-			return false;
-		}
-		}
-	}
-	else {
-		return false;
-	}
-}
-
-bool Model::GetSegmentPoints(ID obj_id, Array<ID>& arr) {
-	Primitive* obj;
-	if (!data.find(obj_id)) {
-		return false;
-	}
-	obj = data.GetCurrent();
-	if (obj->GetType() != segment) {
-		return false;
-	}
-	Segment* segment = dynamic_cast<Segment*>(obj);
-	arr.pushBack(segment->GetPoint1_ID());
-	arr.pushBack(segment->GetPoint2_ID());
-	return true;
-}
-
-bool Model::GetArcPoints(ID obj_id, Array<ID>& arr) {
-	Primitive* obj;
-	if (!data.find(obj_id)) {
-		return false;
-	}
-	obj = data.GetCurrent();
-	if (obj->GetType() != arc) {
-		return false;
-	}
-	Arc* arc = dynamic_cast<Arc*>(obj);
-	arr.pushBack(arc->GetPoint1_ID());
-	arr.pushBack(arc->GetPoint2_ID());
-	return true;
-}
-
-void  Model::PrintSystemRequirement() {
+void Model::OptimizeAllRequirements() {
+	Array<IRequirement*> req;
 	for (int i = 0; i < dataReq.getSize(); ++i) {
-		std::cout << std::endl;
-		std::cout << i << ":\n";
-		dataReq[i]->Print();
+		req.pushBack(dataReq[i]);
 	}
+	OptimizeRequirements(req);
 }

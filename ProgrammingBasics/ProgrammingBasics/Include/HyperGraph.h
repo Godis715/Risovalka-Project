@@ -1,5 +1,7 @@
-#pragma once
+#ifndef __HYPERGRAPH
+#define __HYPERGRAPH
 #include "Requirement.h"
+#include "Set.h"
 
 class HyperGraph
 {
@@ -7,30 +9,39 @@ private:
 	class Component
 	{
 	private:
+		const ID id;
+	public:
 		Dict<ID, Primitive*> dataPrimitive;
 		Dict<ID, IRequirement*> dataRequirement;
-	public:
-		Component() {}
+
+		Component(ID);
 		~Component() {}
 		bool Search(ID&);
 		bool Delete(ID&);
 		Array<double*> GetParams();
 		double GetError();
+		ID GetID() const;
 	};
 
-	int currentIndex;
+	Dict<ID, Component*> components;
 
-	Array<Component> components;
-	void SplitingAndBFS(int index);
-	void MergeComponents(int array[], int size);
-	void DeleteComponent(int index);
+	Array<Primitive*> SplitingAndBFS(ID);
+	void MergeComponents(Array<ID>&);
 public:
 	HyperGraph() {}
 	~HyperGraph() {}
-	bool SearchPrimitive(ID&) const;
-	void DeletePrimitive(ID&);
-	void Add(IRequirement*, Array<Primitive*>);
+	
+
+	int GetSize();
+	void DeleteComponent(ID id);
+	bool Search(ID, ID&);
+	void Delete(Array<ID>&);
+	void Add(IRequirement*, Array<Primitive*>&);
 	Array<Primitive*> UploadingDataPrimitive();
 	Array<IRequirement*> UploadingDataRequirement();
 	int GetSize();
 };
+
+
+
+#endif

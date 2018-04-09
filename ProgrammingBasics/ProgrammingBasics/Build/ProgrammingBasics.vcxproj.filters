@@ -42,6 +42,9 @@
     <ClCompile Include="..\Src\HyperGraph.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
+    <ClCompile Include="..\Src\Controller.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Include\Array.h">
@@ -89,13 +92,13 @@
     <ClInclude Include="..\Include\Hash-Table.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="..\Include\IDReq.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
     <ClInclude Include="..\Include\HyperGraph.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="..\Include\Set.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Include\Controller.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>

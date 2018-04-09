@@ -2,12 +2,17 @@
 #define REQUIREMENT_H
 #include "Dictionary.h"
 
+#define OPTIM_EPS 1e-3
+#define OPTIM_GRAD_EPS 1e-3
+#define DELTA_X 1e-6
+
 template <typename T> class Parameters {
 private:
 	T* params;
 	int num;
 public:
 	Parameters(int);
+	Parameters(int, T);
 	Parameters();
 	Parameters(const Parameters&);
 	T& operator[](int);
@@ -18,7 +23,8 @@ class IRequirement {
 private:
 	const ID id;
 protected:
-	const double EPS = 1e-8;
+	Array<Primitive*> primitives;
+	const double EPS = 1e-4;
 	Parameters<double*> params;
 	int params_num;
 public :
@@ -30,7 +36,8 @@ public :
 		return id;
 	}
 	Parameters<double*> GetParams();
-	bool Contains(ID&) const;
+	bool Contains(ID);
+	void GetPrimitivesID(Array<ID>&);
 };
 
 class DistanceBetweenPoints : public IRequirement
@@ -57,9 +64,9 @@ public:
 		return abs((vec1 - vec2).GetLength() - dist);
 	}
 	double error() {
-		double dist = (*(params[0]) - *(params[2])) * (*(params[0]) - *(params[2])) +
-			(*(params[1]) - *(params[3])) * (*(params[1]) - *(params[3])) - distance * distance;
-		return dist * dist;
+		double a2b2 = (*(params[0]) - *(params[2])) * (*(params[0]) - *(params[2])) +
+			(*(params[1]) - *(params[3])) * (*(params[1]) - *(params[3]));
+		return a2b2 - distance * (2 * sqrt(a2b2) - distance);
 	}
 	void ChangeDistance(double _distance) {
 		distance = _distance;
@@ -72,7 +79,6 @@ public:
 private:
 	double distance;
 };
-
 
 class PointsOnTheOneHand : public IRequirement
 {
