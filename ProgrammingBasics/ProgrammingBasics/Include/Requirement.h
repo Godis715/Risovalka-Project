@@ -6,19 +6,6 @@
 #define OPTIM_GRAD_EPS 1e-3
 #define DELTA_X 1e-6
 
-/*template <typename T> class Parameters {
-private:
-	T* params;
-	int num;
-public:
-	Parameters(int);
-	Parameters(int, T);
-	Parameters();
-	Parameters(const Parameters&);
-	T& operator[](int);
-	int GetSize() const;
-}; */
-
 class IRequirement {
 private:
 	const ID id;

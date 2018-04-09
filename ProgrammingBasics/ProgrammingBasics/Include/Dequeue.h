@@ -16,6 +16,9 @@ private:
 	int Size = 0;
 public:
 	Deck() {}
+	~Deck() {
+		DeleteDeck();
+	}
 	int GetSize() {
 		return Size;
 	}

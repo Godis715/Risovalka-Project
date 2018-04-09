@@ -3,12 +3,6 @@
 #include "Dequeue.h"
 #include "Hash-Table.h"
 
-template <class TKey, class TVal> class Pair
-{
-	TKey first;
-	TVal second;
-};
-
 template <class TKey, class TVal> class Dict
 {
 private:
@@ -306,6 +300,10 @@ public:
 		size = 0;
 	}
 
+	~Dict() {
+		DeleteDict();
+	}
+
 	int GetSize() const
 	{
 		return size;
@@ -595,6 +593,9 @@ public:
 	}
 
 	void DeleteDict() {
+		if (head == nullptr) {
+			return;
+		}
 		temp = head;
 		Deck<Node<TKey, TVal>*> deck;
 		deck.PushTail(temp);
@@ -609,10 +610,6 @@ public:
 			}
 			delete temp;
 		}
-		temp = nullptr;
-		head = nullptr;
-		current = nullptr;
-		support = nullptr;
 		size = 0;
 	}
 };

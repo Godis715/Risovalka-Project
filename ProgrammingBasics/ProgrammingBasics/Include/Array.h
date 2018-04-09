@@ -81,29 +81,6 @@ private:
 
 public:
 
-	int GetSize() const
-	{
-		return _size;
-	}
-
-	void operator=(const Array& arr) {
-		this->_capacity = arr._capacity;
-		this->_size = arr._size;
-		this->_storage = new T[_capacity];
-		for (int i = 0; i < _size; ++i) {
-			this->_storage[i] = arr._storage[i];
-		}
-	}
-
-	Array(const Array& arr) : _default_capacity(arr._default_capacity) {
-		this->_capacity = arr._capacity;
-		this->_size = arr._size;
-		this->_storage = new T[_capacity];
-		for (int i = 0; i < _size; ++i) {
-			this->_storage[i] = arr._storage[i];
-		}
-	}
-
 	Array() : _default_capacity(64)
 	{
 		_capacity = _default_capacity;
@@ -134,9 +111,19 @@ public:
 		FillDefault(default_value);
 	}
 
-	void FillDefault(const T& default_value) {
+	Array(Array&& arr) : _default_capacity(arr._default_capacity) {
+		this->_capacity = arr._capacity;
+		this->_size = arr._size;
+		this->_storage = arr._storage;
+		arr._storage = nullptr;
+	}
+
+	Array(const Array& arr) : _default_capacity(arr._default_capacity) {
+		this->_capacity = arr._capacity;
+		this->_size = arr._size;
+		this->_storage = new T[_capacity];
 		for (int i = 0; i < _size; ++i) {
-			_storage[i] = default_value;
+			this->_storage[i] = arr._storage[i];
 		}
 	}
 
@@ -144,6 +131,34 @@ public:
 	{
 		delete[] _storage;
 	}
+	
+	void operator=(Array&& arr) {
+		this->_capacity = arr._capacity;
+		this->_size = arr._size;
+		this->_storage = arr._storage;
+		arr._storage = nullptr;
+	}
+
+	void operator=(const Array& arr) {
+		this->_capacity = arr._capacity;
+		this->_size = arr._size;
+		this->_storage = new T[_capacity];
+		for (int i = 0; i < _size; ++i) {
+			this->_storage[i] = arr._storage[i];
+		}
+	}
+
+	int GetSize() const
+	{
+		return _size;
+	}
+
+	void FillDefault(const T& default_value) {
+		for (int i = 0; i < _size; ++i) {
+			_storage[i] = default_value;
+		}
+	}
+
 
 	T& operator[](int index)
 	{
