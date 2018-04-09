@@ -448,7 +448,7 @@ void Model::OptimizeByGradient(Array<IRequirement*>& requirments, Parameters<dou
 	double error = GetError(requirments);
 
 	double left = 0.0;
-	double right = 0.1 * (double)reqSize;
+	double right = 0.1;
 
 	double leftValue = ErrorByAlpha(requirments, params, aGradient, left);
 	double rightValue = ErrorByAlpha(requirments, params, aGradient, right);
@@ -557,7 +557,7 @@ void Model::OptimizeRequirements(Array<IRequirement*>& requirments) {
 		for (int i = 0; i < requirments.getSize(); ++i) {
 			Parameters<double> currentGradient = requirments[i]->gradient();
 			for (int j = 0; j < currentGradient.GetSize(); ++j) {
-				aGradient[match_array[match_array_iterator]] -= currentGradient[j];
+				aGradient[match_array[match_array_iterator]] -= currentGradient[j] / requirments.getSize();
 				++match_array_iterator;
 			}
 		}

@@ -2,8 +2,8 @@
 #define REQUIREMENT_H
 #include "Dictionary.h"
 
-#define OPTIM_EPS 1e-7
-#define OPTIM_GRAD_EPS 1e-5
+#define OPTIM_EPS 1e-3
+#define OPTIM_GRAD_EPS 1e-3
 #define DELTA_X 1e-6
 
 template <typename T> class Parameters {
@@ -64,9 +64,9 @@ public:
 		return abs((vec1 - vec2).GetLength() - dist);
 	}
 	double error() {
-		double dist = (*(params[0]) - *(params[2])) * (*(params[0]) - *(params[2])) +
-			(*(params[1]) - *(params[3])) * (*(params[1]) - *(params[3])) - distance * distance;
-		return dist * dist;
+		double a2b2 = (*(params[0]) - *(params[2])) * (*(params[0]) - *(params[2])) +
+			(*(params[1]) - *(params[3])) * (*(params[1]) - *(params[3]));
+		return a2b2 - distance * (2 * sqrt(a2b2) - distance);
 	}
 	void ChangeDistance(double _distance) {
 		distance = _distance;
