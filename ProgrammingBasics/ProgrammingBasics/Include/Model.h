@@ -13,18 +13,18 @@ private:
 	Dict<ID, Primitive*> data; //or another container
 	Array<IRequirement*> dataReq;
 	IDGenerator* idGen;
-	double GetError();
-	double GetError(Array<IRequirement*>&);
-	double ErrorByAlpha(Array<IRequirement*>&, Parameters<double*>, Parameters<double>, double);
+	double GetError() const;
+	double GetError(const Array<IRequirement*>&) const;
+	double ErrorByAlpha(const Array<IRequirement*>&, const Array<double*>&, const Array<double>&, double);
 
-	void OptimizeByGradient(Array<IRequirement*>&, Parameters<double*>, Parameters<double>);
+	void OptimizeByGradient(const Array<IRequirement*>&, const Array<double*>&, const Array<double>&);
 
 public:
 	class infoObject
 	{
 	public:
-		infoObject(){}
-		void operator=(infoObject input)
+		infoObject(){ }
+		void operator=(const infoObject& input)
 		{
 			this->params = input.params;
 			this->type = input.type;
@@ -32,6 +32,7 @@ public:
 		Array<double> params;
 		type_id type;
 	};
+
 	Model() { }
 	bool DischargeInfoObjects(Array<infoObject>&);
 	bool createObject(type_id, Array<double>&, ID&);
@@ -43,7 +44,7 @@ public:
 	bool GetArcPoints(ID, Array<ID>&);
 	bool getObjParam(const ID&, Array<double>&);
 	int Optimize1();
-	void OptimizeRequirements(Array<IRequirement*>&);
+	void OptimizeRequirements(const Array<IRequirement*>&);
 	void PrintSystemRequirement();
 
 	//temp function

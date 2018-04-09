@@ -6,7 +6,7 @@ void Presenter::DrawScene() {
 	view->SetColor(white);
 	Array<Model::infoObject> scene;
 	if (model->DischargeInfoObjects(scene)) {
-		for (int i = 0; i < scene.getSize(); ++i) {
+		for (int i = 0; i < scene.GetSize(); ++i) {
 			if (scene[i].type == segment) {
 				view->DrawLine(Vector2(scene[i].params[0], scene[i].params[1]),
 					Vector2(scene[i].params[2], scene[i].params[3]));
@@ -17,7 +17,7 @@ void Presenter::DrawScene() {
 		}
 	}
 
-	for (int i = 0; i < controller->buttons.getSize(); ++i) {
+	for (int i = 0; i < controller->buttons.GetSize(); ++i) {
 
 		view->DrawLine(controller->buttons[i].leftUp,
 			Vector2(controller->buttons[i].leftUp.x, controller->buttons[i].rightDown.y));
@@ -30,11 +30,11 @@ void Presenter::DrawScene() {
 	}
 
 	view->SetColor(red);
-	for (int i = 0; i < controller->clickedPoints.getSize(); ++i) {
+	for (int i = 0; i < controller->clickedPoints.GetSize(); ++i) {
 		view->DrawPoint(controller->clickedPoints[i]);
 	}
 
-	for (int i = 0; i < controller->selectedObjects.getSize(); ++i) {
+	for (int i = 0; i < controller->selectedObjects.GetSize(); ++i) {
 		type_id type;
 		if (model->getObjType(controller->selectedObjects[i], type)) {
 			switch (type) {
@@ -63,8 +63,8 @@ void Presenter::DrawScene() {
 
 ID Presenter::CreatePoint(double x, double y) {
 	Array<double> params;
-	params.pushBack(x);
-	params.pushBack(y);
+	params.PushBack(x);
+	params.PushBack(y);
 
 	ID id;
 	model->createObject(point, params, id);
@@ -73,10 +73,10 @@ ID Presenter::CreatePoint(double x, double y) {
 ID Presenter::CreateSegment(double x1, double y1, double x2, double y2) {
 	ID id;
 	Array<double> params;
-	params.pushBack(x1);
-	params.pushBack(y1);
-	params.pushBack(x2);
-	params.pushBack(y2);
+	params.PushBack(x1);
+	params.PushBack(y1);
+	params.PushBack(x2);
+	params.PushBack(y2);
 	model->createObject(segment, params, id);
 	return id;
 }
@@ -94,11 +94,11 @@ ID Presenter::CreateArc(double x1, double y1, double x2, double y2, double angle
 {
 	ID id;
 	Array<double> params;
-	params.pushBack(x1);
-	params.pushBack(y1);
-	params.pushBack(x2);
-	params.pushBack(y2);
-	params.pushBack(angle);
+	params.PushBack(x1);
+	params.PushBack(y1);
+	params.PushBack(x2);
+	params.PushBack(y2);
+	params.PushBack(angle);
 	model->createObject(arc, params, id);
 	return id;
 }
@@ -125,9 +125,9 @@ bool Presenter::CreateRequirmentDistBetPoints(ID point1, ID point2, double d)
 	Array<double> params;
 	Array<ID> components;
 
-	components.pushBack(point1);
-	components.pushBack(point2);
-	params.pushBack(d);
+	components.PushBack(point1);
+	components.PushBack(point2);
+	params.PushBack(d);
 
 	if (model->createRequirement(distBetPoints, components, params)) {
 		return true;
@@ -141,9 +141,9 @@ bool Presenter::CreateRequirmentPointsOnTheOneHand(ID segment, ID point1, ID poi
 	Array<double> params;//empty
 	Array<ID> components;
 
-	components.pushBack(segment);
-	components.pushBack(point1);
-	components.pushBack(point2);
+	components.PushBack(segment);
+	components.PushBack(point1);
+	components.PushBack(point2);
 
 	if (model->createRequirement(pointsOnTheOneHand, components, params)) {
 		return true;
@@ -157,9 +157,9 @@ bool Presenter::CreateRequirmentDistanceBetweenPointSegment(ID segment, ID point
 	Array<double> params;
 	Array<ID> components;
 
-	components.pushBack(segment);
-	components.pushBack(point);
-	params.pushBack(d);
+	components.PushBack(segment);
+	components.PushBack(point);
+	params.PushBack(d);
 
 	if (model->createRequirement(distBetPointSeg, components, params)) {
 		return true;
@@ -173,9 +173,9 @@ bool Presenter::CreateRequirmentAngleBetweenSegments(ID segment1, ID segment2, d
 	Array<double> params;
 	Array<ID> components;
 
-	components.pushBack(segment1);
-	components.pushBack(segment2);
-	params.pushBack(a);
+	components.PushBack(segment1);
+	components.PushBack(segment2);
+	params.PushBack(a);
 
 	if (model->createRequirement(angleBetSeg, components, params)) {
 		return true;
@@ -189,9 +189,9 @@ bool Presenter::CreateRequirmentDistanceBetweenPointArc(ID arc, ID point, double
 	Array<double> params;
 	Array<ID> components;
 
-	components.pushBack(arc);
-	components.pushBack(point);
-	params.pushBack(d);
+	components.PushBack(arc);
+	components.PushBack(point);
+	params.PushBack(d);
 
 	if (model->createRequirement(distBetPointArc, components, params)) {
 		return true;
@@ -205,8 +205,8 @@ bool Presenter::CreateRequirmentPointInArc(ID arc, ID point)
 	Array<double> params;//empty
 	Array<ID> components;
 
-	components.pushBack(arc);
-	components.pushBack(point);
+	components.PushBack(arc);
+	components.PushBack(point);
 
 
 	if (model->createRequirement(pointInArc, components, params)) {
@@ -220,9 +220,9 @@ bool Presenter::CreateRequirmentTriangle(ID segment1, ID segment2, ID segment3) 
 	Array<double> params;//empty
 	Array<ID> components;
 
-	components.pushBack(segment1);
-	components.pushBack(segment2);
-	components.pushBack(segment3);
+	components.PushBack(segment1);
+	components.PushBack(segment2);
+	components.PushBack(segment3);
 
 
 	if (model->createRequirement(triangle, components, params)) {
@@ -236,10 +236,10 @@ bool Presenter::CreateRequirmentCorrectTriangle(ID segment1, ID segment2, ID seg
 	Array<double> params;
 	Array<ID> components;
 
-	components.pushBack(segment1);
-	components.pushBack(segment2);
-	components.pushBack(segment3);
-	params.pushBack(size);
+	components.PushBack(segment1);
+	components.PushBack(segment2);
+	components.PushBack(segment3);
+	params.PushBack(size);
 
 	if (model->createRequirement(correctTriangle, components, params)) {
 		return true;
@@ -261,7 +261,7 @@ bool Presenter::CreateRequirmentNsAngle(Array<ID>& components) {
 bool Presenter::CreateRequirmentCorrectNsAngle(Array<ID>& components, double size) {
 	Array<double> params;
 
-	params.pushBack(size);
+	params.PushBack(size);
 
 	if (model->createRequirement(correctNsAngle, components, params)) {
 		return true;

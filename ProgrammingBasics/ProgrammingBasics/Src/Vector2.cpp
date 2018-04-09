@@ -23,15 +23,15 @@ double Vector2::GetLength() const {
 	return sqrt(this->x * this->x + this->y * this->y);
 }
 
-double Vector2::Dot(Vector2 vec1, Vector2 vec2) {
+double Vector2::Dot(const Vector2& vec1, const Vector2& vec2) {
 	return vec1.x * vec2.x + vec1.y + vec2.y;
 }
 
-double Vector2::Cross(Vector2 vec1, Vector2 vec2) {
+double Vector2::Cross(const Vector2& vec1, const Vector2& vec2) {
 	return (vec1.x * vec2.y - vec1.y * vec1.x);
 }
 
-double Vector2::Angle(Vector2 vec1, Vector2 vec2) {
+double Vector2::Angle(const Vector2& vec1, const Vector2& vec2) {
 	double Cos = Vector2::Dot(vec1, vec2) / (vec1.GetLength() * vec2.GetLength());
 	double Sin = Vector2::Cross(vec1, vec2) / (vec1.GetLength() * vec2.GetLength());
 	if (Sin >= 0) {

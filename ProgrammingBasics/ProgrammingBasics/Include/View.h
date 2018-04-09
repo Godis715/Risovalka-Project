@@ -15,9 +15,9 @@ private:
 	RECT screen;
 public:
 	View();
-	void DrawLine(Vector2, Vector2);
-	void DrawArc(Vector2, Vector2);
-	void DrawPoint(Vector2);
+	void DrawLine(const Vector2&, const Vector2&);
+	void DrawArc(const Vector2&, const Vector2&);
+	void DrawPoint(const Vector2&);
 	void SetColor(color);
 
 	void Run();

@@ -6,7 +6,7 @@
 #define OPTIM_GRAD_EPS 1e-3
 #define DELTA_X 1e-6
 
-template <typename T> class Parameters {
+/*template <typename T> class Parameters {
 private:
 	T* params;
 	int num;
@@ -17,7 +17,7 @@ public:
 	Parameters(const Parameters&);
 	T& operator[](int);
 	int GetSize() const;
-};
+}; */
 
 class IRequirement {
 private:
@@ -25,17 +25,17 @@ private:
 protected:
 	Array<Primitive*> primitives;
 	const double EPS = 1e-4;
-	Parameters<double*> params;
+	Array<double*> params;
 	int params_num;
 public :
 	IRequirement(ID _id) : id(_id) { }
 	virtual double error() = 0;
-	Parameters<double> gradient();
+	Array<double> gradient();
 	virtual void Print() = 0;
 	ID GetID() const {
 		return id;
 	}
-	Parameters<double*> GetParams();
+	Array<double*> GetParams();
 	bool Contains(ID);
 	void GetPrimitivesID(Array<ID>&);
 };
@@ -49,7 +49,7 @@ public:
 		Vector2* pos1 = &_point1.position;
 		Vector2* pos2 = &_point2.position;
 		
-		params = Parameters<double*>(4);
+		params = Array<double*>(4);
 
 		params[0] = &pos1->x;
 		params[1] = &pos1->y;
@@ -75,7 +75,7 @@ public:
 		std::cout << " point1) " << params[0] << ' ' << params[1] << "\n";
 		std::cout << " point2) " << params[2] << ' ' << params[3] << "\n\n";
 	}
-	Parameters<double> gradient() { return Parameters<double>(); }
+	Array<double> gradient() { return Array<double>(); }
 private:
 	double distance;
 };
@@ -108,7 +108,7 @@ public:
 	}
 
 
-	Parameters<double> gradient() { return Parameters<double>(); }
+	Array<double> gradient() { return Array<double>(); }
 
 	void Print() {
 		Vector2 vec1 = segment.GetPoint1_pos();
@@ -144,7 +144,7 @@ public:
 		distance = _distance;
 	}
 
-	Parameters<double> gradient() { return Parameters<double>(); }
+	Array<double> gradient() { return Array<double>(); }
 
 	void Print() {
 		Vector2 vec1 = segment.GetPoint1_pos();
@@ -183,7 +183,7 @@ public:
 		angle = _andle;
 	}
 
-	Parameters<double> gradient() { return Parameters<double>(); }
+	Array<double> gradient() { return Array<double>(); }
 
 	void Print() {
 		Vector2 vec1 = segment1.GetPoint1_pos();
@@ -221,7 +221,7 @@ public:
 	}
 	void Print() {}
 
-	Parameters<double> gradient() { return Parameters<double>(); }
+	Array<double> gradient() { return Array<double>(); }
 
 private:
 	Arc& arc;
@@ -265,7 +265,7 @@ public:
 		}
 	}
 
-	Parameters<double> gradient() { return Parameters<double>(); }
+	Array<double> gradient() { return Array<double>(); }
 
 	void Print() {}
 private:
@@ -403,7 +403,7 @@ public:
 		return sumError / 3;
 	}
 
-	Parameters<double> gradient() { return Parameters<double>(); }
+	Array<double> gradient() { return Array<double>(); }
 
 	void Print() {
 		Vector2 vec1 = segment1->GetPoint1_pos();
@@ -563,7 +563,7 @@ public:
 		size = _size;
 	}
 
-	Parameters<double> gradient() { return Parameters<double>(); }
+	Array<double> gradient() { return Array<double>(); }
 
 	void Print() {
 		Vector2 vec1 = segment1->GetPoint1_pos();
@@ -696,7 +696,7 @@ public:
 		return sumError / count;
 	}
 
-	Parameters<double> gradient() { return Parameters<double>(); }
+	Array<double> gradient() { return Array<double>(); }
 
 	void Print() {
 		Vector2 vec1;
@@ -853,7 +853,7 @@ public:
 		return sumError / (count * 3);
 	}
 
-	Parameters<double> gradient() { return Parameters<double>(); }
+	Array<double> gradient() { return Array<double>(); }
 
 	void Print() {
 		Vector2 vec1;

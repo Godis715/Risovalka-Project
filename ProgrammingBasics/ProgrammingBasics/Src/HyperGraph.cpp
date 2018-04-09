@@ -30,15 +30,15 @@ Array<double*> HyperGraph::Component::GetParams()
 			case point:
 			{
 				Point* point = dynamic_cast<Point*>(dataPrimitive.GetCurrent());
-				output.pushBack(&point->position.x);
-				output.pushBack(&point->position.y);
+				output.PushBack(&point->position.x);
+				output.PushBack(&point->position.y);
 				return true;
 				break;
 			}
 			case arc:
 			{
 				Arc* arc = dynamic_cast<Arc*>(dataPrimitive.GetCurrent());
-				output.pushBack(&arc->angle);
+				output.PushBack(&arc->angle);
 				return true;
 				break;
 			}
@@ -174,7 +174,7 @@ Array<Primitive*> HyperGraph::SplitingAndBFS(ID id) {
 		//
 		component->dataRequirement.MoveHead();
 		component->dataRequirement.GetCurrent()->GetPrimitivesID(ID_In_Req);
-		for (int i = 0; i < ID_In_Req.getSize(); ++i) {
+		for (int i = 0; i < ID_In_Req.GetSize(); ++i) {
 			if (component->dataPrimitive.Find(ID_In_Req[i])) {
 				Primitive* tempPrimitive = component->dataPrimitive.GetCurrent();
 				component->dataPrimitive.DeleteCurrent();
@@ -193,7 +193,7 @@ Array<Primitive*> HyperGraph::SplitingAndBFS(ID id) {
 			{
 				if (component->dataRequirement.GetCurrent()->Contains(primitive->GetID())) {
 					component->dataRequirement.GetCurrent()->GetPrimitivesID(ID_In_Req);
-					for (int i = 0; i < ID_In_Req.getSize(); ++i) {
+					for (int i = 0; i < ID_In_Req.GetSize(); ++i) {
 						if (component->dataPrimitive.Find(ID_In_Req[i])) {
 							Primitive* tempPrimitive = component->dataPrimitive.GetCurrent();
 							component->dataPrimitive.DeleteCurrent();
@@ -215,7 +215,7 @@ Array<Primitive*> HyperGraph::SplitingAndBFS(ID id) {
 		Array<Primitive*> answer(component->dataPrimitive.GetSize());
 		do
 		{
-			answer.pushBack(component->dataPrimitive.GetCurrent());
+			answer.PushBack(component->dataPrimitive.GetCurrent());
 		} while (component->dataPrimitive.MoveNext());
 		DeleteComponent(component->GetID());
 		return answer;
@@ -229,7 +229,7 @@ void HyperGraph::MergeComponents(Array<ID>& idComponets)
 {
 	components.Find(idComponets[0]);
 	Component* input = components.GetCurrent();
-	for (int i = 1; i < idComponets.getSize(); i++)
+	for (int i = 1; i < idComponets.GetSize(); i++)
 	{
 		components.Find(idComponets[i]);
 		components.GetCurrent()->dataPrimitive.MoveHead();
@@ -257,7 +257,7 @@ void HyperGraph::Add(IRequirement* requirement, Array<Primitive*>& primitives) {
 	int maxComponent = 0;
 	int tempMax;
 	ID componentID;
-	for (int i = 0; i < primitives.getSize(); ++i) {
+	for (int i = 0; i < primitives.GetSize(); ++i) {
 		if (Search(primitives[i]->GetID(), componentID)) {
 			tempMax = components.GetCurrent()->dataPrimitive.GetSize();
 			set.Push(componentID, components.GetCurrent());
@@ -270,22 +270,22 @@ void HyperGraph::Add(IRequirement* requirement, Array<Primitive*>& primitives) {
 	while (set.getsize() > 0)
 	{
 		Component* component = set.PopElement();
-		IDArrray.pushBack(component->GetID());
+		IDArrray.PushBack(component->GetID());
 		if (component->dataPrimitive.GetSize() == maxComponent) {
-			IDArrray.swap(0, IDArrray.getSize() - 1);
+			IDArrray.Swap(0, IDArrray.GetSize() - 1);
 		}
 	}
-	if (IDArrray.getSize() > 0) {
+	if (IDArrray.GetSize() > 0) {
 		MergeComponents(IDArrray);
 		components.Find(IDArrray[0]);
-		for (int i = 0; i < primitives.getSize(); ++i) {
+		for (int i = 0; i < primitives.GetSize(); ++i) {
 			components.GetCurrent()->dataPrimitive.Add(primitives[i]->GetID(), primitives[i]);
 		}
 		components.GetCurrent()->dataRequirement.Add(requirement->GetID(), requirement);
 		return;
 	}
 	Component* component = new Component(IDGenerator::getInstance()->generateID());
-	for (int i = 0; i < primitives.getSize(); ++i) {
+	for (int i = 0; i < primitives.GetSize(); ++i) {
 		component->dataPrimitive.Add(primitives[i]->GetID(), primitives[i]);
 	}
 	component->dataRequirement.Add(requirement->GetID(), requirement);
@@ -296,7 +296,7 @@ void HyperGraph::Delete(Array<ID>& IDArray) {
 	Set<ID, Component*> set;
 	ID componentID;
 	Component* component;
-	for (int i = 0; i < IDArray.getSize(); ++i) {
+	for (int i = 0; i < IDArray.GetSize(); ++i) {
 		if (Search(IDArray[i], componentID)) {
 			components.Find(componentID);
 			component = components.GetCurrent();
