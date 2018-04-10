@@ -8,15 +8,16 @@ class Primitive;
 class Model
 {
 private:
-
-	double EPS = 1e-12;
-	Dict<ID, Primitive*> data; //or another container
+	Dict<ID, Primitive*> data;
 	Array<IRequirement*> dataReq;
 	IDGenerator* idGen;
+
+	//similar functions!!
 	double GetError() const;
 	double GetError(const Array<IRequirement*>&) const;
-	double ErrorByAlpha(const Array<IRequirement*>&, const Array<double*>&, const Array<double>&, double);
+	//
 
+	double ErrorByAlpha(const Array<IRequirement*>&, const Array<double*>&, const Array<double>&, double);
 	void OptimizeByGradient(const Array<IRequirement*>&, const Array<double*>&, const Array<double>&);
 
 public:
@@ -36,14 +37,28 @@ public:
 	Model() { }
 	bool DischargeInfoObjects(Array<infoObject>&);
 	bool createObject(type_id, Array<double>&, ID&);
-	bool createSegment(ID&, ID&, ID&);
+	
+	//carefully delete
+	//bool createSegment(ID&, ID&, ID&);
 	bool createRequirement(const Requirement_id, Array<ID>&, Array<double>&);
+
+	//rewrite!!!!!!!
 	bool getNearest(double, double, ID&, double&);
+
+
 	bool getObjType(const ID&, type_id&);
+
+	//replace with GET CHILD 
 	bool GetSegmentPoints(ID, Array<ID>&);
 	bool GetArcPoints(ID, Array<ID>&);
+
+
 	bool getObjParam(const ID&, Array<double>&);
+	
+	// temp!!
 	int Optimize1();
+	// end temp
+
 	void OptimizeRequirements(const Array<IRequirement*>&);
 	// void PrintSystemRequirement();
 
