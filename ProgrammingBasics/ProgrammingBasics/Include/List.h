@@ -229,6 +229,9 @@ private:
 	template <class T> class Element
 	{
 	public:
+		Element() {
+
+		}
 		Element * next = nullptr;
 		Element* prev = nullptr;
 		T value;
@@ -276,6 +279,7 @@ public:
 			return;
 		}
 		Element<T>* newElement = new Element<T>;
+		newElement->value = newValue;
 		newElement->next = current->next;
 		newElement->prev = current;
 		current->next->prev = newElement;
