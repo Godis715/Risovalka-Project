@@ -10,7 +10,8 @@
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
 namespace UnitTests
-{		
+{
+
 	TEST_CLASS(List_BasicFunctionality)
 	{
 	public:
@@ -304,24 +305,6 @@ namespace UnitTests
 				exceptionIsCatched = true;
 			}
 			Assert::AreEqual(true, exceptionIsCatched);
-		}
-
-		TEST_METHOD(Test_Array_resize_FillingDefault)
-		{
-			Array<int> arr;
-			for (int i = 0; i < 10; i++)
-			{
-				arr.pushBack(i);
-			}
-			arr.resize(15);
-			for (int i = 0; i < 15; i++)
-			{
-				if (i < 10)
-				{
-					Assert::AreEqual(i, arr[i]);
-				}
-				else Assert::AreEqual(0, arr[i]);
-			}
 		}
 
 		TEST_METHOD(Test_Array_clear)
@@ -620,21 +603,21 @@ namespace UnitTests
 		TEST_METHOD(Test_Dictionary_getSize)
 		{
 			Dict<int, int> dic;
-			Assert::AreEqual(0, dic.getsize());
+			Assert::AreEqual(0, dic.GetSize());
 		}
 
 		TEST_METHOD(Test_Dictionary_add)
 		{
 			Dict<int, int> dic;
 			dic.Add(5, 10);
-			Assert::AreEqual(1, dic.getsize());
+			Assert::AreEqual(1, dic.GetSize());
 		}
 
 		TEST_METHOD(Test_Dictionary_find)
 		{
 			Dict<char, int> dic;
 			dic.Add('A', 10);
-			bool a = dic.find('A');
+			bool a = dic.Find('A');
 			Assert::AreEqual(true, a);
 		}
 
@@ -643,7 +626,7 @@ namespace UnitTests
 			Dict<char, int> dic;
 			dic.Add('B', 10);
 			dic.Add('A', 15);
-			bool a = dic.find('A');
+			bool a = dic.Find('A');
 			Assert::AreEqual(true, a);
 		}
 
@@ -652,7 +635,7 @@ namespace UnitTests
 			Dict<int, int> dic;
 			dic.Add(5, 10);
 			dic.Erase(5);
-			Assert::AreEqual(0, dic.getsize());
+			Assert::AreEqual(0, dic.GetSize());
 		}
 
 		TEST_METHOD(Test_Dictionary_erase_SomeElements)
@@ -668,8 +651,8 @@ namespace UnitTests
 			dic.Add(7, 26);
 			dic.Add(9, 16);
 			dic.Erase(5);
-			Assert::AreEqual(8, dic.getsize());
-			Assert::IsFalse(dic.find(5));
+			Assert::AreEqual(8, dic.GetSize());
+			Assert::IsFalse(dic.Find(5));
 		}
 
 	};
@@ -838,77 +821,77 @@ namespace UnitTests
 
 	};
 
-	/*TEST_CLASS(HyperGraph_BasicFuctionality)
-	{
-	public:
+	//TEST_CLASS(HyperGraph_BasicFuctionality)
+	//{
+	//public:
 
-		TEST_METHOD(Test_HyperGraph_Add)
-		{
-			HyperGraph hg;
-			Assert::AreEqual(0, hg.GetSize());
-			Point p1(1, 1);
-			Point p2(2, 2);
-			Array<Primitive*> arp;
-			arp.pushBack(&p1);
-			arp.pushBack(&p2);
-			DistanceBetweenPoints req(p1, p2, 5);
-			hg.Add(&req, arp);
-			Assert::AreEqual(1, hg.GetSize());
-			Point p3(3, 3);
-			Point p4(4, 4);
-			Array<Primitive*> arp2;
-			arp2.pushBack(&p3);
-			arp2.pushBack(&p4);
-			DistanceBetweenPoints req2(p3, p4, 2);
-			hg.Add(&req2, arp2);
-			Assert::AreEqual(2, hg.GetSize());
-			DistanceBetweenPoints req1(p2, p4, 2);
-			Array<Primitive*> arp1;
-			arp1.pushBack(&p2);
-			arp1.pushBack(&p4);
-			hg.Add(&req1, arp1);
-			Assert::AreEqual(1, hg.GetSize());
-		}
+	//	TEST_METHOD(Test_HyperGraph_Add)
+	//	{
+	//		HyperGraph hg;
+	//		Assert::AreEqual(0, hg.GetSize());
+	//		Point p1(1, 1);
+	//		Point p2(2, 2);
+	//		Array<Primitive*> arp;
+	//		arp.pushBack(&p1);
+	//		arp.pushBack(&p2);
+	//		DistanceBetweenPoints req(p1, p2, 5);
+	//		hg.Add(&req, arp);
+	//		Assert::AreEqual(1, hg.GetSize());
+	//		Point p3(3, 3);
+	//		Point p4(4, 4);
+	//		Array<Primitive*> arp2;
+	//		arp2.pushBack(&p3);
+	//		arp2.pushBack(&p4);
+	//		DistanceBetweenPoints req2(p3, p4, 2);
+	//		hg.Add(&req2, arp2);
+	//		Assert::AreEqual(2, hg.GetSize());
+	//		DistanceBetweenPoints req1(p2, p4, 2);
+	//		Array<Primitive*> arp1;
+	//		arp1.pushBack(&p2);
+	//		arp1.pushBack(&p4);
+	//		hg.Add(&req1, arp1);
+	//		Assert::AreEqual(1, hg.GetSize());
+	//	}
 
-		TEST_METHOD(Test_HyperGraph_SearchPrimitive)
-		{
-			HyperGraph hg;
-			Point p1(1, 1);
-			Point p2(2, 2);
-			Array<Primitive*> arp;
-			arp.pushBack(&p1);
-			arp.pushBack(&p2);
-			DistanceBetweenPoints req(p1, p2, 5);
-			hg.Add(&req, arp);
-			Assert::AreEqual(true, hg.SearchPrimitive(p1.GetID()));
-			Assert::AreEqual(true, hg.SearchPrimitive(p2.GetID()));
-			Point p3(3, 2);
-			Assert::AreEqual(false, hg.SearchPrimitive(p3.GetID()));
-		}
+	//	/*TEST_METHOD(Test_HyperGraph_SearchPrimitive)
+	//	{
+	//		HyperGraph hg;
+	//		Point p1(1, 1);
+	//		Point p2(2, 2);
+	//		Array<Primitive*> arp;
+	//		arp.pushBack(&p1);
+	//		arp.pushBack(&p2);
+	//		DistanceBetweenPoints req(p1, p2, 5);
+	//		hg.Add(&req, arp);
+	//		Assert::AreEqual(true, hg.Search(p1.GetID()));
+	//		Assert::AreEqual(true, hg.Search(p2.GetID()));
+	//		Point p3(3, 2);
+	//		Assert::AreEqual(false, hg.Search(p3.GetID()));
+	//	}*/
 
-		TEST_METHOD(Test_HyperGraph_DeletePrimitive)
-		{
-			HyperGraph hg;
-			Point p1(1, 1);
-			Point p2(2, 2);
-			Array<Primitive*> arp;
-			arp.pushBack(&p1);
-			arp.pushBack(&p2);
-			DistanceBetweenPoints req(p1, p2, 5);
-			hg.Add(&req, arp);
-			hg.DeletePrimitive(p1.GetID());
-			Assert::AreEqual(0, hg.GetSize());
-		}
+	//	/*TEST_METHOD(Test_HyperGraph_DeletePrimitive)
+	//	{
+	//		HyperGraph hg;
+	//		Point p1(1, 1);
+	//		Point p2(2, 2);
+	//		Array<Primitive*> arp;
+	//		arp.pushBack(&p1);
+	//		arp.pushBack(&p2);
+	//		DistanceBetweenPoints req(p1, p2, 5);
+	//		hg.Add(&req, arp);
+	//		hg.Delete(p1.GetID());
+	//		Assert::AreEqual(0, hg.GetSize());
+	//	}*/
 
-		TEST_METHOD(Test_HyperGraph_UploadingDataPrimitive)
-		{
+	//	TEST_METHOD(Test_HyperGraph_UploadingDataPrimitive)
+	//	{
 
-		}
+	//	}
 
-		TEST_METHOD(Test_HyperGraph_UploadingDataRequirement)
-		{
+	//	TEST_METHOD(Test_HyperGraph_UploadingDataRequirement)
+	//	{
 
-		}
+	//	}
 
-	};*/
+	//};
 }
