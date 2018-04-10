@@ -9,16 +9,18 @@ class Model
 {
 private:
 	Dict<ID, Primitive*> data;
-	Array<IRequirement*> dataReq;
+
+	//Array? It should be dict
+	Array<Requirement*> dataReq;
 	IDGenerator* idGen;
 
 	//similar functions!!
 	double GetError() const;
-	double GetError(const Array<IRequirement*>&) const;
+	double GetError(const Array<Requirement*>&) const;
 	//
 
-	double ErrorByAlpha(const Array<IRequirement*>&, const Array<double*>&, const Array<double>&, double);
-	void OptimizeByGradient(const Array<IRequirement*>&, const Array<double*>&, const Array<double>&);
+	double ErrorByAlpha(const Array<Requirement*>&, const Array<double*>&, const Array<double>&, double);
+	void OptimizeByGradient(const Array<Requirement*>&, const Array<double*>&, const Array<double>&);
 
 public:
 	class infoObject
@@ -35,6 +37,10 @@ public:
 	};
 
 	Model() { }
+
+	// Create destructor
+	~Model();
+
 	bool DischargeInfoObjects(Array<infoObject>&);
 	bool createObject(type_id, Array<double>&, ID&);
 	
@@ -56,10 +62,10 @@ public:
 	bool getObjParam(const ID&, Array<double>&);
 	
 	// temp!!
-	int Optimize1();
+	// int Optimize1();
 	// end temp
 
-	void OptimizeRequirements(const Array<IRequirement*>&);
+	void OptimizeRequirements(const Array<Requirement*>&);
 	// void PrintSystemRequirement();
 
 	//temp function

@@ -221,8 +221,6 @@
 //	return Temp;
 //}
 
-
-
 template <class T> class ListE
 {
 private:

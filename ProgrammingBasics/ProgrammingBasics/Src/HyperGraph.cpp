@@ -59,69 +59,69 @@ double HyperGraph::Component::GetError()
 	return error;
 }
 
-bool HyperGraph::Component::Delete(ID& _id) {
-
-	if (dataRequirement.Find(_id)) {
-		delete dataRequirement.GetCurrent();
-		dataRequirement.Erase(_id);
-		return true;
-	}
-
-	if (dataPrimitive.Find(_id)) {
-		Primitive* primitive = dataPrimitive.GetCurrent();
-		dataRequirement.MoveBegin();
-		do
-		{
-			if (dataRequirement.GetCurrent()->Contains(_id)) {
-				delete dataRequirement.GetCurrent();
-				dataRequirement.Erase(_id);
-			}
-		} while (dataRequirement.MoveNext());
-		switch (primitive->GetType())
-		{
-		case point: {
-			dataPrimitive.MoveBegin();
-			do
-			{
-				if (dataPrimitive.GetCurrent()->GetType() == segment) {
-					Segment* seg = dynamic_cast<Segment*>(dataPrimitive.GetCurrent());
-					if ((seg->GetPoint1_ID() == primitive->GetID()) || (seg->GetPoint2_ID() == primitive->GetID())) {
-						dataPrimitive.Erase(primitive->GetID());
-						dataPrimitive.Erase(seg->GetID());
-						delete primitive;
-						delete seg;
-						return true;
-					}
-				}
-				if (dataPrimitive.GetCurrent()->GetType() == arc) {
-					Segment* _arc = dynamic_cast<Segment*>(dataPrimitive.GetCurrent());
-					if ((_arc->GetPoint1_ID() == primitive->GetID()) || (_arc->GetPoint2_ID() == primitive->GetID())) {
-						dataPrimitive.Erase(primitive->GetID());
-						dataPrimitive.Erase(_arc->GetID());
-						delete dynamic_cast<Point*>(primitive);
-						delete _arc;
-						return true;
-					}
-				}
-			} while (dataPrimitive.MoveNext());
-			return true;
-		}
-		case segment: {
-			dataPrimitive.Erase(primitive->GetID());
-			delete dynamic_cast<Segment*>(primitive);
-			return true;
-		}
-		case arc: {
-			dataPrimitive.Erase(primitive->GetID());
-			delete dynamic_cast<Arc*>(primitive);
-			return true;
-		}
-		default:
-			break;
-		}
-	}
-	return false;
-}
+//bool HyperGraph::Component::Delete(ID& _id) {
+//
+//	if (dataRequirement.Find(_id)) {
+//		delete dataRequirement.GetCurrent();
+//		dataRequirement.Erase(_id);
+//		return true;
+//	}
+//
+//	if (dataPrimitive.Find(_id)) {
+//		Primitive* primitive = dataPrimitive.GetCurrent();
+//		dataRequirement.MoveBegin();
+//		do
+//		{
+//			if (dataRequirement.GetCurrent()->Contains(_id)) {
+//				delete dataRequirement.GetCurrent();
+//				dataRequirement.Erase(_id);
+//			}
+//		} while (dataRequirement.MoveNext());
+//		switch (primitive->GetType())
+//		{
+//		case point: {
+//			dataPrimitive.MoveBegin();
+//			do
+//			{
+//				if (dataPrimitive.GetCurrent()->GetType() == segment) {
+//					Segment* seg = dynamic_cast<Segment*>(dataPrimitive.GetCurrent());
+//					if ((seg->GetPoint1_ID() == primitive->GetID()) || (seg->GetPoint2_ID() == primitive->GetID())) {
+//						dataPrimitive.Erase(primitive->GetID());
+//						dataPrimitive.Erase(seg->GetID());
+//						delete primitive;
+//						delete seg;
+//						return true;
+//					}
+//				}
+//				if (dataPrimitive.GetCurrent()->GetType() == arc) {
+//					Segment* _arc = dynamic_cast<Segment*>(dataPrimitive.GetCurrent());
+//					if ((_arc->GetPoint1_ID() == primitive->GetID()) || (_arc->GetPoint2_ID() == primitive->GetID())) {
+//						dataPrimitive.Erase(primitive->GetID());
+//						dataPrimitive.Erase(_arc->GetID());
+//						delete dynamic_cast<Point*>(primitive);
+//						delete _arc;
+//						return true;
+//					}
+//				}
+//			} while (dataPrimitive.MoveNext());
+//			return true;
+//		}
+//		case segment: {
+//			dataPrimitive.Erase(primitive->GetID());
+//			delete dynamic_cast<Segment*>(primitive);
+//			return true;
+//		}
+//		case arc: {
+//			dataPrimitive.Erase(primitive->GetID());
+//			delete dynamic_cast<Arc*>(primitive);
+//			return true;
+//		}
+//		default:
+//			break;
+//		}
+//	}
+//	return false;
+//}
 
 ID  HyperGraph::Component::GetID() const {
 	return this->id;
@@ -161,69 +161,69 @@ void HyperGraph::DeleteComponent(ID id)
 	components.Erase(id);
 }
 
-Array<Primitive*> HyperGraph::SplitingAndBFS(ID id) {
-	components.Find(id);
-	Component* component = components.GetCurrent();
-	components.DeleteCurrent();
-	Set<ID, Primitive*> set;
-	do
-	{
-		Array<ID> ID_In_Req;
-		Component* newComponent = new Component(IDGenerator::getInstance()->generateID());
-		Primitive* primitive;;
-		//
-		component->dataRequirement.MoveHead();
-		component->dataRequirement.GetCurrent()->GetPrimitivesID(ID_In_Req);
-		for (int i = 0; i < ID_In_Req.GetSize(); ++i) {
-			if (component->dataPrimitive.Find(ID_In_Req[i])) {
-				Primitive* tempPrimitive = component->dataPrimitive.GetCurrent();
-				component->dataPrimitive.DeleteCurrent();
-				set.Push(tempPrimitive->GetID(), tempPrimitive);
-			}
-		}
-		IRequirement* Req = component->dataRequirement.GetCurrent();
-		component->dataRequirement.DeleteCurrent();
-		newComponent->dataRequirement.Add(Req->GetID(), Req);
-		//
-		do
-		{
-			primitive = set.PopElement();
-			component->dataRequirement.MoveBegin();
-			do
-			{
-				if (component->dataRequirement.GetCurrent()->Contains(primitive->GetID())) {
-					component->dataRequirement.GetCurrent()->GetPrimitivesID(ID_In_Req);
-					for (int i = 0; i < ID_In_Req.GetSize(); ++i) {
-						if (component->dataPrimitive.Find(ID_In_Req[i])) {
-							Primitive* tempPrimitive = component->dataPrimitive.GetCurrent();
-							component->dataPrimitive.DeleteCurrent();
-							set.Push(tempPrimitive->GetID(), tempPrimitive);
-						}
-					}
-					IRequirement* Req = component->dataRequirement.GetCurrent();
-					component->dataRequirement.DeleteCurrent();
-					newComponent->dataRequirement.Add(Req->GetID(), Req);
-					component->dataRequirement.MovePrev();
-				}
-			} while (component->dataRequirement.MoveNext());
-			newComponent->dataPrimitive.Add(primitive->GetID(), primitive);
-		} while (set.getsize() > 0);
-		components.Add(newComponent->GetID(), newComponent);
-	} while (component->dataRequirement.GetSize() > 0);
-	if (component->dataPrimitive.GetSize() != 0) {
-		component->dataPrimitive.MoveBegin();
-		Array<Primitive*> answer(component->dataPrimitive.GetSize());
-		do
-		{
-			answer.PushBack(component->dataPrimitive.GetCurrent());
-		} while (component->dataPrimitive.MoveNext());
-		DeleteComponent(component->GetID());
-		return answer;
-	}
-	Array<Primitive*> answer(0);
-	DeleteComponent(component->GetID());
-	return answer;
-}
+//Array<Primitive*> HyperGraph::SplitingAndBFS(ID id) {
+//	components.Find(id);
+//	Component* component = components.GetCurrent();
+//	components.DeleteCurrent();
+//	Set<ID, Primitive*> set;
+//	do
+//	{
+//		Array<ID> ID_In_Req;
+//		Component* newComponent = new Component(IDGenerator::getInstance()->generateID());
+//		Primitive* primitive;;
+//		//
+//		component->dataRequirement.MoveHead();
+//		component->dataRequirement.GetCurrent()->GetPrimitivesID(ID_In_Req);
+//		for (int i = 0; i < ID_In_Req.GetSize(); ++i) {
+//			if (component->dataPrimitive.Find(ID_In_Req[i])) {
+//				Primitive* tempPrimitive = component->dataPrimitive.GetCurrent();
+//				component->dataPrimitive.DeleteCurrent();
+//				set.Push(tempPrimitive->GetID(), tempPrimitive);
+//			}
+//		}
+//		Requirement* Req = component->dataRequirement.GetCurrent();
+//		component->dataRequirement.DeleteCurrent();
+//		newComponent->dataRequirement.Add(Req->GetID(), Req);
+//		//
+//		do
+//		{
+//			primitive = set.PopElement();
+//			component->dataRequirement.MoveBegin();
+//			do
+//			{
+//				if (component->dataRequirement.GetCurrent()->Contains(primitive->GetID())) {
+//					component->dataRequirement.GetCurrent()->GetPrimitivesID(ID_In_Req);
+//					for (int i = 0; i < ID_In_Req.GetSize(); ++i) {
+//						if (component->dataPrimitive.Find(ID_In_Req[i])) {
+//							Primitive* tempPrimitive = component->dataPrimitive.GetCurrent();
+//							component->dataPrimitive.DeleteCurrent();
+//							set.Push(tempPrimitive->GetID(), tempPrimitive);
+//						}
+//					}
+//					Requirement* Req = component->dataRequirement.GetCurrent();
+//					component->dataRequirement.DeleteCurrent();
+//					newComponent->dataRequirement.Add(Req->GetID(), Req);
+//					component->dataRequirement.MovePrev();
+//				}
+//			} while (component->dataRequirement.MoveNext());
+//			newComponent->dataPrimitive.Add(primitive->GetID(), primitive);
+//		} while (set.getsize() > 0);
+//		components.Add(newComponent->GetID(), newComponent);
+//	} while (component->dataRequirement.GetSize() > 0);
+//	if (component->dataPrimitive.GetSize() != 0) {
+//		component->dataPrimitive.MoveBegin();
+//		Array<Primitive*> answer(component->dataPrimitive.GetSize());
+//		do
+//		{
+//			answer.PushBack(component->dataPrimitive.GetCurrent());
+//		} while (component->dataPrimitive.MoveNext());
+//		DeleteComponent(component->GetID());
+//		return answer;
+//	}
+//	Array<Primitive*> answer(0);
+//	DeleteComponent(component->GetID());
+//	return answer;
+//}
 
 void HyperGraph::MergeComponents(Array<ID>& idComponets)
 {
@@ -252,7 +252,7 @@ void HyperGraph::MergeComponents(Array<ID>& idComponets)
 	}
 }
 
-void HyperGraph::Add(IRequirement* requirement, Array<Primitive*>& primitives) {
+void HyperGraph::Add(Requirement* requirement, Array<Primitive*>& primitives) {
 	Set<ID, Component*> set;
 	int maxComponent = 0;
 	int tempMax;

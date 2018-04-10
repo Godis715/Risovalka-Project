@@ -11,11 +11,11 @@ Vector2::Vector2() {
 	y = 0.0f;
 }
 
-Vector2 Vector2::operator -(const Vector2& vector) {
+Vector2 Vector2::operator -(const Vector2& vector) const {
 	return Vector2(this->x - vector.x, this->y - vector.y);
 }
 
-Vector2 Vector2::operator +(const Vector2& vector) {
+Vector2 Vector2::operator +(const Vector2& vector) const {
 	return Vector2(this->x + vector.x, this->y + vector.y);
 }
 
@@ -45,10 +45,10 @@ double Vector2::Angle(const Vector2& vec1, const Vector2& vec2) {
 	return angle + 2 * (angle - PI);
 }
 
-Vector2 Vector2::operator*(double val) {
+Vector2 Vector2::operator*(double val) const {
 	return Vector2(this->x * val, this->y * val);
 }
 
-Vector2 Vector2::operator /(double val) {
+Vector2 Vector2::operator /(double val) const {
 	return Vector2(this->x / val, this->y / val);
 }

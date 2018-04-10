@@ -68,26 +68,26 @@ bool Model::createObject(type_id type, Array<double>& params, ID& obj_id) {
 	}
 }
 
-bool Model::createSegment(ID& p1ID, ID& p2ID, ID& segID) {
-	Primitive* point1PR;
-	Primitive* point2PR;
-	bool error = false;
-	if (data.Find(p1ID)) {
-		point1PR = data.GetCurrent();
-		if (data.Find(p2ID)) {
-			point2PR = data.GetCurrent();
-			if ((point1PR->GetType() == point) && (point2PR->GetType() == point)) {
-				Point* point1 = dynamic_cast<Point*>(point1PR);
-				Point* point2 = dynamic_cast<Point*>(point2PR);
-				Segment* segment = new Segment(point1, point2);
-				segID = segment->GetID();
-				data.Add(segID, segment);
-				return true;
-			}
-		}
-	}
-	return false;
-}
+//bool Model::createSegment(ID& p1ID, ID& p2ID, ID& segID) {
+//	Primitive* point1PR;
+//	Primitive* point2PR;
+//	bool error = false;
+//	if (data.Find(p1ID)) {
+//		point1PR = data.GetCurrent();
+//		if (data.Find(p2ID)) {
+//			point2PR = data.GetCurrent();
+//			if ((point1PR->GetType() == point) && (point2PR->GetType() == point)) {
+//				Point* point1 = dynamic_cast<Point*>(point1PR);
+//				Point* point2 = dynamic_cast<Point*>(point2PR);
+//				Segment* segment = new Segment(point1, point2);
+//				segID = segment->GetID();
+//				data.Add(segID, segment);
+//				return true;
+//			}
+//		}
+//	}
+//	return false;
+//}
 
 bool Model::createRequirement(const Requirement_id _id, Array<ID>& id_arr, Array<double>& params) {
 	Array<Primitive*> primitives;
@@ -107,8 +107,8 @@ bool Model::createRequirement(const Requirement_id _id, Array<ID>& id_arr, Array
 		if ((primitives[0]->GetType() == point)
 			&& (primitives[1]->GetType() == point)
 			&& (params.GetSize() > 0)) {
-		Requirement = new DistanceBetweenPoints(*dynamic_cast<Point*>(primitives[0]),
-			*dynamic_cast<Point*>(primitives[1]),
+		Requirement = new DistanceBetweenPoints(dynamic_cast<Point*>(primitives[0]),
+			dynamic_cast<Point*>(primitives[1]),
 			params[0]);
 		dataReq.PushBack(Requirement);
 		return true;
@@ -190,7 +190,7 @@ bool Model::createRequirement(const Requirement_id _id, Array<ID>& id_arr, Array
 			return false;
 		}
 	}
-	case triangle: {
+	/*case triangle: {
 		Triangle* Requirement;
 		if ((primitives[0]->GetType() == segment)
 			&& (primitives[1]->GetType() == segment)
@@ -204,25 +204,25 @@ bool Model::createRequirement(const Requirement_id _id, Array<ID>& id_arr, Array
 		else {
 			return false;
 		}
-	}
-	case correctTriangle: {
-		ÑorrectTriangle* Requirement;
-		if ((primitives[0]->GetType() == segment)
-			&& (primitives[1]->GetType() == segment)
-			&& (primitives[2]->GetType() == segment)
-			&& (params.GetSize() > 0)) {
-			Requirement = new ÑorrectTriangle(dynamic_cast<Segment*>(primitives[0]),
-				dynamic_cast<Segment*>(primitives[1]),
-				dynamic_cast<Segment*>(primitives[2]),
-				params[0]);
-			dataReq.PushBack(Requirement);
-			return true;
-		}
-		else {
-			return false;
-		}
-	}
-	case nsAngle: {
+	}*/
+	//case correctTriangle: {
+	//	ÑorrectTriangle* Requirement;
+	//	if ((primitives[0]->GetType() == segment)
+	//		&& (primitives[1]->GetType() == segment)
+	//		&& (primitives[2]->GetType() == segment)
+	//		&& (params.GetSize() > 0)) {
+	//		Requirement = new ÑorrectTriangle(dynamic_cast<Segment*>(primitives[0]),
+	//			dynamic_cast<Segment*>(primitives[1]),
+	//			dynamic_cast<Segment*>(primitives[2]),
+	//			params[0]);
+	//		dataReq.PushBack(Requirement);
+	//		return true;
+	//	}
+	//	else {
+	//		return false;
+	//	}
+	//}
+	/* case nsAngle: {
 		NsAngle* Requirement;
 		ListE<Segment*> list;
 		for (int i = 0; i < primitives.GetSize(); ++i) {
@@ -257,7 +257,7 @@ bool Model::createRequirement(const Requirement_id _id, Array<ID>& id_arr, Array
 		else {
 			return false;
 		}
-	}
+	} */
 	default:
 		return false;
 	}
@@ -272,156 +272,155 @@ double Model::GetError() const {
 	return sum_error / dataReq.GetSize();
 }
 
-int Model::Optimize1() {
+//int Model::Optimize1() {
+//
+//	if (data.GetSize() == 0) {
+//		return 0;
+//	}
+//
+//	Array<Point*> points;
+//	Array<Arc*> arcs;
+//
+//	data.MoveBegin();
+//	do {
+//		Primitive* obj = data.GetCurrent();
+//		if (obj->GetType() == point) {
+//			points.PushBack(dynamic_cast<Point*>(obj));
+//		}
+//		else if (obj->GetType() == arc) {
+//			arcs.PushBack(dynamic_cast<Arc*>(obj));
+//		}
+//	} while (data.MoveNext());
+//
+//	const double delta_increasing_k = 2.0;
+//	double sum_error = 0;
+//	sum_error = GetError();
+//	double prevError = sum_error;
+//	double prevLastError = sum_error;
+//	int count = 0;
+//	int iterInside = 3;
+//	double delta = sum_error;
+//	std::cout << sum_error << "   " << iterInside << "   " << EPS << "  " << delta << "\n";
+//
+//	while (sum_error > EPS) {
+//		++count;
+//		for (int i = 0; i < points.GetSize(); ++i) {
+//
+//			delta = sum_error;
+//
+//			Vector2 pos = points[i]->GetPosition();
+//			for (int k = 0; k < iterInside; ++k)
+//			{
+//				double shift_x[]{ delta, -delta, delta, -delta, delta, -delta, 0, 0 };
+//				double shift_y[]{ delta, delta, -delta, -delta, 0, 0, delta, -delta };
+//
+//				double minFuncValue = sum_error;
+//				Vector2 minFuncPos = pos;
+//				bool hasChanged = false;
+//
+//				for (int j = 0; j < 8; ++j) {
+//
+//					points[i]->SetPosition(pos.x + shift_x[j], pos.y + shift_y[j]);
+//
+//					double funcValue = GetError();
+//
+//					if (funcValue < minFuncValue) {
+//
+//						minFuncValue = funcValue;
+//
+//						minFuncPos = pos;
+//						minFuncPos.x += shift_x[j];
+//						minFuncPos.y += shift_y[j];
+//
+//						hasChanged = true;
+//					}
+//				}
+//
+//				if (!hasChanged) {
+//					delta /= delta_increasing_k;
+//				}
+//				else {
+//					sum_error = minFuncValue;
+//					points[i]->SetPosition(minFuncPos);
+//					break;
+//				}
+//				if (delta < 1e-6) {
+//					break;
+//				}
+//			}
+//		}
+//		for (int i = 0; i < arcs.GetSize(); ++i) {
+//			double delta = sum_error;
+//			while (delta > EPS) {
+//				double tempAngle = arcs[i]->GetAngle();
+//
+//				bool hasChanged = false;
+//
+//				double minFuncAngle = tempAngle;
+//				double minFuncValue = sum_error;
+//
+//				arcs[i]->SetAngle(tempAngle - delta);
+//				double funcValue = GetError();
+//
+//				if (funcValue < minFuncValue) {
+//					minFuncValue = funcValue;
+//					minFuncAngle = tempAngle - delta;
+//					hasChanged = true;
+//				}
+//
+//				arcs[i]->SetAngle(tempAngle + delta);
+//				funcValue = GetError();
+//
+//				if (funcValue < minFuncAngle) {
+//					minFuncValue = funcValue;
+//					minFuncAngle = tempAngle + delta;
+//					hasChanged = true;
+//				}
+//
+//				if (!hasChanged) {
+//					delta /= delta_increasing_k;
+//				}
+//				else {
+//					arcs[i]->SetAngle(minFuncAngle);
+//					sum_error = minFuncValue;
+//					break;
+//				}
+//			}
+//		}
+//
+//		if (count % 25 == 0) {
+//			std::cout << sum_error << "   "<< iterInside << "   " << EPS << "  " << delta << "\n";
+//			if (count % 50 == 0) {
+//				if (EPS < 0.01) {
+//					EPS *= 2;
+//				}
+//				if (count > 400) {
+//					//std::cout << sum_error << "   " << iterInside << "   " << EPS << "  " << delta << "\n";
+//					return count;
+//				}
+//				if (prevLastError == sum_error) {
+//					return count;
+//				}
+//				prevLastError = sum_error;
+//			}
+//		}
+//		if (prevError == sum_error) {
+//			if (iterInside < 24) {
+//				iterInside *= 2;
+//			}
+//		}
+//		else {
+//			if (iterInside > 3) {
+//				iterInside /= 2;
+//			}
+//		}
+//		prevError = sum_error;
+//	}
+//	std::cout << sum_error << "   " << iterInside << "   " << EPS << "  " << delta << "\n";
+//	return count;
+//}
 
-	if (data.GetSize() == 0) {
-		return 0;
-	}
-
-	Array<Point*> points;
-	Array<Arc*> arcs;
-
-	data.MoveBegin();
-	do {
-		Primitive* obj = data.GetCurrent();
-		if (obj->GetType() == point) {
-			points.PushBack(dynamic_cast<Point*>(obj));
-		}
-		else if (obj->GetType() == arc) {
-			arcs.PushBack(dynamic_cast<Arc*>(obj));
-		}
-	} while (data.MoveNext());
-
-	const double delta_increasing_k = 2.0;
-	double sum_error = 0;
-	sum_error = GetError();
-	double prevError = sum_error;
-	double prevLastError = sum_error;
-	int count = 0;
-	int iterInside = 3;
-	double delta = sum_error;
-	EPS = 1e-5;
-	std::cout << sum_error << "   " << iterInside << "   " << EPS << "  " << delta << "\n";
-
-	while (sum_error > EPS) {
-		++count;
-		for (int i = 0; i < points.GetSize(); ++i) {
-
-			delta = sum_error;
-
-			Vector2 pos = points[i]->GetPosition();
-			for (int k = 0; k < iterInside; ++k)
-			{
-				double shift_x[]{ delta, -delta, delta, -delta, delta, -delta, 0, 0 };
-				double shift_y[]{ delta, delta, -delta, -delta, 0, 0, delta, -delta };
-
-				double minFuncValue = sum_error;
-				Vector2 minFuncPos = pos;
-				bool hasChanged = false;
-
-				for (int j = 0; j < 8; ++j) {
-
-					points[i]->SetPosition(pos.x + shift_x[j], pos.y + shift_y[j]);
-
-					double funcValue = GetError();
-
-					if (funcValue < minFuncValue) {
-
-						minFuncValue = funcValue;
-
-						minFuncPos = pos;
-						minFuncPos.x += shift_x[j];
-						minFuncPos.y += shift_y[j];
-
-						hasChanged = true;
-					}
-				}
-
-				if (!hasChanged) {
-					delta /= delta_increasing_k;
-				}
-				else {
-					sum_error = minFuncValue;
-					points[i]->SetPosition(minFuncPos);
-					break;
-				}
-				if (delta < 1e-6) {
-					break;
-				}
-			}
-		}
-		for (int i = 0; i < arcs.GetSize(); ++i) {
-			double delta = sum_error;
-			while (delta > EPS) {
-				double tempAngle = arcs[i]->GetAngle();
-
-				bool hasChanged = false;
-
-				double minFuncAngle = tempAngle;
-				double minFuncValue = sum_error;
-
-				arcs[i]->SetAngle(tempAngle - delta);
-				double funcValue = GetError();
-
-				if (funcValue < minFuncValue) {
-					minFuncValue = funcValue;
-					minFuncAngle = tempAngle - delta;
-					hasChanged = true;
-				}
-
-				arcs[i]->SetAngle(tempAngle + delta);
-				funcValue = GetError();
-
-				if (funcValue < minFuncAngle) {
-					minFuncValue = funcValue;
-					minFuncAngle = tempAngle + delta;
-					hasChanged = true;
-				}
-
-				if (!hasChanged) {
-					delta /= delta_increasing_k;
-				}
-				else {
-					arcs[i]->SetAngle(minFuncAngle);
-					sum_error = minFuncValue;
-					break;
-				}
-			}
-		}
-
-		if (count % 25 == 0) {
-			std::cout << sum_error << "   "<< iterInside << "   " << EPS << "  " << delta << "\n";
-			if (count % 50 == 0) {
-				if (EPS < 0.01) {
-					EPS *= 2;
-				}
-				if (count > 400) {
-					//std::cout << sum_error << "   " << iterInside << "   " << EPS << "  " << delta << "\n";
-					return count;
-				}
-				if (prevLastError == sum_error) {
-					return count;
-				}
-				prevLastError = sum_error;
-			}
-		}
-		if (prevError == sum_error) {
-			if (iterInside < 24) {
-				iterInside *= 2;
-			}
-		}
-		else {
-			if (iterInside > 3) {
-				iterInside /= 2;
-			}
-		}
-		prevError = sum_error;
-	}
-	std::cout << sum_error << "   " << iterInside << "   " << EPS << "  " << delta << "\n";
-	return count;
-}
-
-double Model::GetError(const Array<IRequirement*>& requirments) const {
+double Model::GetError(const Array<Requirement*>& requirments) const {
 	double error = 0.0;
 	for (int i = 0; i < requirments.GetSize(); ++i) {
 		error += requirments[i]->error();
@@ -429,7 +428,7 @@ double Model::GetError(const Array<IRequirement*>& requirments) const {
 	return error / requirments.GetSize();
 }
 
-double Model::ErrorByAlpha(const Array<IRequirement*>& req, const Array<double*>& params, const Array<double>& aGrad, double alpha) {
+double Model::ErrorByAlpha(const Array<Requirement*>& req, const Array<double*>& params, const Array<double>& aGrad, double alpha) {
 	for (int i = 0; i < params.GetSize(); ++i) {
 		double delta = aGrad[i];
 		*(params[i]) += delta * alpha;
@@ -441,7 +440,7 @@ double Model::ErrorByAlpha(const Array<IRequirement*>& req, const Array<double*>
 	return error;
 }
 
-void Model::OptimizeByGradient(const Array<IRequirement*>& requirments, const Array<double*>& params, const Array<double>& aGradient) {
+void Model::OptimizeByGradient(const Array<Requirement*>& requirments, const Array<double*>& params, const Array<double>& aGradient) {
 
 	const double gold_section = 1.6180339887498;
 	int reqSize = requirments.GetSize();
@@ -487,7 +486,7 @@ void Model::OptimizeByGradient(const Array<IRequirement*>& requirments, const Ar
 	}
 }
 
-void Model::OptimizeRequirements(const Array<IRequirement*>& requirments) {
+void Model::OptimizeRequirements(const Array<Requirement*>& requirments) {
 	// get parameters number
 	int params_number = 0;
 	for (int i = 0; i < requirments.GetSize(); ++i) {
@@ -700,7 +699,7 @@ bool Model::getNearest(double x, double y, ID& obj_id, double& distance) {
 }
 
 void Model::OptimizeAllRequirements() {
-	Array<IRequirement*> req;
+	Array<Requirement*> req;
 	for (int i = 0; i < dataReq.GetSize(); ++i) {
 		req.PushBack(dataReq[i]);
 	}

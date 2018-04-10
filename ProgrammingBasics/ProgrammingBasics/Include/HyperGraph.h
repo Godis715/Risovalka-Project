@@ -12,7 +12,7 @@ private:
 		const ID id;
 	public:
 		Dict<ID, Primitive*> dataPrimitive;
-		Dict<ID, IRequirement*> dataRequirement;
+		Dict<ID, Requirement*> dataRequirement;
 
 		Component(ID);
 		~Component() {}
@@ -36,9 +36,9 @@ public:
 	void DeleteComponent(ID id);
 	bool Search(ID, ID&);
 	void Delete(Array<ID>&);
-	void Add(IRequirement*, Array<Primitive*>&);
+	void Add(Requirement*, Array<Primitive*>&);
 	Array<Primitive*> UploadingDataPrimitive();
-	Array<IRequirement*> UploadingDataRequirement();
+	Array<Requirement*> UploadingDataRequirement();
 };
 
 
