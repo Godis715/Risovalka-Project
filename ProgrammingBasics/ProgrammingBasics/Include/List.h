@@ -230,7 +230,10 @@ private:
 		Element() {
 
 		}
-		Element * next = nullptr;
+		Element(T& val) : value(val) {
+		
+		}
+		Element* next = nullptr;
 		Element* prev = nullptr;
 		T value;
 	};
@@ -251,9 +254,8 @@ public:
 		return size;
 	}
 
-	void PushHead(T newValue) {
-		Element<T>* newElement = new Element<T>;
-		newElement->value = newValue;
+	void PushHead(T& newValue) {
+		Element<T>* newElement = new Element<T>(newValue);
 		if (size != 0) {
 			head->prev = newElement;
 			newElement->next = head;
@@ -267,7 +269,7 @@ public:
 		return;
 	}
 
-	void PushAfterCurrent(T newValue) {
+	void PushAfterCurrent(T& newValue) {
 		if (size == 0) {
 			PushHead(newValue);
 			return;
@@ -276,8 +278,7 @@ public:
 			PushTail(newValue);
 			return;
 		}
-		Element<T>* newElement = new Element<T>;
-		newElement->value = newValue;
+		Element<T>* newElement = new Element<T>(newValue);
 		newElement->next = current->next;
 		newElement->prev = current;
 		current->next->prev = newElement;
@@ -286,7 +287,7 @@ public:
 		return;
 	}
 
-	void PushBeforeCurrent(T newValue) {
+	void PushBeforeCurrent(T& newValue) {
 		if (size == 0) {
 			PushHead(newValue);
 			return;
@@ -301,13 +302,12 @@ public:
 		MoveNext();
 	}
 
-	void PushTail(T newValue) {
+	void PushTail(T& newValue) {
 		if (size == 0) {
 			PushHead(newValue);
 			return;
 		}
-		Element<T>* newElement = new Element<T>;
-		newElement->value = newValue;
+		Element<T>* newElement = new Element<T>(newValue);
 		newElement->prev = tail;
 		tail->next = newElement;
 		tail = newElement;

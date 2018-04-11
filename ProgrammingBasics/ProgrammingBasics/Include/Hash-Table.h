@@ -21,9 +21,14 @@ private:
 	template <class Tkey, class Tval> class Pair
 	{
 	public:
-		Pair(Tkey _key, Tval _value) {
+		//Pair() { }
+		Pair(Tkey& _key, Tval& _value) {
 			key = _key;
 			value = _value;
+		}
+		Pair(Pair& _pair) {
+			key = _pair.key;
+			value = _pair.value;
 		}
 		Tkey key;
 		Tval value;
@@ -75,7 +80,6 @@ private:
 public:
 	HashTable(int size) : table(size) {
 		hashSize = size;
-		table = Array<ListE<Pair<Tkey, Tval>>>(hashSize);
 	}
 	//~HashTable() {
 	//	for (int i = 0; i < hashSize; ++i) {
@@ -84,7 +88,7 @@ public:
 	//}
 
 	void Input(Tkey key, Tval value) {
-		Pair<Tkey, Tval> pair = new Pair<Tkey, Tval>(key, value);
+		Pair<Tkey, Tval> pair(key, value);
 		int index = hash(key) % hashSize;
 		PushToColumn(index, pair);
 		if (hashSize <= countElements) {
@@ -94,7 +98,7 @@ public:
 
 	bool Searching(Tkey key, Tval& value) {
 		int index = hash(key) % hashSize;
-		if (table[index]->GetSize() == 0) {
+		if (table[index].GetSize() == 0) {
 			return false;
 		}
 		table[index].MoveHead();

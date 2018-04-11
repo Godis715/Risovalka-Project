@@ -17,7 +17,7 @@ private:
 		Component(ID);
 		~Component() {}
 		bool Search(ID&);
-		bool Delete(ID&);
+		//bool Delete(ID&);
 		Array<double*> GetParams();
 		double GetError();
 		ID GetID() const;
@@ -25,7 +25,7 @@ private:
 
 	Dict<ID, Component*> components;
 
-	Array<Primitive*> SplitingAndBFS(ID);
+	//Array<Primitive*> SplitingAndBFS(ID);
 	void MergeComponents(Array<ID>&);
 public:
 	HyperGraph() {}

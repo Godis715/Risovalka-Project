@@ -301,12 +301,12 @@ void HyperGraph::Delete(Array<ID>& IDArray) {
 			components.Find(componentID);
 			component = components.GetCurrent();
 			set.Push(componentID, component);
-			component->Delete(IDArray[i]);
+			//component->Delete(IDArray[i]);
 		}
 	}
 	while (set.getsize() > 0)
 	{
 		component = set.PopElement();
-		SplitingAndBFS(component->GetID());
+		//SplitingAndBFS(component->GetID());
 	}
 }

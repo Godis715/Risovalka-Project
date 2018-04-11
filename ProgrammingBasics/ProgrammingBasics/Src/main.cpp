@@ -1,15 +1,13 @@
-#include "View.h"
 #include <ctime>
-
-Array<Model> func() {
-	Array<Model> k(500);
-	return k;
-}
+#include "Hash-Table.h"
 
 int main()
 {
-	IView* view = new View;
-	view->Run();
+	HashTable<int, int, Hash> a(5);
+	a.Input(5, 5);
+	int b;
+	bool c = a.Searching(5, b);
+	a.DeleteElement(5);
 
 	return 0;
 }
