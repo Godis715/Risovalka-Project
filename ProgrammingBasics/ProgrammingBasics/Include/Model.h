@@ -1,4 +1,9 @@
-#include "HyperGraph.h"
+//#include "HyperGraph.h"
+#include "Requirement.h"
+#include "Dictionary.h"
+#include "Array.h"
+#include "Queue.h"
+#include "Set.h"
 
 #ifndef __MODEL
 #define __MODEL
@@ -8,14 +13,36 @@ class Primitive;
 class Model
 {
 private:
-	Dict<ID, Primitive*> data;
+	class Link
+	{
+	public:
+		ID primID;
+		ID reqID;
+		Link(const ID&, const ID&);
+		Link(){}
+		~Link(){}
+	};
 
-	//Array? It should be dict
-	Array<Requirement*> dataReq;
+	Dict<ID, Primitive*> dataPrim;
+
+	Dict<ID, Requirement*> dataReq;
+	
+	Array<Link> dataLink;
+
 	IDGenerator* idGen;
 
+	void GetIDRequirements(const ID&, Array<ID>&);
+
+	//may be not using
+	bool find(const ID&, Array<ID>);
+
+	bool find(const ID&, Array<Primitive*>&);
+
+	bool find(const ID&, Array<Requirement*>&);
+	//..
+
 	//similar functions!!
-	double GetError() const;
+	double GetError();
 	double GetError(const Array<Requirement*>&) const;
 	//
 

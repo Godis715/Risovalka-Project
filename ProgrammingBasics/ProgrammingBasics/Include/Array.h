@@ -345,7 +345,7 @@ public:
 		return index;
 	} */
 
-	/*bool find(T value)
+	bool find(T& value, bool(*cmp)())
 	{
 		for (size_t i = 0; i < _size; i++)
 		{
@@ -355,7 +355,7 @@ public:
 			}
 		}
 		return false;
-	} */
+	}
 }; 
 
 //template <class T> std::ostream& operator<< (std::ostream& out, Array<T>& arr)
