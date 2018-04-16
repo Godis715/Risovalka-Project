@@ -15,6 +15,7 @@ enum type_id { point = 1, segment, arc };
 
 enum Requirement_id {
 	distBetPoints = 1,
+	equalSegmentLen,
 	pointsOnTheOneHand,
 	distBetPointSeg,
 	angleBetSeg,

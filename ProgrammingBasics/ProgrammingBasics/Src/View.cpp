@@ -31,16 +31,7 @@ void View::Run() {
 		if (NumEvents != 0 && InRec.EventType == MOUSE_EVENT && InRec.Event.MouseEvent.dwButtonState == RI_MOUSE_BUTTON_1_DOWN) {
 			GetCursorPos(&pos);
 			ScreenToClient(hWnd, &pos);
-			if (pos.x <= 20 && pos.y <= 20) {
-				presenter->KeyPressedEvent(' ');
-				continue;
-			}
-			if (pos.x <= 20) {
-				presenter->KeyPressedEvent('d');
-				continue;
-			}
 			presenter->ClickSceneEvent(pos.x, pos.y);
-
 		}
 	}
 }
@@ -57,11 +48,11 @@ void View::DrawLine(const Vector2& point1, const Vector2& point2) {
 
 void View::DrawPoint(const Vector2& point) {
 	const double size = 3.0;
-	MoveToEx(hDC, (int)point.x - size, (int)point.y - size, NULL);
-	LineTo(hDC, (int)point.x + size, (int)point.y + size);
+	MoveToEx(hDC, (int)(point.x - size), (int)(point.y - size), NULL);
+	LineTo(hDC, (int)(point.x + size), (int)(point.y + size));
 
-	MoveToEx(hDC, (int)point.x + size, (int)point.y - size, NULL);
-	LineTo(hDC, (int)point.x - size, (int)point.y + size);
+	MoveToEx(hDC, (int)(point.x + size), (int)(point.y - size), NULL);
+	LineTo(hDC, (int)(point.x - size), (int)(point.y + size));
 }
 
 void View::SetColor(color col) {

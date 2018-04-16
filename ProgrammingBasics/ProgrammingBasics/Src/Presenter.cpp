@@ -33,34 +33,27 @@ void Presenter::DrawScene() {
 	for (int i = 0; i < controller->clickedPoints.GetSize(); ++i) {
 		view->DrawPoint(controller->clickedPoints[i]);
 	}
-
 	for (int i = 0; i < controller->selectedObjects.GetSize(); ++i) {
 		type_id type;
-		if (model->getObjType(controller->selectedObjects[i], type)) {
-			switch (type) {
-			case point: {
-				Array<double> params;
-				if (model->getObjParam(controller->selectedObjects[i], params)) {
-					view->DrawPoint(Vector2(params[0], params[1]));
-				}
-				break;
-			}
-			case segment:
-			{
-				Array<double> params;
-				if (model->getObjParam(controller->selectedObjects[i], params)) {
-					view->DrawLine(Vector2(params[0], params[1]),
-						Vector2(params[2], params[3]));
-				}
-				break;
-			}
-			}
+		model->getObjType(controller->selectedObjects[i], type);
+		Array<double> params;
+		model->getObjParam(controller->selectedObjects[i], params);
+		switch (type) {
+		case point: {
+			Vector2 pos(params[0], params[1]);
+			view->DrawPoint(pos);
+			break;
 		}
+		case segment: {
+			Vector2 pos1(params[0], params[1]);
+			Vector2 pos2(params[2], params[3]);
+			view->DrawLine(pos1, pos2);
+			break;
+		}
+		}
+		// drawing selected object
 	}
-
-	// drawing selected object
 }
-
 ID Presenter::CreatePoint(double x, double y) {
 	Array<double> params;
 	params.PushBack(x);
@@ -112,6 +105,7 @@ Presenter::Presenter(IView* view)
 	controller->AddButton(single_selecting, Vector2(10, 300), Vector2(30, 280));
 	controller->AddButton(segment_creating, Vector2(50, 300), Vector2(70, 280));
 	controller->AddButton(merging_points, Vector2(90, 300), Vector2(110, 280));
+	controller->AddButton(segments_equal, Vector2(130, 300), Vector2(150, 280));
 }
 
 Presenter::Presenter()
@@ -331,20 +325,11 @@ void Presenter::DrawTriangle(
 }
 
 bool Presenter::GetClickedObjectID(double x, double y, ID& obj_id) {
-	double dist;
-	if (model->getNearest(x, y, obj_id, dist)) {
-		if (dist < 5.0) {
-			return true;
-		}
-	}
-	return false;
+	return model->getNearest(x, y, obj_id);
 }
 
 bool Presenter::GetObjType(const ID& id, type_id& type) {
-	if (model->getObjType(id, type)) {
-		return true;
-	}
-	return false;
+	return model->getObjType(id, type);
 }
 
 void Presenter::ClickSceneEvent(double x, double y) {
@@ -360,6 +345,25 @@ void Presenter::KeyPressedEvent(char c) {
 	}
 	DrawScene();
 }
+
+bool Presenter::CreateRequirmentEqualSegmentLen(ID seg1, ID seg2) {
+	type_id type1;
+	type_id type2;
+	if (model->getObjType(seg1, type1) && model->getObjType(seg2, type2) &&
+		type1 == segment && type2 == segment) {
+		Array<ID> segments;
+		Array<double> params(1);
+
+		segments.PushBack(seg1);
+		segments.PushBack(seg2);
+
+		return model->createRequirement(equalSegmentLen, segments, params);
+	}
+	else {
+		return false;
+	}
+}
+
 
 
 //void Prese

@@ -12,11 +12,9 @@ private:
 	const ID id;
 protected:
 	Array<Primitive*> primitives;
-	const double EPS = 1e-4;
 	Array<double*> params;
-	int params_num;
 public :
-	IRequirement(ID _id) : id(_id) { }
+	IRequirement(ID _id, int _size) : id(_id), params(Array<double*>(_size)) { }
 	virtual double error() = 0;
 	Array<double> gradient();
 	ID GetID() const {
@@ -27,26 +25,31 @@ public :
 	void GetPrimitivesID(Array<ID>&);
 };
 
-class DistanceBetweenPoints : public IRequirement
+class DistBtPointsReq : public IRequirement
 {
+private:
+	double distance;
+	Point* point1;
+	Point* point2;
 public:
-	DistanceBetweenPoints(Point& _point1, Point& _point2, double _distance) :
-		IRequirement(IDGenerator::getInstance()->generateID())
+	DistBtPointsReq(Point& _point1, Point& _point2, double _distance) :
+		IRequirement(IDGenerator::getInstance()->generateID(), 4)
 	{
 		Vector2* pos1 = &_point1.position;
 		Vector2* pos2 = &_point2.position;
 		
-		params = Array<double*>(4);
-
 		params[0] = &pos1->x;
 		params[1] = &pos1->y;
 		params[2] = &pos2->x;
 		params[3] = &pos2->y;
 
-		params_num = 4;
 		distance = _distance;
+
+		point1 = &_point1;
+		point2 = &_point2;
 	}
-	~DistanceBetweenPoints() {}
+
+	~DistBtPointsReq() {}
 	static double errorSt(Vector2 vec1, Vector2 vec2, double dist) {
 		return abs((vec1 - vec2).GetLength() - dist);
 	}
@@ -58,11 +61,39 @@ public:
 	void ChangeDistance(double _distance) {
 		distance = _distance;
 	}
-
-	Array<double> gradient() { return Array<double>(); }
-private:
-	double distance;
 };
+
+class EqualSegmentLenReq : public IRequirement {
+private:
+	Segment* seg1;
+	Segment* seg2;
+public:
+	EqualSegmentLenReq(Segment& _seg1, Segment& _seg2) : 
+		IRequirement(IDGenerator::getInstance()->generateID(), 8)
+	{
+		seg1 = &_seg1;
+		seg2 = &_seg2;
+
+		params[0] = (&seg1->point1->position.x);
+		params[1] = (&seg1->point1->position.y);
+		params[2] = (&seg1->point2->position.x);
+		params[3] = (&seg1->point2->position.y);
+		params[4] = (&seg2->point1->position.x);
+		params[5] = (&seg2->point1->position.y);
+		params[6] = (&seg2->point2->position.x);
+		params[7] = (&seg2->point2->position.y);
+	}
+	~EqualSegmentLenReq() { }
+	double error() {
+		Vector2 vec1(*(params[3]) - *(params[1]), *(params[2]) - *(params[0]));
+		Vector2 vec2(*(params[7]) - *(params[5]), *(params[6]) - *(params[4]));
+
+		double divergence = vec2.GetLength() - vec1.GetLength();
+		return divergence * divergence;
+	}
+};
+
+
 
 class PointsOnTheOneHand : public IRequirement
 {
@@ -71,7 +102,7 @@ public:
 		segment(_segment),
 		point1(_point1),
 		point2(_point2),
-		IRequirement(IDGenerator::getInstance()->generateID()) {}
+		IRequirement(IDGenerator::getInstance()->generateID(), 0) {}
 	~PointsOnTheOneHand() {}
 	double error() {
 
@@ -110,7 +141,7 @@ public:
 	DistanceBetweenPointSegment(Segment& _segment, Point& _point, double _distance) :
 		segment(_segment),
 		point(_point),
-		IRequirement(IDGenerator::getInstance()->generateID())
+		IRequirement(IDGenerator::getInstance()->generateID(), 0)
 	{
 		distance = _distance;
 	}
@@ -135,7 +166,7 @@ public:
 	AngleBetweenSegments(Segment& _segment1, Segment& _segment2, double _andle) :
 		segment1(_segment1),
 		segment2(_segment2),
-		IRequirement(IDGenerator::getInstance()->generateID())
+		IRequirement(IDGenerator::getInstance()->generateID(), 0)
 	{
 		angle = _andle;
 	}
@@ -164,7 +195,7 @@ public:
 	DistanceBetweenPointArc(Arc& _arc, Point& _point, double dist) :
 		arc(_arc),
 		point(_point),
-		IRequirement(IDGenerator::getInstance()->generateID())
+		IRequirement(IDGenerator::getInstance()->generateID(), 0)
 	{
 		distance = dist;
 	}
@@ -192,7 +223,7 @@ public:
 	PointInArc(Arc& _arc,  Point& _point) :
 		arc(_arc),
 		point(_point),
-		IRequirement(IDGenerator::getInstance()->generateID()) {}
+		IRequirement(IDGenerator::getInstance()->generateID(), 0) {}
 	~PointInArc() {}
 	// return distance to arc and angle
 	double error() {
@@ -234,7 +265,7 @@ class Triangle : public IRequirement
 {
 public:
 	Triangle(Segment* _segment1, Segment* _segment2, Segment* _segment3) :
-		IRequirement(IDGenerator::getInstance()->generateID())
+		IRequirement(IDGenerator::getInstance()->generateID(), 0)
 	{
 		Vector2 points[6];
 		points[0] = _segment1->GetPoint1_pos();
@@ -336,25 +367,25 @@ public:
 	double error() {
 		double sumError = 0;
 		if (bijection[0]) {
-			sumError += DistanceBetweenPoints::errorSt(segment1->GetPoint1_pos(), segment2->GetPoint2_pos(), 0);
+			sumError += DistBtPointsReq::errorSt(segment1->GetPoint1_pos(), segment2->GetPoint2_pos(), 0);
 			if (bijection[1]) {
-				sumError += DistanceBetweenPoints::errorSt(segment1->GetPoint2_pos(), segment3->GetPoint2_pos(), 0);
-				sumError += DistanceBetweenPoints::errorSt(segment2->GetPoint1_pos(), segment3->GetPoint1_pos(), 0);
+				sumError += DistBtPointsReq::errorSt(segment1->GetPoint2_pos(), segment3->GetPoint2_pos(), 0);
+				sumError += DistBtPointsReq::errorSt(segment2->GetPoint1_pos(), segment3->GetPoint1_pos(), 0);
 			}
 			else {
-				sumError += DistanceBetweenPoints::errorSt(segment1->GetPoint2_pos(), segment3->GetPoint1_pos(), 0);
-				sumError += DistanceBetweenPoints::errorSt(segment2->GetPoint1_pos(), segment3->GetPoint2_pos(), 0);
+				sumError += DistBtPointsReq::errorSt(segment1->GetPoint2_pos(), segment3->GetPoint1_pos(), 0);
+				sumError += DistBtPointsReq::errorSt(segment2->GetPoint1_pos(), segment3->GetPoint2_pos(), 0);
 			}
 		}
 		else {
-			sumError += DistanceBetweenPoints::errorSt(segment1->GetPoint1_pos(), segment2->GetPoint1_pos(), 0);
+			sumError += DistBtPointsReq::errorSt(segment1->GetPoint1_pos(), segment2->GetPoint1_pos(), 0);
 			if (bijection[1]) {
-				sumError += DistanceBetweenPoints::errorSt(segment1->GetPoint2_pos(), segment3->GetPoint2_pos(), 0);
-				sumError += DistanceBetweenPoints::errorSt(segment2->GetPoint2_pos(), segment3->GetPoint1_pos(), 0);
+				sumError += DistBtPointsReq::errorSt(segment1->GetPoint2_pos(), segment3->GetPoint2_pos(), 0);
+				sumError += DistBtPointsReq::errorSt(segment2->GetPoint2_pos(), segment3->GetPoint1_pos(), 0);
 			}
 			else {
-				sumError += DistanceBetweenPoints::errorSt(segment1->GetPoint2_pos(), segment3->GetPoint1_pos(), 0);
-				sumError += DistanceBetweenPoints::errorSt(segment2->GetPoint2_pos(), segment3->GetPoint2_pos(), 0);
+				sumError += DistBtPointsReq::errorSt(segment1->GetPoint2_pos(), segment3->GetPoint1_pos(), 0);
+				sumError += DistBtPointsReq::errorSt(segment2->GetPoint2_pos(), segment3->GetPoint2_pos(), 0);
 			}
 		}
 		return sumError / 3;
@@ -372,7 +403,7 @@ class ÑorrectTriangle : public IRequirement
 {
 public:
 	ÑorrectTriangle(Segment* _segment1, Segment* _segment2, Segment* _segment3, double _size) :
-		IRequirement(IDGenerator::getInstance()->generateID())
+		IRequirement(IDGenerator::getInstance()->generateID(), 0)
 	{
 		size = _segment1->GetLength() + _segment2->GetLength() + _segment2->GetLength();
 
@@ -478,30 +509,30 @@ public:
 	double error() {
 		double sumError = 0;
 		if (bijection[0]) {
-			sumError += DistanceBetweenPoints::errorSt(segment1->GetPoint1_pos(), segment2->GetPoint2_pos(), 0);
+			sumError += DistBtPointsReq::errorSt(segment1->GetPoint1_pos(), segment2->GetPoint2_pos(), 0);
 			if (bijection[1]) {
-				sumError += DistanceBetweenPoints::errorSt(segment1->GetPoint2_pos(), segment3->GetPoint2_pos(), 0);
-				sumError += DistanceBetweenPoints::errorSt(segment2->GetPoint1_pos(), segment3->GetPoint1_pos(), 0);
+				sumError += DistBtPointsReq::errorSt(segment1->GetPoint2_pos(), segment3->GetPoint2_pos(), 0);
+				sumError += DistBtPointsReq::errorSt(segment2->GetPoint1_pos(), segment3->GetPoint1_pos(), 0);
 			}
 			else {
-				sumError += DistanceBetweenPoints::errorSt(segment1->GetPoint2_pos(), segment3->GetPoint1_pos(), 0);
-				sumError += DistanceBetweenPoints::errorSt(segment2->GetPoint1_pos(), segment3->GetPoint2_pos(), 0);
+				sumError += DistBtPointsReq::errorSt(segment1->GetPoint2_pos(), segment3->GetPoint1_pos(), 0);
+				sumError += DistBtPointsReq::errorSt(segment2->GetPoint1_pos(), segment3->GetPoint2_pos(), 0);
 			}
 		}
 		else {
-			sumError += DistanceBetweenPoints::errorSt(segment1->GetPoint1_pos(), segment2->GetPoint1_pos(), 0);
+			sumError += DistBtPointsReq::errorSt(segment1->GetPoint1_pos(), segment2->GetPoint1_pos(), 0);
 			if (bijection[1]) {
-				sumError += DistanceBetweenPoints::errorSt(segment1->GetPoint2_pos(), segment3->GetPoint2_pos(), 0);
-				sumError += DistanceBetweenPoints::errorSt(segment2->GetPoint2_pos(), segment3->GetPoint1_pos(), 0);
+				sumError += DistBtPointsReq::errorSt(segment1->GetPoint2_pos(), segment3->GetPoint2_pos(), 0);
+				sumError += DistBtPointsReq::errorSt(segment2->GetPoint2_pos(), segment3->GetPoint1_pos(), 0);
 			}
 			else {
-				sumError += DistanceBetweenPoints::errorSt(segment1->GetPoint2_pos(), segment3->GetPoint1_pos(), 0);
-				sumError += DistanceBetweenPoints::errorSt(segment2->GetPoint2_pos(), segment3->GetPoint2_pos(), 0);
+				sumError += DistBtPointsReq::errorSt(segment1->GetPoint2_pos(), segment3->GetPoint1_pos(), 0);
+				sumError += DistBtPointsReq::errorSt(segment2->GetPoint2_pos(), segment3->GetPoint2_pos(), 0);
 			}
 		}
-		sumError += DistanceBetweenPoints::errorSt(segment1->GetPoint1_pos(), segment1->GetPoint2_pos(), size);
-		sumError += DistanceBetweenPoints::errorSt(segment2->GetPoint1_pos(), segment3->GetPoint2_pos(), size);
-		sumError += DistanceBetweenPoints::errorSt(segment3->GetPoint1_pos(), segment2->GetPoint2_pos(), size);
+		sumError += DistBtPointsReq::errorSt(segment1->GetPoint1_pos(), segment1->GetPoint2_pos(), size);
+		sumError += DistBtPointsReq::errorSt(segment2->GetPoint1_pos(), segment3->GetPoint2_pos(), size);
+		sumError += DistBtPointsReq::errorSt(segment3->GetPoint1_pos(), segment2->GetPoint2_pos(), size);
 		return sumError / 6;
 	}
 	void ChangeSize(double _size) {
@@ -521,7 +552,7 @@ class NsAngle : public IRequirement
 {
 public:
 	NsAngle(ListE<Segment*>& list) :
-		IRequirement(IDGenerator::getInstance()->generateID())
+		IRequirement(IDGenerator::getInstance()->generateID(), 0)
 	{
 		count = count = list.GetSize();
 		segments = new Segment*[count];
@@ -587,43 +618,43 @@ public:
 			if (bijection[i] && bijection[i - 1]) {
 				vec1 = segments[i]->GetPoint1_pos();
 				vec2 = segments[i + 1]->GetPoint2_pos();
-				sumError += DistanceBetweenPoints::errorSt(vec1, vec2, 0);
+				sumError += DistBtPointsReq::errorSt(vec1, vec2, 0);
 			}
 			if (bijection[i] && !bijection[i - 1]) {
 				vec1 = segments[i]->GetPoint2_pos();
 				vec2 = segments[i + 1]->GetPoint2_pos();
-				sumError += DistanceBetweenPoints::errorSt(vec1, vec2, 0);
+				sumError += DistBtPointsReq::errorSt(vec1, vec2, 0);
 			}
 			if (!bijection[i] && bijection[i - 1]) {
 				vec1 = segments[i]->GetPoint1_pos();
 				vec2 = segments[i + 1]->GetPoint1_pos();
-				sumError += DistanceBetweenPoints::errorSt(vec1, vec2, 0);
+				sumError += DistBtPointsReq::errorSt(vec1, vec2, 0);
 			}
 			if (!bijection[i] && !bijection[i - 1]) {
 				vec1 = segments[i]->GetPoint2_pos();
 				vec2 = segments[i + 1]->GetPoint1_pos();
-				sumError += DistanceBetweenPoints::errorSt(vec1, vec2, 0);
+				sumError += DistBtPointsReq::errorSt(vec1, vec2, 0);
 			}
 		}
 		if (bijection[count - 2]) {
 			vec1 = segments[count - 1]->GetPoint1_pos();
 			vec2 = segments[0]->GetPoint2_pos();
-			sumError += DistanceBetweenPoints::errorSt(vec1, vec2, 0);
+			sumError += DistBtPointsReq::errorSt(vec1, vec2, 0);
 		}
 		else {
 			vec1 = segments[count - 1]->GetPoint2_pos();
 			vec2 = segments[0]->GetPoint2_pos();
-			sumError += DistanceBetweenPoints::errorSt(vec1, vec2, 0);
+			sumError += DistBtPointsReq::errorSt(vec1, vec2, 0);
 		}
 		if (bijection[0]) {
 			vec1 = segments[0]->GetPoint1_pos();
 			vec2 = segments[1]->GetPoint2_pos();
-			sumError += DistanceBetweenPoints::errorSt(vec1, vec2, 0);
+			sumError += DistBtPointsReq::errorSt(vec1, vec2, 0);
 		}
 		else {
 			vec1 = segments[0]->GetPoint1_pos();
 			vec2 = segments[1]->GetPoint1_pos();
-			sumError += DistanceBetweenPoints::errorSt(vec1, vec2, 0);
+			sumError += DistBtPointsReq::errorSt(vec1, vec2, 0);
 		}
 		return sumError / count;
 	}
@@ -639,7 +670,7 @@ class CorrectNsAngle : public IRequirement
 {
 public:
 	CorrectNsAngle(ListE<Segment*>& list, double _size) :
-		IRequirement(IDGenerator::getInstance()->generateID())
+		IRequirement(IDGenerator::getInstance()->generateID(), 0)
 	{
 		Segment* temp;
 		Segment* minSegment;
@@ -727,49 +758,49 @@ public:
 			if (bijection[i] && bijection[i - 1]) {
 				vec1 = segments[i]->GetPoint1_pos();
 				vec2 = segments[i + 1]->GetPoint2_pos();
-				sumError += DistanceBetweenPoints::errorSt(vec1, vec2, 0);
+				sumError += DistBtPointsReq::errorSt(vec1, vec2, 0);
 			}
 			if (bijection[i] && !bijection[i - 1]) {
 				vec1 = segments[i]->GetPoint2_pos();
 				vec2 = segments[i + 1]->GetPoint2_pos();
-				sumError += DistanceBetweenPoints::errorSt(vec1, vec2, 0);
+				sumError += DistBtPointsReq::errorSt(vec1, vec2, 0);
 			}
 			if (!bijection[i] && bijection[i - 1]) {
 				vec1 = segments[i]->GetPoint1_pos();
 				vec2 = segments[i + 1]->GetPoint1_pos();
-				sumError += DistanceBetweenPoints::errorSt(vec1, vec2, 0);
+				sumError += DistBtPointsReq::errorSt(vec1, vec2, 0);
 			}
 			if (!bijection[i] && !bijection[i - 1]) {
 				vec1 = segments[i]->GetPoint2_pos();
 				vec2 = segments[i + 1]->GetPoint1_pos();
-				sumError += DistanceBetweenPoints::errorSt(vec1, vec2, 0);
+				sumError += DistBtPointsReq::errorSt(vec1, vec2, 0);
 			}
 		}
 		if (bijection[count - 2]) {
 			vec1 = segments[count - 1]->GetPoint1_pos();
 			vec2 = segments[0]->GetPoint2_pos();
-			sumError += DistanceBetweenPoints::errorSt(vec1, vec2, 0);
+			sumError += DistBtPointsReq::errorSt(vec1, vec2, 0);
 		}
 		else {
 			vec1 = segments[count - 1]->GetPoint2_pos();
 			vec2 = segments[0]->GetPoint2_pos();
-			sumError += DistanceBetweenPoints::errorSt(vec1, vec2, 0);
+			sumError += DistBtPointsReq::errorSt(vec1, vec2, 0);
 		}
 		if (bijection[0]) {
 			vec1 = segments[0]->GetPoint1_pos();
 			vec2 = segments[1]->GetPoint2_pos();
-			sumError += DistanceBetweenPoints::errorSt(vec1, vec2, 0);
+			sumError += DistBtPointsReq::errorSt(vec1, vec2, 0);
 		}
 		else {
 			vec1 = segments[0]->GetPoint1_pos();
 			vec2 = segments[1]->GetPoint1_pos();
-			sumError += DistanceBetweenPoints::errorSt(vec1, vec2, 0);
+			sumError += DistBtPointsReq::errorSt(vec1, vec2, 0);
 		}
 		for (int i = 0; i < count; ++i) {
 			vec1 = segments[i]->GetPoint1_pos();
 			vec2 = segments[i]->GetPoint2_pos();
-			sumError += DistanceBetweenPoints::errorSt(vec1, vec2, size);
-			sumError += DistanceBetweenPoints::errorSt(vec2, center, radius);
+			sumError += DistBtPointsReq::errorSt(vec1, vec2, size);
+			sumError += DistBtPointsReq::errorSt(vec2, center, radius);
 		}
 		return sumError / (count * 3);
 	}

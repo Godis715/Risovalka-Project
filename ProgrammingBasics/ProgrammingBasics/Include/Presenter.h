@@ -60,6 +60,7 @@ public:
 
 
 	bool CreateRequirmentDistBetPoints(ID, ID, double);
+	bool CreateRequirmentEqualSegmentLen(ID, ID);
 	//bool CreateRequirmentPointsOnTheOneHand(ID, ID, ID);
 	//bool CreateRequirmentDistanceBetweenPointSegment(ID, ID, double);
 	//bool CreateRequirmentAngleBetweenSegments(ID, ID, double);

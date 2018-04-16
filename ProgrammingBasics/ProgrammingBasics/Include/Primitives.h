@@ -36,10 +36,7 @@ public:
 
 class Segment : public Primitive {
 private:
-	Point* point1;
-	Point* point2;
 
-	//
 	class Equation {
 	public:
 		double a;
@@ -57,6 +54,10 @@ private:
 	}
 
 public:
+
+	Point* point1;
+	Point* point2;
+
 	Segment(Point*, Point*);
 	double GetDistance(Vector2) const;
 	double GetLength() const;

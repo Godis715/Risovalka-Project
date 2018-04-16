@@ -38,7 +38,7 @@ public:
 	bool createObject(type_id, Array<double>&, ID&);
 	bool createSegment(ID&, ID&, ID&);
 	bool createRequirement(const Requirement_id, Array<ID>&, Array<double>&);
-	bool getNearest(double, double, ID&, double&);
+	bool getNearest(double, double, ID&);
 	bool getObjType(const ID&, type_id&);
 	bool GetSegmentPoints(ID, Array<ID>&);
 	bool GetArcPoints(ID, Array<ID>&);

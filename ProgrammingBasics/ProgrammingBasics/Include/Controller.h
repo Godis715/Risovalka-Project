@@ -2,7 +2,7 @@
 
 #include "Presenter.h"
 
-enum state_id { segment_creating, single_selecting, poly_selecting, merging_points};
+enum state_id { segment_creating, single_selecting, poly_selecting, merging_points, segments_equal};
 
 class Button {
 private:

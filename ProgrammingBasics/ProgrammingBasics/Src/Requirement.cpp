@@ -8,9 +8,9 @@ Array<double*> IRequirement::GetParams() {
 }
 
 Array<double> IRequirement::gradient() {
-	Array<double> grad(params_num);
+	Array<double> grad(params.GetSize());
 	double err = error();
-	for (int i = 0; i < params_num; ++i) {
+	for (int i = 0; i < params.GetSize(); ++i) {
 
 		(*params[i]) += DELTA_X;
 		double delta_error_right = error();

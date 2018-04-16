@@ -40,6 +40,14 @@ void Controller::ClickAt(double x, double y) {
 		case segment_creating: {
 			selectedObjects.PushBack(obj_id);
 			refresh();
+			break;
+		}
+		case segments_equal: {
+			type_id type;
+			if (presenter->GetObjType(obj_id, type) && type == segment) {
+				selectedObjects.PushBack(obj_id);
+				refresh();
+			}
 		}
 		}
 
@@ -95,6 +103,20 @@ void Controller::refresh() {
 			clickedPoints.Clear();
 			state = single_selecting;
 		}
+		break;
+	}
+	case segments_equal: {
+		if (selectedObjects.GetSize() == 2) {
+			if (presenter->CreateRequirmentEqualSegmentLen(selectedObjects[0], selectedObjects[1])) {
+				state = single_selecting;
+				presenter->Optimize();
+			}
+			selectedObjects.Clear();
+		}
+		if (selectedObjects.GetSize() > 2) {
+			selectedObjects.Clear();
+		}
+		break;
 	}
 	}
 }

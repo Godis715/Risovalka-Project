@@ -102,12 +102,12 @@ bool Model::createRequirement(const Requirement_id _id, Array<ID>& id_arr, Array
 	switch (_id)
 	{
 	case distBetPoints: {
-		DistanceBetweenPoints* Requirement;
+		DistBtPointsReq* Requirement;
 
 		if ((primitives[0]->GetType() == point)
 			&& (primitives[1]->GetType() == point)
 			&& (params.GetSize() > 0)) {
-		Requirement = new DistanceBetweenPoints(*dynamic_cast<Point*>(primitives[0]),
+		Requirement = new DistBtPointsReq(*dynamic_cast<Point*>(primitives[0]),
 			*dynamic_cast<Point*>(primitives[1]),
 			params[0]);
 		dataReq.PushBack(Requirement);
@@ -251,6 +251,19 @@ bool Model::createRequirement(const Requirement_id _id, Array<ID>& id_arr, Array
 				}
 			}
 			Requirement = new CorrectNsAngle(list, params[0]);
+			dataReq.PushBack(Requirement);
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+	case equalSegmentLen: {
+		EqualSegmentLenReq* Requirement;
+		if ((primitives[0]->GetType() == segment)
+			&& (primitives[1]->GetType() == segment)) {
+			Requirement = new EqualSegmentLenReq(*dynamic_cast<Segment*>(primitives[0]),
+				*dynamic_cast<Segment*>(primitives[1]));
 			dataReq.PushBack(Requirement);
 			return true;
 		}
@@ -671,27 +684,38 @@ bool Model::GetArcPoints(ID obj_id, Array<ID>& arr) {
 //	}
 //}
 
-bool Model::getNearest(double x, double y, ID& obj_id, double& distance) {
+bool Model::getNearest(double x, double y, ID& obj_id) {
 	if (data.GetSize() != 0) {
 		Vector2 pos(x, y);
 		data.MoveBegin();
-		ID nearestObject = data.GetCurrent()->GetID();
-		double minDist = data.GetCurrent()->GetDistance(pos);
-		while (data.MoveNext()) {
+		ID nearestObj;
+		double minDist;
+		bool isFound = false;
+		bool isFoundPoint = false;
+		do {
 			double dist = data.GetCurrent()->GetDistance(pos);
-			if (data.GetCurrent()->GetType() == point) {
-				if (dist < 5.0f) {
-					dist = 0.0;
+			if (dist < 5.0) {
+				if (data.GetCurrent()->GetType() == point) {
+					if (!isFoundPoint || dist < minDist) {
+						minDist = dist;
+						nearestObj = data.GetCurrent()->GetID();
+					}
+					isFoundPoint = true;
+					isFound = true;
+				}
+				else if (!isFound || !isFoundPoint) {
+					if (!isFound || dist < minDist) {
+						minDist = dist;
+						nearestObj = data.GetCurrent()->GetID();
+					}
+					isFound = true;
 				}
 			}
-			if (dist < minDist && data.GetCurrent()->GetType() == point) {
-				minDist = dist;
-				nearestObject = data.GetCurrent()->GetID();
-			}
+		} while (data.MoveNext());
+		if (isFound) {
+			obj_id = nearestObj;
 		}
-		distance = minDist;
-		obj_id = nearestObject;
-		return true;
+		return isFound;
 	}
 	else
 	{
