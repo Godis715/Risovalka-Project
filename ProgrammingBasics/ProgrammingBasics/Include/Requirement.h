@@ -14,20 +14,22 @@ private:
 protected:
 	Array<double*> params;
 public:
-	Requirement(ID _id) : id(_id) { }
+	Requirement(ID _id, int _size) : id(_id), params(Array<double*>(_size)) { 
+		
+	}
 	virtual double error() = 0;
 	Array<double> gradient();
 	ID GetID() const;
 	Array<double*> GetParams();
 };
 
-class DistanceBetweenPoints : public Requirement
+class DistBetPointsReq : public Requirement
 {
 private:
 	double distance;
 public:
-	DistanceBetweenPoints(Point* _point1, Point* _point2, double _distance) :
-		Requirement(IDGenerator::getInstance()->generateID())
+	DistBetPointsReq(Point* _point1, Point* _point2, double _distance) :
+		Requirement(IDGenerator::getInstance()->generateID(), 4)
 	{
 		Vector2* pos1 = &_point1->position;
 		Vector2* pos2 = &_point2->position;
@@ -41,7 +43,7 @@ public:
 
 		distance = _distance;
 	}
-	~DistanceBetweenPoints() { }
+	~DistBetPointsReq() { }
 	//static double errorSt(Vector2 vec1, Vector2 vec2, double dist) {
 	//	return abs((vec1 - vec2).GetLength() - dist);
 	//}
@@ -55,6 +57,38 @@ public:
 	}
 };
 
+class EqualSegmentLenReq : public Requirement {
+private:
+	Segment * seg1;
+	Segment* seg2;
+public:
+	EqualSegmentLenReq(Segment& _seg1, Segment& _seg2) :
+		Requirement(IDGenerator::getInstance()->generateID(), 8)
+	{
+		seg1 = &_seg1;
+		seg2 = &_seg2;
+
+		params[0] = (&seg1->point1->position.x);
+		params[1] = (&seg1->point1->position.y);
+		params[2] = (&seg1->point2->position.x);
+		params[3] = (&seg1->point2->position.y);
+		params[4] = (&seg2->point1->position.x);
+		params[5] = (&seg2->point1->position.y);
+		params[6] = (&seg2->point2->position.x);
+		params[7] = (&seg2->point2->position.y);
+	}
+	~EqualSegmentLenReq() { }
+	double error() {
+		Vector2 vec1(*(params[3]) - *(params[1]), *(params[2]) - *(params[0]));
+		Vector2 vec2(*(params[7]) - *(params[5]), *(params[6]) - *(params[4]));
+
+		double divergence = vec2.GetLength() - vec1.GetLength();
+		return divergence * divergence;
+	}
+};
+
+
+
 class PointsOnTheOneHand : public Requirement
 {
 public:
@@ -62,7 +96,7 @@ public:
 		segment(_segment),
 		point1(_point1),
 		point2(_point2),
-		Requirement(IDGenerator::getInstance()->generateID()) {}
+		Requirement(IDGenerator::getInstance()->generateID(), 0) {}
 	~PointsOnTheOneHand() {}
 	double error() {
 
@@ -101,7 +135,7 @@ public:
 	DistanceBetweenPointSegment(Segment& _segment, Point& _point, double _distance) :
 		segment(_segment),
 		point(_point),
-		Requirement(IDGenerator::getInstance()->generateID())
+		Requirement(IDGenerator::getInstance()->generateID(), 0)
 	{
 		distance = _distance;
 	}
@@ -126,7 +160,7 @@ public:
 	AngleBetweenSegments(Segment& _segment1, Segment& _segment2, double _andle) :
 		segment1(_segment1),
 		segment2(_segment2),
-		Requirement(IDGenerator::getInstance()->generateID())
+		Requirement(IDGenerator::getInstance()->generateID(), 0)
 	{
 		angle = _andle;
 	}
@@ -155,7 +189,7 @@ public:
 	DistanceBetweenPointArc(Arc& _arc, Point& _point, double dist) :
 		arc(_arc),
 		point(_point),
-		Requirement(IDGenerator::getInstance()->generateID())
+		Requirement(IDGenerator::getInstance()->generateID(), 0)
 	{
 		distance = dist;
 	}
@@ -183,7 +217,7 @@ public:
 	PointInArc(Arc& _arc,  Point& _point) :
 		arc(_arc),
 		point(_point),
-		Requirement(IDGenerator::getInstance()->generateID()) {}
+		Requirement(IDGenerator::getInstance()->generateID(), 0) {}
 	~PointInArc() {}
 	// return distance to arc and angle
 	double error() {
