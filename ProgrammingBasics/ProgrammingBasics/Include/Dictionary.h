@@ -10,7 +10,7 @@ private:
 	template <class TKey, class TVal> class Node
 	{
 	public:
-		Node* rightChild = nullptr;
+		Node * rightChild = nullptr;
 		Node* leftChild = nullptr;
 		Node* parent = nullptr;
 		TKey key;
@@ -303,6 +303,60 @@ public:
 	~Dict() {
 		DeleteDict();
 	}
+
+	class Marker {
+	private:
+		Node* current;
+		bool isValid;
+		public:
+		Marker(Dict* dict) {
+			this->isValid = dict != nullptr && dict->head != nullptr;
+			if (isValid) {
+				this->current = dict->head;
+			}
+		}
+		bool MoveNext() {
+			if (!isValid) {
+				return false;
+			}
+			if (current == nullptr) {
+				isValid = false;
+				return false;
+			}
+			if (current->rightChild != nullptr) {
+				current = current->rightChild;
+				while (current->leftChild != nullptr)
+				{
+					current = current->leftChild;
+				}
+				return true;
+			}
+			if (current->parent != nullptr) {
+				if (current == current->parent->leftChild) {
+					current = current->parent;
+					return true;
+				}
+				temp = current;
+				current = current->parent;
+				while ((current != nullptr) && (current->rightChild == temp))
+				{
+					temp = current;
+					current = current->parent;
+				}
+				if (current == nullptr) {
+					isValid = false;
+					return false;
+				}
+				else {
+					isValid = false;
+					return true;
+				}
+			}
+			isValid = false;
+			return false;
+		}
+		TVal GetValue() const;
+	};
 
 	int GetSize() const
 	{
@@ -613,5 +667,4 @@ public:
 		size = 0;
 	}
 };
-
 #endif
