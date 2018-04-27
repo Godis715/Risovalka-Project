@@ -126,6 +126,8 @@
     <ClCompile Include="..\Src\Model.cpp" />
     <ClCompile Include="..\Src\Requirement.cpp" />
     <ClCompile Include="..\Src\Vector2.cpp" />
+    <ClCompile Include="Dictionary.cpp" />
+    <ClCompile Include="Logger.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Include\Array.h" />
@@ -135,6 +137,7 @@
     <ClInclude Include="..\Include\HyperGraph.h" />
     <ClInclude Include="..\Include\ID.h" />
     <ClInclude Include="..\Include\IDGenerator.h" />
+    <ClInclude Include="..\Include\INumerable.h" />
     <ClInclude Include="..\Include\List.h" />
     <ClInclude Include="..\Include\Model.h" />
     <ClInclude Include="..\Include\Primitives.h" />
@@ -143,6 +146,7 @@
     <ClInclude Include="..\Include\Set.h" />
     <ClInclude Include="..\Include\Type.h" />
     <ClInclude Include="..\Include\Vector2.h" />
+    <ClInclude Include="Logger.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

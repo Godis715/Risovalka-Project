@@ -27,9 +27,10 @@ private:
 
 	Dict<ID, Requirement*> dataReq;
 	
-	Array<Link> dataLink;
+	Dict<ID, ListE<ID>*> dataLink;
 
 	IDGenerator* idGen;
+
 
 	void GetIDRequirements(const ID&, Array<ID>&);
 
