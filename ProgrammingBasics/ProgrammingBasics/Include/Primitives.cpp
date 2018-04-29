@@ -15,7 +15,7 @@ type_id Primitive::GetType() {
 }
 
 
-Point::Point(Vector2 pos) :
+Point::Point(const Vector2& pos) :
 	Primitive(IDGenerator::getInstance()->generateID(), point)
 {
 	this->position = pos;
@@ -30,14 +30,14 @@ Point::Point(const Point& _p) :
 {
 	this->position = _p.position;
 }
-double Point::GetDistance(Vector2 point) const {
+double Point::GetDistance(const Vector2& point) const {
 	return sqrt((position.x - point.x)*(position.x - point.x) +
 		(position.y - point.y)*(position.y - point.y));
 }
 Vector2 Point::GetPosition() const {
 	return position;
 }
-void Point::SetPosition(Vector2 _pos) {
+void Point::SetPosition(const Vector2& _pos) {
 	position = _pos;
 }
 void Point::SetPosition(double x, double y) {
@@ -83,7 +83,7 @@ double Segment::Inequality(Vector2 vector) {
 	delete equation;
 	return answer;
 }
-double Segment::GetDistance(Vector2 point) const {
+double Segment::GetDistance(const Vector2& point) const {
 	double dotProduct1 = 0.0;
 	double dotProduct2 = 0.0;
 	Vector2 point1 = this->point1->GetPosition();
@@ -118,7 +118,9 @@ Arc::Arc(Point* _p1, Point* _p2, double _angle) :
 	}
 	angle = _angle;
 }
-double Arc::GetDistance(Vector2) const {
+
+// write this function
+double Arc::GetDistance(const Vector2& _point) const {
 	return 0.0;
 }
 Vector2 Arc::GetCenter() const {

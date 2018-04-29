@@ -30,19 +30,16 @@
     <ClCompile Include="..\Include\Primitives.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="..\Src\Presenter.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Src\View.cpp">
+    <ClCompile Include="..\Src\HyperGraph.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
     <ClCompile Include="..\Src\Requirement.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="..\Src\HyperGraph.cpp">
+    <ClCompile Include="Logger.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="..\Src\Controller.cpp">
+    <ClCompile Include="Dictionary.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
   </ItemGroup>
@@ -80,15 +77,6 @@
     <ClInclude Include="..\Include\Dequeue.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="..\Include\Presenter.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Include\View.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Include\IView.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
     <ClInclude Include="..\Include\Hash-Table.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
@@ -98,7 +86,13 @@
     <ClInclude Include="..\Include\Set.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="..\Include\Controller.h">
+    <ClInclude Include="..\Include\Queue.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="Logger.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Include\INumerable.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>

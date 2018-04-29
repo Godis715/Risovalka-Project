@@ -1,19 +1,106 @@
 #include "Model.h"
+#include <iostream>
 #include <stdexcept>
 
-bool Model::DischargeInfoObjects(Array<infoObject>& DataInfoObjects)
+Model::Link::Link(const ID& primID, const ID& reqID)
 {
-	if (data.GetSize() == 0) {
+	this->primID = primID;
+	this->reqID = reqID;
+}
+
+void Model::GetIDRequirements(const ID& id, Array<ID>& FoundIDRequirement)
+{
+	Dict<ID, ID> labels;
+	Queue<ID> forConsideration;
+	forConsideration.push(id);
+	do
+	{
+		ID tempID = forConsideration.pop();
+		if (!labels.Find(tempID))
+		{
+			for (int i = 0; i < dataLink.GetSize(); i++)
+			{
+				if (dataLink[i].reqID == id)
+				{
+					forConsideration.push(dataLink[i].primID);
+				}
+
+				if (dataLink[i].primID == id)
+				{
+					FoundIDRequirement.PushBack(dataLink[i].reqID);
+					forConsideration.push(dataLink[i].reqID);
+				}
+			}
+			labels.Add(tempID, tempID);
+		}
+	} while (!forConsideration.isEmpty());
+}
+
+bool Model::find(const ID& id, Array<ID> foundID)
+{
+	bool isFound = false;
+	for (int i = 0; i < dataLink.GetSize(); i++)
+	{
+		if (dataLink[i].reqID == id)
+		{
+			foundID.PushBack(dataLink[i].primID);
+			isFound = true;
+		}
+
+		if (dataLink[i].primID == id)
+		{
+			foundID.PushBack(dataLink[i].reqID);
+			isFound = true;
+		}
+	}
+	return isFound;
+}
+
+bool Model::find(const ID& idReq, Array<Primitive*>& foundPrim)
+{
+	bool isFound = false;
+	for (int i = 0; i < dataLink.GetSize(); i++)
+	{
+		if (dataLink[i].reqID == idReq)
+		{
+			if (dataPrim.Find(dataLink[i].primID)) {
+				foundPrim.PushBack(dataPrim.GetCurrent());
+				isFound = true;
+			}
+		}
+	}
+	return isFound;
+}
+
+bool Model::find(const ID& idPrim, Array<Requirement*>& foundReq)
+{
+	bool isFound = false;
+	for (int i = 0; i < dataLink.GetSize(); i++)
+	{
+		if (dataLink[i].primID == idPrim)
+		{
+			if (dataReq.Find(dataLink[i].reqID)) {
+				foundReq.PushBack(dataReq.GetCurrent());
+				isFound = true;
+			}
+		}
+	}
+	return isFound;
+}
+
+bool Model::DischargeInfoObjects(Array<infoObject>& dataPrimInfoObjects)
+{
+	if (dataPrim.GetSize() == 0) {
 		return false;
 	}
-	data.MoveBegin();
+	dataPrim.MoveBegin();
 	do
 	{
 		infoObject temp;
-		getObjParam(data.GetCurrentKey(), temp.params);
-		getObjType(data.GetCurrentKey(), temp.type);
-		DataInfoObjects.pushBack(temp);
-	} while (data.MoveNext());
+		getObjParam(dataPrim.GetCurrentKey(), temp.params);
+		getObjType(dataPrim.GetCurrentKey(), temp.type);
+		dataPrimInfoObjects.PushBack(temp);
+	} while (dataPrim.MoveNext());
 	return true;
 }
 
@@ -21,17 +108,17 @@ bool Model::createObject(type_id type, Array<double>& params, ID& obj_id) {
 	switch (type)
 	{
 	case point: {
-		if (params.getSize() != 2) {
+		if (params.GetSize() != 2) {
 			return false;
 		}
 		Point* _point;
 		_point = new Point(params[0], params[1]);
-		data.Add(_point->GetID(),_point);
+		dataPrim.Add(_point->GetID(),_point);
 		obj_id = _point->GetID();
 		return true;
 	}
 	case segment: {
-		if (params.getSize() != 4) {
+		if (params.GetSize() != 4) {
 			return false;
 		}
 		Point* p1 = new Point(params[0], params[1]);
@@ -39,15 +126,15 @@ bool Model::createObject(type_id type, Array<double>& params, ID& obj_id) {
 
 		Segment* _seg = new Segment(p1, p2);
 
-		data.Add(p1->GetID(), p1);
-		data.Add(p2->GetID(), p2);
-		data.Add(_seg->GetID(), _seg);
+		dataPrim.Add(p1->GetID(), p1);
+		dataPrim.Add(p2->GetID(), p2);
+		dataPrim.Add(_seg->GetID(), _seg);
 
 		obj_id = _seg->GetID();
 		return true;
 	}
 	case arc: {
-		if (params.getSize() != 5) {
+		if (params.GetSize() != 5) {
 			return false;
 		}
 		Point* p1 = new Point(params[0], params[1]);
@@ -55,9 +142,9 @@ bool Model::createObject(type_id type, Array<double>& params, ID& obj_id) {
 
 		Arc* _arc = new Arc(p1, p2, params[4]);
 
-		data.Add(p1->GetID(), p1);
-		data.Add(p2->GetID(), p2);
-		data.Add(_arc->GetID(), _arc);
+		dataPrim.Add(p1->GetID(), p1);
+		dataPrim.Add(p2->GetID(), p2);
+		dataPrim.Add(_arc->GetID(), _arc);
 
 		obj_id = _arc->GetID();
 		return true;
@@ -67,32 +154,32 @@ bool Model::createObject(type_id type, Array<double>& params, ID& obj_id) {
 	}
 }
 
-bool Model::createSegment(ID& p1ID, ID& p2ID, ID& segID) {
-	Primitive* point1PR;
-	Primitive* point2PR;
-	bool error = false;
-	if (data.Find(p1ID)) {
-		point1PR = data.GetCurrent();
-		if (data.Find(p2ID)) {
-			point2PR = data.GetCurrent();
-			if ((point1PR->GetType() == point) && (point2PR->GetType() == point)) {
-				Point* point1 = dynamic_cast<Point*>(point1PR);
-				Point* point2 = dynamic_cast<Point*>(point2PR);
-				Segment* segment = new Segment(point1, point2);
-				segID = segment->GetID();
-				data.Add(segID, segment);
-				return true;
-			}
-		}
-	}
-	return false;
-}
+//bool Model::createSegment(ID& p1ID, ID& p2ID, ID& segID) {
+//	Primitive* point1PR;
+//	Primitive* point2PR;
+//	bool error = false;
+//	if (dataPrim.Find(p1ID)) {
+//		point1PR = dataPrim.GetCurrent();
+//		if (dataPrim.Find(p2ID)) {
+//			point2PR = dataPrim.GetCurrent();
+//			if ((point1PR->GetType() == point) && (point2PR->GetType() == point)) {
+//				Point* point1 = dynamic_cast<Point*>(point1PR);
+//				Point* point2 = dynamic_cast<Point*>(point2PR);
+//				Segment* segment = new Segment(point1, point2);
+//				segID = segment->GetID();
+//				dataPrim.Add(segID, segment);
+//				return true;
+//			}
+//		}
+//	}
+//	return false;
+//}
 
 bool Model::createRequirement(const Requirement_id _id, Array<ID>& id_arr, Array<double>& params) {
 	Array<Primitive*> primitives;
-	for (int i = 0; i < id_arr.getSize(); ++i) {
-		if (data.Find(id_arr[i])) {
-			primitives.pushBack(data.GetCurrent());
+	for (int i = 0; i < id_arr.GetSize(); ++i) {
+		if (dataPrim.Find(id_arr[i])) {
+			primitives.PushBack(dataPrim.GetCurrent());
 		}
 		else {
 			return false;
@@ -101,30 +188,57 @@ bool Model::createRequirement(const Requirement_id _id, Array<ID>& id_arr, Array
 	switch (_id)
 	{
 	case distBetPoints: {
-		DistanceBetweenPoints* Requirement;
-
-		if ((primitives[0]->GetType() == point)
-			&& (primitives[1]->GetType() == point)
-			&& (params.getSize() > 0)) {
-		Requirement = new DistanceBetweenPoints(*dynamic_cast<Point*>(primitives[0]),
-			*dynamic_cast<Point*>(primitives[1]),
-			params[0]);
-		dataReq.pushBack(Requirement);
-		return true;
+		DistBetPointsReq* Requirement;
+		if (primitives.GetSize() != 2 && params.GetSize() != 1) {
+			return false;
+		}
+		if (primitives[0]->GetType() == point &&
+			primitives[1]->GetType() == point) {
+			Requirement = new DistBetPointsReq(dynamic_cast<Point*>(primitives[0]),
+				dynamic_cast<Point*>(primitives[1]),
+				params[0]);
+			dataReq.Add(Requirement->GetID(), Requirement);
+			dataLink.PushBack(Link(primitives[0]->GetID(), Requirement->GetID()));
+			dataLink.PushBack(Link(primitives[1]->GetID(), Requirement->GetID()));
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+	case EqualSegmentLen: {
+		if (primitives.GetSize() != 2) {
+			return false;
+		}
+		EqualSegmentLenReq* requirement;
+		if ((primitives[0]->GetType() == segment)
+			&& (primitives[1]->GetType() == segment)) {
+			requirement = new EqualSegmentLenReq(*dynamic_cast<Segment*>(primitives[0]),
+				*dynamic_cast<Segment*>(primitives[1]));
+			dataReq.Add(requirement->GetID(), requirement);
+			dataLink.PushBack(Link(primitives[0]->GetID(), requirement->GetID()));
+			dataLink.PushBack(Link(primitives[1]->GetID(), requirement->GetID()));
+			return true;
 		}
 		else {
 			return false;
 		}
 	}
 	case pointsOnTheOneHand: {
-		PointsOnTheOneHand* Requirement;
+		if (primitives.GetSize() != 3) {
+			return false;
+		}
+		PointsOnTheOneHand* requirement;
 		if ((primitives[0]->GetType() == segment)
 			&& (primitives[1]->GetType() == point)
 			&& (primitives[2]->GetType() == point)) {
-			Requirement = new PointsOnTheOneHand(*dynamic_cast<Segment*>(primitives[0]),
+			requirement = new PointsOnTheOneHand(*dynamic_cast<Segment*>(primitives[0]),
 				*dynamic_cast<Point*>(primitives[1]),
 				*dynamic_cast<Point*>(primitives[2]));
-			dataReq.pushBack(Requirement);
+			dataReq.Add(requirement->GetID(), requirement);
+			dataLink.PushBack(Link(primitives[0]->GetID(), requirement->GetID()));
+			dataLink.PushBack(Link(primitives[1]->GetID(), requirement->GetID()));
+			dataLink.PushBack(Link(primitives[2]->GetID(), requirement->GetID()));
 			return true;
 		}
 		else {
@@ -135,11 +249,13 @@ bool Model::createRequirement(const Requirement_id _id, Array<ID>& id_arr, Array
 		DistanceBetweenPointSegment* Requirement;
 		if ((primitives[0]->GetType() == segment)
 			&& (primitives[1]->GetType() == point)
-			&& (params.getSize() > 0)) {
+			&& (params.GetSize() > 0)) {
 			Requirement = new DistanceBetweenPointSegment(*dynamic_cast<Segment*>(primitives[0]),
 				*dynamic_cast<Point*>(primitives[1]),
 				params[0]);
-			dataReq.pushBack(Requirement);
+			dataReq.Add(Requirement->GetID(), Requirement);
+			dataLink.PushBack(Link(primitives[0]->GetID(), Requirement->GetID()));
+			dataLink.PushBack(Link(primitives[1]->GetID(), Requirement->GetID()));
 			return true;
 		}
 		else {
@@ -150,11 +266,13 @@ bool Model::createRequirement(const Requirement_id _id, Array<ID>& id_arr, Array
 		AngleBetweenSegments* Requirement;
 		if ((primitives[0]->GetType() == segment)
 			&& (primitives[1]->GetType() == segment)
-			&& (params.getSize() > 0)) {
+			&& (params.GetSize() > 0)) {
 			Requirement = new AngleBetweenSegments(*dynamic_cast<Segment*>(primitives[0]),
 				*dynamic_cast<Segment*>(primitives[1]),
 				params[0]);
-			dataReq.pushBack(Requirement);
+			dataReq.Add(Requirement->GetID(), Requirement);
+			dataLink.PushBack(Link(primitives[0]->GetID(), Requirement->GetID()));
+			dataLink.PushBack(Link(primitives[1]->GetID(), Requirement->GetID()));
 			return true;
 		}
 		else {
@@ -165,11 +283,13 @@ bool Model::createRequirement(const Requirement_id _id, Array<ID>& id_arr, Array
 		DistanceBetweenPointArc* Requirement;
 		if ((primitives[0]->GetType() == arc)
 			&& (primitives[1]->GetType() == point)
-			&& (params.getSize() > 0)) {
+			&& (params.GetSize() > 0)) {
 			Requirement = new DistanceBetweenPointArc(*dynamic_cast<Arc*>(primitives[0]),
 				*dynamic_cast<Point*>(primitives[1]),
 				params[0]);
-			dataReq.pushBack(Requirement);
+			dataReq.Add(Requirement->GetID(), Requirement);
+			dataLink.PushBack(Link(primitives[0]->GetID(), Requirement->GetID()));
+			dataLink.PushBack(Link(primitives[1]->GetID(), Requirement->GetID()));
 			return true;
 		}
 		else {
@@ -182,14 +302,16 @@ bool Model::createRequirement(const Requirement_id _id, Array<ID>& id_arr, Array
 			&& (primitives[1]->GetType() == point)) {
 			Requirement = new PointInArc(*dynamic_cast<Arc*>(primitives[0]),
 				*dynamic_cast<Point*>(primitives[1]));
-			dataReq.pushBack(Requirement);
+			dataReq.Add(Requirement->GetID(), Requirement);
+			dataLink.PushBack(Link(primitives[0]->GetID(), Requirement->GetID()));
+			dataLink.PushBack(Link(primitives[1]->GetID(), Requirement->GetID()));
 			return true;
 		}
 		else {
 			return false;
 		}
 	}
-	case triangle: {
+	/*case triangle: {
 		Triangle* Requirement;
 		if ((primitives[0]->GetType() == segment)
 			&& (primitives[1]->GetType() == segment)
@@ -197,34 +319,34 @@ bool Model::createRequirement(const Requirement_id _id, Array<ID>& id_arr, Array
 			Requirement = new Triangle(dynamic_cast<Segment*>(primitives[0]),
 				dynamic_cast<Segment*>(primitives[1]),
 				dynamic_cast<Segment*>(primitives[2]));
-			dataReq.pushBack(Requirement);
+			dataPrimReq.PushBack(Requirement);
 			return true;
 		}
 		else {
 			return false;
 		}
-	}
-	case correctTriangle: {
-		ÑorrectTriangle* Requirement;
-		if ((primitives[0]->GetType() == segment)
-			&& (primitives[1]->GetType() == segment)
-			&& (primitives[2]->GetType() == segment)
-			&& (params.getSize() > 0)) {
-			Requirement = new ÑorrectTriangle(dynamic_cast<Segment*>(primitives[0]),
-				dynamic_cast<Segment*>(primitives[1]),
-				dynamic_cast<Segment*>(primitives[2]),
-				params[0]);
-			dataReq.pushBack(Requirement);
-			return true;
-		}
-		else {
-			return false;
-		}
-	}
-	case nsAngle: {
+	}*/
+	//case correctTriangle: {
+	//	ÑorrectTriangle* Requirement;
+	//	if ((primitives[0]->GetType() == segment)
+	//		&& (primitives[1]->GetType() == segment)
+	//		&& (primitives[2]->GetType() == segment)
+	//		&& (params.GetSize() > 0)) {
+	//		Requirement = new ÑorrectTriangle(dynamic_cast<Segment*>(primitives[0]),
+	//			dynamic_cast<Segment*>(primitives[1]),
+	//			dynamic_cast<Segment*>(primitives[2]),
+	//			params[0]);
+	//		dataPrimReq.PushBack(Requirement);
+	//		return true;
+	//	}
+	//	else {
+	//		return false;
+	//	}
+	//}
+	/* case nsAngle: {
 		NsAngle* Requirement;
 		ListE<Segment*> list;
-		for (int i = 0; i < primitives.getSize(); ++i) {
+		for (int i = 0; i < primitives.GetSize(); ++i) {
 			if (segment == primitives[i]->GetType()) {
 				list.PushTail(dynamic_cast<Segment*>(primitives[i]));
 			}
@@ -233,15 +355,15 @@ bool Model::createRequirement(const Requirement_id _id, Array<ID>& id_arr, Array
 			}
 		}
 		Requirement = new NsAngle(list);
-		dataReq.pushBack(Requirement);
+		dataPrimReq.PushBack(Requirement);
 		return true;
 	}
 	case correctNsAngle: {
 		CorrectNsAngle* Requirement;
 		
-		if (params.getSize() > 0) {
+		if (params.GetSize() > 0) {
 			ListE<Segment*> list;
-			for (int i = 0; i < primitives.getSize(); ++i) {
+			for (int i = 0; i < primitives.GetSize(); ++i) {
 				if (segment == primitives[i]->GetType()) {
 					list.PushTail(dynamic_cast<Segment*>(primitives[i]));
 				}
@@ -250,185 +372,185 @@ bool Model::createRequirement(const Requirement_id _id, Array<ID>& id_arr, Array
 				}
 			}
 			Requirement = new CorrectNsAngle(list, params[0]);
-			dataReq.pushBack(Requirement);
+			dataPrimReq.PushBack(Requirement);
 			return true;
 		}
 		else {
 			return false;
 		}
-	}
+	} */
 	default:
 		return false;
 	}
 }
 
-double Model::GetError() {
+double Model::GetError(){
 	double sum_error = 0;
-	for (int i = 0; i < dataReq.getSize(); i++)
+	dataReq.MoveHead();
+	do
 	{
-		sum_error += dataReq[i]->error();
-	}
-	return sum_error / dataReq.getSize();
+		sum_error += dataReq.GetCurrent()->error();
+	} while (dataReq.MoveNext());
+	return sum_error / dataReq.GetSize();
 }
 
-int Model::Optimize1() {
+//int Model::Optimize1() {
+//
+//	if (dataPrim.GetSize() == 0) {
+//		return 0;
+//	}
+//
+//	Array<Point*> points;
+//	Array<Arc*> arcs;
+//
+//	dataPrim.MoveBegin();
+//	do {
+//		Primitive* obj = dataPrim.GetCurrent();
+//		if (obj->GetType() == point) {
+//			points.PushBack(dynamic_cast<Point*>(obj));
+//		}
+//		else if (obj->GetType() == arc) {
+//			arcs.PushBack(dynamic_cast<Arc*>(obj));
+//		}
+//	} while (dataPrim.MoveNext());
+//
+//	const double delta_increasing_k = 2.0;
+//	double sum_error = 0;
+//	sum_error = GetError();
+//	double prevError = sum_error;
+//	double prevLastError = sum_error;
+//	int count = 0;
+//	int iterInside = 3;
+//	double delta = sum_error;
+//	std::cout << sum_error << "   " << iterInside << "   " << EPS << "  " << delta << "\n";
+//
+//	while (sum_error > EPS) {
+//		++count;
+//		for (int i = 0; i < points.GetSize(); ++i) {
+//
+//			delta = sum_error;
+//
+//			Vector2 pos = points[i]->GetPosition();
+//			for (int k = 0; k < iterInside; ++k)
+//			{
+//				double shift_x[]{ delta, -delta, delta, -delta, delta, -delta, 0, 0 };
+//				double shift_y[]{ delta, delta, -delta, -delta, 0, 0, delta, -delta };
+//
+//				double minFuncValue = sum_error;
+//				Vector2 minFuncPos = pos;
+//				bool hasChanged = false;
+//
+//				for (int j = 0; j < 8; ++j) {
+//
+//					points[i]->SetPosition(pos.x + shift_x[j], pos.y + shift_y[j]);
+//
+//					double funcValue = GetError();
+//
+//					if (funcValue < minFuncValue) {
+//
+//						minFuncValue = funcValue;
+//
+//						minFuncPos = pos;
+//						minFuncPos.x += shift_x[j];
+//						minFuncPos.y += shift_y[j];
+//
+//						hasChanged = true;
+//					}
+//				}
+//
+//				if (!hasChanged) {
+//					delta /= delta_increasing_k;
+//				}
+//				else {
+//					sum_error = minFuncValue;
+//					points[i]->SetPosition(minFuncPos);
+//					break;
+//				}
+//				if (delta < 1e-6) {
+//					break;
+//				}
+//			}
+//		}
+//		for (int i = 0; i < arcs.GetSize(); ++i) {
+//			double delta = sum_error;
+//			while (delta > EPS) {
+//				double tempAngle = arcs[i]->GetAngle();
+//
+//				bool hasChanged = false;
+//
+//				double minFuncAngle = tempAngle;
+//				double minFuncValue = sum_error;
+//
+//				arcs[i]->SetAngle(tempAngle - delta);
+//				double funcValue = GetError();
+//
+//				if (funcValue < minFuncValue) {
+//					minFuncValue = funcValue;
+//					minFuncAngle = tempAngle - delta;
+//					hasChanged = true;
+//				}
+//
+//				arcs[i]->SetAngle(tempAngle + delta);
+//				funcValue = GetError();
+//
+//				if (funcValue < minFuncAngle) {
+//					minFuncValue = funcValue;
+//					minFuncAngle = tempAngle + delta;
+//					hasChanged = true;
+//				}
+//
+//				if (!hasChanged) {
+//					delta /= delta_increasing_k;
+//				}
+//				else {
+//					arcs[i]->SetAngle(minFuncAngle);
+//					sum_error = minFuncValue;
+//					break;
+//				}
+//			}
+//		}
+//
+//		if (count % 25 == 0) {
+//			std::cout << sum_error << "   "<< iterInside << "   " << EPS << "  " << delta << "\n";
+//			if (count % 50 == 0) {
+//				if (EPS < 0.01) {
+//					EPS *= 2;
+//				}
+//				if (count > 400) {
+//					//std::cout << sum_error << "   " << iterInside << "   " << EPS << "  " << delta << "\n";
+//					return count;
+//				}
+//				if (prevLastError == sum_error) {
+//					return count;
+//				}
+//				prevLastError = sum_error;
+//			}
+//		}
+//		if (prevError == sum_error) {
+//			if (iterInside < 24) {
+//				iterInside *= 2;
+//			}
+//		}
+//		else {
+//			if (iterInside > 3) {
+//				iterInside /= 2;
+//			}
+//		}
+//		prevError = sum_error;
+//	}
+//	std::cout << sum_error << "   " << iterInside << "   " << EPS << "  " << delta << "\n";
+//	return count;
+//}
 
-	if (data.GetSize() == 0) {
-		return 0;
-	}
-
-	Array<Point*> points;
-	Array<Arc*> arcs;
-
-	data.MoveBegin();
-	do {
-		Primitive* obj = data.GetCurrent();
-		if (obj->GetType() == point) {
-			points.pushBack(dynamic_cast<Point*>(obj));
-		}
-		else if (obj->GetType() == arc) {
-			arcs.pushBack(dynamic_cast<Arc*>(obj));
-		}
-	} while (data.MoveNext());
-
-	const double delta_increasing_k = 2.0;
-	double sum_error = 0;
-	sum_error = GetError();
-	double prevError = sum_error;
-	double prevLastError = sum_error;
-	int count = 0;
-	int iterInside = 3;
-	double delta = sum_error;
-	EPS = 1e-5;
-	std::cout << sum_error << "   " << iterInside << "   " << EPS << "  " << delta << "\n";
-
-	while (sum_error > EPS) {
-		++count;
-		for (int i = 0; i < points.getSize(); ++i) {
-
-			delta = sum_error;
-
-			Vector2 pos = points[i]->GetPosition();
-			for (int k = 0; k < iterInside; ++k)
-			{
-				double shift_x[]{ delta, -delta, delta, -delta, delta, -delta, 0, 0 };
-				double shift_y[]{ delta, delta, -delta, -delta, 0, 0, delta, -delta };
-
-				double minFuncValue = sum_error;
-				Vector2 minFuncPos = pos;
-				bool hasChanged = false;
-
-				for (int j = 0; j < 8; ++j) {
-
-					points[i]->SetPosition(pos.x + shift_x[j], pos.y + shift_y[j]);
-
-					double funcValue = GetError();
-
-					if (funcValue < minFuncValue) {
-
-						minFuncValue = funcValue;
-
-						minFuncPos = pos;
-						minFuncPos.x += shift_x[j];
-						minFuncPos.y += shift_y[j];
-
-						hasChanged = true;
-					}
-				}
-
-				if (!hasChanged) {
-					delta /= delta_increasing_k;
-				}
-				else {
-					sum_error = minFuncValue;
-					points[i]->SetPosition(minFuncPos);
-					break;
-				}
-				if (delta < 1e-6) {
-					break;
-				}
-			}
-		}
-		for (int i = 0; i < arcs.getSize(); ++i) {
-			double delta = sum_error;
-			while (delta > EPS) {
-				double tempAngle = arcs[i]->GetAngle();
-
-				bool hasChanged = false;
-
-				double minFuncAngle = tempAngle;
-				double minFuncValue = sum_error;
-
-				arcs[i]->SetAngle(tempAngle - delta);
-				double funcValue = GetError();
-
-				if (funcValue < minFuncValue) {
-					minFuncValue = funcValue;
-					minFuncAngle = tempAngle - delta;
-					hasChanged = true;
-				}
-
-				arcs[i]->SetAngle(tempAngle + delta);
-				funcValue = GetError();
-
-				if (funcValue < minFuncAngle) {
-					minFuncValue = funcValue;
-					minFuncAngle = tempAngle + delta;
-					hasChanged = true;
-				}
-
-				if (!hasChanged) {
-					delta /= delta_increasing_k;
-				}
-				else {
-					arcs[i]->SetAngle(minFuncAngle);
-					sum_error = minFuncValue;
-					break;
-				}
-			}
-		}
-
-		if (count % 25 == 0) {
-			std::cout << sum_error << "   "<< iterInside << "   " << EPS << "  " << delta << "\n";
-			if (count % 50 == 0) {
-				if (EPS < 0.01) {
-					EPS *= 2;
-				}
-				if (count > 400) {
-					//std::cout << sum_error << "   " << iterInside << "   " << EPS << "  " << delta << "\n";
-					return count;
-				}
-				if (prevLastError == sum_error) {
-					return count;
-				}
-				prevLastError = sum_error;
-			}
-		}
-		if (prevError == sum_error) {
-			if (iterInside < 24) {
-				iterInside *= 2;
-			}
-		}
-		else {
-			if (iterInside > 3) {
-				iterInside /= 2;
-			}
-		}
-		prevError = sum_error;
-	}
-	std::cout << sum_error << "   " << iterInside << "   " << EPS << "  " << delta << "\n";
-	return count;
-}
-
-double Model::GetError(Array<IRequirement*>& requirments) {
+double Model::GetError(const Array<Requirement*>& requirments) const {
 	double error = 0.0;
-	for (int i = 0; i < requirments.getSize(); ++i) {
+	for (int i = 0; i < requirments.GetSize(); ++i) {
 		error += requirments[i]->error();
 	}
-	return error / requirments.getSize();
+	return error / requirments.GetSize();
 }
 
-double Model::ErrorByAlpha(Array<IRequirement*>& req, Parameters<double*> params, Parameters<double> aGrad, double alpha) {
+double Model::ErrorByAlpha(const Array<Requirement*>& req, const Array<double*>& params, const Array<double>& aGrad, double alpha) {
 	for (int i = 0; i < params.GetSize(); ++i) {
 		double delta = aGrad[i];
 		*(params[i]) += delta * alpha;
@@ -440,10 +562,10 @@ double Model::ErrorByAlpha(Array<IRequirement*>& req, Parameters<double*> params
 	return error;
 }
 
-void Model::OptimizeByGradient(Array<IRequirement*>& requirments, Parameters<double*> params, Parameters<double> aGradient) {
+void Model::OptimizeByGradient(const Array<Requirement*>& requirments, const Array<double*>& params, const Array<double>& aGradient) {
 
 	const double gold_section = 1.6180339887498;
-	int reqSize = requirments.getSize();
+	int reqSize = requirments.GetSize();
 
 	double error = GetError(requirments);
 
@@ -486,11 +608,11 @@ void Model::OptimizeByGradient(Array<IRequirement*>& requirments, Parameters<dou
 	}
 }
 
-void Model::OptimizeRequirements(Array<IRequirement*>& requirments) {
+void Model::OptimizeRequirements(const Array<Requirement*>& requirments) {
 	// get parameters number
 	int params_number = 0;
-	for (int i = 0; i < requirments.getSize(); ++i) {
-		Parameters<double*> params = requirments[i]->GetParams();
+	for (int i = 0; i < requirments.GetSize(); ++i) {
+		Array<double*> params = requirments[i]->GetParams();
 		params_number += params.GetSize();
 	}
 
@@ -504,7 +626,7 @@ void Model::OptimizeRequirements(Array<IRequirement*>& requirments) {
 	//ctreating match_array, which will establish a correspondence
 	//between not-unique parameters and their unique numbers
 
-	Parameters<double*> all_parameters(params_number);
+	Array<double*> all_parameters(params_number);
 	Set<double*, UniqueParam> set;
 	int* match_array = new int[params_number];
 
@@ -515,9 +637,9 @@ void Model::OptimizeRequirements(Array<IRequirement*>& requirments) {
 	int uniq_numbers_iterator = 0;
 
 	// filling match_array
-	for (int i = 0; i < requirments.getSize(); ++i) {
+	for (int i = 0; i < requirments.GetSize(); ++i) {
 
-		Parameters<double*> currentRequirmentParams = requirments[i]->GetParams();
+		Array<double*> currentRequirmentParams = requirments[i]->GetParams();
 
 		for (int j = 0; j < currentRequirmentParams.GetSize(); ++j) {
 
@@ -541,38 +663,37 @@ void Model::OptimizeRequirements(Array<IRequirement*>& requirments) {
 	}
 
 	// array of unique_parameters
-	Parameters<double*> unique_parameters(uniq_numbers_iterator, nullptr);
+	Array<double*> unique_parameters(uniq_numbers_iterator, nullptr);
 
 	for (int i = 0; i < params_number; ++i) {
 		unique_parameters[match_array[i]] = all_parameters[i];
 	}
 
 	// anti gradient
-	Parameters<double> aGradient(uniq_numbers_iterator, 0.0);
+	Array<double> aGradient(uniq_numbers_iterator, 0.0);
 
 	//filling anti gradient
 	double err = GetError(requirments);
 	while (GetError(requirments) > OPTIM_EPS) {
 		int match_array_iterator = 0;
-		for (int i = 0; i < requirments.getSize(); ++i) {
-			Parameters<double> currentGradient = requirments[i]->gradient();
+		for (int i = 0; i < requirments.GetSize(); ++i) {
+			Array<double> currentGradient = requirments[i]->gradient();
 			for (int j = 0; j < currentGradient.GetSize(); ++j) {
-				aGradient[match_array[match_array_iterator]] -= currentGradient[j] / requirments.getSize();
+				aGradient[match_array[match_array_iterator]] -= currentGradient[j] / requirments.GetSize();
 				++match_array_iterator;
 			}
 		}
 
 		OptimizeByGradient(requirments, unique_parameters, aGradient);
-		aGradient = Parameters<double>(uniq_numbers_iterator, 0.0);
+		aGradient.FillDefault(0.0);
 		err = GetError(requirments);
 	}
 }
 
-
 bool Model::getObjType(const ID& obj_id, type_id& type) {
 	Primitive* obj = nullptr;
-	bool isFound = data.Find(obj_id);
-	obj = data.GetCurrent();
+	bool isFound = dataPrim.Find(obj_id);
+	obj = dataPrim.GetCurrent();
 	if (isFound) {
 		type = obj->GetType();
 		return true;
@@ -584,42 +705,42 @@ bool Model::getObjType(const ID& obj_id, type_id& type) {
 
 bool Model::getObjParam(const ID& obj_id, Array<double>& result) {
 	Primitive* obj = nullptr;
-	bool isFound = data.Find(obj_id);
+	bool isFound = dataPrim.Find(obj_id);
 	if (isFound) {
-		obj = data.GetCurrent();
+		obj = dataPrim.GetCurrent();
 		switch (obj->GetType()) {
 		case point: {
 			Point* point = dynamic_cast<Point*>(obj);
-			result.clear();
+			result.Clear();
 			Vector2 pos = point->GetPosition();
-			result.pushBack(pos.x);
-			result.pushBack(pos.y);
+			result.PushBack(pos.x);
+			result.PushBack(pos.y);
 			return true;
 			break;
 		}
 		case segment: {
 			Segment* segment = dynamic_cast<Segment*>(obj);
-			result.clear();
+			result.Clear();
 			Vector2 pos1 = segment->GetPoint1_pos();
 			Vector2 pos2 = segment->GetPoint2_pos();
-			result.pushBack(pos1.x);
-			result.pushBack(pos1.y);
-			result.pushBack(pos2.x);
-			result.pushBack(pos2.y);
+			result.PushBack(pos1.x);
+			result.PushBack(pos1.y);
+			result.PushBack(pos2.x);
+			result.PushBack(pos2.y);
 			return true;
 			break;
 		}
 		case arc: {
 			Arc* arc = dynamic_cast<Arc*>(obj);
-			result.clear();
+			result.Clear();
 			Vector2 pos1 = arc->GetPoint1_pos();
 			Vector2 pos2 = arc->GetPoint2_pos();
 			double angle = arc->GetAngle();
-			result.pushBack(pos1.x);
-			result.pushBack(pos1.y);
-			result.pushBack(pos2.x);
-			result.pushBack(pos2.y);
-			result.pushBack(angle);
+			result.PushBack(pos1.x);
+			result.PushBack(pos1.y);
+			result.PushBack(pos2.x);
+			result.PushBack(pos2.y);
+			result.PushBack(angle);
 			return true;
 			break;
 		}
@@ -634,58 +755,58 @@ bool Model::getObjParam(const ID& obj_id, Array<double>& result) {
 
 bool Model::GetSegmentPoints(ID obj_id, Array<ID>& arr) {
 	Primitive* obj;
-	if (!data.Find(obj_id)) {
+	if (!dataPrim.Find(obj_id)) {
 		return false;
 	}
-	obj = data.GetCurrent();
+	obj = dataPrim.GetCurrent();
 	if (obj->GetType() != segment) {
 		return false;
 	}
 	Segment* segment = dynamic_cast<Segment*>(obj);
-	arr.pushBack(segment->GetPoint1_ID());
-	arr.pushBack(segment->GetPoint2_ID());
+	arr.PushBack(segment->GetPoint1_ID());
+	arr.PushBack(segment->GetPoint2_ID());
 	return true;
 }
 
 bool Model::GetArcPoints(ID obj_id, Array<ID>& arr) {
 	Primitive* obj;
-	if (!data.Find(obj_id)) {
+	if (!dataPrim.Find(obj_id)) {
 		return false;
 	}
-	obj = data.GetCurrent();
+	obj = dataPrim.GetCurrent();
 	if (obj->GetType() != arc) {
 		return false;
 	}
 	Arc* arc = dynamic_cast<Arc*>(obj);
-	arr.pushBack(arc->GetPoint1_ID());
-	arr.pushBack(arc->GetPoint2_ID());
+	arr.PushBack(arc->GetPoint1_ID());
+	arr.PushBack(arc->GetPoint2_ID());
 	return true;
 }
 
-void  Model::PrintSystemRequirement() {
-	for (int i = 0; i < dataReq.getSize(); ++i) {
-		std::cout << std::endl;
-		std::cout << i << ":\n";
-		dataReq[i]->Print();
-	}
-}
+//void  Model::PrintSystemRequirement() {
+//	for (int i = 0; i < dataPrimReq.GetSize(); ++i) {
+//		std::cout << std::endl;
+//		std::cout << i << ":\n";
+//		//dataPrimReq[i]->Print();
+//	}
+//}
 
 bool Model::getNearest(double x, double y, ID& obj_id, double& distance) {
-	if (data.GetSize() != 0) {
+	if (dataPrim.GetSize() != 0) {
 		Vector2 pos(x, y);
-		data.MoveBegin();
-		ID nearestObject = data.GetCurrent()->GetID();
-		double minDist = data.GetCurrent()->GetDistance(pos);
-		while (data.MoveNext()) {
-			double dist = data.GetCurrent()->GetDistance(pos);
-			if (data.GetCurrent()->GetType() == point) {
+		dataPrim.MoveBegin();
+		ID nearestObject = dataPrim.GetCurrent()->GetID();
+		double minDist = dataPrim.GetCurrent()->GetDistance(pos);
+		while (dataPrim.MoveNext()) {
+			double dist = dataPrim.GetCurrent()->GetDistance(pos);
+			if (dataPrim.GetCurrent()->GetType() == point) {
 				if (dist < 5.0f) {
 					dist = 0.0;
 				}
 			}
-			if (dist < minDist && data.GetCurrent()->GetType() == point) {
+			if (dist < minDist && dataPrim.GetCurrent()->GetType() == point) {
 				minDist = dist;
-				nearestObject = data.GetCurrent()->GetID();
+				nearestObject = dataPrim.GetCurrent()->GetID();
 			}
 		}
 		distance = minDist;
@@ -699,9 +820,11 @@ bool Model::getNearest(double x, double y, ID& obj_id, double& distance) {
 }
 
 void Model::OptimizeAllRequirements() {
-	Array<IRequirement*> req;
-	for (int i = 0; i < dataReq.getSize(); ++i) {
-		req.pushBack(dataReq[i]);
-	}
+	Array<Requirement*> req;
+	dataReq.MoveHead();
+	do
+	{
+		req.PushBack(dataReq.GetCurrent());
+	} while (dataReq.MoveNext());
 	OptimizeRequirements(req);
 }

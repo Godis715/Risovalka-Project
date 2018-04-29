@@ -10,7 +10,8 @@ public:
 	bool operator== (const ID&) const;
 	bool operator< (const ID&) const;
 	bool operator> (const ID&) const;
-	int operator %(int) const;
+	//int operator %(int) const;
+	unsigned long long GetHash() const;
 };
 
 #endif

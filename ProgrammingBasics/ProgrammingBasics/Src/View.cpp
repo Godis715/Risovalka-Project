@@ -46,16 +46,16 @@ void View::Run() {
 }
 
 
-void View::DrawArc(Vector2 point1, Vector2 point2) {
+void View::DrawArc(const Vector2& point1, const Vector2& point2) {
 	
 }
 
-void View::DrawLine(Vector2 point1, Vector2 point2) {
+void View::DrawLine(const Vector2& point1, const Vector2& point2) {
 	MoveToEx(hDC, (int)point1.x, (int)point1.y, NULL);
 	LineTo(hDC,(int)point2.x, (int)point2.y);
 }
 
-void View::DrawPoint(Vector2 point) {
+void View::DrawPoint(const Vector2& point) {
 	const double size = 3.0;
 	MoveToEx(hDC, (int)point.x - size, (int)point.y - size, NULL);
 	LineTo(hDC, (int)point.x + size, (int)point.y + size);

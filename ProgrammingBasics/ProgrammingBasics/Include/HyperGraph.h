@@ -12,20 +12,18 @@ private:
 		const ID id;
 	public:
 		Dict<ID, Primitive*> dataPrimitive;
-		Dict<ID, IRequirement*> dataRequirement;
+		Dict<ID, Requirement*> dataRequirement;
 
 		Component(ID);
 		~Component() {}
 		bool Search(ID&);
-		bool Delete(ID&);
+		//bool Delete(ID&);
 		Array<double*> GetParams();
 		double GetError();
 		ID GetID() const;
 	};
 
-	Dict<ID, Component*> components;
-
-	Array<Primitive*> SplitingAndBFS(ID);
+	//Array<Primitive*> SplitingAndBFS(ID);
 	void MergeComponents(Array<ID>&);
 public:
 	HyperGraph() {}
@@ -36,10 +34,9 @@ public:
 	void DeleteComponent(ID id);
 	bool Search(ID, ID&);
 	void Delete(Array<ID>&);
-	void Add(IRequirement*, Array<Primitive*>&);
+	void Add(Requirement*, Array<Primitive*>&);
 	Array<Primitive*> UploadingDataPrimitive();
-	Array<IRequirement*> UploadingDataRequirement();
-	//int GetSize();
+	Array<Requirement*> UploadingDataRequirement();
 };
 
 

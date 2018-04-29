@@ -8,7 +8,7 @@ Controller::Controller(Presenter* _presenter) {
 
 void Controller::ClickAt(double x, double y) {
 
-	for (int i = 0; i < buttons.getSize(); ++i) {
+	for (int i = 0; i < buttons.GetSize(); ++i) {
 		if (buttons[i].IsClicked(Vector2(x, y))) {
 			SetState(buttons[i].state);
 			return;
@@ -19,26 +19,26 @@ void Controller::ClickAt(double x, double y) {
 	if (presenter->GetClickedObjectID(x, y, obj_id)) {
 		switch (state) {
 		case single_selecting: {
-			if (!selectedObjects.isEmpty()) {
-				selectedObjects.clear();
+			if (!selectedObjects.IsEmpty()) {
+				selectedObjects.Clear();
 			}
-			selectedObjects.pushBack(obj_id);
+			selectedObjects.PushBack(obj_id);
 			break;
 		}
 		case poly_selecting: {
-			selectedObjects.pushBack(obj_id);
+			selectedObjects.PushBack(obj_id);
 			break;
 		}
 		case merging_points: {
 			type_id type;
 			if (presenter->GetObjType(obj_id, type) && type == point) {
-				selectedObjects.pushBack(obj_id);
+				selectedObjects.PushBack(obj_id);
 				refresh();
 			}
 			break;
 		}
 		case segment_creating: {
-			selectedObjects.pushBack(obj_id);
+			selectedObjects.PushBack(obj_id);
 			refresh();
 		}
 		}
@@ -47,14 +47,14 @@ void Controller::ClickAt(double x, double y) {
 	else {
 		switch (state) {
 		case segment_creating: {
-			clickedPoints.pushBack(Vector2(x, y));
+			clickedPoints.PushBack(Vector2(x, y));
 			refresh();
 			break;
 		}
 		default:
 			state = single_selecting;
-			clickedPoints.clear();
-			selectedObjects.clear();
+			clickedPoints.Clear();
+			selectedObjects.Clear();
 			break;
 		}
 	}
@@ -69,30 +69,30 @@ void Controller::SetState(state_id _state) {
 void Controller::refresh() {
 	switch (state) {
 	case merging_points: {
-		if (selectedObjects.getSize() > 2) {
-			selectedObjects.clear();
+		if (selectedObjects.GetSize() > 2) {
+			selectedObjects.Clear();
 			return;
 		}
-		if (selectedObjects.getSize() == 2) {
+		if (selectedObjects.GetSize() == 2) {
 
 			presenter->CreateRequirmentDistBetPoints(selectedObjects[0], selectedObjects[1], 0.0);
 			presenter->Optimize();
-			selectedObjects.clear();
+			selectedObjects.Clear();
 			state = single_selecting;
 			return;
 		}
 		break;
 	}
 	case segment_creating: {
-		selectedObjects.clear();
-		if (clickedPoints.getSize() > 2) {
-			clickedPoints.clear();
+		selectedObjects.Clear();
+		if (clickedPoints.GetSize() > 2) {
+			clickedPoints.Clear();
 			return;
 		}
-		if (clickedPoints.getSize() == 2) {
+		if (clickedPoints.GetSize() == 2) {
 			presenter->CreateSegment(clickedPoints[0].x, clickedPoints[0].y,
 				clickedPoints[1].x, clickedPoints[1].y);
-			clickedPoints.clear();
+			clickedPoints.Clear();
 			state = single_selecting;
 		}
 	}
@@ -100,7 +100,7 @@ void Controller::refresh() {
 }
 
 void Controller::AddButton(state_id _state, Vector2 _pos1, Vector2 _pos2) {
-	buttons.pushBack(Button(_state, _pos1, _pos2));
+	buttons.PushBack(Button(_state, _pos1, _pos2));
 }
 
 Button::Button(state_id _state, Vector2 lu, Vector2 rd) {

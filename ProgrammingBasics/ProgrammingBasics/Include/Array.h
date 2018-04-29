@@ -1,16 +1,15 @@
-#include <iostream>
-
-
 #ifndef __ARRAY
 #define __ARRAY
+
+#include <stdexcept>
 
 template <class T> class Array
 {
 private:
-	T * _storage = nullptr;
+	T* _storage = nullptr;
 	int _size = 0;
 	int _capacity;
-	int _first_capacity = 512;
+	const int _default_capacity;
 
 	void doubleCapacity()
 	{
@@ -24,17 +23,9 @@ private:
 		_capacity *= 2;
 	}
 
-	void fillDefault(size_t l, size_t r)
-	{
-		for (size_t i = l; i <= r; i++)
-		{
-			_storage[i] = 0;
-		}
-	}
-
 	//Sort methods begin
-
-	void createPyramid(int cur, int end, int delta)
+	// look after
+	/*void createPyramid(int cur, int end, int delta)
 	{
 		int child;
 		while ((cur - delta) <= (end - delta) / 2)
@@ -83,72 +74,110 @@ private:
 			end--;
 			createPyramid(l, end, delta);
 		}
-	}
+	}*/
 
 	//Sort methods end
 
 public:
 
-	int getSize() const
+	Array() : _default_capacity(64)
 	{
-		return _size;
-	}
-
-	void operator=(Array& arr) {
-		this->_capacity = arr._capacity;
-		this->_size = arr._size;
-		this->_storage = new T[_capacity];
-		for (int i = 0; i < _size; ++i) {
-			this->_storage[i] = arr._storage[i];
-		}
-	}
-
-	Array(Array& arr) {
-		this->_capacity = arr._capacity;
-		this->_size = arr._size;
-		this->_storage = new T[_capacity];
-		for (int i = 0; i < _size; ++i) {
-			this->_storage[i] = arr._storage[i];
-		}
-	}
-
-	Array()
-	{
-		_capacity = _first_capacity;
+		_capacity = _default_capacity;
 		_size = 0;
 		_storage = new T[_capacity];
 	}
 
-	Array(int size)
+	Array(int size) : _default_capacity(size)
 	{
-		if (size < 0)
+		if (size <= 0)
 		{
-			std::cout << "Bad array size!\n";
 			throw std::invalid_argument("Bad array size!");
 		}
-		_first_capacity = size;
-		_capacity = _first_capacity;
-		_size = 0;
+		_capacity = size;
+		_size = size;
 		_storage = new T[_capacity];
-		//fillDefault(0, _size - 1);
+	}
+
+	Array(int size, const T& default_value) : _default_capacity(size)
+	{
+		if (size <= 0)
+		{
+			throw std::invalid_argument("Bad array size!");
+		}
+		_capacity = size;
+		_size = size;
+		_storage = new T[_capacity];
+		FillDefault(default_value);
+	}
+
+	Array(Array&& arr) : _default_capacity(arr._default_capacity) {
+		this->_capacity = arr._capacity;
+		this->_size = arr._size;
+		this->_storage = arr._storage;
+		arr._storage = nullptr;
+	}
+
+	Array(const Array& arr) : _default_capacity(arr._default_capacity) {
+		this->_capacity = arr._capacity;
+		this->_size = arr._size;
+		this->_storage = new T[_capacity];
+		for (int i = 0; i < _size; ++i) {
+			this->_storage[i] = arr._storage[i];
+		}
 	}
 
 	~Array()
 	{
 		delete[] _storage;
 	}
+	
+	void operator=(Array&& arr) {
+		this->_capacity = arr._capacity;
+		this->_size = arr._size;
+		this->_storage = arr._storage;
+		arr._storage = nullptr;
+	}
+
+	void operator=(const Array& arr) {
+		this->_capacity = arr._capacity;
+		this->_size = arr._size;
+		this->_storage = new T[_capacity];
+		for (int i = 0; i < _size; ++i) {
+			this->_storage[i] = arr._storage[i];
+		}
+	}
+
+	int GetSize() const
+	{
+		return _size;
+	}
+
+	void FillDefault(const T& default_value) {
+		for (int i = 0; i < _size; ++i) {
+			_storage[i] = default_value;
+		}
+	}
+
 
 	T& operator[](int index)
 	{
 		if (index < 0 || index >= _size)
 		{
-			std::cout << "Index out of range!\n";
 			throw std::out_of_range("Index out of range!");
 		}
 		return _storage[index];
 	}
 
-	void pushBack(T value)
+	const T& operator[](int index) const
+	{
+		if (index < 0 || index >= _size)
+		{
+			throw std::out_of_range("Index out of range!");
+		}
+		return _storage[index];
+	}
+
+	void PushBack(const T& value)
 	{
 		if (_size + 1 > _capacity)
 		{
@@ -157,27 +186,25 @@ public:
 		_storage[_size++] = value;
 	}
 
-	T popBack()
+	T PopBack()
 	{
 		if (_size == 0)
 		{
-			std::cout << "Array is empty\n";
 			throw std::out_of_range("Array is empty");
 		}
 		_size--;
 		return _storage[_size];
 	}
 
-	bool isEmpty()
+	bool IsEmpty() const
 	{
 		return (_size > 0) ? false : true;
 	}
 
-	void resize(int newSize)
+	void Resize(int newSize)
 	{
 		if (newSize < 0)
 		{
-			std::cout << "Negative size!\n";
 			throw std::invalid_argument("Negative size!");
 		}
 		if (newSize > _capacity)
@@ -191,29 +218,23 @@ public:
 		}
 		delete[] _storage;
 		_storage = newStorage;
-		if (newSize > _size)
-		{
-			//fillDefault(_size, newSize - 1);
-		}
 		_size = newSize;
 	}
 
-	void clear()
+	void Clear()
 	{
-		_capacity = 512;
-		resize(0);
+		_capacity = _default_capacity;
+		Resize(0);
 	}
 
-	void swap(int index1, int index2)
+	void Swap(int index1, int index2)
 	{
 		if (index1 > _size - 1 || index2 > _size - 1)
 		{
-			std::cout << "Index out of range!\n";
 			throw std::out_of_range("Index out of range!");
 		}
 		if (index1 < 0 || index2 < 0)
 		{
-			std::cout << "Negative index!\n";
 			throw std::invalid_argument("Negative index!");
 		}
 		T temp = _storage[index1];
@@ -221,41 +242,37 @@ public:
 		_storage[index2] = temp;
 	}
 
-	void sort(int l, int r)
+	/*void sort(int l, int r)
 	{
 		if (l < 0 || r < 0 || l > r || l >= _size || r >= _size)
 		{
-			std::cout << "Negative index! OR Index out of range\n";
 			throw std::invalid_argument("Negative index! OR Index out of range\n");
 		}
 		int delta = l;
 		phaseOne(l, r, delta);
 		phaseTwo(l, r, delta);
-	}
+	} */
 
-	void reverse(int l, int r)
+	/*void Reverse(int l, int r)
 	{
 		if (l < 0 || r < 0 || l > r || l >= _size || r >= _size)
 		{
-			std::cout << "Negative index! OR Index out of range\n";
 			throw std::invalid_argument("Negative index! OR Index out of range\n");
 		}
 		for (int i = 0; i < (r - l + 1) / 2; i++)
 		{
-			swap(l + i, r - i);
+			Swap(l + i, r - i);
 		}
-	}
+	}*/
 
-	void insert(int index, T value) {
+	void Insert(int index, const T& value) {
 		if (index >= _size) {
-			std::cout << "Index out of range!\n";
 			throw std::out_of_range("Index out of range!");
 		}
 		if (index < 0) {
-			std::cout << "Negative index!\n";
 			throw std::invalid_argument("Negative index!");
 		}
-		pushBack(value);
+		PushBack(value);
 		for (int i = _size - 2; i >= index; --i) {
 			T temp = _storage[i];
 			_storage[i] = _storage[i + 1];
@@ -263,13 +280,11 @@ public:
 		}
 	}
 
-	void erase(int index) {
+	void Erase(int index) {
 		if (index >= _size) {
-			std::cout << "Index out of range!\n";
 			throw std::out_of_range("Index out of range!");
 		}
 		if (index < 0) {
-			std::cout << "Negative index!\n";
 			throw std::invalid_argument("Negative index!");
 		}
 		for (int i = index; i < _size - 1; i++) {
@@ -277,13 +292,13 @@ public:
 			_storage[i] = _storage[i + 1];
 			_storage[i + 1] = Temp;
 		}
-		popBack();
+		PopBack();
 	}
-	int binSearch(int l, int r, T value)
+
+	/*int BinSearch(int l, int r, T value)
 	{
 		if (l < 0 || r < 0 || l > r || l >= _size || r >= _size)
 		{
-			std::cout << "Negative index! OR Index out of range\n";
 			throw std::invalid_argument("Negative index! OR Index out of range\n");
 		}
 		if (value < _storage[l])
@@ -328,9 +343,9 @@ public:
 			}
 		}
 		return index;
-	}
+	} */
 
-	bool find(T value)
+	bool find(T& value, bool(*cmp)())
 	{
 		for (size_t i = 0; i < _size; i++)
 		{
@@ -341,16 +356,15 @@ public:
 		}
 		return false;
 	}
-};
+}; 
 
-template <class T> std::ostream& operator<< (std::ostream& out, Array<T>& arr)
-{
-	for (size_t i = 0; i < arr.getSize(); i++)
-	{
-		out << arr[i] << " ";
-	}
-	out << "\n";
-	return out;
-}
-
+//template <class T> std::ostream& operator<< (std::ostream& out, Array<T>& arr)
+//{
+//	for (size_t i = 0; i < arr.GetSize(); i++)
+//	{
+//		out << arr[i] << " ";
+//	}
+//	out << "\n";
+//	return out;
+//}
 #endif
