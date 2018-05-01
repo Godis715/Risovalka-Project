@@ -21,7 +21,6 @@ private:
 	template <class Tkey, class Tval> class Pair
 	{
 	public:
-		//Pair() { }
 		Pair(Tkey& _key, Tval& _value) {
 			key = _key;
 			value = _value;
@@ -61,9 +60,6 @@ private:
 		hashSize *= 2;
 		Array<ListE<Pair<Tkey, Tval>>> temp = table;
 		table = Array<ListE<Pair<Tkey, Tval>>>(hashSize);
-		//for (int i = 0; i < hashSize; ++i) {
-		//	table[i] = new ListE<Pair<Tkey, Tval>*>;
-		//}
 		for (int i = 0; i < prevSize; ++i) {
 			if (temp[i].GetSize() != 0) {
 				do
@@ -81,11 +77,6 @@ public:
 	HashTable(int size) : table(size) {
 		hashSize = size;
 	}
-	//~HashTable() {
-	//	for (int i = 0; i < hashSize; ++i) {
-	//		table[i]->DeleteList();
-	//	}
-	//}
 
 	void Input(Tkey key, Tval value) {
 		Pair<Tkey, Tval> pair(key, value);
