@@ -93,14 +93,15 @@ bool Model::DischargeInfoObjects(Array<infoObject>& dataPrimInfoObjects)
 	if (dataPrim.GetSize() == 0) {
 		return false;
 	}
-	dataPrim.MoveBegin();
+	auto dataPrimMarker = dataPrim.GetMarker();
 	do
 	{
 		infoObject temp;
-		getObjParam(dataPrim.GetCurrentKey(), temp.params);
-		getObjType(dataPrim.GetCurrentKey(), temp.type);
+		getObjParam(dataPrimMarker->GetValue()->GetID(), temp.params);
+		getObjType(dataPrimMarker->GetValue()->GetID(), temp.type);
 		dataPrimInfoObjects.PushBack(temp);
-	} while (dataPrim.MoveNext());
+	} while (dataPrimMarker->MoveNext());
+	delete dataPrimMarker;
 	return true;
 }
 
@@ -386,11 +387,13 @@ bool Model::createRequirement(const Requirement_id _id, Array<ID>& id_arr, Array
 
 double Model::GetError(){
 	double sum_error = 0;
-	dataReq.MoveHead();
+	auto dataReqMarker = dataReq.GetMarker();
 	do
 	{
-		sum_error += dataReq.GetCurrent()->error();
-	} while (dataReq.MoveNext());
+		sum_error += dataReqMarker->GetValue()->error();
+	} while (dataReqMarker->MoveNext());
+
+	delete dataReqMarker;
 	return sum_error / dataReq.GetSize();
 }
 
@@ -692,22 +695,25 @@ void Model::OptimizeRequirements(const Array<Requirement*>& requirments) {
 
 bool Model::getObjType(const ID& obj_id, type_id& type) {
 	Primitive* obj = nullptr;
-	bool isFound = dataPrim.Find(obj_id);
-	obj = dataPrim.GetCurrent();
-	if (isFound) {
+	auto dataPrimMarker = dataPrim.Find(obj_id);
+
+	if (dataPrimMarker != nullptr) {
+		obj = dataPrimMarker->GetValue();
 		type = obj->GetType();
+		delete dataPrimMarker;
 		return true;
 	}
 	else {
+		delete dataPrimMarker;
 		return false;
 	}
 }
 
 bool Model::getObjParam(const ID& obj_id, Array<double>& result) {
 	Primitive* obj = nullptr;
-	bool isFound = dataPrim.Find(obj_id);
-	if (isFound) {
-		obj = dataPrim.GetCurrent();
+	auto dataPrimMarker = dataPrim.Find(obj_id);
+	if (dataPrimMarker != nullptr) {
+		obj = dataPrimMarker->GetValue();
 		switch (obj->GetType()) {
 		case point: {
 			Point* point = dynamic_cast<Point*>(obj);
@@ -715,6 +721,7 @@ bool Model::getObjParam(const ID& obj_id, Array<double>& result) {
 			Vector2 pos = point->GetPosition();
 			result.PushBack(pos.x);
 			result.PushBack(pos.y);
+			delete dataPrimMarker;
 			return true;
 			break;
 		}
@@ -727,6 +734,7 @@ bool Model::getObjParam(const ID& obj_id, Array<double>& result) {
 			result.PushBack(pos1.y);
 			result.PushBack(pos2.x);
 			result.PushBack(pos2.y);
+			delete dataPrimMarker;
 			return true;
 			break;
 		}
@@ -741,45 +749,53 @@ bool Model::getObjParam(const ID& obj_id, Array<double>& result) {
 			result.PushBack(pos2.x);
 			result.PushBack(pos2.y);
 			result.PushBack(angle);
+			delete dataPrimMarker;
 			return true;
 			break;
 		}
 		default: {
+			delete dataPrimMarker;
 			return false;
 		}
 		}
 	}
+	delete dataPrimMarker;
 	return false;
 
 }
 
 bool Model::GetSegmentPoints(ID obj_id, Array<ID>& arr) {
 	Primitive* obj;
-	if (!dataPrim.Find(obj_id)) {
+	auto dataPrimMarker = dataPrim.Find(obj_id);
+	if (dataPrimMarker == nullptr) {
 		return false;
 	}
-	obj = dataPrim.GetCurrent();
+	obj = dataPrimMarker->GetValue();
 	if (obj->GetType() != segment) {
+		delete dataPrimMarker;
 		return false;
 	}
 	Segment* segment = dynamic_cast<Segment*>(obj);
 	arr.PushBack(segment->GetPoint1_ID());
 	arr.PushBack(segment->GetPoint2_ID());
+	delete dataPrimMarker;
 	return true;
 }
 
 bool Model::GetArcPoints(ID obj_id, Array<ID>& arr) {
 	Primitive* obj;
-	if (!dataPrim.Find(obj_id)) {
+	auto dataPrimMarker = dataPrim.Find(obj_id);
+	if (dataPrimMarker == nullptr) {
 		return false;
 	}
-	obj = dataPrim.GetCurrent();
+	obj = dataPrimMarker->GetValue();
 	if (obj->GetType() != arc) {
 		return false;
 	}
 	Arc* arc = dynamic_cast<Arc*>(obj);
 	arr.PushBack(arc->GetPoint1_ID());
 	arr.PushBack(arc->GetPoint2_ID());
+	delete dataPrimMarker;
 	return true;
 }
 
@@ -794,23 +810,24 @@ bool Model::GetArcPoints(ID obj_id, Array<ID>& arr) {
 bool Model::getNearest(double x, double y, ID& obj_id, double& distance) {
 	if (dataPrim.GetSize() != 0) {
 		Vector2 pos(x, y);
-		dataPrim.MoveBegin();
-		ID nearestObject = dataPrim.GetCurrent()->GetID();
-		double minDist = dataPrim.GetCurrent()->GetDistance(pos);
-		while (dataPrim.MoveNext()) {
-			double dist = dataPrim.GetCurrent()->GetDistance(pos);
-			if (dataPrim.GetCurrent()->GetType() == point) {
+		auto dataPrimMarker = dataPrim.GetMarker();
+		ID nearestObject = dataPrimMarker->GetValue()->GetID();
+		double minDist = dataPrimMarker->GetValue()->GetDistance(pos);
+		while (dataPrimMarker->MoveNext()) {
+			double dist = dataPrimMarker->GetValue()->GetDistance(pos);
+			if (dataPrimMarker->GetValue()->GetType() == point) {
 				if (dist < 5.0f) {
 					dist = 0.0;
 				}
 			}
-			if (dist < minDist && dataPrim.GetCurrent()->GetType() == point) {
+			if (dist < minDist && dataPrimMarker->GetValue()->GetType() == point) {
 				minDist = dist;
-				nearestObject = dataPrim.GetCurrent()->GetID();
+				nearestObject = dataPrimMarker->GetValue()->GetID();
 			}
 		}
 		distance = minDist;
 		obj_id = nearestObject;
+		delete dataPrimMarker;
 		return true;
 	}
 	else
@@ -821,10 +838,11 @@ bool Model::getNearest(double x, double y, ID& obj_id, double& distance) {
 
 void Model::OptimizeAllRequirements() {
 	Array<Requirement*> req;
-	dataReq.MoveHead();
+	auto dataReqMarker = dataReq.GetMarker();
 	do
 	{
-		req.PushBack(dataReq.GetCurrent());
-	} while (dataReq.MoveNext());
+		req.PushBack(dataReqMarker->GetValue());
+	} while (dataReqMarker->MoveNext());
 	OptimizeRequirements(req);
+	delete dataReqMarker;
 }

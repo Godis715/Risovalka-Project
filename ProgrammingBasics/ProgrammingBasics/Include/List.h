@@ -4,7 +4,7 @@
 #include "INumerable.h"
 #include <stdexcept>
 
-template <typename T> class List : public INumerable
+template <typename T> class List : public INumerable<T>
 {
 private:
 	class Node
@@ -28,23 +28,23 @@ public:
 		tail = nullptr;
 		size = 0;
 	}
-	class Marker : IMarker
+	class Marker : public IMarker<T>
 	{
 	private:
 		Node* current;
 		Node* prev;
-		List* listForMarker;
+		List* list;
 	public:
-		Marker(List* list)
+		Marker(List* _list)
 		{
-			if (list->head == nullptr) {
+			if (_list->head == nullptr) {
 				isValid = false;
 				return;
 			}
 			isValid = true;
 			prev = nullptr;
-			current = list->head;
-			listForMarker = list;
+			current = _list->head;
+			list = _list;
 		}
 
 		void DeleteCurrent() {
@@ -100,7 +100,7 @@ public:
 	size_t GetSize() const {
 		return size;
 	}
-	template <class T> IMarker<T>* GetMarker() {
+	IMarker<T>* GetMarker() {
 		return new Marker(this);
 	}
 	void PushTail(const T& val) {

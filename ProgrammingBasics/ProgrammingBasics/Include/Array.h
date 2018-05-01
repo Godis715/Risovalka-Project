@@ -80,6 +80,52 @@ private:
 
 public:
 
+	class ReadMarker {
+	private:
+		size_t index;
+		Array<T>* arr;
+	public:
+
+		ReadMarker(Array<T>* _arr, size_t _index) {
+			arr = _arr;
+			if (index > arr->_size) {
+				index = arr->_size;
+			}
+			else {
+				index = _index;
+			}
+		}
+
+		ReadMarker(const ReadMarker& marker) {
+			this->arr = marker->arr;
+			this->index = marker->index;
+		}
+
+		ReadMarker(ReadMarker&& marker) {
+			this->arr = marker->arr;
+			this->index = marker->index;
+
+			marker->arr = nullptr;
+		}
+
+		T GetValue() const {
+			return arr->_storage[index];
+		}
+
+		void operator ++() {
+			index++;
+		}
+
+		bool operator != (const ReadMarker& marker) {
+			if (this->arr != marker->arr) {
+				throw std::exception("Trying to compare non-native markers");
+			}
+
+			return (this->index != marker->index);
+		}
+
+	};
+
 	Array() : _default_capacity(64)
 	{
 		_capacity = _default_capacity;
@@ -157,7 +203,6 @@ public:
 			_storage[i] = default_value;
 		}
 	}
-
 
 	T& operator[](int index)
 	{
@@ -356,6 +401,15 @@ public:
 		}
 		return false;
 	}
+
+	ReadMarker Begin() {
+		return ReadMarker(this, 0);
+	}
+
+	ReadMarker End() {
+		return ReadMarker(this, _size);
+	}
+
 }; 
 
 //template <class T> std::ostream& operator<< (std::ostream& out, Array<T>& arr)

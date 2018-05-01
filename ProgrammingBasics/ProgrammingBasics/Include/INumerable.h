@@ -1,5 +1,8 @@
 #pragma once
 
+#include "ID.h"
+#include "Primitives.h"
+
 template <typename T> class IMarker {
 protected:
 	bool isValid;

@@ -1,7 +1,8 @@
 #ifndef __DICT
 #define __DICT
+
+#include "INumerable.h"
 #include "Dequeue.h"
-#include "Hash-Table.h"
 
 // class - parent of all Nodes
 template <class TKey, class TVal> class Node {
@@ -22,19 +23,15 @@ public:
 };
 
 // class - parent of all dictionaries
-template <class TKey, class TVal> class BinSearchTree : public INumerable
+template <class TKey, class TVal> class BinSearchTree : public INumerable<TVal>
 {
 private:
 	int size;
 	Node<TKey, TVal>* head;
-	Node<TKey, TVal>* current;
 
-	// i think this fields became useless when we'll write marker
-	// imho
-	Node<TKey, TVal>* support;
-	Node<TKey, TVal>* temp;
-
-	virtual Node<TKey, TVal>* CreateNode(const TKey&, const TVal&) = 0;
+	virtual Node<TKey, TVal>* CreateNode(const TKey& _key, const TVal& _val) {
+		return new Node<TKey, TVal>(_key, _val);
+	}
 
 	void DeleteNode(Node<TKey, TVal>* node) {
 		--size;
@@ -63,8 +60,7 @@ private:
 		bool inRight;
 		if ((node->right != nullptr) && (node->left != nullptr)) {
 
-			inRight = (node->right->high > node->left->high);
-
+			inRight = (node->right->high >= node->left->high);
 		}
 		else {
 
@@ -139,6 +135,7 @@ private:
 			return;
 		}
 		else {
+			temp = node->left;
 			while (temp->right != nullptr)
 			{
 				temp = temp->right;
@@ -155,7 +152,7 @@ private:
 				// ��������, ���� � �������� ���� ���������� �������� ��� ������� �������	
 				temp->parent = node->parent;
 				if (node->parent != nullptr) {
-					if (node->value <= node->parent->value) {
+					if (node->value > node->parent->value) {
 						node->parent->right = temp;
 					}
 					else {
@@ -173,7 +170,7 @@ private:
 				return;
 			}
 			//
-			temp->parent->right = temp->right;
+			temp->parent->right = temp->left;
 			if (temp->left != nullptr) {
 				temp->left->parent = temp->parent;
 			}
@@ -181,7 +178,7 @@ private:
 			//
 			temp->parent = node->parent;
 			if (node->parent != nullptr) {
-				if (node->value <= node->parent->value) {
+				if (node->value > node->parent->value) {
 					node->parent->right = temp;
 				}
 				else {
@@ -194,7 +191,7 @@ private:
 				head = temp;
 			}
 			//
-			temp->left = node->lefy;
+			temp->left = node->left;
 			node->left->parent = temp;
 			// ��� ��� �������������� ������ ���������� � ����������������,
 			// �� �� ������ ���� �� ������ � ���������
@@ -205,15 +202,15 @@ private:
 		}
 	}
 
-	void AddNode(const TKey& key, const TVal& val) {
+	Node<TKey, TVal>* AddNode(const TKey& key, const TVal& val) {
 		size++;
 		if (head == nullptr)
 		{
-			head = CreateNode();
+			head = CreateNode(key, val);
 			head->key = key;
 			head->value = val;
 			head->high = 1;
-			return;
+			return head;
 		}
 
 		Node<TKey, TVal>* node = head;
@@ -231,7 +228,7 @@ private:
 					node->right->parent = node;
 					node->right->high = 1;
 					RestoreHigh(node);
-					return;
+					return node->right;
 				}
 			}
 			else
@@ -245,10 +242,43 @@ private:
 					node->left = CreateNode(key, val);
 					node->left->parent = node;
 					RestoreHigh(node);
-					return;
+					return node->left;
 				}
 			}
 		}
+	}
+
+	Node<TKey, TVal>* FindNode(const TKey& key) {
+		Node<TKey, TVal>* node = head;
+		while (node != nullptr)
+		{
+			if (node->key == key) {
+				return node;
+			}
+			if (key > node->key)
+			{
+				if (node->right != nullptr)
+				{
+					node = node->right;
+				}
+				else
+				{
+					return nullptr;
+				}
+			}
+			else
+			{
+				if (node->left != nullptr)
+				{
+					node = node->left;
+				}
+				else
+				{
+					return nullptr;
+				}
+			}
+		}
+		return nullptr;
 	}
 
 	void LL(Node<TKey, TVal>* node) {
@@ -355,11 +385,11 @@ private:
 				rightHigh = node->left->right->high;
 			}
 			if (leftHigh >= rightHigh) {
-				LL();
+				LL(node);
 				return;
 			}
 			else {
-				LR();
+				LR(node);
 				return;
 			}
 		}
@@ -410,9 +440,6 @@ public:
 	BinSearchTree()
 	{
 		head = nullptr;
-		current = nullptr;
-		support = nullptr;
-		temp = nullptr;
 		size = 0;
 	}
 
@@ -420,7 +447,7 @@ public:
 		DeleteDict();
 	}
 
-	class Marker : public IMarker {
+	class Marker : public IMarker<TVal> {
 	private:
 		Node<TKey, TVal>* current;
 		BinSearchTree<TKey, TVal>* tree;
@@ -431,8 +458,18 @@ public:
 				isValid = false;
 				return;
 			}
+			isValid = true;
 			MoveBegin();
 		}
+		Marker(BinSearchTree<TKey, TVal>* _tree, Node<TKey, TVal>* node) : tree(_tree) {
+			if (tree == nullptr || tree->head == nullptr || node == nullptr) {
+				isValid = false;
+				return;
+			}
+			isValid = true;
+			current = node;
+		}
+
 		TVal GetValue() const {
 			if (!isValid) {
 				throw std::exception("Marker was not valid");
@@ -444,6 +481,7 @@ public:
 				return false;
 			}
 			if (current == nullptr) {
+				isValid = false;
 				return false;
 			}
 			if (current->right != nullptr) {
@@ -459,7 +497,7 @@ public:
 					current = current->parent;
 					return true;
 				}
-				temp = current;
+				Node<TKey, TVal>* temp = current;
 				current = current->parent;
 				while ((current != nullptr) && (current->right == temp))
 				{
@@ -467,13 +505,15 @@ public:
 					current = current->parent;
 				}
 				if (current == nullptr) {
-					current = head;
+					current = tree->head;
+					isValid = false;
 					return false;
 				}
 				else {
 					return true;
 				}
 			}
+			isValid = false;
 			return false;
 		}
 		bool MoveBegin() {
@@ -493,11 +533,12 @@ public:
 			if (!isValid) {
 				return;
 			}
-			
+			tree->DeleteNode(current);
+			isValid = false;
 		}
 	};
 
-	int GetSize() const
+	size_t GetSize() const
 	{
 		return size;
 	}
@@ -506,78 +547,24 @@ public:
 		AddNode(key, val);
 	}
 
-	/*void Erase(const TKey &key) {
-		support = head;
-		while (support != nullptr)
-		{
-			if (key == support->key) {
-				Erase();
-				return;
-			}
-			if (key > support->key)
-			{
-				if (support->right != nullptr)
-				{
-					support = support->right;
-				}
-				else
-				{
-					return;
-				}
-			}
-			else
-			{
-				if (support->left != nullptr)
-				{
-					support = support->left;
-				}
-				else
-				{
-					return;
-				}
-			}
-		}
-	}*/
-
-	IMarker* Find(const TKey &key)
+	virtual IMarker<TVal>* Find(const TKey &key)
 	{
-		Node<TKey, TVal>* node = head;
-		while (node != nullptr)
-		{
-			if (node->key == key) {
-				return new Marker(node);
-			}
-			if (key > node->key)
-			{
-				if (node->right != nullptr)
-				{
-					node = node->right;
-				}
-				else
-				{
-					return nullptr;
-				}
-			}
-			else
-			{
-				if (node->left != nullptr)
-				{
-					node = node->left;
-				}
-				else
-				{
-					return nullptr;
-				}
-			}
+		Node<TKey, TVal>* node = FindNode(key);
+		if (node != nullptr) {
+			return new Marker(this, node);
 		}
 		return nullptr;
 	}
+
+	virtual IMarker<TVal>* GetMarker() {
+		return new Marker(this);
+	};
 
 	void DeleteDict() {
 		if (head == nullptr) {
 			return;
 		}
-		temp = head;
+		Node<TKey, TVal>* temp = head;
 		Deck<Node<TKey, TVal>*> deck;
 		deck.PushTail(temp);
 		while (deck.GetSize() > 0)
@@ -597,8 +584,9 @@ public:
 
 template <class TKey, class TVal> class Dict : public BinSearchTree<TKey, TVal> {
 private:
-	template <class TKey, class TVal> class DictNode : public Node<TKey, TVal> {
-		DictNode(const TKey& _key, const TVal& _val) : Node<TKey, TVal>(const TKey& _key, const TVal& _val) { }
+	class DictNode : public Node<TKey, TVal> {
+	public:
+		DictNode(const TKey& _key, const TVal& _val) : Node<TKey, TVal>(_key, _val) { }
 	};
 	Node<TKey, TVal>* CreateNode(const TKey& _key, const TVal& _val)
 	{
@@ -607,6 +595,5 @@ private:
 public:
 
 };
-
 
 #endif
