@@ -23,7 +23,7 @@ public:
 };
 
 // class - parent of all dictionaries
-template <class TKey, class TVal> class BinSearchTree : public INumerable<TVal>
+template <class TKey, class TVal> class BinSearchTree : public INumerable
 {
 private:
 	int size;
@@ -447,13 +447,13 @@ public:
 		DeleteDict();
 	}
 
-	class Marker : public IMarker<TVal> {
+	class TreeMarker : public IMarker {
 	private:
 		Node<TKey, TVal>* current;
 		BinSearchTree<TKey, TVal>* tree;
 		
 	public:
-		Marker(BinSearchTree<TKey, TVal>* _tree) : tree(_tree) {
+		TreeMarker(BinSearchTree<TKey, TVal>* _tree) : tree(_tree) {
 			if (tree == nullptr || tree->head == nullptr) {
 				isValid = false;
 				return;
@@ -461,7 +461,7 @@ public:
 			isValid = true;
 			MoveBegin();
 		}
-		Marker(BinSearchTree<TKey, TVal>* _tree, Node<TKey, TVal>* node) : tree(_tree) {
+		TreeMarker(BinSearchTree<TKey, TVal>* _tree, Node<TKey, TVal>* node) : tree(_tree) {
 			if (tree == nullptr || tree->head == nullptr || node == nullptr) {
 				isValid = false;
 				return;
@@ -547,17 +547,17 @@ public:
 		AddNode(key, val);
 	}
 
-	virtual IMarker<TVal>* Find(const TKey &key)
+	virtual TreeMarker* Find(const TKey &key)
 	{
 		Node<TKey, TVal>* node = FindNode(key);
 		if (node != nullptr) {
-			return new Marker(this, node);
+			return new TreeMarker(this, node);
 		}
 		return nullptr;
 	}
 
-	virtual IMarker<TVal>* GetMarker() {
-		return new Marker(this);
+	virtual TreeMarker* GetMarker() {
+		return new TreeMarker(this);
 	};
 
 	void DeleteDict() {

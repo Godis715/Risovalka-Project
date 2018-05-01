@@ -8,18 +8,21 @@ Model::Link::Link(const ID& primID, const ID& reqID)
 	this->reqID = reqID;
 }
 
-void Model::GetIDRequirements(const ID& id, Array<ID>& FoundIDRequirement)
+
+//WhY did it make so strange
+void Model::GetIDRequirements(const ID& idPrim, Array<ID>& FoundIDRequirement)
 {
 	Dict<ID, ID> labels;
 	Queue<ID> forConsideration;
-	forConsideration.push(id);
+	auto marker = dataLink.GetMarker();
+	forConsideration.push(idPrim);
 	do
 	{
 		ID tempID = forConsideration.pop();
 		if (!labels.Find(tempID))
 		{
-			for (int i = 0; i < dataLink.GetSize(); i++)
-			{
+			do {
+				marker->
 				if (dataLink[i].reqID == id)
 				{
 					forConsideration.push(dataLink[i].primID);
@@ -30,63 +33,65 @@ void Model::GetIDRequirements(const ID& id, Array<ID>& FoundIDRequirement)
 					FoundIDRequirement.PushBack(dataLink[i].reqID);
 					forConsideration.push(dataLink[i].reqID);
 				}
-			}
+			} while (marker->MoveNext());
 			labels.Add(tempID, tempID);
 		}
 	} while (!forConsideration.isEmpty());
 }
 
-bool Model::find(const ID& id, Array<ID> foundID)
-{
-	bool isFound = false;
-	for (int i = 0; i < dataLink.GetSize(); i++)
-	{
-		if (dataLink[i].reqID == id)
-		{
-			foundID.PushBack(dataLink[i].primID);
-			isFound = true;
-		}
+//WhY did it make so strange
 
-		if (dataLink[i].primID == id)
-		{
-			foundID.PushBack(dataLink[i].reqID);
-			isFound = true;
-		}
-	}
-	return isFound;
-}
+//bool Model::find(const ID& id, Array<ID> foundID)
+//{
+//	bool isFound = false;
+//	for (int i = 0; i < dataLink.GetSize(); i++)
+//	{
+//		if (dataLink[i].reqID == id)
+//		{
+//			foundID.PushBack(dataLink[i].primID);
+//			isFound = true;
+//		}
+//
+//		if (dataLink[i].primID == id)
+//		{
+//			foundID.PushBack(dataLink[i].reqID);
+//			isFound = true;
+//		}
+//	}
+//	return isFound;
+//}
 
-bool Model::find(const ID& idReq, Array<Primitive*>& foundPrim)
-{
-	bool isFound = false;
-	for (int i = 0; i < dataLink.GetSize(); i++)
-	{
-		if (dataLink[i].reqID == idReq)
-		{
-			if (dataPrim.Find(dataLink[i].primID)) {
-				foundPrim.PushBack(dataPrim.GetCurrent());
-				isFound = true;
-			}
-		}
-	}
-	return isFound;
-}
+//bool Model::find(const ID& idReq, Array<Primitive*>& foundPrim)
+//{
+//	bool isFound = false;
+//	for (int i = 0; i < dataLink.GetSize(); i++)
+//	{
+//		if (dataLink[i].reqID == idReq)
+//		{
+//			if (dataPrim.Find(dataLink[i].primID)) {
+//				foundPrim.PushBack(dataPrim.GetCurrent());
+//				isFound = true;
+//			}
+//		}
+//	}
+//	return isFound;
+//}
 
-bool Model::find(const ID& idPrim, Array<Requirement*>& foundReq)
-{
-	bool isFound = false;
-	for (int i = 0; i < dataLink.GetSize(); i++)
-	{
-		if (dataLink[i].primID == idPrim)
-		{
-			if (dataReq.Find(dataLink[i].reqID)) {
-				foundReq.PushBack(dataReq.GetCurrent());
-				isFound = true;
-			}
-		}
-	}
-	return isFound;
-}
+//bool Model::find(const ID& idPrim, Array<Requirement*>& foundReq)
+//{
+//	bool isFound = false;
+//	for (int i = 0; i < dataLink.GetSize(); i++)
+//	{
+//		if (dataLink[i].primID == idPrim)
+//		{
+//			if (dataReq.Find(dataLink[i].reqID)) {
+//				foundReq.PushBack(dataReq.GetCurrent());
+//				isFound = true;
+//			}
+//		}
+//	}
+//	return isFound;
+//}
 
 bool Model::DischargeInfoObjects(Array<infoObject>& dataPrimInfoObjects)
 {
@@ -176,214 +181,214 @@ bool Model::createObject(type_id type, Array<double>& params, ID& obj_id) {
 //	return false;
 //}
 
-bool Model::createRequirement(const Requirement_id _id, Array<ID>& id_arr, Array<double>& params) {
-	Array<Primitive*> primitives;
-	for (int i = 0; i < id_arr.GetSize(); ++i) {
-		if (dataPrim.Find(id_arr[i])) {
-			primitives.PushBack(dataPrim.GetCurrent());
-		}
-		else {
-			return false;
-		}
-	}
-	switch (_id)
-	{
-	case distBetPoints: {
-		DistBetPointsReq* Requirement;
-		if (primitives.GetSize() != 2 && params.GetSize() != 1) {
-			return false;
-		}
-		if (primitives[0]->GetType() == point &&
-			primitives[1]->GetType() == point) {
-			Requirement = new DistBetPointsReq(dynamic_cast<Point*>(primitives[0]),
-				dynamic_cast<Point*>(primitives[1]),
-				params[0]);
-			dataReq.Add(Requirement->GetID(), Requirement);
-			dataLink.PushBack(Link(primitives[0]->GetID(), Requirement->GetID()));
-			dataLink.PushBack(Link(primitives[1]->GetID(), Requirement->GetID()));
-			return true;
-		}
-		else {
-			return false;
-		}
-	}
-	case EqualSegmentLen: {
-		if (primitives.GetSize() != 2) {
-			return false;
-		}
-		EqualSegmentLenReq* requirement;
-		if ((primitives[0]->GetType() == segment)
-			&& (primitives[1]->GetType() == segment)) {
-			requirement = new EqualSegmentLenReq(*dynamic_cast<Segment*>(primitives[0]),
-				*dynamic_cast<Segment*>(primitives[1]));
-			dataReq.Add(requirement->GetID(), requirement);
-			dataLink.PushBack(Link(primitives[0]->GetID(), requirement->GetID()));
-			dataLink.PushBack(Link(primitives[1]->GetID(), requirement->GetID()));
-			return true;
-		}
-		else {
-			return false;
-		}
-	}
-	case pointsOnTheOneHand: {
-		if (primitives.GetSize() != 3) {
-			return false;
-		}
-		PointsOnTheOneHand* requirement;
-		if ((primitives[0]->GetType() == segment)
-			&& (primitives[1]->GetType() == point)
-			&& (primitives[2]->GetType() == point)) {
-			requirement = new PointsOnTheOneHand(*dynamic_cast<Segment*>(primitives[0]),
-				*dynamic_cast<Point*>(primitives[1]),
-				*dynamic_cast<Point*>(primitives[2]));
-			dataReq.Add(requirement->GetID(), requirement);
-			dataLink.PushBack(Link(primitives[0]->GetID(), requirement->GetID()));
-			dataLink.PushBack(Link(primitives[1]->GetID(), requirement->GetID()));
-			dataLink.PushBack(Link(primitives[2]->GetID(), requirement->GetID()));
-			return true;
-		}
-		else {
-			return false;
-		}
-	}
-	case distBetPointSeg: {
-		DistanceBetweenPointSegment* Requirement;
-		if ((primitives[0]->GetType() == segment)
-			&& (primitives[1]->GetType() == point)
-			&& (params.GetSize() > 0)) {
-			Requirement = new DistanceBetweenPointSegment(*dynamic_cast<Segment*>(primitives[0]),
-				*dynamic_cast<Point*>(primitives[1]),
-				params[0]);
-			dataReq.Add(Requirement->GetID(), Requirement);
-			dataLink.PushBack(Link(primitives[0]->GetID(), Requirement->GetID()));
-			dataLink.PushBack(Link(primitives[1]->GetID(), Requirement->GetID()));
-			return true;
-		}
-		else {
-			return false;
-		}
-	}
-	case angleBetSeg: {
-		AngleBetweenSegments* Requirement;
-		if ((primitives[0]->GetType() == segment)
-			&& (primitives[1]->GetType() == segment)
-			&& (params.GetSize() > 0)) {
-			Requirement = new AngleBetweenSegments(*dynamic_cast<Segment*>(primitives[0]),
-				*dynamic_cast<Segment*>(primitives[1]),
-				params[0]);
-			dataReq.Add(Requirement->GetID(), Requirement);
-			dataLink.PushBack(Link(primitives[0]->GetID(), Requirement->GetID()));
-			dataLink.PushBack(Link(primitives[1]->GetID(), Requirement->GetID()));
-			return true;
-		}
-		else {
-			return false;
-		}
-	}
-	case distBetPointArc: {
-		DistanceBetweenPointArc* Requirement;
-		if ((primitives[0]->GetType() == arc)
-			&& (primitives[1]->GetType() == point)
-			&& (params.GetSize() > 0)) {
-			Requirement = new DistanceBetweenPointArc(*dynamic_cast<Arc*>(primitives[0]),
-				*dynamic_cast<Point*>(primitives[1]),
-				params[0]);
-			dataReq.Add(Requirement->GetID(), Requirement);
-			dataLink.PushBack(Link(primitives[0]->GetID(), Requirement->GetID()));
-			dataLink.PushBack(Link(primitives[1]->GetID(), Requirement->GetID()));
-			return true;
-		}
-		else {
-			return false;
-		}
-	}
-	case pointInArc: {
-		PointInArc* Requirement;
-		if ((primitives[0]->GetType() == arc)
-			&& (primitives[1]->GetType() == point)) {
-			Requirement = new PointInArc(*dynamic_cast<Arc*>(primitives[0]),
-				*dynamic_cast<Point*>(primitives[1]));
-			dataReq.Add(Requirement->GetID(), Requirement);
-			dataLink.PushBack(Link(primitives[0]->GetID(), Requirement->GetID()));
-			dataLink.PushBack(Link(primitives[1]->GetID(), Requirement->GetID()));
-			return true;
-		}
-		else {
-			return false;
-		}
-	}
-	/*case triangle: {
-		Triangle* Requirement;
-		if ((primitives[0]->GetType() == segment)
-			&& (primitives[1]->GetType() == segment)
-			&& (primitives[2]->GetType() == segment)) {
-			Requirement = new Triangle(dynamic_cast<Segment*>(primitives[0]),
-				dynamic_cast<Segment*>(primitives[1]),
-				dynamic_cast<Segment*>(primitives[2]));
-			dataPrimReq.PushBack(Requirement);
-			return true;
-		}
-		else {
-			return false;
-		}
-	}*/
-	//case correctTriangle: {
-	//	ÑorrectTriangle* Requirement;
-	//	if ((primitives[0]->GetType() == segment)
-	//		&& (primitives[1]->GetType() == segment)
-	//		&& (primitives[2]->GetType() == segment)
-	//		&& (params.GetSize() > 0)) {
-	//		Requirement = new ÑorrectTriangle(dynamic_cast<Segment*>(primitives[0]),
-	//			dynamic_cast<Segment*>(primitives[1]),
-	//			dynamic_cast<Segment*>(primitives[2]),
-	//			params[0]);
-	//		dataPrimReq.PushBack(Requirement);
-	//		return true;
-	//	}
-	//	else {
-	//		return false;
-	//	}
-	//}
-	/* case nsAngle: {
-		NsAngle* Requirement;
-		ListE<Segment*> list;
-		for (int i = 0; i < primitives.GetSize(); ++i) {
-			if (segment == primitives[i]->GetType()) {
-				list.PushTail(dynamic_cast<Segment*>(primitives[i]));
-			}
-			else {
-				return false;
-			}
-		}
-		Requirement = new NsAngle(list);
-		dataPrimReq.PushBack(Requirement);
-		return true;
-	}
-	case correctNsAngle: {
-		CorrectNsAngle* Requirement;
-		
-		if (params.GetSize() > 0) {
-			ListE<Segment*> list;
-			for (int i = 0; i < primitives.GetSize(); ++i) {
-				if (segment == primitives[i]->GetType()) {
-					list.PushTail(dynamic_cast<Segment*>(primitives[i]));
-				}
-				else {
-					return false;
-				}
-			}
-			Requirement = new CorrectNsAngle(list, params[0]);
-			dataPrimReq.PushBack(Requirement);
-			return true;
-		}
-		else {
-			return false;
-		}
-	} */
-	default:
-		return false;
-	}
-}
+//bool Model::createRequirement(const Requirement_id _id, Array<ID>& id_arr, Array<double>& params) {
+//	Array<Primitive*> primitives;
+//	for (int i = 0; i < id_arr.GetSize(); ++i) {
+//		if (dataPrim.Find(id_arr[i])) {
+//			primitives.PushBack(dataPrim.GetCurrent());
+//		}
+//		else {
+//			return false;
+//		}
+//	}
+//	switch (_id)
+//	{
+//	case distBetPoints: {
+//		DistBetPointsReq* Requirement;
+//		if (primitives.GetSize() != 2 && params.GetSize() != 1) {
+//			return false;
+//		}
+//		if (primitives[0]->GetType() == point &&
+//			primitives[1]->GetType() == point) {
+//			Requirement = new DistBetPointsReq(dynamic_cast<Point*>(primitives[0]),
+//				dynamic_cast<Point*>(primitives[1]),
+//				params[0]);
+//			dataReq.Add(Requirement->GetID(), Requirement);
+//			dataLink.PushBack(Link(primitives[0]->GetID(), Requirement->GetID()));
+//			dataLink.PushBack(Link(primitives[1]->GetID(), Requirement->GetID()));
+//			return true;
+//		}
+//		else {
+//			return false;
+//		}
+//	}
+//	case EqualSegmentLen: {
+//		if (primitives.GetSize() != 2) {
+//			return false;
+//		}
+//		EqualSegmentLenReq* requirement;
+//		if ((primitives[0]->GetType() == segment)
+//			&& (primitives[1]->GetType() == segment)) {
+//			requirement = new EqualSegmentLenReq(*dynamic_cast<Segment*>(primitives[0]),
+//				*dynamic_cast<Segment*>(primitives[1]));
+//			dataReq.Add(requirement->GetID(), requirement);
+//			dataLink.PushBack(Link(primitives[0]->GetID(), requirement->GetID()));
+//			dataLink.PushBack(Link(primitives[1]->GetID(), requirement->GetID()));
+//			return true;
+//		}
+//		else {
+//			return false;
+//		}
+//	}
+//	case pointsOnTheOneHand: {
+//		if (primitives.GetSize() != 3) {
+//			return false;
+//		}
+//		PointsOnTheOneHand* requirement;
+//		if ((primitives[0]->GetType() == segment)
+//			&& (primitives[1]->GetType() == point)
+//			&& (primitives[2]->GetType() == point)) {
+//			requirement = new PointsOnTheOneHand(*dynamic_cast<Segment*>(primitives[0]),
+//				*dynamic_cast<Point*>(primitives[1]),
+//				*dynamic_cast<Point*>(primitives[2]));
+//			dataReq.Add(requirement->GetID(), requirement);
+//			dataLink.PushBack(Link(primitives[0]->GetID(), requirement->GetID()));
+//			dataLink.PushBack(Link(primitives[1]->GetID(), requirement->GetID()));
+//			dataLink.PushBack(Link(primitives[2]->GetID(), requirement->GetID()));
+//			return true;
+//		}
+//		else {
+//			return false;
+//		}
+//	}
+//	case distBetPointSeg: {
+//		DistanceBetweenPointSegment* Requirement;
+//		if ((primitives[0]->GetType() == segment)
+//			&& (primitives[1]->GetType() == point)
+//			&& (params.GetSize() > 0)) {
+//			Requirement = new DistanceBetweenPointSegment(*dynamic_cast<Segment*>(primitives[0]),
+//				*dynamic_cast<Point*>(primitives[1]),
+//				params[0]);
+//			dataReq.Add(Requirement->GetID(), Requirement);
+//			dataLink.PushBack(Link(primitives[0]->GetID(), Requirement->GetID()));
+//			dataLink.PushBack(Link(primitives[1]->GetID(), Requirement->GetID()));
+//			return true;
+//		}
+//		else {
+//			return false;
+//		}
+//	}
+//	case angleBetSeg: {
+//		AngleBetweenSegments* Requirement;
+//		if ((primitives[0]->GetType() == segment)
+//			&& (primitives[1]->GetType() == segment)
+//			&& (params.GetSize() > 0)) {
+//			Requirement = new AngleBetweenSegments(*dynamic_cast<Segment*>(primitives[0]),
+//				*dynamic_cast<Segment*>(primitives[1]),
+//				params[0]);
+//			dataReq.Add(Requirement->GetID(), Requirement);
+//			dataLink.PushBack(Link(primitives[0]->GetID(), Requirement->GetID()));
+//			dataLink.PushBack(Link(primitives[1]->GetID(), Requirement->GetID()));
+//			return true;
+//		}
+//		else {
+//			return false;
+//		}
+//	}
+//	case distBetPointArc: {
+//		DistanceBetweenPointArc* Requirement;
+//		if ((primitives[0]->GetType() == arc)
+//			&& (primitives[1]->GetType() == point)
+//			&& (params.GetSize() > 0)) {
+//			Requirement = new DistanceBetweenPointArc(*dynamic_cast<Arc*>(primitives[0]),
+//				*dynamic_cast<Point*>(primitives[1]),
+//				params[0]);
+//			dataReq.Add(Requirement->GetID(), Requirement);
+//			dataLink.PushBack(Link(primitives[0]->GetID(), Requirement->GetID()));
+//			dataLink.PushBack(Link(primitives[1]->GetID(), Requirement->GetID()));
+//			return true;
+//		}
+//		else {
+//			return false;
+//		}
+//	}
+//	case pointInArc: {
+//		PointInArc* Requirement;
+//		if ((primitives[0]->GetType() == arc)
+//			&& (primitives[1]->GetType() == point)) {
+//			Requirement = new PointInArc(*dynamic_cast<Arc*>(primitives[0]),
+//				*dynamic_cast<Point*>(primitives[1]));
+//			dataReq.Add(Requirement->GetID(), Requirement);
+//			dataLink.PushBack(Link(primitives[0]->GetID(), Requirement->GetID()));
+//			dataLink.PushBack(Link(primitives[1]->GetID(), Requirement->GetID()));
+//			return true;
+//		}
+//		else {
+//			return false;
+//		}
+//	}
+//	/*case triangle: {
+//		Triangle* Requirement;
+//		if ((primitives[0]->GetType() == segment)
+//			&& (primitives[1]->GetType() == segment)
+//			&& (primitives[2]->GetType() == segment)) {
+//			Requirement = new Triangle(dynamic_cast<Segment*>(primitives[0]),
+//				dynamic_cast<Segment*>(primitives[1]),
+//				dynamic_cast<Segment*>(primitives[2]));
+//			dataPrimReq.PushBack(Requirement);
+//			return true;
+//		}
+//		else {
+//			return false;
+//		}
+//	}*/
+//	//case correctTriangle: {
+//	//	ÑorrectTriangle* Requirement;
+//	//	if ((primitives[0]->GetType() == segment)
+//	//		&& (primitives[1]->GetType() == segment)
+//	//		&& (primitives[2]->GetType() == segment)
+//	//		&& (params.GetSize() > 0)) {
+//	//		Requirement = new ÑorrectTriangle(dynamic_cast<Segment*>(primitives[0]),
+//	//			dynamic_cast<Segment*>(primitives[1]),
+//	//			dynamic_cast<Segment*>(primitives[2]),
+//	//			params[0]);
+//	//		dataPrimReq.PushBack(Requirement);
+//	//		return true;
+//	//	}
+//	//	else {
+//	//		return false;
+//	//	}
+//	//}
+//	/* case nsAngle: {
+//		NsAngle* Requirement;
+//		ListE<Segment*> list;
+//		for (int i = 0; i < primitives.GetSize(); ++i) {
+//			if (segment == primitives[i]->GetType()) {
+//				list.PushTail(dynamic_cast<Segment*>(primitives[i]));
+//			}
+//			else {
+//				return false;
+//			}
+//		}
+//		Requirement = new NsAngle(list);
+//		dataPrimReq.PushBack(Requirement);
+//		return true;
+//	}
+//	case correctNsAngle: {
+//		CorrectNsAngle* Requirement;
+//		
+//		if (params.GetSize() > 0) {
+//			ListE<Segment*> list;
+//			for (int i = 0; i < primitives.GetSize(); ++i) {
+//				if (segment == primitives[i]->GetType()) {
+//					list.PushTail(dynamic_cast<Segment*>(primitives[i]));
+//				}
+//				else {
+//					return false;
+//				}
+//			}
+//			Requirement = new CorrectNsAngle(list, params[0]);
+//			dataPrimReq.PushBack(Requirement);
+//			return true;
+//		}
+//		else {
+//			return false;
+//		}
+//	} */
+//	default:
+//		return false;
+//	}
+//}
 
 double Model::GetError(){
 	double sum_error = 0;

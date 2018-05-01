@@ -97,15 +97,15 @@ public:
 		}
 
 		ReadMarker(const ReadMarker& marker) {
-			this->arr = marker->arr;
-			this->index = marker->index;
+			this->arr = marker.arr;
+			this->index = marker.index;
 		}
 
 		ReadMarker(ReadMarker&& marker) {
-			this->arr = marker->arr;
-			this->index = marker->index;
+			this->arr = marker.arr;
+			this->index = marker.index;
 
-			marker->arr = nullptr;
+			marker.arr = nullptr;
 		}
 
 		T GetValue() const {
@@ -116,12 +116,12 @@ public:
 			index++;
 		}
 
-		bool operator != (const ReadMarker& marker) {
-			if (this->arr != marker->arr) {
+		bool operator == (const ReadMarker& marker) {
+			if (this->arr != marker.arr) {
 				throw std::exception("Trying to compare non-native markers");
 			}
 
-			return (this->index != marker->index);
+			return (this->index == marker.index);
 		}
 
 	};

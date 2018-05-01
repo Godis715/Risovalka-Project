@@ -120,7 +120,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\Include\Primitives.cpp" />
-    <ClCompile Include="..\Src\HyperGraph.cpp" />
     <ClCompile Include="..\Src\ID.cpp" />
     <ClCompile Include="..\Src\main.cpp" />
     <ClCompile Include="..\Src\Model.cpp" />
@@ -134,7 +133,6 @@
     <ClInclude Include="..\Include\Dequeue.h" />
     <ClInclude Include="..\Include\Dictionary.h" />
     <ClInclude Include="..\Include\Hash-Table.h" />
-    <ClInclude Include="..\Include\HyperGraph.h" />
     <ClInclude Include="..\Include\ID.h" />
     <ClInclude Include="..\Include\IDGenerator.h" />
     <ClInclude Include="..\Include\INumerable.h" />
