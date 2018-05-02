@@ -120,13 +120,11 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\Include\Primitives.cpp" />
-    <ClCompile Include="..\Src\HyperGraph.cpp" />
     <ClCompile Include="..\Src\ID.cpp" />
     <ClCompile Include="..\Src\main.cpp" />
     <ClCompile Include="..\Src\Model.cpp" />
     <ClCompile Include="..\Src\Requirement.cpp" />
     <ClCompile Include="..\Src\Vector2.cpp" />
-    <ClCompile Include="Dictionary.cpp" />
     <ClCompile Include="Logger.cpp" />
   </ItemGroup>
   <ItemGroup>

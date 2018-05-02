@@ -27,7 +27,7 @@ private:
 
 	Dict<ID, Requirement*> dataReq;
 	
-	Dict<ID, ListE<ID>*> dataLink;
+	Dict<ID, List<ID>*> dataLink;
 
 	IDGenerator* idGen;
 

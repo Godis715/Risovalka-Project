@@ -30,16 +30,10 @@
     <ClCompile Include="..\Include\Primitives.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="..\Src\HyperGraph.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
     <ClCompile Include="..\Src\Requirement.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
     <ClCompile Include="Logger.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="Dictionary.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
   </ItemGroup>

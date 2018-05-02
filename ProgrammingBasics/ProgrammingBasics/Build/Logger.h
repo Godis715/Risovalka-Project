@@ -8,7 +8,7 @@
 #define LEVEL_3 3
 #define MAX_LEVEL 3
 
-static class LoggerStatic {
+static class Logger {
 private:
 
 	static int minLevel;
