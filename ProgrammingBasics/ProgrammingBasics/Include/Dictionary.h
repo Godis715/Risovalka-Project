@@ -1,8 +1,7 @@
 #ifndef __DICT
 #define __DICT
 
-#include "INumerable.h"
-#include "Dequeue.h"
+#include "Array.h"
 
 // class - parent of all Nodes
 template <class TKey, class TVal> class Node {
@@ -37,7 +36,7 @@ private:
 		--size;
 		if ((node->right == nullptr) && (node->left == nullptr)) {
 			if (node->parent != nullptr) {
-				if (node->value <= node->parent->value) {
+				if (node->key <= node->parent->key) {
 					node = node->parent;
 					delete node->left;
 					node->left = nullptr;
@@ -86,7 +85,7 @@ private:
 				// ��������, ���� � �������� ���� ���������� �������� ��� ������� �������	
 				temp->parent = node->parent;
 				if (node->parent != nullptr) {
-					if (node->value <= node->parent->value) {
+					if (node->key <= node->parent->key) {
 						node->parent->left = temp;
 					}
 					else {
@@ -112,7 +111,7 @@ private:
 			//
 			temp->parent = node->parent;
 			if (node->parent != nullptr) {
-				if (node->value <= node->parent->value) {
+				if (node->key <= node->parent->key) {
 					node->parent->left = temp;
 				}
 				else {
@@ -152,7 +151,7 @@ private:
 				// ��������, ���� � �������� ���� ���������� �������� ��� ������� �������	
 				temp->parent = node->parent;
 				if (node->parent != nullptr) {
-					if (node->value > node->parent->value) {
+					if (node->key > node->parent->key) {
 						node->parent->right = temp;
 					}
 					else {
@@ -178,7 +177,7 @@ private:
 			//
 			temp->parent = node->parent;
 			if (node->parent != nullptr) {
-				if (node->value > node->parent->value) {
+				if (node->key > node->parent->key) {
 					node->parent->right = temp;
 				}
 				else {

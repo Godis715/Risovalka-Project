@@ -1,7 +1,6 @@
-#pragma once
-#include <iostream>
-#include "Array.h"
-#include <string>
+#pragma
+
+#include "Requirement.h"
 
 #define LEVEL_1 1
 #define LEVEL_2 2

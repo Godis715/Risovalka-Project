@@ -1,6 +1,4 @@
 #include "Model.h"
-#include <iostream>
-#include <stdexcept>
 
 Model::Link::Link(const ID& primID, const ID& reqID)
 {
@@ -9,89 +7,173 @@ Model::Link::Link(const ID& primID, const ID& reqID)
 }
 
 
-//WhY did it make so strange
-void Model::GetIDRequirements(const ID& idPrim, Array<ID>& FoundIDRequirement)
+void Model::GetIDRequirementsInComponent(const ID& idPrim, Array<ID>& IDReq)
 {
 	Dict<ID, ID> labels;
-	Queue<ID> forConsideration;
+	Queue<ID> queuePrim;
+	Queue<ID> queueReq;
 	auto marker = dataLink.GetMarker();
-	forConsideration.push(idPrim);
-	do
-	{
-		ID tempID = forConsideration.pop();
-		if (!labels.Find(tempID))
-		{
-			do {
-				marker->
-				if (dataLink[i].reqID == id)
-				{
-					forConsideration.push(dataLink[i].primID);
-				}
+	List<ID>* list;
+	List<ID>::ListMarker* listMarker;
+	ID id;
+	BinSearchTree<ID, List<ID>*>::TreeMarker* treeMarker;
 
-				if (dataLink[i].primID == id)
-				{
-					FoundIDRequirement.PushBack(dataLink[i].reqID);
-					forConsideration.push(dataLink[i].reqID);
-				}
-			} while (marker->MoveNext());
-			labels.Add(tempID, tempID);
+	queuePrim.push(idPrim);
+	while (!queuePrim.isEmpty())
+	{
+		while (!queuePrim.isEmpty())
+		{
+			id = queuePrim.pop();
+			labels.Add(id, id);
+
+			treeMarker =  dataLink.Find(id);
+			if (!treeMarker->IsValid()) {
+				delete treeMarker;
+				continue;
+			}
+			list = treeMarker->GetValue();
+			listMarker = list->GetMarker();
+			if (!listMarker->IsValid()) {
+				delete treeMarker;
+				delete listMarker;
+				continue;
+			}
+			id = listMarker->GetValue();
+			if (labels.Find(id)) {
+				delete treeMarker;
+				delete listMarker;
+				continue;
+			}
+			queueReq.push(id);
+			
 		}
-	} while (!forConsideration.isEmpty());
+		while (!queueReq.isEmpty())
+		{
+			id = queueReq.pop();
+			labels.Add(id, id);
+			IDReq.PushBack(id);
+
+			treeMarker = dataLink.Find(id);
+			if (!treeMarker->IsValid()) {
+				delete treeMarker;
+				continue;
+			}
+			list = treeMarker->GetValue();
+			listMarker = list->GetMarker();
+			if (!listMarker->IsValid()) {
+				delete treeMarker;
+				delete listMarker;
+				continue;
+			}
+			id = listMarker->GetValue();
+			if (labels.Find(id)) {
+				delete treeMarker;
+				delete listMarker;
+				continue;
+			}
+			queuePrim.push(id);
+		}
+	}
 }
 
-//WhY did it make so strange
+void Model::FindRequirementsByID(Array<ID>& IDReq, Array<Requirement*>& Requirements) {
+	for (int i = 0; i < IDReq.GetSize(); ++i) {
+		BinSearchTree<ID, Requirement*>::TreeMarker* marker = dataReq.Find(IDReq[i]);
+		if (!marker->IsValid()) {
+			delete marker;
+			continue;
+		}
+		Requirements.PushBack(marker->GetValue());
+		delete marker;
+	}
+}
 
-//bool Model::find(const ID& id, Array<ID> foundID)
-//{
-//	bool isFound = false;
-//	for (int i = 0; i < dataLink.GetSize(); i++)
-//	{
-//		if (dataLink[i].reqID == id)
-//		{
-//			foundID.PushBack(dataLink[i].primID);
-//			isFound = true;
-//		}
-//
-//		if (dataLink[i].primID == id)
-//		{
-//			foundID.PushBack(dataLink[i].reqID);
-//			isFound = true;
-//		}
-//	}
-//	return isFound;
-//}
+bool Model::find(const ID& id, Array<ID> foundID)
+{
+	bool isFound = false;
+	auto marker = dataLink.Find(id);
+	if (!marker->IsValid()) {
+		delete marker;
+		return isFound;
+	}
+	List<ID>* list = marker->GetValue();
+	List<ID>::ListMarker* listMarker = list->GetMarker();
+	if (!listMarker->IsValid()) {
+		delete marker;
+		delete listMarker;
+		return isFound;
+	}
+	do
+	{
+		foundID.PushBack(listMarker->GetValue());
+	} while (listMarker->MoveNext());
+	delete listMarker;
+	delete marker;
+	isFound = true;
+	return isFound;
+}
 
-//bool Model::find(const ID& idReq, Array<Primitive*>& foundPrim)
-//{
-//	bool isFound = false;
-//	for (int i = 0; i < dataLink.GetSize(); i++)
-//	{
-//		if (dataLink[i].reqID == idReq)
-//		{
-//			if (dataPrim.Find(dataLink[i].primID)) {
-//				foundPrim.PushBack(dataPrim.GetCurrent());
-//				isFound = true;
-//			}
-//		}
-//	}
-//	return isFound;
-//}
+bool Model::find(const ID& idReq, Array<Primitive*>& foundPrim)
+{
+	bool isFound = false;
+	auto marker = dataLink.Find(idReq);
+	if (!marker->IsValid()) {
+		delete marker;
+		return isFound;
+	}
+	List<ID>* list = marker->GetValue();
+	List<ID>::ListMarker* listMarker = list->GetMarker();
+	if (!listMarker->IsValid()) {
+		delete marker;
+		delete listMarker;
+		return isFound;
+	}
+	do
+	{
+		BinSearchTree<ID, Primitive*>::TreeMarker* markerPrim = dataPrim.Find(listMarker->GetValue());
+		foundPrim.PushBack(markerPrim->GetValue());
+		if (!markerPrim->IsValid()) {
+			delete markerPrim;
+			continue;
+		}
+		delete markerPrim;
+	} while (listMarker->MoveNext());
+	delete listMarker;
+	delete marker;
+	isFound = true;
+	return isFound;
+}
 
-//bool Model::find(const ID& idPrim, Array<Requirement*>& foundReq)
-//{
-//	bool isFound = false;
-//	for (int i = 0; i < dataLink.GetSize(); i++)
-//	{
-//		if (dataLink[i].primID == idPrim)
-//		{
-//			if (dataReq.Find(dataLink[i].reqID)) {
-//				foundReq.PushBack(dataReq.GetCurrent());
-//				isFound = true;
-//			}
-//		}
-//	}
-//	return isFound;
-//}
+bool Model::find(const ID& idPrim, Array<Requirement*>& foundReq)
+{
+	bool isFound = false;
+	auto marker = dataLink.Find(idPrim);
+	if (!marker->IsValid()) {
+		delete marker;
+		return isFound;
+	}
+	List<ID>* list = marker->GetValue();
+	List<ID>::ListMarker* listMarker = list->GetMarker();
+	if (!listMarker->IsValid()) {
+		delete marker;
+		delete listMarker;
+		return isFound;
+	}
+	do
+	{
+		BinSearchTree<ID, Requirement*>::TreeMarker* markerPrim = dataReq.Find(listMarker->GetValue());
+		if (!markerPrim->IsValid()) {
+			delete markerPrim;
+			continue;
+		}
+		foundReq.PushBack(markerPrim->GetValue());
+		delete markerPrim;
+	} while (listMarker->MoveNext());
+	delete listMarker;
+	delete marker;
+	isFound = true;
+	return isFound;
+}
 
 bool Model::DischargeInfoObjects(Array<infoObject>& dataPrimInfoObjects)
 {

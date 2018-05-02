@@ -1,4 +1,7 @@
-#pragma once
+#ifndef __SET
+#define __SET
+
+#include "Dictionary.h"
 
 template <typename TKey, typename TValue> class Set {
 private:
@@ -248,3 +251,5 @@ public:
 		}
 	}
 };
+
+#endif

@@ -1,7 +1,7 @@
 #ifndef __ARRAY
 #define __ARRAY
 
-#include <stdexcept>
+#include "List.h"
 
 template <class T> class Array
 {
@@ -337,6 +337,19 @@ public:
 			_storage[i] = _storage[i + 1];
 			_storage[i + 1] = Temp;
 		}
+		PopBack();
+	}
+
+	void EraseO_1_(int index){
+		if (index >= _size) {
+			throw std::out_of_range("Index out of range!");
+		}
+		if (index < 0) {
+			throw std::invalid_argument("Negative index!");
+		}
+		T Temp = _storage[index];
+		_storage[index] = _storage[GetSize() - 1];
+		_storage[GetSize() - 1] = Temp;
 		PopBack();
 	}
 

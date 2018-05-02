@@ -1,7 +1,6 @@
 #ifndef REQUIREMENT_H
 #define REQUIREMENT_H
-#include "Dictionary.h"
-#include <cmath>
+#include "Primitives.h"
 
 // find exact values and place in project
 #define OPTIM_EPS 1e-3

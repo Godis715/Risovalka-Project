@@ -125,8 +125,6 @@
     <ClCompile Include="..\Src\Model.cpp" />
     <ClCompile Include="..\Src\Requirement.cpp" />
     <ClCompile Include="..\Src\Vector2.cpp" />
-    <ClCompile Include="Dictionary.cpp" />
-    <ClCompile Include="Logger.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Include\Array.h" />

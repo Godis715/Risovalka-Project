@@ -1,5 +1,4 @@
 #include "Primitives.h"
-#include <cmath>
 
 ID Primitive::GetID() const {
 	return id;

@@ -1,13 +1,29 @@
 #include "Requirement.h"
-#include "Dictionary.h"
-#include "Array.h"
-#include "Queue.h"
-#include "Set.h"
+#include "Logger.h"
 
 #ifndef __MODEL
 #define __MODEL
 
-class Primitive;
+// ID
+// IDGenerator
+// Library //
+// INumerable
+// Queue
+// Dequeue
+// List
+// Array
+// Dictionary
+// Set
+// Hash-Table
+// Type
+// Vector2
+// Primitives
+// Requirement
+// Model
+
+// Without Logger.h
+
+
 
 class Model
 {
@@ -31,7 +47,9 @@ private:
 	IDGenerator* idGen;
 
 
-	void GetIDRequirements(const ID&, Array<ID>&);
+	void GetIDRequirementsInComponent(const ID&, Array<ID>&);
+
+	void FindRequirementsByID(Array<ID>&, Array<Requirement*>&);
 
 	//may be not using
 	bool find(const ID&, Array<ID>);

@@ -1,6 +1,8 @@
 #ifndef __TYPE
 #define __TYPE
 
+#include "Hash-Table.h"
+
 enum type_id { point = 1, segment, arc };
 
 //class Type {

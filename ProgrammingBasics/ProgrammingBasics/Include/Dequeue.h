@@ -1,4 +1,5 @@
 #pragma once
+#include "Queue.h"
 
 template<class Type> class Deck
 {

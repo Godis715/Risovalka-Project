@@ -1,16 +1,19 @@
 #pragma once
 
-#include "ID.h"
-#include "Primitives.h"
+#include "IDGenerator.h"
+#include <stdexcept>
+#include <cmath>
+#include <iostream>
+#include <string>
 
-/*template <typename T>*/ class IMarker {
+class IMarker {
 protected:
 	bool isValid;
 public:
 	// virtual T GetValue() const = 0;
 	virtual bool MoveNext() = 0;
-	virtual void DeleteCurrent() = 0;
-	bool IsValid() const {
+	//virtual void DeleteCurrent() = 0;
+	virtual bool IsValid() const {
 		return isValid;
 	}
 };
