@@ -10,6 +10,7 @@
 class Requirement {
 private:
 	const ID id;
+	const Requirement_id type;
 protected:
 	Array<double*> params;
 public:
@@ -20,6 +21,7 @@ public:
 	Array<double> gradient();
 	ID GetID() const;
 	Array<double*> GetParams();
+	Requirement_id GetType() const;
 };
 
 class DistBetPointsReq : public Requirement

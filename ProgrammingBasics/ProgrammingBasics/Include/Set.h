@@ -1,7 +1,7 @@
 #ifndef __SET
 #define __SET
 
-#include "Dictionary.h"
+#include "Pair-Tree.h"
 
 template <typename TKey, typename TValue> class Set {
 private:

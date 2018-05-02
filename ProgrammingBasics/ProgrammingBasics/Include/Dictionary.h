@@ -5,6 +5,10 @@
 
 // class - parent of all Nodes
 template <class TKey, class TVal> class Node {
+protected:
+	void virtual f() {
+		return;
+	}
 public:
 	Node(const TKey& _key, const TVal& _val) : key(_key), value(_val)
 	{
@@ -25,180 +29,8 @@ public:
 template <class TKey, class TVal> class BinSearchTree : public INumerable
 {
 private:
-	int size;
-	Node<TKey, TVal>* head;
-
 	virtual Node<TKey, TVal>* CreateNode(const TKey& _key, const TVal& _val) {
 		return new Node<TKey, TVal>(_key, _val);
-	}
-
-	void DeleteNode(Node<TKey, TVal>* node) {
-		--size;
-		if ((node->right == nullptr) && (node->left == nullptr)) {
-			if (node->parent != nullptr) {
-				if (node->key <= node->parent->key) {
-					node = node->parent;
-					delete node->left;
-					node->left = nullptr;
-				}
-				else {
-					node = node->parent;
-					delete node->right;
-					node->right = nullptr;
-				}
-				RestoreHigh(node);
-			}
-			else
-			{
-				head = nullptr;
-				delete node;
-			}
-			return;
-		}
-		// ����������� �� ������ ����� �������
-		bool inRight;
-		if ((node->right != nullptr) && (node->left != nullptr)) {
-
-			inRight = (node->right->high >= node->left->high);
-		}
-		else {
-
-			inRight = (node->right != nullptr);
-		}
-		//
-		Node<TKey, TVal>* temp = node->right;
-		if (inRight) {
-			
-			while (temp->left != nullptr)
-			{
-				temp = temp->left;
-			}
-
-			//
-			temp->left = node->left;
-			if (node->left != nullptr) {
-				node->left->parent = temp;
-			}
-			//
-
-			if (temp == node->right) {
-				// ��������, ���� � �������� ���� ���������� �������� ��� ������� �������	
-				temp->parent = node->parent;
-				if (node->parent != nullptr) {
-					if (node->key <= node->parent->key) {
-						node->parent->left = temp;
-					}
-					else {
-						node->parent->right = temp;
-					}
-					
-				}
-				else
-				{
-					head = temp;
-				}
-				//
-				delete node;
-				RestoreHigh(temp);
-				return;
-			}
-			//
-			temp->parent->left = temp->right;
-			if (temp->right != nullptr) {
-				temp->right->parent = temp->parent;
-			}
-			Node<TKey, TVal>* tempParent = temp->parent;
-			//
-			temp->parent = node->parent;
-			if (node->parent != nullptr) {
-				if (node->key <= node->parent->key) {
-					node->parent->left = temp;
-				}
-				else {
-					node->parent->right = temp;
-				}
-
-			}
-			else
-			{
-				head = temp;
-			}
-			//
-			temp->right = node->right;
-			node->right->parent = temp;
-			// ��� ��� �������������� ������ ���������� � ����������������,
-			// �� �� ������ ���� �� ������ � ���������
-
-			delete node;
-			RestoreHigh(tempParent);
-			return;
-		}
-		else {
-			temp = node->left;
-			while (temp->right != nullptr)
-			{
-				temp = temp->right;
-			}
-
-			//
-			temp->right = node->right;
-			if (node->right != nullptr) {
-				node->right->parent = temp;
-			}
-			//
-
-			if (temp == node->left) {
-				// ��������, ���� � �������� ���� ���������� �������� ��� ������� �������	
-				temp->parent = node->parent;
-				if (node->parent != nullptr) {
-					if (node->key > node->parent->key) {
-						node->parent->right = temp;
-					}
-					else {
-						node->parent->left = temp;
-					}
-
-				}
-				else
-				{
-					head = temp;
-				}
-				//
-				delete node;
-				RestoreHigh(temp);
-				return;
-			}
-			//
-			temp->parent->right = temp->left;
-			if (temp->left != nullptr) {
-				temp->left->parent = temp->parent;
-			}
-			Node<TKey, TVal>* tempParent = temp->parent;
-			//
-			temp->parent = node->parent;
-			if (node->parent != nullptr) {
-				if (node->key > node->parent->key) {
-					node->parent->right = temp;
-				}
-				else {
-					node->parent->left = temp;
-				}
-
-			}
-			else
-			{
-				head = temp;
-			}
-			//
-			temp->left = node->left;
-			node->left->parent = temp;
-			// ��� ��� �������������� ������ ���������� � ����������������,
-			// �� �� ������ ���� �� ������ � ���������
-
-			delete node;
-			RestoreHigh(tempParent);
-			return;
-		}
 	}
 
 	Node<TKey, TVal>* AddNode(const TKey& key, const TVal& val) {
@@ -245,39 +77,6 @@ private:
 				}
 			}
 		}
-	}
-
-	Node<TKey, TVal>* FindNode(const TKey& key) {
-		Node<TKey, TVal>* node = head;
-		while (node != nullptr)
-		{
-			if (node->key == key) {
-				return node;
-			}
-			if (key > node->key)
-			{
-				if (node->right != nullptr)
-				{
-					node = node->right;
-				}
-				else
-				{
-					return nullptr;
-				}
-			}
-			else
-			{
-				if (node->left != nullptr)
-				{
-					node = node->left;
-				}
-				else
-				{
-					return nullptr;
-				}
-			}
-		}
-		return nullptr;
 	}
 
 	void LL(Node<TKey, TVal>* node) {
@@ -394,6 +193,27 @@ private:
 		}
 	}
 
+	void RestoreHighOnce(Node<TKey, TVal>* node) {
+		int leftHigh = 0;
+		int rightHigh = 0;
+		if (node->left != nullptr) {
+			leftHigh = node->left->high;
+		}
+		if (node->right != nullptr) {
+			rightHigh = node->right->high;
+		}
+		if (rightHigh > leftHigh) {
+			node->high = rightHigh + 1;
+		}
+		else {
+			node->high = leftHigh + 1;
+		}
+	}
+
+protected:
+	int size;
+	Node<TKey, TVal>* head;
+	// Moving
 	void RestoreHigh(Node<TKey, TVal>* node) {
 		while (node != nullptr)
 		{
@@ -418,20 +238,207 @@ private:
 		}
 	}
 
-	void RestoreHighOnce(Node<TKey, TVal>* node) {
-		int leftHigh = 0;
-		int rightHigh = 0;
-		if (node->left != nullptr) {
-			leftHigh = node->left->high;
+	// Moving
+	Node<TKey, TVal>* FindNode(const TKey& key) {
+		Node<TKey, TVal>* node = head;
+		while (node != nullptr)
+		{
+			if (node->key == key) {
+				return node;
+			}
+			if (key > node->key)
+			{
+				if (node->right != nullptr)
+				{
+					node = node->right;
+				}
+				else
+				{
+					return nullptr;
+				}
+			}
+			else
+			{
+				if (node->left != nullptr)
+				{
+					node = node->left;
+				}
+				else
+				{
+					return nullptr;
+				}
+			}
 		}
-		if (node->right != nullptr) {
-			rightHigh = node->right->high;
+		return nullptr;
+	}
+
+	// Moving
+	void DeleteNode(Node<TKey, TVal>* node) {
+		--size;
+		if ((node->right == nullptr) && (node->left == nullptr)) {
+			if (node->parent != nullptr) {
+				if (node->key > node->parent->key) {
+					node = node->parent;
+					delete node->right;
+					node->right = nullptr;
+				}
+				else {
+					node = node->parent;
+					delete node->left;
+					node->left = nullptr;
+				}
+				RestoreHigh(node);
+			}
+			else
+			{
+				head = nullptr;
+				delete node;
+			}
+			return;
 		}
-		if (rightHigh > leftHigh) {
-			node->high = rightHigh + 1;
+		// ����������� �� ������ ����� �������
+		bool inRight;
+		if ((node->right != nullptr) && (node->left != nullptr)) {
+
+			inRight = (node->right->high >= node->left->high);
 		}
 		else {
-			node->high = leftHigh + 1;
+
+			inRight = (node->right != nullptr);
+		}
+		//
+		Node<TKey, TVal>* temp = node->right;
+		if (inRight) {
+
+			while (temp->left != nullptr)
+			{
+				temp = temp->left;
+			}
+
+			//
+			temp->left = node->left;
+			if (node->left != nullptr) {
+				node->left->parent = temp;
+			}
+			//
+
+			if (temp == node->right) {
+				// ��������, ���� � �������� ���� ���������� �������� ��� ������� �������	
+				temp->parent = node->parent;
+				if (node->parent != nullptr) {
+					if (node->key > node->parent->key) {
+						node->parent->right = temp;
+					}
+					else {
+						node->parent->left = temp;
+					}
+
+				}
+				else
+				{
+					head = temp;
+				}
+				//
+				delete node;
+				RestoreHigh(temp);
+				return;
+			}
+			//
+			temp->parent->left = temp->right;
+			if (temp->right != nullptr) {
+				temp->right->parent = temp->parent;
+			}
+			Node<TKey, TVal>* tempParent = temp->parent;
+			//
+			temp->parent = node->parent;
+			if (node->parent != nullptr) {
+				if (node->key > node->parent->key) {
+					node->parent->right = temp;
+				}
+				else {
+					node->parent->left = temp;
+				}
+
+			}
+			else
+			{
+				head = temp;
+			}
+			//
+			temp->right = node->right;
+			node->right->parent = temp;
+			// ��� ��� �������������� ������ ���������� � ����������������,
+			// �� �� ������ ���� �� ������ � ���������
+
+			delete node;
+			RestoreHigh(tempParent);
+			return;
+		}
+		else {
+			temp = node->left;
+			while (temp->right != nullptr)
+			{
+				temp = temp->right;
+			}
+
+			//
+			temp->right = node->right;
+			if (node->right != nullptr) {
+				node->right->parent = temp;
+			}
+			//
+
+			if (temp == node->left) {
+				// ��������, ���� � �������� ���� ���������� �������� ��� ������� �������	
+				temp->parent = node->parent;
+				if (node->parent != nullptr) {
+					if (node->key > node->parent->key) {
+						node->parent->right = temp;
+					}
+					else {
+						node->parent->left = temp;
+					}
+
+				}
+				else
+				{
+					head = temp;
+				}
+				//
+				delete node;
+				RestoreHigh(temp);
+				return;
+			}
+			//
+			temp->parent->right = temp->left;
+			if (temp->left != nullptr) {
+				temp->left->parent = temp->parent;
+			}
+			Node<TKey, TVal>* tempParent = temp->parent;
+			//
+			temp->parent = node->parent;
+			if (node->parent != nullptr) {
+				if (node->key > node->parent->key) {
+					node->parent->right = temp;
+				}
+				else {
+					node->parent->left = temp;
+				}
+
+			}
+			else
+			{
+				head = temp;
+			}
+			//
+			temp->left = node->left;
+			node->left->parent = temp;
+			// ��� ��� �������������� ������ ���������� � ����������������,
+			// �� �� ������ ���� �� ������ � ���������
+
+			delete node;
+			RestoreHigh(tempParent);
+			return;
 		}
 	}
 
@@ -447,9 +454,11 @@ public:
 	}
 
 	class TreeMarker : public IMarker {
-	private:
+	protected:
 		Node<TKey, TVal>* current;
+
 		BinSearchTree<TKey, TVal>* tree;
+		bool isValid;
 		
 	public:
 		TreeMarker(BinSearchTree<TKey, TVal>* _tree) : tree(_tree) {
@@ -475,6 +484,7 @@ public:
 			}
 			return current->value;
 		}
+
 		bool MoveNext() {
 			if (!isValid) {
 				return false;
@@ -515,6 +525,7 @@ public:
 			isValid = false;
 			return false;
 		}
+
 		bool MoveBegin() {
 			if (tree == nullptr || tree->head == nullptr) {
 				isValid = false;
@@ -528,6 +539,7 @@ public:
 			}
 			return true;
 		}
+
 		void DeleteCurrent() {
 			if (!isValid) {
 				return;
@@ -544,6 +556,52 @@ public:
 
 	virtual void Add(const TKey &key, const TVal &val) {
 		AddNode(key, val);
+	}
+
+	virtual void Add(Node<TKey, TVal>* node) {
+		size++;
+		node->left = nullptr;
+		node->parent = nullptr;
+		node->right = nullptr;
+		node->high = 1;
+		if (head == nullptr)
+		{
+			head = node;
+			return;
+		}
+
+		Node<TKey, TVal>* temp = head;
+		while (temp != nullptr)
+		{
+			if (node->key > temp->key)
+			{
+				if (temp->right != nullptr)
+				{
+					temp = temp->right;
+				}
+				else
+				{
+					temp->right = node;
+					node->parent = temp;
+					RestoreHigh(temp);
+					return;
+				}
+			}
+			else
+			{
+				if (temp->left != nullptr)
+				{
+					temp = temp->left;
+				}
+				else
+				{
+					temp->left = node;
+					node->parent = temp;
+					RestoreHigh(temp);
+					return;
+				}
+			}
+		}
 	}
 
 	virtual TreeMarker* Find(const TKey &key)
@@ -565,15 +623,15 @@ public:
 		}
 		Node<TKey, TVal>* temp = head;
 		Deck<Node<TKey, TVal>*> deck;
-		deck.PushTail(temp);
+		deck.PushBack(temp);
 		while (deck.GetSize() > 0)
 		{
-			temp = deck.PopTail();
+			temp = deck.PopBack();
 			if (temp->left != nullptr) {
-				deck.PushTail(temp->left);
+				deck.PushBack(temp->left);
 			}
 			if (temp->right != nullptr) {
-				deck.PushTail(temp->right);
+				deck.PushBack(temp->right);
 			}
 			delete temp;
 		}

@@ -1,8 +1,7 @@
-#include "Requirement.h"
-#include "Logger.h"
-
 #ifndef __MODEL
 #define __MODEL
+
+#include "Data.h"
 
 // ID
 // IDGenerator
@@ -13,16 +12,16 @@
 // List
 // Array
 // Dictionary
+// Pair-Tree
 // Set
 // Hash-Table
 // Type
 // Vector2
 // Primitives
 // Requirement
+// Logger
+// Data
 // Model
-
-// Without Logger.h
-
 
 
 class Model
@@ -45,6 +44,8 @@ private:
 	Dict<ID, List<ID>*> dataLink;
 
 	IDGenerator* idGen;
+
+	Data data;
 
 
 	void GetIDRequirementsInComponent(const ID&, Array<ID>&);
@@ -91,7 +92,8 @@ public:
 	
 	//carefully delete
 	//bool createSegment(ID&, ID&, ID&);
-	bool createRequirement(const Requirement_id, Array<ID>&, Array<double>&);
+	bool CreateRequirementByID(const Requirement_id, Array<ID>&, Array<double>&);
+	bool CreateRequirement(const Requirement_id, Array<Primitive*>&, Array<double>&);
 
 	//rewrite!!!!!!!
 	bool getNearest(double, double, ID&, double&);
@@ -115,6 +117,24 @@ public:
 
 	//temp function
 	void OptimizeAllRequirements();
-};
 
+	// XXX Function
+
+	bool XXXCreateObject(const type_id, Array<double>&, ID&);
+
+	bool XXXCreateRequirementByID(const Requirement_id, Array<int>&, Array<ID>&, Array<double>&);
+
+	bool XXXCreateRequirement(const Requirement_id, Array<int>&, Array<Primitive*>&, Array<double>&);
+
+	void XXXGetRequirementsByID(int, const ID&, Array<Requirement*>&);
+
+	void XXXGetRequirementsIDByID(int, const ID&, Array<ID>&);
+
+	void XXXGetRequirementsType(int, const ID&, Array<Requirement_id>&);
+
+	void XXXDeleteRequirement(int, const ID&);
+
+	void XXXDeletePrimitive(int, const ID&);
+
+};
 #endif

@@ -15,17 +15,17 @@ type_id Primitive::GetType() {
 
 
 Point::Point(const Vector2& pos) :
-	Primitive(IDGenerator::getInstance()->generateID(), point)
+	Primitive(IDGenerator::getInstance()->generateID(), __point)
 {
 	this->position = pos;
 }
 Point::Point(double _x, double _y) :
-	Primitive(IDGenerator::getInstance()->generateID(), point)
+	Primitive(IDGenerator::getInstance()->generateID(), __point)
 {
 	this->position = Vector2(_x, _y);
 }
 Point::Point(const Point& _p) :
-	Primitive(IDGenerator::getInstance()->generateID(), point)
+	Primitive(IDGenerator::getInstance()->generateID(), __point)
 {
 	this->position = _p.position;
 }
@@ -46,7 +46,7 @@ void Point::SetPosition(double x, double y) {
 
 
 Segment::Segment(Point* _p1, Point* _p2) :
-	Primitive(IDGenerator::getInstance()->generateID(), segment)
+	Primitive(IDGenerator::getInstance()->generateID(), __segment)
 {
 	if (_p1 == nullptr || _p2 == nullptr) {
 		throw std::invalid_argument("Segment::Segment::parameters was nullptr");
@@ -110,7 +110,7 @@ double Segment::GetDistance(const Vector2& point) const {
 }
 
 Arc::Arc(Point* _p1, Point* _p2, double _angle) :
-	Primitive(IDGenerator::getInstance()->generateID(), arc)
+	Primitive(IDGenerator::getInstance()->generateID(), __arc)
 {
 	if (_p1 == nullptr || _p2 == nullptr) {
 		throw std::invalid_argument("Arc::Arc::parameters was nullptr");

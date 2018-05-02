@@ -7,82 +7,90 @@ private:
 	class Element
 	{
 	public:
-		Element * Next = nullptr;
-		Element* Prev = nullptr;
+		Element * next = nullptr;
+		Element* prev = nullptr;
 		Type value;
 	};
 
-	Element* Head = nullptr;
-	Element* Tail = nullptr;
-	int Size = 0;
+	Element* head;
+	Element* tail;
+	int size;
 public:
-	Deck() {}
+	Deck() {
+		head = nullptr;
+		tail = nullptr;
+		size = 0;
+	}
 	~Deck() {
 		DeleteDeck();
 	}
 	int GetSize() {
-		return Size;
+		return size;
 	}
 
-	void PushHead(Type newValue) {
-		Element* NewElement = new Element;
-		NewElement->value = newValue;
-		if (Size != 0) {
-			Head->Prev = NewElement;
-			NewElement->Next = Head;
+	void PushBegin(Type newValue) {
+		Element* newElement = new Element;
+		newElement->value = newValue;
+		if (size != 0) {
+			head->prev = newElement;
+			newElement->next = head;
 		}
 		else
 		{
-			Tail = NewElement;
+			tail = newElement;
 		}
-		Head = NewElement;
-		++Size;
+		head = newElement;
+		++size;
 		return;
 	}
 
-	void PushTail(Type newValue) {
-		if (Size == 0) {
-			PushHead(newValue);
+	void PushBack(Type newValue) {
+		if (size == 0) {
+			PushBegin(newValue);
 			return;
 		}
-		Element* NewElement = new Element;
-		NewElement->value = newValue;
-		NewElement->Prev = Tail;
-		Tail->Next = NewElement;
-		Tail = NewElement;
-		++Size;
+		Element* newElement = new Element;
+		newElement->value = newValue;
+		newElement->prev = tail;
+		tail->next = newElement;
+		tail = newElement;
+		++size;
 		return;
 	}
 
-	Type PopHead() {
-		if (Size == 0) {
+	Type PopBegin() {
+		if (size == 0) {
 			return 0;
 		}
-		Type head = Head->value;
-		Element* temp = Head;
-		Head = Head->Next;
-		--Size;
+		Type value = head->value;
+		Element* temp = head;
+		head = head->next;
+		--size;
 		delete temp;
-		return head;
+		return value;
 	}
 
-	Type PopTail() {
-		if (Size == 0) {
+	Type PopBack() {
+		if (size == 0) {
 			return 0;
 		}
-		Type tail = Tail->value;
-		Element* temp = Tail;
-		Tail = Tail->Prev;
-		--Size;
+		Type value = tail->value;
+		Element* temp = tail;
+		tail = tail->prev;
+		--size;
 		delete temp;
-		return tail;
+		return value;
 	}
 
 	void DeleteDeck() {
-		while (Size != 0)
+		while (size != 0)
 		{
-			PopHead();
+			PopBegin();
 		}
 		return;
+	}
+
+	bool IsEmpty() {
+		return (size == 0) && (head == nullptr) && (tail == nullptr);
 	}
 };
