@@ -1,4 +1,5 @@
-#pragma
+#ifndef __LOGGER
+#define __LOGGER
 
 #include "Requirement.h"
 
@@ -51,3 +52,5 @@ public:
 		}
 	}
 };
+
+#endif
