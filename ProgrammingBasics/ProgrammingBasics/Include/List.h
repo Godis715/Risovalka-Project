@@ -1,10 +1,10 @@
 #ifndef __LIST_H
 #define __LIST_H
+// EVG?-class LMarker
 
-#include "INumerable.h"
-#include <stdexcept>
+#include "Dequeue.h"
 
-template <typename T> class List : public INumerable<T>
+template <typename T> class List : public INumerable
 {
 private:
 	class Node
@@ -28,14 +28,14 @@ public:
 		tail = nullptr;
 		size = 0;
 	}
-	class Marker : public IMarker<T>
+	class ListMarker : public IMarker
 	{
 	private:
-		Node* current;
+		Node * current;
 		Node* prev;
 		List* list;
 	public:
-		Marker(List* _list)
+		ListMarker(List* _list)
 		{
 			if (_list->head == nullptr) {
 				isValid = false;
@@ -68,7 +68,7 @@ public:
 		}
 
 		bool MoveNext() {
-			if(!isValid || current->next == nullptr) {
+			if (!isValid || current->next == nullptr) {
 				isValid = false;
 				return false;
 			}
@@ -83,7 +83,7 @@ public:
 			}
 			return current->value;
 		}
-		
+
 		void AddAfter(const T& val) {
 			if (!isValid) {
 				return;
@@ -95,13 +95,18 @@ public:
 			}
 			list->size++;
 		}
+
+		// &&&&&??????
+		bool IsValid() const {
+			return isValid;
+		}
 	};
 	
 	size_t GetSize() const {
 		return size;
 	}
-	IMarker<T>* GetMarker() {
-		return new Marker(this);
+	ListMarker* GetMarker() {
+		return new ListMarker(this);
 	}
 	void PushTail(const T& val) {
 		if (size == 0)

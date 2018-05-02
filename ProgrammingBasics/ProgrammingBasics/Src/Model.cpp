@@ -1,6 +1,4 @@
 #include "Model.h"
-#include <iostream>
-#include <stdexcept>
 
 Model::Link::Link(const ID& primID, const ID& reqID)
 {
@@ -8,83 +6,172 @@ Model::Link::Link(const ID& primID, const ID& reqID)
 	this->reqID = reqID;
 }
 
-void Model::GetIDRequirements(const ID& id, Array<ID>& FoundIDRequirement)
+
+void Model::GetIDRequirementsInComponent(const ID& idPrim, Array<ID>& IDReq)
 {
 	Dict<ID, ID> labels;
-	Queue<ID> forConsideration;
-	forConsideration.push(id);
-	do
-	{
-		ID tempID = forConsideration.pop();
-		if (!labels.Find(tempID))
-		{
-			for (int i = 0; i < dataLink.GetSize(); i++)
-			{
-				if (dataLink[i].reqID == id)
-				{
-					forConsideration.push(dataLink[i].primID);
-				}
+	Queue<ID> queuePrim;
+	Queue<ID> queueReq;
+	auto marker = dataLink.GetMarker();
+	List<ID>* list;
+	List<ID>::ListMarker* listMarker;
+	ID id;
+	BinSearchTree<ID, List<ID>*>::TreeMarker* treeMarker;
 
-				if (dataLink[i].primID == id)
-				{
-					FoundIDRequirement.PushBack(dataLink[i].reqID);
-					forConsideration.push(dataLink[i].reqID);
-				}
+	queuePrim.push(idPrim);
+	while (!queuePrim.isEmpty())
+	{
+		while (!queuePrim.isEmpty())
+		{
+			id = queuePrim.pop();
+			labels.Add(id, id);
+
+			treeMarker =  dataLink.Find(id);
+			if (!treeMarker->IsValid()) {
+				delete treeMarker;
+				continue;
 			}
-			labels.Add(tempID, tempID);
+			list = treeMarker->GetValue();
+			listMarker = list->GetMarker();
+			if (!listMarker->IsValid()) {
+				delete treeMarker;
+				delete listMarker;
+				continue;
+			}
+			id = listMarker->GetValue();
+			if (labels.Find(id)) {
+				delete treeMarker;
+				delete listMarker;
+				continue;
+			}
+			queueReq.push(id);
+			
 		}
-	} while (!forConsideration.isEmpty());
+		while (!queueReq.isEmpty())
+		{
+			id = queueReq.pop();
+			labels.Add(id, id);
+			IDReq.PushBack(id);
+
+			treeMarker = dataLink.Find(id);
+			if (!treeMarker->IsValid()) {
+				delete treeMarker;
+				continue;
+			}
+			list = treeMarker->GetValue();
+			listMarker = list->GetMarker();
+			if (!listMarker->IsValid()) {
+				delete treeMarker;
+				delete listMarker;
+				continue;
+			}
+			id = listMarker->GetValue();
+			if (labels.Find(id)) {
+				delete treeMarker;
+				delete listMarker;
+				continue;
+			}
+			queuePrim.push(id);
+		}
+	}
+}
+
+void Model::FindRequirementsByID(Array<ID>& IDReq, Array<Requirement*>& Requirements) {
+	for (int i = 0; i < IDReq.GetSize(); ++i) {
+		BinSearchTree<ID, Requirement*>::TreeMarker* marker = dataReq.Find(IDReq[i]);
+		if (!marker->IsValid()) {
+			delete marker;
+			continue;
+		}
+		Requirements.PushBack(marker->GetValue());
+		delete marker;
+	}
 }
 
 bool Model::find(const ID& id, Array<ID> foundID)
 {
 	bool isFound = false;
-	for (int i = 0; i < dataLink.GetSize(); i++)
-	{
-		if (dataLink[i].reqID == id)
-		{
-			foundID.PushBack(dataLink[i].primID);
-			isFound = true;
-		}
-
-		if (dataLink[i].primID == id)
-		{
-			foundID.PushBack(dataLink[i].reqID);
-			isFound = true;
-		}
+	auto marker = dataLink.Find(id);
+	if (!marker->IsValid()) {
+		delete marker;
+		return isFound;
 	}
+	List<ID>* list = marker->GetValue();
+	List<ID>::ListMarker* listMarker = list->GetMarker();
+	if (!listMarker->IsValid()) {
+		delete marker;
+		delete listMarker;
+		return isFound;
+	}
+	do
+	{
+		foundID.PushBack(listMarker->GetValue());
+	} while (listMarker->MoveNext());
+	delete listMarker;
+	delete marker;
+	isFound = true;
 	return isFound;
 }
 
 bool Model::find(const ID& idReq, Array<Primitive*>& foundPrim)
 {
 	bool isFound = false;
-	for (int i = 0; i < dataLink.GetSize(); i++)
-	{
-		if (dataLink[i].reqID == idReq)
-		{
-			if (dataPrim.Find(dataLink[i].primID)) {
-				foundPrim.PushBack(dataPrim.GetCurrent());
-				isFound = true;
-			}
-		}
+	auto marker = dataLink.Find(idReq);
+	if (!marker->IsValid()) {
+		delete marker;
+		return isFound;
 	}
+	List<ID>* list = marker->GetValue();
+	List<ID>::ListMarker* listMarker = list->GetMarker();
+	if (!listMarker->IsValid()) {
+		delete marker;
+		delete listMarker;
+		return isFound;
+	}
+	do
+	{
+		BinSearchTree<ID, Primitive*>::TreeMarker* markerPrim = dataPrim.Find(listMarker->GetValue());
+		foundPrim.PushBack(markerPrim->GetValue());
+		if (!markerPrim->IsValid()) {
+			delete markerPrim;
+			continue;
+		}
+		delete markerPrim;
+	} while (listMarker->MoveNext());
+	delete listMarker;
+	delete marker;
+	isFound = true;
 	return isFound;
 }
 
 bool Model::find(const ID& idPrim, Array<Requirement*>& foundReq)
 {
 	bool isFound = false;
-	for (int i = 0; i < dataLink.GetSize(); i++)
-	{
-		if (dataLink[i].primID == idPrim)
-		{
-			if (dataReq.Find(dataLink[i].reqID)) {
-				foundReq.PushBack(dataReq.GetCurrent());
-				isFound = true;
-			}
-		}
+	auto marker = dataLink.Find(idPrim);
+	if (!marker->IsValid()) {
+		delete marker;
+		return isFound;
 	}
+	List<ID>* list = marker->GetValue();
+	List<ID>::ListMarker* listMarker = list->GetMarker();
+	if (!listMarker->IsValid()) {
+		delete marker;
+		delete listMarker;
+		return isFound;
+	}
+	do
+	{
+		BinSearchTree<ID, Requirement*>::TreeMarker* markerPrim = dataReq.Find(listMarker->GetValue());
+		if (!markerPrim->IsValid()) {
+			delete markerPrim;
+			continue;
+		}
+		foundReq.PushBack(markerPrim->GetValue());
+		delete markerPrim;
+	} while (listMarker->MoveNext());
+	delete listMarker;
+	delete marker;
+	isFound = true;
 	return isFound;
 }
 
@@ -108,7 +195,7 @@ bool Model::DischargeInfoObjects(Array<infoObject>& dataPrimInfoObjects)
 bool Model::createObject(type_id type, Array<double>& params, ID& obj_id) {
 	switch (type)
 	{
-	case point: {
+	case __point: {
 		if (params.GetSize() != 2) {
 			return false;
 		}
@@ -118,7 +205,7 @@ bool Model::createObject(type_id type, Array<double>& params, ID& obj_id) {
 		obj_id = _point->GetID();
 		return true;
 	}
-	case segment: {
+	case __segment: {
 		if (params.GetSize() != 4) {
 			return false;
 		}
@@ -134,7 +221,7 @@ bool Model::createObject(type_id type, Array<double>& params, ID& obj_id) {
 		obj_id = _seg->GetID();
 		return true;
 	}
-	case arc: {
+	case __arc: {
 		if (params.GetSize() != 5) {
 			return false;
 		}
@@ -176,31 +263,36 @@ bool Model::createObject(type_id type, Array<double>& params, ID& obj_id) {
 //	return false;
 //}
 
-bool Model::createRequirement(const Requirement_id _id, Array<ID>& id_arr, Array<double>& params) {
+bool Model::CreateRequirementByID(const Requirement_id type, Array<ID>& id_arr, Array<double>& params) {
 	Array<Primitive*> primitives;
 	for (int i = 0; i < id_arr.GetSize(); ++i) {
-		if (dataPrim.Find(id_arr[i])) {
-			primitives.PushBack(dataPrim.GetCurrent());
+
+		BinSearchTree<ID, Primitive*>::TreeMarker* marker = dataPrim.Find(id_arr[i]);
+		if (marker == nullptr) {
+			throw std::exception("INVALID ID in array!");
 		}
-		else {
-			return false;
-		}
+		primitives.PushBack(marker->GetValue());
+		delete marker;
 	}
-	switch (_id)
+	return CreateRequirement(type, primitives, params);
+}
+
+bool Model::CreateRequirement(const Requirement_id type, Array<Primitive*>& primitives, Array<double>& params) {
+	switch (type)
 	{
 	case distBetPoints: {
 		DistBetPointsReq* Requirement;
 		if (primitives.GetSize() != 2 && params.GetSize() != 1) {
 			return false;
 		}
-		if (primitives[0]->GetType() == point &&
-			primitives[1]->GetType() == point) {
+		if (primitives[0]->GetType() == __point &&
+			primitives[1]->GetType() == __point) {
 			Requirement = new DistBetPointsReq(dynamic_cast<Point*>(primitives[0]),
 				dynamic_cast<Point*>(primitives[1]),
 				params[0]);
 			dataReq.Add(Requirement->GetID(), Requirement);
-			dataLink.PushBack(Link(primitives[0]->GetID(), Requirement->GetID()));
-			dataLink.PushBack(Link(primitives[1]->GetID(), Requirement->GetID()));
+			dataLink.Add();
+			dataLink.Add();
 			return true;
 		}
 		else {
@@ -312,78 +404,79 @@ bool Model::createRequirement(const Requirement_id _id, Array<ID>& id_arr, Array
 			return false;
 		}
 	}
-	/*case triangle: {
-		Triangle* Requirement;
-		if ((primitives[0]->GetType() == segment)
-			&& (primitives[1]->GetType() == segment)
-			&& (primitives[2]->GetType() == segment)) {
-			Requirement = new Triangle(dynamic_cast<Segment*>(primitives[0]),
-				dynamic_cast<Segment*>(primitives[1]),
-				dynamic_cast<Segment*>(primitives[2]));
-			dataPrimReq.PushBack(Requirement);
-			return true;
-		}
-		else {
-			return false;
-		}
-	}*/
-	//case correctTriangle: {
-	//	ÑorrectTriangle* Requirement;
-	//	if ((primitives[0]->GetType() == segment)
-	//		&& (primitives[1]->GetType() == segment)
-	//		&& (primitives[2]->GetType() == segment)
-	//		&& (params.GetSize() > 0)) {
-	//		Requirement = new ÑorrectTriangle(dynamic_cast<Segment*>(primitives[0]),
-	//			dynamic_cast<Segment*>(primitives[1]),
-	//			dynamic_cast<Segment*>(primitives[2]),
-	//			params[0]);
-	//		dataPrimReq.PushBack(Requirement);
-	//		return true;
-	//	}
-	//	else {
-	//		return false;
-	//	}
-	//}
-	/* case nsAngle: {
-		NsAngle* Requirement;
-		ListE<Segment*> list;
-		for (int i = 0; i < primitives.GetSize(); ++i) {
-			if (segment == primitives[i]->GetType()) {
-				list.PushTail(dynamic_cast<Segment*>(primitives[i]));
-			}
-			else {
-				return false;
-			}
-		}
-		Requirement = new NsAngle(list);
-		dataPrimReq.PushBack(Requirement);
-		return true;
-	}
-	case correctNsAngle: {
-		CorrectNsAngle* Requirement;
-		
-		if (params.GetSize() > 0) {
-			ListE<Segment*> list;
-			for (int i = 0; i < primitives.GetSize(); ++i) {
-				if (segment == primitives[i]->GetType()) {
-					list.PushTail(dynamic_cast<Segment*>(primitives[i]));
-				}
-				else {
-					return false;
-				}
-			}
-			Requirement = new CorrectNsAngle(list, params[0]);
-			dataPrimReq.PushBack(Requirement);
-			return true;
-		}
-		else {
-			return false;
-		}
-	} */
+					 /*case triangle: {
+					 Triangle* Requirement;
+					 if ((primitives[0]->GetType() == segment)
+					 && (primitives[1]->GetType() == segment)
+					 && (primitives[2]->GetType() == segment)) {
+					 Requirement = new Triangle(dynamic_cast<Segment*>(primitives[0]),
+					 dynamic_cast<Segment*>(primitives[1]),
+					 dynamic_cast<Segment*>(primitives[2]));
+					 dataPrimReq.PushBack(Requirement);
+					 return true;
+					 }
+					 else {
+					 return false;
+					 }
+					 }*/
+					 //case correctTriangle: {
+					 //	ÑorrectTriangle* Requirement;
+					 //	if ((primitives[0]->GetType() == segment)
+					 //		&& (primitives[1]->GetType() == segment)
+					 //		&& (primitives[2]->GetType() == segment)
+					 //		&& (params.GetSize() > 0)) {
+					 //		Requirement = new ÑorrectTriangle(dynamic_cast<Segment*>(primitives[0]),
+					 //			dynamic_cast<Segment*>(primitives[1]),
+					 //			dynamic_cast<Segment*>(primitives[2]),
+					 //			params[0]);
+					 //		dataPrimReq.PushBack(Requirement);
+					 //		return true;
+					 //	}
+					 //	else {
+					 //		return false;
+					 //	}
+					 //}
+					 /* case nsAngle: {
+					 NsAngle* Requirement;
+					 ListE<Segment*> list;
+					 for (int i = 0; i < primitives.GetSize(); ++i) {
+					 if (segment == primitives[i]->GetType()) {
+					 list.PushTail(dynamic_cast<Segment*>(primitives[i]));
+					 }
+					 else {
+					 return false;
+					 }
+					 }
+					 Requirement = new NsAngle(list);
+					 dataPrimReq.PushBack(Requirement);
+					 return true;
+					 }
+					 case correctNsAngle: {
+					 CorrectNsAngle* Requirement;
+
+					 if (params.GetSize() > 0) {
+					 ListE<Segment*> list;
+					 for (int i = 0; i < primitives.GetSize(); ++i) {
+					 if (segment == primitives[i]->GetType()) {
+					 list.PushTail(dynamic_cast<Segment*>(primitives[i]));
+					 }
+					 else {
+					 return false;
+					 }
+					 }
+					 Requirement = new CorrectNsAngle(list, params[0]);
+					 dataPrimReq.PushBack(Requirement);
+					 return true;
+					 }
+					 else {
+					 return false;
+					 }
+					 } */
 	default:
 		return false;
 	}
 }
+
 
 double Model::GetError(){
 	double sum_error = 0;
@@ -715,7 +808,7 @@ bool Model::getObjParam(const ID& obj_id, Array<double>& result) {
 	if (dataPrimMarker != nullptr) {
 		obj = dataPrimMarker->GetValue();
 		switch (obj->GetType()) {
-		case point: {
+		case __point: {
 			Point* point = dynamic_cast<Point*>(obj);
 			result.Clear();
 			Vector2 pos = point->GetPosition();
@@ -725,7 +818,7 @@ bool Model::getObjParam(const ID& obj_id, Array<double>& result) {
 			return true;
 			break;
 		}
-		case segment: {
+		case __segment: {
 			Segment* segment = dynamic_cast<Segment*>(obj);
 			result.Clear();
 			Vector2 pos1 = segment->GetPoint1_pos();
@@ -738,7 +831,7 @@ bool Model::getObjParam(const ID& obj_id, Array<double>& result) {
 			return true;
 			break;
 		}
-		case arc: {
+		case __arc: {
 			Arc* arc = dynamic_cast<Arc*>(obj);
 			result.Clear();
 			Vector2 pos1 = arc->GetPoint1_pos();
@@ -771,7 +864,7 @@ bool Model::GetSegmentPoints(ID obj_id, Array<ID>& arr) {
 		return false;
 	}
 	obj = dataPrimMarker->GetValue();
-	if (obj->GetType() != segment) {
+	if (obj->GetType() != __segment) {
 		delete dataPrimMarker;
 		return false;
 	}
@@ -789,7 +882,7 @@ bool Model::GetArcPoints(ID obj_id, Array<ID>& arr) {
 		return false;
 	}
 	obj = dataPrimMarker->GetValue();
-	if (obj->GetType() != arc) {
+	if (obj->GetType() != __arc) {
 		return false;
 	}
 	Arc* arc = dynamic_cast<Arc*>(obj);
@@ -815,12 +908,12 @@ bool Model::getNearest(double x, double y, ID& obj_id, double& distance) {
 		double minDist = dataPrimMarker->GetValue()->GetDistance(pos);
 		while (dataPrimMarker->MoveNext()) {
 			double dist = dataPrimMarker->GetValue()->GetDistance(pos);
-			if (dataPrimMarker->GetValue()->GetType() == point) {
+			if (dataPrimMarker->GetValue()->GetType() == __point) {
 				if (dist < 5.0f) {
 					dist = 0.0;
 				}
 			}
-			if (dist < minDist && dataPrimMarker->GetValue()->GetType() == point) {
+			if (dist < minDist && dataPrimMarker->GetValue()->GetType() == __point) {
 				minDist = dist;
 				nearestObject = dataPrimMarker->GetValue()->GetID();
 			}
@@ -845,4 +938,107 @@ void Model::OptimizeAllRequirements() {
 	} while (dataReqMarker->MoveNext());
 	OptimizeRequirements(req);
 	delete dataReqMarker;
+}
+
+// XXX function
+
+bool Model::XXXCreateObject(const type_id type, Array<double>& params, ID& obj_id) {
+	switch (type)
+	{
+	case __point: {
+		if (params.GetSize() != 2) {
+			return false;
+		}
+		Point* point = new Point(params[0], params[1]);
+		obj_id = point->GetID();
+		data.dict->Add(obj_id, point);
+		return true;
+	}
+	case __segment: {
+		if (params.GetSize() != 4) {
+			return false;
+		}
+		Point* point1 = new Point(params[0], params[1]);
+		Point* point2 = new Point(params[2], params[3]);
+
+		Segment* segment = new Segment(point1, point2);
+		obj_id = segment->GetID();
+		data.dict->Add(point1->GetID(), point1);
+		data.dict->Add(point2->GetID(), point2);
+		data.dict->Add(obj_id, segment);
+		return true;
+	}
+	case __arc: {
+		if (params.GetSize() != 5) {
+			return false;
+		}
+		Point* point1 = new Point(params[0], params[1]);
+		Point* point2 = new Point(params[2], params[3]);
+
+		Arc* arc = new Arc(point1, point2, params[4]);
+		obj_id = arc->GetID();
+
+		data.dict->Add(point1->GetID(), point1);
+		data.dict->Add(point2->GetID(), point2);
+		data.dict->Add(obj_id, arc);
+
+		return true;
+	}
+	default:
+		return false;
+	}
+}
+
+bool Model::XXXCreateRequirementByID(const Requirement_id type, Array<int>& index, Array<ID>& IDPrims, Array<double>& params) {
+	Array<Primitive*> arrayPrim(IDPrims.GetSize());
+	if (IDPrims.GetSize() != index.GetSize()) {
+		throw std::exception("size is not equal!!!");
+	}
+	for (int i = 0; i < IDPrims.GetSize(); ++i) {
+		if (index[i] < 0) {
+			BinSearchTree<ID, Primitive*>::TreeMarker* marker = data.dict->Find(IDPrims[i]);
+			arrayPrim.PushBack(marker->GetValue());
+			delete marker;
+		}
+		else {
+			Data::GMarker* gMarker = data.Find(index[i], IDPrims[i]);
+			arrayPrim.PushBack(gMarker->GetValue());
+			delete gMarker;
+		}
+	}
+	return XXXCreateRequirement(type, index, arrayPrim, params);
+}
+
+bool XXXCreateRequirement(const Requirement_id type, Array<int>& index, Array<Primitive*>& Primitives, Array<double>& params) {
+
+}
+
+void Model::XXXGetRequirementsByID(int index, const ID& id, Array<Requirement*>& arrayReq) {
+	data.GetRequirementsByPrim(index, id, arrayReq);
+}
+
+void Model::XXXGetRequirementsIDByID(int index, const ID& id, Array<ID>& arrayReqID) {
+	data.GetIDRequirementsByPrim(index, id, arrayReqID);
+}
+
+void Model::XXXGetRequirementsType(int index, const ID& id, Array<Requirement_id>& arrayReqType) {
+	Array<Requirement*> arrayReq;
+	data.GetRequirementsByPrim(index, id, arrayReq);
+	for (int i = 0; i < arrayReq.GetSize(); ++i) {
+		arrayReqType.PushBack(arrayReq[i]->GetType());
+	}
+}
+
+void Model::XXXDeleteRequirement(int index, const ID& id) {
+	data.DeleteRequirement(index, id);
+}
+
+void Model::XXXDeletePrimitive(int index, const ID& id) {
+	if (index < 0) {
+		BinSearchTree<ID, Primitive*>::TreeMarker* marker = data.dict->Find(id);
+		marker->DeleteCurrent();
+		delete marker;
+		return;
+	}
+	data.DeletePrimitive(index, id);
 }

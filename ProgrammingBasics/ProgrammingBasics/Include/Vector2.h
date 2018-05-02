@@ -1,6 +1,8 @@
 #ifndef __VECTOR2
 #define __VECTOR2
 
+#include "Type.h"
+
 class Vector2 {
 private:
 public:

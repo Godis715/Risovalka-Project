@@ -1,14 +1,28 @@
-//#include "HyperGraph.h"
-#include "Requirement.h"
-#include "Dictionary.h"
-#include "Array.h"
-#include "Queue.h"
-#include "Set.h"
-
 #ifndef __MODEL
 #define __MODEL
 
-class Primitive;
+#include "Data.h"
+
+// ID
+// IDGenerator
+// Library //
+// INumerable
+// Queue
+// Dequeue
+// List
+// Array
+// Dictionary
+// Pair-Tree
+// Set
+// Hash-Table
+// Type
+// Vector2
+// Primitives
+// Requirement
+// Logger
+// Data
+// Model
+
 
 class Model
 {
@@ -31,8 +45,12 @@ private:
 
 	IDGenerator* idGen;
 
+	Data data;
 
-	void GetIDRequirements(const ID&, Array<ID>&);
+
+	void GetIDRequirementsInComponent(const ID&, Array<ID>&);
+
+	void FindRequirementsByID(Array<ID>&, Array<Requirement*>&);
 
 	//may be not using
 	bool find(const ID&, Array<ID>);
@@ -74,7 +92,8 @@ public:
 	
 	//carefully delete
 	//bool createSegment(ID&, ID&, ID&);
-	bool createRequirement(const Requirement_id, Array<ID>&, Array<double>&);
+	bool CreateRequirementByID(const Requirement_id, Array<ID>&, Array<double>&);
+	bool CreateRequirement(const Requirement_id, Array<Primitive*>&, Array<double>&);
 
 	//rewrite!!!!!!!
 	bool getNearest(double, double, ID&, double&);
@@ -98,6 +117,24 @@ public:
 
 	//temp function
 	void OptimizeAllRequirements();
-};
 
+	// XXX Function
+
+	bool XXXCreateObject(const type_id, Array<double>&, ID&);
+
+	bool XXXCreateRequirementByID(const Requirement_id, Array<int>&, Array<ID>&, Array<double>&);
+
+	bool XXXCreateRequirement(const Requirement_id, Array<int>&, Array<Primitive*>&, Array<double>&);
+
+	void XXXGetRequirementsByID(int, const ID&, Array<Requirement*>&);
+
+	void XXXGetRequirementsIDByID(int, const ID&, Array<ID>&);
+
+	void XXXGetRequirementsType(int, const ID&, Array<Requirement_id>&);
+
+	void XXXDeleteRequirement(int, const ID&);
+
+	void XXXDeletePrimitive(int, const ID&);
+
+};
 #endif

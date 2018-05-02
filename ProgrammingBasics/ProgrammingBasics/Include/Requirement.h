@@ -1,7 +1,6 @@
 #ifndef REQUIREMENT_H
 #define REQUIREMENT_H
-#include "Dictionary.h"
-#include <cmath>
+#include "Primitives.h"
 
 // find exact values and place in project
 #define OPTIM_EPS 1e-3
@@ -11,6 +10,7 @@
 class Requirement {
 private:
 	const ID id;
+	const Requirement_id type;
 protected:
 	Array<double*> params;
 public:
@@ -21,6 +21,7 @@ public:
 	Array<double> gradient();
 	ID GetID() const;
 	Array<double*> GetParams();
+	Requirement_id GetType() const;
 };
 
 class DistBetPointsReq : public Requirement

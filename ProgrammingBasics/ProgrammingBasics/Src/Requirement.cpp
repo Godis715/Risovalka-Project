@@ -28,3 +28,7 @@ Array<double> Requirement::gradient() {
 ID Requirement::GetID() const {
 	return id;
 }
+
+Requirement_id Requirement::GetType() const {
+	return type;
+}
