@@ -3,10 +3,10 @@
 
 #include "Hash-Table.h"
 
-enum type_id {
-	__point = 1,
-	__segment,
-	__arc
+enum prim_type {
+	point_t = 1,
+	segment_t,
+	arc_t
 };
 
 //class Type {
@@ -19,9 +19,9 @@ enum type_id {
 //	type_id GetTypeId() const;
 //};
 
-enum Requirement_id {
+enum req_type {
 	distBetPoints = 1,
-	EqualSegmentLen,
+	equalSegmentLen,
 	pointsOnTheOneHand,
 	distBetPointSeg,
 	angleBetSeg,

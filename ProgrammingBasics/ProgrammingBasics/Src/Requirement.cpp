@@ -29,6 +29,6 @@ ID Requirement::GetID() const {
 	return id;
 }
 
-Requirement_id Requirement::GetType() const {
+req_type Requirement::GetType() const {
 	return type;
 }

@@ -3,12 +3,14 @@
 
 #include "Requirement.h"
 
+using std::string;
+
 #define LEVEL_1 1
 #define LEVEL_2 2
 #define LEVEL_3 3
 #define MAX_LEVEL 3
 
-static class LoggerStatic {
+static class Logger {
 private:
 
 	static int minLevel;
@@ -52,5 +54,9 @@ public:
 		}
 	}
 };
+
+string operator + (int num, string str);
+
+string operator + (string str, int num);
 
 #endif

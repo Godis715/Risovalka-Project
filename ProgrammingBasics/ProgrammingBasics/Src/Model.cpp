@@ -192,10 +192,10 @@ bool Model::DischargeInfoObjects(Array<infoObject>& dataPrimInfoObjects)
 	return true;
 }
 
-bool Model::createObject(type_id type, Array<double>& params, ID& obj_id) {
+bool Model::createObject(prim_type type, Array<double>& params, ID& obj_id) {
 	switch (type)
 	{
-	case __point: {
+	case point_t: {
 		if (params.GetSize() != 2) {
 			return false;
 		}
@@ -205,7 +205,7 @@ bool Model::createObject(type_id type, Array<double>& params, ID& obj_id) {
 		obj_id = _point->GetID();
 		return true;
 	}
-	case __segment: {
+	case segment_t: {
 		if (params.GetSize() != 4) {
 			return false;
 		}
@@ -221,7 +221,7 @@ bool Model::createObject(type_id type, Array<double>& params, ID& obj_id) {
 		obj_id = _seg->GetID();
 		return true;
 	}
-	case __arc: {
+	case arc_t: {
 		if (params.GetSize() != 5) {
 			return false;
 		}
@@ -263,7 +263,7 @@ bool Model::createObject(type_id type, Array<double>& params, ID& obj_id) {
 //	return false;
 //}
 
-bool Model::CreateRequirementByID(const Requirement_id type, Array<ID>& id_arr, Array<double>& params) {
+bool Model::CreateRequirementByID(const req_type type, Array<ID>& id_arr, Array<double>& params) {
 	Array<Primitive*> primitives;
 	for (int i = 0; i < id_arr.GetSize(); ++i) {
 
@@ -277,7 +277,7 @@ bool Model::CreateRequirementByID(const Requirement_id type, Array<ID>& id_arr, 
 	return CreateRequirement(type, primitives, params);
 }
 
-bool Model::CreateRequirement(const Requirement_id type, Array<Primitive*>& primitives, Array<double>& params) {
+bool Model::CreateRequirement(const req_type type, Array<Primitive*>& primitives, Array<double>& params) {
 	switch (type)
 	{
 	case distBetPoints: {
@@ -285,8 +285,8 @@ bool Model::CreateRequirement(const Requirement_id type, Array<Primitive*>& prim
 		if (primitives.GetSize() != 2 && params.GetSize() != 1) {
 			return false;
 		}
-		if (primitives[0]->GetType() == __point &&
-			primitives[1]->GetType() == __point) {
+		if (primitives[0]->GetType() == point_t &&
+			primitives[1]->GetType() == point_t) {
 			Requirement = new DistBetPointsReq(dynamic_cast<Point*>(primitives[0]),
 				dynamic_cast<Point*>(primitives[1]),
 				params[0]);
@@ -299,13 +299,13 @@ bool Model::CreateRequirement(const Requirement_id type, Array<Primitive*>& prim
 			return false;
 		}
 	}
-	case EqualSegmentLen: {
+	case equalSegmentLen: {
 		if (primitives.GetSize() != 2) {
 			return false;
 		}
 		EqualSegmentLenReq* requirement;
-		if ((primitives[0]->GetType() == segment)
-			&& (primitives[1]->GetType() == segment)) {
+		if ((primitives[0]->GetType() == segment_t)
+			&& (primitives[1]->GetType() == segment_t)) {
 			requirement = new EqualSegmentLenReq(*dynamic_cast<Segment*>(primitives[0]),
 				*dynamic_cast<Segment*>(primitives[1]));
 			dataReq.Add(requirement->GetID(), requirement);
@@ -322,9 +322,9 @@ bool Model::CreateRequirement(const Requirement_id type, Array<Primitive*>& prim
 			return false;
 		}
 		PointsOnTheOneHand* requirement;
-		if ((primitives[0]->GetType() == segment)
-			&& (primitives[1]->GetType() == point)
-			&& (primitives[2]->GetType() == point)) {
+		if ((primitives[0]->GetType() == segment_t)
+			&& (primitives[1]->GetType() == point_t)
+			&& (primitives[2]->GetType() == point_t)) {
 			requirement = new PointsOnTheOneHand(*dynamic_cast<Segment*>(primitives[0]),
 				*dynamic_cast<Point*>(primitives[1]),
 				*dynamic_cast<Point*>(primitives[2]));
@@ -340,8 +340,8 @@ bool Model::CreateRequirement(const Requirement_id type, Array<Primitive*>& prim
 	}
 	case distBetPointSeg: {
 		DistanceBetweenPointSegment* Requirement;
-		if ((primitives[0]->GetType() == segment)
-			&& (primitives[1]->GetType() == point)
+		if ((primitives[0]->GetType() == segment_t)
+			&& (primitives[1]->GetType() == point_t)
 			&& (params.GetSize() > 0)) {
 			Requirement = new DistanceBetweenPointSegment(*dynamic_cast<Segment*>(primitives[0]),
 				*dynamic_cast<Point*>(primitives[1]),
@@ -357,8 +357,8 @@ bool Model::CreateRequirement(const Requirement_id type, Array<Primitive*>& prim
 	}
 	case angleBetSeg: {
 		AngleBetweenSegments* Requirement;
-		if ((primitives[0]->GetType() == segment)
-			&& (primitives[1]->GetType() == segment)
+		if ((primitives[0]->GetType() == segment_t)
+			&& (primitives[1]->GetType() == segment_t)
 			&& (params.GetSize() > 0)) {
 			Requirement = new AngleBetweenSegments(*dynamic_cast<Segment*>(primitives[0]),
 				*dynamic_cast<Segment*>(primitives[1]),
@@ -374,8 +374,8 @@ bool Model::CreateRequirement(const Requirement_id type, Array<Primitive*>& prim
 	}
 	case distBetPointArc: {
 		DistanceBetweenPointArc* Requirement;
-		if ((primitives[0]->GetType() == arc)
-			&& (primitives[1]->GetType() == point)
+		if ((primitives[0]->GetType() == arc_t)
+			&& (primitives[1]->GetType() == point_t)
 			&& (params.GetSize() > 0)) {
 			Requirement = new DistanceBetweenPointArc(*dynamic_cast<Arc*>(primitives[0]),
 				*dynamic_cast<Point*>(primitives[1]),
@@ -391,8 +391,8 @@ bool Model::CreateRequirement(const Requirement_id type, Array<Primitive*>& prim
 	}
 	case pointInArc: {
 		PointInArc* Requirement;
-		if ((primitives[0]->GetType() == arc)
-			&& (primitives[1]->GetType() == point)) {
+		if ((primitives[0]->GetType() == arc_t)
+			&& (primitives[1]->GetType() == point_t)) {
 			Requirement = new PointInArc(*dynamic_cast<Arc*>(primitives[0]),
 				*dynamic_cast<Point*>(primitives[1]));
 			dataReq.Add(Requirement->GetID(), Requirement);
@@ -786,7 +786,7 @@ void Model::OptimizeRequirements(const Array<Requirement*>& requirments) {
 	}
 }
 
-bool Model::getObjType(const ID& obj_id, type_id& type) {
+bool Model::getObjType(const ID& obj_id, prim_type& type) {
 	Primitive* obj = nullptr;
 	auto dataPrimMarker = dataPrim.Find(obj_id);
 
@@ -808,7 +808,7 @@ bool Model::getObjParam(const ID& obj_id, Array<double>& result) {
 	if (dataPrimMarker != nullptr) {
 		obj = dataPrimMarker->GetValue();
 		switch (obj->GetType()) {
-		case __point: {
+		case point_t: {
 			Point* point = dynamic_cast<Point*>(obj);
 			result.Clear();
 			Vector2 pos = point->GetPosition();
@@ -818,7 +818,7 @@ bool Model::getObjParam(const ID& obj_id, Array<double>& result) {
 			return true;
 			break;
 		}
-		case __segment: {
+		case segment_t: {
 			Segment* segment = dynamic_cast<Segment*>(obj);
 			result.Clear();
 			Vector2 pos1 = segment->GetPoint1_pos();
@@ -831,7 +831,7 @@ bool Model::getObjParam(const ID& obj_id, Array<double>& result) {
 			return true;
 			break;
 		}
-		case __arc: {
+		case arc_t: {
 			Arc* arc = dynamic_cast<Arc*>(obj);
 			result.Clear();
 			Vector2 pos1 = arc->GetPoint1_pos();
@@ -864,7 +864,7 @@ bool Model::GetSegmentPoints(ID obj_id, Array<ID>& arr) {
 		return false;
 	}
 	obj = dataPrimMarker->GetValue();
-	if (obj->GetType() != __segment) {
+	if (obj->GetType() != segment_t) {
 		delete dataPrimMarker;
 		return false;
 	}
@@ -882,7 +882,7 @@ bool Model::GetArcPoints(ID obj_id, Array<ID>& arr) {
 		return false;
 	}
 	obj = dataPrimMarker->GetValue();
-	if (obj->GetType() != __arc) {
+	if (obj->GetType() != arc_t) {
 		return false;
 	}
 	Arc* arc = dynamic_cast<Arc*>(obj);
@@ -908,12 +908,12 @@ bool Model::getNearest(double x, double y, ID& obj_id, double& distance) {
 		double minDist = dataPrimMarker->GetValue()->GetDistance(pos);
 		while (dataPrimMarker->MoveNext()) {
 			double dist = dataPrimMarker->GetValue()->GetDistance(pos);
-			if (dataPrimMarker->GetValue()->GetType() == __point) {
+			if (dataPrimMarker->GetValue()->GetType() == point_t) {
 				if (dist < 5.0f) {
 					dist = 0.0;
 				}
 			}
-			if (dist < minDist && dataPrimMarker->GetValue()->GetType() == __point) {
+			if (dist < minDist && dataPrimMarker->GetValue()->GetType() == point_t) {
 				minDist = dist;
 				nearestObject = dataPrimMarker->GetValue()->GetID();
 			}
@@ -942,10 +942,10 @@ void Model::OptimizeAllRequirements() {
 
 // XXX function
 
-bool Model::XXXCreateObject(const type_id type, Array<double>& params, ID& obj_id) {
+bool Model::XXXCreateObject(const prim_type type, Array<double>& params, ID& obj_id) {
 	switch (type)
 	{
-	case __point: {
+	case point_t: {
 		if (params.GetSize() != 2) {
 			return false;
 		}
@@ -954,7 +954,7 @@ bool Model::XXXCreateObject(const type_id type, Array<double>& params, ID& obj_i
 		data.dict->Add(obj_id, point);
 		return true;
 	}
-	case __segment: {
+	case segment_t: {
 		if (params.GetSize() != 4) {
 			return false;
 		}
@@ -968,7 +968,7 @@ bool Model::XXXCreateObject(const type_id type, Array<double>& params, ID& obj_i
 		data.dict->Add(obj_id, segment);
 		return true;
 	}
-	case __arc: {
+	case arc_t: {
 		if (params.GetSize() != 5) {
 			return false;
 		}
@@ -989,7 +989,7 @@ bool Model::XXXCreateObject(const type_id type, Array<double>& params, ID& obj_i
 	}
 }
 
-bool Model::XXXCreateRequirementByID(const Requirement_id type, Array<int>& index, Array<ID>& IDPrims, Array<double>& params) {
+bool Model::XXXCreateRequirementByID(const req_type type, Array<int>& index, Array<ID>& IDPrims, Array<double>& params) {
 	Array<Primitive*> arrayPrim(IDPrims.GetSize());
 	if (IDPrims.GetSize() != index.GetSize()) {
 		throw std::exception("size is not equal!!!");
@@ -1009,7 +1009,7 @@ bool Model::XXXCreateRequirementByID(const Requirement_id type, Array<int>& inde
 	return XXXCreateRequirement(type, index, arrayPrim, params);
 }
 
-bool XXXCreateRequirement(const Requirement_id type, Array<int>& index, Array<Primitive*>& Primitives, Array<double>& params) {
+bool XXXCreateRequirement(const req_type type, Array<int>& index, Array<Primitive*>& Primitives, Array<double>& params) {
 
 }
 
@@ -1021,7 +1021,7 @@ void Model::XXXGetRequirementsIDByID(int index, const ID& id, Array<ID>& arrayRe
 	data.GetIDRequirementsByPrim(index, id, arrayReqID);
 }
 
-void Model::XXXGetRequirementsType(int index, const ID& id, Array<Requirement_id>& arrayReqType) {
+void Model::XXXGetRequirementsType(int index, const ID& id, Array<req_type>& arrayReqType) {
 	Array<Requirement*> arrayReq;
 	data.GetRequirementsByPrim(index, id, arrayReq);
 	for (int i = 0; i < arrayReq.GetSize(); ++i) {

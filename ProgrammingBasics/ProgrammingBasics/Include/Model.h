@@ -79,7 +79,7 @@ public:
 			this->type = input.type;
 		}
 		Array<double> params;
-		type_id type;
+		prim_type type;
 	};
 
 	Model() { }
@@ -88,18 +88,18 @@ public:
 	~Model();
 
 	bool DischargeInfoObjects(Array<infoObject>&);
-	bool createObject(type_id, Array<double>&, ID&);
+	bool createObject(prim_type, Array<double>&, ID&);
 	
 	//carefully delete
 	//bool createSegment(ID&, ID&, ID&);
-	bool CreateRequirementByID(const Requirement_id, Array<ID>&, Array<double>&);
-	bool CreateRequirement(const Requirement_id, Array<Primitive*>&, Array<double>&);
+	bool CreateRequirementByID(const req_type, Array<ID>&, Array<double>&);
+	bool CreateRequirement(const req_type, Array<Primitive*>&, Array<double>&);
 
 	//rewrite!!!!!!!
 	bool getNearest(double, double, ID&, double&);
 
 
-	bool getObjType(const ID&, type_id&);
+	bool getObjType(const ID&, prim_type&);
 
 	//replace with GET CHILD 
 	bool GetSegmentPoints(ID, Array<ID>&);
@@ -120,17 +120,17 @@ public:
 
 	// XXX Function
 
-	bool XXXCreateObject(const type_id, Array<double>&, ID&);
+	bool XXXCreateObject(const prim_type, Array<double>&, ID&);
 
-	bool XXXCreateRequirementByID(const Requirement_id, Array<int>&, Array<ID>&, Array<double>&);
+	bool XXXCreateRequirementByID(const req_type, Array<int>&, Array<ID>&, Array<double>&);
 
-	bool XXXCreateRequirement(const Requirement_id, Array<int>&, Array<Primitive*>&, Array<double>&);
+	bool XXXCreateRequirement(const req_type, Array<int>&, Array<Primitive*>&, Array<double>&);
 
 	void XXXGetRequirementsByID(int, const ID&, Array<Requirement*>&);
 
 	void XXXGetRequirementsIDByID(int, const ID&, Array<ID>&);
 
-	void XXXGetRequirementsType(int, const ID&, Array<Requirement_id>&);
+	void XXXGetRequirementsType(int, const ID&, Array<req_type>&);
 
 	void XXXDeleteRequirement(int, const ID&);
 
