@@ -409,10 +409,10 @@ private:
 //};
 
 // carefully delete
-//class ÑorrectTriangle : public Requirement
+//class ï¿½orrectTriangle : public Requirement
 //{
 //public:
-//	ÑorrectTriangle(Segment* _segment1, Segment* _segment2, Segment* _segment3, double _size) :
+//	ï¿½orrectTriangle(Segment* _segment1, Segment* _segment2, Segment* _segment3, double _size) :
 //		Requirement(IDGenerator::getInstance()->generateID())
 //	{
 //		size = _segment1->GetLength() + _segment2->GetLength() + _segment2->GetLength();
@@ -515,7 +515,7 @@ private:
 //		}
 //
 //	}
-//	~ÑorrectTriangle() {}
+//	~ï¿½orrectTriangle() {}
 //	double error() {
 //		double sumError = 0;
 //		if (bijection[0]) {
