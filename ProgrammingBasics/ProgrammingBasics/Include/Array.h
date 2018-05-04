@@ -340,7 +340,7 @@ public:
 		PopBack();
 	}
 
-	void EraseO_1_(int index){
+	/*void EraseO_1_(int index){
 		if (index >= _size) {
 			throw std::out_of_range("Index out of range!");
 		}
@@ -351,7 +351,7 @@ public:
 		_storage[index] = _storage[GetSize() - 1];
 		_storage[GetSize() - 1] = Temp;
 		PopBack();
-	}
+	}*/
 
 	/*int BinSearch(int l, int r, T value)
 	{

@@ -24,14 +24,34 @@ public:
 	~PairTree() {}
 
 	class PairMarker :
-		public BinSearchTree<TKey, TValFirst>::TreeMarker
+		public BinSearchTree<TKey, TValFirst>::Marker
 	{
 	public:
 
 		PairMarker(BinSearchTree<TKey, TValFirst>* _tree) :
-			BinSearchTree<TKey, TValFirst>::TreeMarker(_tree) {}
+			BinSearchTree<TKey, TValFirst>::Marker(_tree) {}
 		PairMarker(BinSearchTree<TKey, TValFirst>* _tree, Node<TKey, TValFirst>* _node) :
-			BinSearchTree<TKey, TValFirst>::TreeMarker(_tree, _node) {}
+			BinSearchTree<TKey, TValFirst>::Marker(_tree, _node) { }
+		PairMarker(PairMarker&& marker) : BinSearchTree<TKey, TValFirst>::Marker(marker.tree, marker.current) {
+			marker.tree = nullptr;
+			marker.current = nullptr;
+		}
+		PairMarker(const PairMarker& marker) : BinSearchTree<TKey, TValFirst>::Marker(marker.tree, marker.current) {
+			
+		}
+		PairMarker() { }
+
+		void operator=(const PairMarker& marker) {
+			this->current = marker->current;
+			this->tree = marker->tree;
+		}
+		void operator=(PairMarker&& marker) {
+			this->current = marker->current;
+			this->tree = marker->tree;
+
+			marker->current = nullptr;
+			marker->tree = nullptr;
+		}
 		~PairMarker() {}
 
 		List<PairNode<TKey, TValSecond, TValFirst >*>* GetList() {
@@ -58,8 +78,13 @@ public:
 		}
 	};
 
-	PairMarker* GetMarker() {
-		return new PairMarker(this);
+	PairMarker FindPair(const TKey& key) {
+		auto node = GetNode(key);
+		return PairMarker(this, node);
+	}
+
+	PairMarker GetPairMarker() {
+		return PairMarker(this);
 	}
 
 	void Merge(PairTree<TKey, TValFirst, TValSecond>* tree) {
@@ -100,6 +125,8 @@ public:
 		PairNode<TKey, TValFirst, TValSecond>* pairNode = dynamic_cast<PairNode<TKey, TValFirst, TValSecond>*>(node);
 		return pairNode;
 	}
+
+
 
 	void Delete(Node<TKey, TValFirst>* node) {
 		this->DeleteNode(node);

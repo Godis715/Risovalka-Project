@@ -31,39 +31,37 @@ private:
 		PairTree<ID, Prim, Req>* treePrim = data[index]->treePrim;
 		PairTree<ID, Req, Prim>* treeReq = data[index]->treeReq;
 
-		PairTree<ID, Prim, Req>::PairMarker* markerPrim = treePrim->GetMarker();
+		PairTree<ID, Prim, Req>::PairMarker markerPrim = treePrim->GetPairMarker();
 		do
 		{
-			markerPrim->MakeFlag();
-		} while (markerPrim->MoveNext());
-		delete markerPrim;
+			markerPrim.MakeFlag();
+		} while (++markerPrim);
 
-		PairTree<ID, Req, Prim>::PairMarker* markerReq = treeReq->GetMarker();
+		PairTree<ID, Req, Prim>::PairMarker markerReq = treeReq->GetPairMarker();
 		do
 		{
-			markerReq->MakeFlag();
-		} while (markerReq->MoveNext());
-		delete markerReq;
+			markerReq.MakeFlag();
+		} while (++markerReq);
 	}
 
 	void TakePrim(Deck<PairNode<ID, Prim, Req>*>& deckPrim, List<PairNode<ID, Prim, Req>*>* list) {
-		List<PairNode<ID, Prim, Req>*>::ListMarker* marker = list->GetMarker();
+		auto marker = list->GetMarker();
 		do
 		{
-			if (marker->GetValue()->flag) {
-				deckPrim.PushBack(marker->GetValue());
+			if (marker.GetValue()->flag) {
+				deckPrim.PushBack(marker.GetValue());
 			}
-		} while (marker->MoveNext());
+		} while (++marker);
 	}
 
 	void TakeReq(Deck<PairNode<ID, Req, Prim>*> deckReq, List<PairNode<ID, Req, Prim>*>* list) {
-		List<PairNode<ID, Req, Prim>*>::ListMarker* marker = list->GetMarker();
+		auto marker = list->GetMarker();
 		do
 		{
-			if (marker->GetValue()->flag) {
-				deckReq.PushBack(marker->GetValue());
+			if (marker.GetValue()->flag) {
+				deckReq.PushBack(marker.GetValue());
 			}
-		} while (marker->MoveNext());
+		} while (++marker);
 	}
 
 	void SplitingAndBFS(int index) {
@@ -109,7 +107,7 @@ private:
 			return;
 		}
 
-		PairTree<ID, Prim, Req>::PairMarker* marker = treePrim->GetMarker();
+		PairTree<ID, Prim, Req>::PairMarker marker = treePrim->GetPairMarker();
 	
 		/*nodePrim = treePrim->GetNode();
 		deckPrim.PushBack(nodePrim);
@@ -125,10 +123,9 @@ private:
 		}*/
 		do
 		{
-			delete marker->GetList();
-			dict->Add(marker->GetKey(), marker->GetValue());
-		} while (marker->MoveNext());
-		delete marker;
+			delete marker.GetList();
+			dict->Add(marker.GetKey(), marker.GetValue());
+		} while (++marker);
 		delete treePrim;
 		delete treeReq;
 		data.Erase(index);
@@ -153,29 +150,30 @@ private:
 	}
 public:
 	Data() {
-		dict = new Dict<ID, Prim>;
+		dict = new BinSearchTree<ID, Prim>;
 	}
 	~Data() {}
 
-	class GMarker : public IMarker
+	class GMarker
 	{
 	private:
-		PairTree<ID, Prim, Req>::PairMarker* marker;
+		PairTree<ID, Prim, Req>::PairMarker marker;
 		Data* graph;
 		int index;
+		bool isValid;
 	public:
-		GMarker(Data* _graph) : graph(_graph), IMarker() {
+		GMarker(Data* _graph) : graph(_graph) {
 			MoveBegin();
 		}
-		GMarker(Data* _graph, PairTree<ID, Prim, Req>::PairMarker* _marker) : graph(_graph), marker(_marker), IMarker() {
-			this->isValid = marker->IsValid();
+		GMarker(Data* _graph, PairTree<ID, Prim, Req>::PairMarker _marker) : graph(_graph), marker(_marker) {
+			this->isValid = marker.IsValid();
 		}
 
 		Prim GetValue() const {
 			if (!isValid) {
 				throw std::exception("Marker was not valid");
 			}
-			return marker->GetValue();
+			return marker.GetValue();
 		}
 
 
@@ -183,33 +181,33 @@ public:
 			if (!isValid) {
 				throw std::exception("Marker was not valid");
 			}
-			return marker->GetKey();
+			return marker.GetKey();
 		}
 
 		List<PairNode<ID, Req, Prim>*>* GetList() {
 			if (!isValid) {
 				throw std::exception("Marker was not valid");
 			}
-			return marker->GetList();
+			return marker.GetList();
 		}
 
 		void GetReqs(Array<Req>& reqs) {
 			if (!isValid) {
 				throw std::exception("Marker was not valid");
 			}
-			List<PairNode<ID, Req, Prim>*>* list = marker->GetList();
-			List<PairNode<ID, Req, Prim>*>::ListMarker* listMarker = list->GetMarker();
+			List<PairNode<ID, Req, Prim>*>* list = marker.GetList();
+			auto listMarker = list->GetMarker();
 			do
 			{
-				reqs.PushBack(listMarker->GetValue()->value);
-			} while (listMarker->MoveNext());
+				reqs.PushBack(listMarker.GetValue()->value);
+			} while (++listMarker);
 		}
 
 		bool MoveNext() {
 			if (!isValid) {
 				return false;
 			}
-			if (marker->MoveNext()) {
+			if (++marker) {
 				return true;
 			}
 			else {
@@ -217,7 +215,6 @@ public:
 				if (index >= graph->GetSize()) {
 					return false;
 				}
-				delete marker;
 				marker = graph->GetPairMarker(index);
 				return true;
 			}
@@ -225,9 +222,8 @@ public:
 
 		void MoveBegin() {
 			index = 0;
-			delete marker;
 			marker = graph->GetPairMarker(index);
-			if (marker->IsValid()) {
+			if (marker.IsValid()) {
 				isValid = true;
 			}
 		}
@@ -239,7 +235,7 @@ public:
 				throw std::exception("Marker was not valid");
 			}
 			isValid = false;
-			marker->DeleteCurrent();
+			marker.DeleteCurrent();
 		}
 
 		int GetIndex() const {
@@ -247,23 +243,23 @@ public:
 		}
 	};
 
-	Dict<ID, Prim>* dict;
+	BinSearchTree<ID, Prim>* dict;
 
 	size_t GetSize() const {
 		return data.GetSize();
 	}
 
-	PairTree<ID, Prim, Req>::PairMarker* GetPairMarker(int index) {
-		return data[index]->treePrim->GetMarker();
+	PairTree<ID, Prim, Req>::PairMarker GetPairMarker(int index) {
+		return data[index]->treePrim->GetPairMarker();
 	}
 
 	GMarker* GetMarker() {
 		return new GMarker(this);
 	}
 
-	GMarker* Find(int index, const ID& key) {
-		PairTree<ID, Prim, Req>::PairMarker* marker = dynamic_cast<PairTree<ID, Prim, Req>::PairMarker*>(data[index]->treePrim->Find(key));
-		return new GMarker(this, marker);
+	GMarker Find(int index, const ID& key) {
+		auto marker = data[index]->treePrim->FindPair(key);
+		return GMarker(this, marker);
 	}
 
 	void GetRequirementsByPrim(int index, const ID& IDPrim, Array<Req>& arrayReq) {
@@ -271,12 +267,11 @@ public:
 		if (node == nullptr) {
 			return;
 		}
-		List<PairNode<ID, Req, Prim>*>::ListMarker* marker =  node->list->GetMarker();
+		auto marker =  node->list->GetMarker();
 		do
 		{
-			arrayReq.PushBack(marker->GetValue()->value);
-		} while (marker->MoveNext());
-		delete marker;
+			arrayReq.PushBack(marker.GetValue()->value);
+		} while (++marker);
 	}
 
 	void GetIDRequirementsByPrim(int index, const ID& IDPrim, Array<ID>& arrayReq) {
@@ -284,12 +279,11 @@ public:
 		if (node == nullptr) {
 			return;
 		}
-		List<PairNode<ID, Req, Prim>*>::ListMarker* marker = node->list->GetMarker();
+		auto marker = node->list->GetMarker();
 		do
 		{
-			arrayReq.PushBack(marker->GetValue()->key);
-		} while (marker->MoveNext());
-		delete marker;
+			arrayReq.PushBack(marker.GetValue()->key);
+		} while (++marker);
 	}
 
 	void DeleteComponent(int index) {
@@ -308,40 +302,39 @@ public:
 			return;
 		}
 		List<PairNode<ID, Req, Prim>*>* list = temp->list;
-		List<PairNode<ID, Req, Prim>*>::ListMarker* listMarker = list->GetMarker();
+		auto listMarker = list->GetMarker();
 
 		do
 		{
-			node2 = listMarker->GetValue();
+			node2 = listMarker.GetValue();
 			List<PairNode<ID, Prim, Req>*>* listReqOnPrim = node2->list;
-			List<PairNode<ID, Prim, Req>*>::ListMarker* listMarkerReq = listReqOnPrim->GetMarker();
+			auto listMarkerReq = listReqOnPrim->GetMarker();
 
 			do
 			{
-				node1 = listMarkerReq->GetValue();
+				node1 = listMarkerReq.GetValue();
 				// Clearing link on this Req
 				if (node1 != temp) {
 					List<PairNode<ID, Req, Prim>*>* listPrimOnReq = node1->list;
-					List<PairNode<ID, Req, Prim>*>::ListMarker* listMarkerPrim = listPrimOnReq->GetMarker();
+					auto listMarkerPrim = listPrimOnReq->GetMarker();
 
 					do
 					{
-						if (node2 == listMarkerPrim->GetValue()) {
-							listMarkerPrim->DeleteCurrent();
-							delete listMarkerPrim;
+						if (node2 == listMarkerPrim.GetValue()) {
+							listMarkerPrim.DeleteCurrent();
+							
 							break;
 						}
-					} while (listMarkerPrim->MoveNext());
+					} while (++listMarkerPrim);
 				}
-			} while (listMarkerReq->MoveNext());
+			} while (++listMarkerReq);
 			// delete Requariments
-			delete listMarkerReq;
+			
 			delete listReqOnPrim;
 			delete node2->value;
 			treeSecond->Delete(node2);
-		} while (listMarker->MoveNext());
+		} while (++listMarker);
 		// delete Primitive
-		delete listMarker;
 		delete list;
 		delete temp->value;
 		treeFirst->Delete(temp);
@@ -359,26 +352,26 @@ public:
 		}
 
 		List<PairNode<ID, Prim, Req>*>* listReqOnPrim = node2->list;
-		List<PairNode<ID, Prim, Req>*>::ListMarker* listMarkerReq = listReqOnPrim->GetMarker();
+		auto listMarkerReq = listReqOnPrim->GetMarker();
 
 		do
 		{
-			node1 = listMarkerReq->GetValue();
+			node1 = listMarkerReq.GetValue();
 			// Clearing link on this Req
 			List<PairNode<ID, Req, Prim>*>* listPrimOnReq = node1->list;
-			List<PairNode<ID, Req, Prim>*>::ListMarker* listMarkerPrim = listPrimOnReq->GetMarker();
+			auto listMarkerPrim = listPrimOnReq->GetMarker();
 
 			do
 			{
-				if (node2 == listMarkerPrim->GetValue()) {
-					listMarkerPrim->DeleteCurrent();
-					delete listMarkerPrim;
+				if (node2 == listMarkerPrim.GetValue()) {
+					listMarkerPrim.DeleteCurrent();
+					
 					break;
 				}
-			} while (listMarkerPrim->MoveNext());
-		} while (listMarkerReq->MoveNext());
+			} while (++listMarkerPrim);
+		} while (++listMarkerReq);
 		// delete Requariments
-		delete listMarkerReq;
+		
 		delete listReqOnPrim;
 		delete node2->value;
 		treeSecond->Delete(node2);
@@ -459,11 +452,11 @@ public:
 		if (index >= data.GetSize()) {
 			return;
 		}
-		PairTree<ID, Prim, Req>::PairMarker* marker = data[index]->treePrim->GetMarker();
+		PairTree<ID, Prim, Req>::PairMarker marker = data[index]->treePrim->GetPairMarker();
 		do
 		{
-			prims.PushBack(marker->GetValue());
-		} while (marker->MoveNext());
+			prims.PushBack(marker.GetValue());
+		} while (++marker);
 		return;
 	}
 
@@ -471,11 +464,11 @@ public:
 		if (index >= data.GetSize()) {
 			return;
 		}
-		PairTree<ID, Req, Prim>::PairMarker* marker = data[index]->treeReq->GetMarker();
+		PairTree<ID, Req, Prim>::PairMarker marker = data[index]->treeReq->GetPairMarker();
 		do
 		{
-			Reqs.PushBack(marker->GetValue());
-		} while (marker->MoveNext());
+			Reqs.PushBack(marker.GetValue());
+		} while (++marker);
 		return;
 	}
 };

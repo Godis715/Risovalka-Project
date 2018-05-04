@@ -6,9 +6,10 @@
 // class - parent of all Nodes
 template <class TKey, class TVal> class Node {
 protected:
-	void virtual f() {
-		return;
-	}
+	//void virtual f() {
+	//	return;
+	//}
+
 public:
 	Node(const TKey& _key, const TVal& _val) : key(_key), value(_val)
 	{
@@ -453,37 +454,12 @@ public:
 		DeleteDict();
 	}
 
-	class TreeMarker : public IMarker {
+	class Marker {
 	protected:
 		Node<TKey, TVal>* current;
 
 		BinSearchTree<TKey, TVal>* tree;
 		bool isValid;
-		
-	public:
-		TreeMarker(BinSearchTree<TKey, TVal>* _tree) : tree(_tree) {
-			if (tree == nullptr || tree->head == nullptr) {
-				isValid = false;
-				return;
-			}
-			isValid = true;
-			MoveBegin();
-		}
-		TreeMarker(BinSearchTree<TKey, TVal>* _tree, Node<TKey, TVal>* node) : tree(_tree) {
-			if (tree == nullptr || tree->head == nullptr || node == nullptr) {
-				isValid = false;
-				return;
-			}
-			isValid = true;
-			current = node;
-		}
-
-		TVal GetValue() const {
-			if (!isValid) {
-				throw std::exception("Marker was not valid");
-			}
-			return current->value;
-		}
 
 		bool MoveNext() {
 			if (!isValid) {
@@ -526,6 +502,57 @@ public:
 			return false;
 		}
 
+		
+	public:
+		Marker() { }
+		Marker(BinSearchTree<TKey, TVal>* _tree) : tree(_tree) {
+			if (tree == nullptr || tree->head == nullptr) {
+				isValid = false;
+				return;
+			}
+			isValid = true;
+			MoveBegin();
+		}
+		Marker(BinSearchTree<TKey, TVal>* _tree, Node<TKey, TVal>* node) : tree(_tree) {
+			if (tree == nullptr || tree->head == nullptr || node == nullptr) {
+				isValid = false;
+				return;
+			}
+			isValid = true;
+			current = node;
+		}
+		Marker(Marker&& marker) {
+			this->isValid = marker.isValid;
+			this->tree = marker.tree;
+			this->current = marker.current;
+
+			marker.tree = nullptr;
+			marker.current = nullptr;
+		}
+		void operator=(Marker&& marker) {
+			this->isValid = marker.isValid;
+			this->tree = marker.tree;
+			this->current = marker.current;
+
+			marker.tree = nullptr;
+			marker.current = nullptr;
+		}
+		void operator= (const Marker& marker) {
+			this->isValid = marker.isValid;
+			this->tree = marker.tree;
+			this->current = marker.current;
+		}
+		bool operator++() {
+			return this->MoveNext();
+		}
+
+		TVal GetValue() const {
+			if (!isValid) {
+				throw std::exception("Marker was not valid");
+			}
+			return current->value;
+		}
+
 		bool MoveBegin() {
 			if (tree == nullptr || tree->head == nullptr) {
 				isValid = false;
@@ -546,6 +573,10 @@ public:
 			}
 			tree->DeleteNode(current);
 			isValid = false;
+		}
+
+		bool IsValid() const {
+			return isValid;
 		}
 	};
 
@@ -604,17 +635,14 @@ public:
 		}
 	}
 
-	virtual TreeMarker* Find(const TKey &key)
+	Marker Find(const TKey &key)
 	{
 		Node<TKey, TVal>* node = FindNode(key);
-		if (node != nullptr) {
-			return new TreeMarker(this, node);
-		}
-		return nullptr;
+		return Marker(this, node);
 	}
 
-	virtual TreeMarker* GetMarker() {
-		return new TreeMarker(this);
+	Marker GetMarker() {
+		return Marker(this);
 	};
 
 	void DeleteDict() {
@@ -639,18 +667,18 @@ public:
 	}
 };
 
-template <class TKey, class TVal> class Dict : public BinSearchTree<TKey, TVal> {
-private:
-	class DictNode : public Node<TKey, TVal> {
-	public:
-		DictNode(const TKey& _key, const TVal& _val) : Node<TKey, TVal>(_key, _val) { }
-	};
-	Node<TKey, TVal>* CreateNode(const TKey& _key, const TVal& _val)
-	{
-		return new DictNode(_key, _val);
-	}
-public:
-
-};
+//template <class TKey, class TVal> class Dict : public BinSearchTree<TKey, TVal> {
+//private:
+//	class DictNode : public Node<TKey, TVal> {
+//	public:
+//		DictNode(const TKey& _key, const TVal& _val) : Node<TKey, TVal>(_key, _val) { }
+//	};
+//	Node<TKey, TVal>* CreateNode(const TKey& _key, const TVal& _val)
+//	{
+//		return new DictNode(_key, _val);
+//	}
+//public:
+//
+//};
 
 #endif

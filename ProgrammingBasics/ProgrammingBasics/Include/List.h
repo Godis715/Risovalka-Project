@@ -4,7 +4,7 @@
 
 #include "Dequeue.h"
 
-template <typename T> class List : public INumerable
+template <typename T> class List
 {
 private:
 	class Node
@@ -28,14 +28,28 @@ public:
 		tail = nullptr;
 		size = 0;
 	}
-	class ListMarker : public IMarker
+	class Marker
 	{
 	private:
-		Node * current;
+		Node* current;
 		Node* prev;
 		List* list;
+
+		bool isValid;
+
+		bool MoveNext() {
+			if (!isValid || current->next == nullptr) {
+				isValid = false;
+				return false;
+			}
+			prev = current;
+			current = current->next;
+			return true;
+		}
+
+
 	public:
-		ListMarker(List* _list)
+		Marker(List* _list)
 		{
 			if (_list->head == nullptr) {
 				isValid = false;
@@ -45,6 +59,38 @@ public:
 			prev = nullptr;
 			current = _list->head;
 			list = _list;
+		}
+
+		Marker(const Marker& marker) {
+			this->current = marker->current;
+			this->prev = marker->prev;
+			this->list = marker->list;
+		}
+
+		Marker(Marker&& marker) {
+			this->current = marker.current;
+			this->prev = marker.prev;
+			this->list = marker.list;
+
+			marker->current = nullptr;
+			marker->prev = nullptr;
+			marker->list = nullptr;
+		}
+
+		Marker() {
+			list = nullptr;
+			current = nullptr;
+			isValid = false;
+		}
+
+		void operator=(const Marker& marker) {
+			this->current = marker.current;
+			this->prev = marker.prev;
+			this->list = marker.list;
+		}
+
+		bool operator++() {
+			return MoveNext();
 		}
 
 		void DeleteCurrent() {
@@ -65,16 +111,6 @@ public:
 
 			list->size--;
 			delete temp;
-		}
-
-		bool MoveNext() {
-			if (!isValid || current->next == nullptr) {
-				isValid = false;
-				return false;
-			}
-			prev = current;
-			current = current->next;
-			return true;
 		}
 
 		T GetValue() const {
@@ -105,8 +141,8 @@ public:
 	size_t GetSize() const {
 		return size;
 	}
-	ListMarker* GetMarker() {
-		return new ListMarker(this);
+	Marker GetMarker() {
+		return Marker(this);
 	}
 	void PushTail(const T& val) {
 		if (size == 0)

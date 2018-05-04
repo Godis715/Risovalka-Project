@@ -23,30 +23,23 @@
 // Data
 // Model
 
+typedef BinSearchTree<ID, List<ID>*> DataLink;
+typedef BinSearchTree<ID, Primitive*> DataPrim;
+typedef BinSearchTree<ID, Requirement*> DataReq;
 
 class Model
 {
 private:
-	class Link
-	{
-	public:
-		ID primID;
-		ID reqID;
-		Link(const ID&, const ID&);
-		Link(){}
-		~Link(){}
-	};
+	DataPrim dataPrim;
 
-	Dict<ID, Primitive*> dataPrim;
+	DataReq dataReq;
 
-	Dict<ID, Requirement*> dataReq;
-	
-	Dict<ID, List<ID>*> dataLink;
+	DataLink dataLink;
 
 	IDGenerator* idGen;
 
-	Data data;
-
+	// Evgeny' graph
+	Data data; 
 
 	void GetIDRequirementsInComponent(const ID&, Array<ID>&);
 
@@ -92,8 +85,8 @@ public:
 	
 	//carefully delete
 	//bool createSegment(ID&, ID&, ID&);
-	bool CreateRequirementByID(const req_type, Array<ID>&, Array<double>&);
-	bool CreateRequirement(const req_type, Array<Primitive*>&, Array<double>&);
+	bool CreateRequirementByID(req_type, Array<ID>&, Array<double>&);
+	bool CreateRequirement(req_type, Array<Primitive*>&, Array<double>&);
 
 	//rewrite!!!!!!!
 	bool getNearest(double, double, ID&, double&);
