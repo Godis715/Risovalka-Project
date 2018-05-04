@@ -5,6 +5,10 @@
 
 template <class TKey, class TValFirst, class TValSecond> class PairNode :
 	public Node<TKey, TValFirst> {
+protected:
+	/*virtual void f() {
+		return;
+	}*/
 public:
 	PairNode(const TKey& _key, const TValFirst& _val) : Node<TKey, TValFirst>(_key, _val) {
 
@@ -42,15 +46,15 @@ public:
 		PairMarker() { }
 
 		void operator=(const PairMarker& marker) {
-			this->current = marker->current;
-			this->tree = marker->tree;
+			this->current = marker.current;
+			this->tree = marker.tree;
 		}
 		void operator=(PairMarker&& marker) {
-			this->current = marker->current;
-			this->tree = marker->tree;
+			this->current = marker.current;
+			this->tree = marker.tree;
 
-			marker->current = nullptr;
-			marker->tree = nullptr;
+			marker.current = nullptr;
+			marker.tree = nullptr;
 		}
 		~PairMarker() {}
 
@@ -58,7 +62,7 @@ public:
 			if (!this->isValid) {
 				throw std::exception("Marker was not valid");
 			}
-			PairNode<TKey, TValFirst, TValSecond>* node = dynamic_cast<PairNode<TKey, TValFirst, TValSecond>*>(this->current);
+			PairNode<TKey, TValFirst, TValSecond>* node = static_cast<PairNode<TKey, TValFirst, TValSecond>*>(this->current);
 			return node->list;
 		}
 
@@ -73,7 +77,7 @@ public:
 			if (! this->isValid) {
 				throw std::exception("Marker was not valid");
 			}
-			PairNode<TKey, TValFirst, TValSecond>* node = dynamic_cast<PairNode<TKey, TValFirst, TValSecond>*>(this->current);
+			PairNode<TKey, TValFirst, TValSecond>* node = static_cast<PairNode<TKey, TValFirst, TValSecond>*>(this->current);
 			node->flag = true;
 		}
 	};
@@ -110,7 +114,7 @@ public:
 
 	PairNode<TKey, TValFirst, TValSecond>* GetNode(const TKey& key) {
 		Node<TKey, TValFirst>* node = this->FindNode(key);
-		PairNode<TKey, TValFirst, TValSecond>* pairNode = dynamic_cast<PairNode<TKey, TValFirst, TValSecond>*>(node);
+		PairNode<TKey, TValFirst, TValSecond>* pairNode = static_cast<PairNode<TKey, TValFirst, TValSecond>*>(node);
 		return pairNode;
 	}
 
@@ -122,7 +126,7 @@ public:
 		//while (node->left != nullptr) {
 		//	node = node->left;
 		//}
-		PairNode<TKey, TValFirst, TValSecond>* pairNode = dynamic_cast<PairNode<TKey, TValFirst, TValSecond>*>(node);
+		PairNode<TKey, TValFirst, TValSecond>* pairNode = static_cast<PairNode<TKey, TValFirst, TValSecond>*>(node);
 		return pairNode;
 	}
 

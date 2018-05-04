@@ -87,6 +87,7 @@ public:
 	//bool createSegment(ID&, ID&, ID&);
 	bool CreateRequirementByID(req_type, Array<ID>&, Array<double>&);
 	bool CreateRequirement(req_type, Array<Primitive*>&, Array<double>&);
+	void CreateLink(const ID&, Array<Primitive*>&);
 
 	//rewrite!!!!!!!
 	bool getNearest(double, double, ID&, double&);
@@ -117,7 +118,7 @@ public:
 
 	bool XXXCreateRequirementByID(const req_type, Array<int>&, Array<ID>&, Array<double>&);
 
-	bool XXXCreateRequirement(const req_type, Array<int>&, Array<Primitive*>&, Array<double>&);
+	bool XXXCreateRequirement(const req_type, Array<int>&, Array<ID>&, Array<Primitive*>&, Array<double>&);
 
 	void XXXGetRequirementsByID(int, const ID&, Array<Requirement*>&);
 

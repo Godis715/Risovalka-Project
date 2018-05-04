@@ -131,7 +131,7 @@ private:
 		data.Erase(index);
 	}
 
-	void CreateNewComponent(Array<ID>& keys, Array<Prim>& elements, ID& key, Req& value) {
+	void CreateNewComponent(Array<ID>& keys, Array<Prim>& elements, const ID& key, Req& value) {
 		Component* component = new Component;
 		int index = data.GetSize();
 		data.PushBack(component);
@@ -379,7 +379,7 @@ public:
 		SplitingAndBFS(index);
 	}
 
-	void Add(Array<int>& indexes, Array<ID>& keys, Array<Prim>& elements, ID& key, Req value) {
+	void Add(Array<int>& indexes, Array<ID>& keys, Array<Prim>& elements, const ID& key, Req value) {
 		// Component* component;
 		bool newComponent = true;
 		bool* components = new bool[data.GetSize()];
@@ -428,6 +428,9 @@ public:
 		// pushing new node
 		for (int i = 0; i < elements.GetSize(); ++i) {
 			if (indexes[i] < 0) {
+				// remove from dictionary
+				dict->Find(keys[i]).DeleteCurrent();
+				// 
 				PairNode<ID, Prim, Req>* nodePrim = new PairNode<ID, Prim, Req>(key, elements[i]);
 				nodePrim->list = new List<PairNode<ID, Req, Prim>*>;
 				nodePrim->list->PushTail(nodeReq);
