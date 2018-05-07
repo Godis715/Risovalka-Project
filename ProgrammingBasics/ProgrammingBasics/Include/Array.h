@@ -135,13 +135,19 @@ public:
 
 	Array(int size) : _default_capacity(size)
 	{
-		if (size <= 0)
+		if (size < 0)
 		{
 			throw std::invalid_argument("Bad array size!");
 		}
 		_capacity = size;
 		_size = size;
-		_storage = new T[_capacity];
+
+		if (size == 0) {
+			_storage = nullptr;
+		}
+		else {
+			_storage = new T[_capacity];
+		}
 	}
 
 	Array(int size, const T& default_value) : _default_capacity(size)

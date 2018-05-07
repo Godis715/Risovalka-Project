@@ -143,8 +143,8 @@ bool Model::find(const ID& idPrim, Array<Requirement*>& foundReq)
 void Model::ConnectPrimitives(Primitive* point, Primitive* prim) {
 	Requirement* _connection = new ConnectionReq;
 	Array<Primitive*> prims(2);
-	prims.PushBack(point);
-	prims.PushBack(prim);
+	prims[0] = point;
+	prims[1] = prim;
 	CreateLink(_connection->GetID(), prims);
 }
 

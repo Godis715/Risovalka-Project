@@ -57,6 +57,8 @@ private:
 
 	void ConnectPrimitives(Primitive*, Primitive*);
 
+	bool CreateRequirement(req_type, Array<Primitive*>&, Array<double>&);
+
 	//..
 #endif
 
@@ -94,7 +96,6 @@ public:
 	bool CreateObject(prim_type, Array<double>&, ID&);
 	
 	bool CreateRequirementByID(req_type, Array<ID>&, Array<double>&);
-	bool CreateRequirement(req_type, Array<Primitive*>&, Array<double>&);
 	void CreateLink(const ID&, Array<Primitive*>&);
 
 	bool DeletePrimitive(const ID&);
