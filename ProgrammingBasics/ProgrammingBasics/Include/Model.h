@@ -3,7 +3,7 @@
 
 #include "Data.h"
 //#define MODEL_VERSION_LINK
-#define MODEL_VERSION_DATA
+#define MODEL_VERSION_LINK
 
 // ID
 // IDGenerator
@@ -86,7 +86,7 @@ public:
 	Model() { }
 
 	// Create destructor
-	~Model();
+	~Model() { }
 
 	bool DischargeInfoObjects(Array<infoObject>&);
 
@@ -100,7 +100,7 @@ public:
 	bool DeletePrimitive(const ID&);
 	bool DeleteRequirement(const ID&);
 #endif
-	//rewrite!!!!!!!
+
 	bool getNearest(double, double, ID&, double&);
 
 	bool getObjType(const ID&, prim_type&);

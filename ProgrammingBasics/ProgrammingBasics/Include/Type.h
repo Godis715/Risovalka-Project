@@ -4,25 +4,16 @@
 #include "Hash-Table.h"
 
 enum prim_type {
-	point_t = 1,
+	point_t,
 	segment_t,
 	arc_t
 };
 
-//class Type {
-//private:
-//	std::string name;
-//	type_id id;
-//public:
-//	Type(type_id);
-//	std::string GetName() const;
-//	type_id GetTypeId() const;
-//};
-
 enum req_type {
-	distBetPoints = 1,
-	connection,
-	equalSegmentLen,
+	connection_t,
+	distBetPoints_t,
+	equalSegmentLen_t,
+
 	pointsOnTheOneHand,
 	distBetPointSeg,
 	angleBetSeg,
@@ -33,15 +24,5 @@ enum req_type {
 	nsAngle,
 	correctNsAngle
 };
-
-//class TypeRequirement {
-//private:
-//	std::string name;
-//	Requirement_id id;
-//public:
-//	TypeRequirement(Requirement_id);
-//	std::string GetName() const;
-//	Requirement_id GetRequirementId() const;
-//};
 
 #endif

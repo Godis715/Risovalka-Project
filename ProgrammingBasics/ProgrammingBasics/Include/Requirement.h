@@ -18,15 +18,15 @@ public:
 		int size;
 
 		switch (type) {
-		case distBetPoints: {
+		case distBetPoints_t: {
 			size = 4;
 			break;
 		}
-		case equalSegmentLen: {
+		case equalSegmentLen_t: {
 			size = 8;
 			break;
 		}
-		case connection: {
+		case connection_t: {
 			size = 0;
 			break;
 		}
@@ -47,7 +47,7 @@ private:
 	double distance;
 public:
 	DistBetPointsReq(Point* _point1, Point* _point2, double _distance) :
-		Requirement(IDGenerator::getInstance()->generateID(), distBetPoints)
+		Requirement(IDGenerator::getInstance()->generateID(), distBetPoints_t)
 	{
 		Vector2* pos1 = &_point1->position;
 		Vector2* pos2 = &_point2->position;
@@ -81,7 +81,7 @@ private:
 	Segment* seg2;
 public:
 	EqualSegmentLenReq(Segment& _seg1, Segment& _seg2) :
-		Requirement(IDGenerator::getInstance()->generateID(), equalSegmentLen)
+		Requirement(IDGenerator::getInstance()->generateID(), equalSegmentLen_t)
 	{
 		seg1 = &_seg1;
 		seg2 = &_seg2;
@@ -110,7 +110,7 @@ class ConnectionReq : public Requirement {
 private:
 public:
 	ConnectionReq() :
-		Requirement(IDGenerator::getInstance()->generateID(), connection)
+		Requirement(IDGenerator::getInstance()->generateID(), connection_t)
 	{
 
 	}

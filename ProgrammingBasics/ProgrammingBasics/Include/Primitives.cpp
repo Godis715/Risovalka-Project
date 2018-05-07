@@ -13,7 +13,6 @@ prim_type Primitive::GetType() {
 	return type;
 }
 
-
 Point::Point(const Vector2& pos) :
 	Primitive(IDGenerator::getInstance()->generateID(), point_t)
 {
@@ -57,6 +56,10 @@ Segment::Segment(Point* _p1, Point* _p2) :
 
 	point1 = _p1;
 	point2 = _p2;
+
+	_p1->SetParent(this);
+	_p1->SetParent(this);
+
 }
 double Segment::GetLength() const {
 	return (point1->GetPosition() - point2->GetPosition()).GetLength();
@@ -119,6 +122,9 @@ Arc::Arc(Point* _p1, Point* _p2, double _angle) :
 		throw std::invalid_argument("Arc::Arc::parameters was nullptr");
 	}
 	angle = _angle;
+
+	_p1->SetParent(this);
+	_p2->SetParent(this);
 }
 
 // write this function
@@ -175,4 +181,15 @@ void Arc::SetAngle(double newAngle) {
 		angle = newAngle + ((double)((int)(abs(newAngle) / (2 * PI)) + 1) * 2 * PI);
 		return;
 	}
+}
+
+Primitive* Point::GetParent() {
+	return parent;
+}
+
+bool Point::SetParent(Primitive* _parent) {
+	if (parent != nullptr || _parent == nullptr) {
+		return false;
+	}
+	parent = _parent;
 }

@@ -317,7 +317,7 @@ bool Model::CreateRequirementByID(const req_type type, Array<ID>& id_arr, Array<
 bool Model::CreateRequirement(req_type type, Array<Primitive*>& primitives, Array<double>& params) {
 	switch (type)
 	{
-	case distBetPoints: {
+	case distBetPoints_t: {
 		// verification parameters
 		if ((primitives.GetSize() != 2)
 			&& (params.GetSize() != 1)
@@ -335,7 +335,7 @@ bool Model::CreateRequirement(req_type type, Array<Primitive*>& primitives, Arra
 		CreateLink(requirement->GetID(), primitives);
 		return true;
 	}
-	case equalSegmentLen: {
+	case equalSegmentLen_t: {
 		// verification parameters
 		if ((primitives.GetSize() != 2)
 			&& (params.GetSize() != 0)
@@ -505,7 +505,14 @@ void Model::CreateLink(const ID& IDreq, Array<Primitive*>& primitives) {
 	// create link Prim on Req
 	for (int i = 0; i < primitives.GetSize(); ++i) {
 		auto markerLink = dataLink.Find(primitives[i]->GetID());
-		markerLink.GetValue()->PushTail(IDreq);
+		if (markerLink.IsValid()) {
+			markerLink.GetValue()->PushTail(IDreq);
+		}
+		else {
+			auto newList = new List<ID>;
+			newList->PushTail(IDreq);
+			dataLink.Add(primitives[i]->GetID(), newList);
+		}
 	}
 	// create link Req on Prim
 	List<ID>* list = new List<ID>;
