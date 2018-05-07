@@ -21,6 +21,7 @@ enum prim_type {
 
 enum req_type {
 	distBetPoints = 1,
+	connection,
 	equalSegmentLen,
 	pointsOnTheOneHand,
 	distBetPointSeg,

@@ -18,6 +18,7 @@ public:
 
 class Point : public Primitive {
 private:
+	Primitive* parent;
 public:
 	Vector2 position;
 
@@ -31,6 +32,9 @@ public:
 	Vector2 GetPosition() const;
 	void SetPosition(const Vector2&);
 	void SetPosition(double, double);
+
+	Primitive* GetParent();
+	bool SetParent(Primitive*);
 	//
 };
 

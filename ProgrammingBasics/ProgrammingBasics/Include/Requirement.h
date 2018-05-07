@@ -26,6 +26,10 @@ public:
 			size = 8;
 			break;
 		}
+		case connection: {
+			size = 0;
+			break;
+		}
 		}
 
 		params = Array<double*>(size);
@@ -101,7 +105,23 @@ public:
 	}
 };
 
+class ConnectionReq : public Requirement {
 
+private:
+public:
+	ConnectionReq() :
+		Requirement(IDGenerator::getInstance()->generateID(), connection)
+	{
+
+	}
+	~ConnectionReq() { }
+	double error() {
+		return 0;
+	}
+};
+
+
+// needed to fix
 
 class PointsOnTheOneHand : public Requirement
 {

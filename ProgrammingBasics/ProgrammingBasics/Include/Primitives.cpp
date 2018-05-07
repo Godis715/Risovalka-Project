@@ -17,16 +17,19 @@ prim_type Primitive::GetType() {
 Point::Point(const Vector2& pos) :
 	Primitive(IDGenerator::getInstance()->generateID(), point_t)
 {
+	this->parent = nullptr;
 	this->position = pos;
 }
 Point::Point(double _x, double _y) :
 	Primitive(IDGenerator::getInstance()->generateID(), point_t)
 {
+	this->parent = nullptr;
 	this->position = Vector2(_x, _y);
 }
 Point::Point(const Point& _p) :
 	Primitive(IDGenerator::getInstance()->generateID(), point_t)
 {
+	this->parent = nullptr;
 	this->position = _p.position;
 }
 double Point::GetDistance(const Vector2& point) const {

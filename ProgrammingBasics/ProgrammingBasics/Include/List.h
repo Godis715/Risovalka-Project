@@ -72,9 +72,9 @@ public:
 			this->prev = marker.prev;
 			this->list = marker.list;
 
-			marker->current = nullptr;
-			marker->prev = nullptr;
-			marker->list = nullptr;
+			marker.current = nullptr;
+			marker.prev = nullptr;
+			marker.list = nullptr;
 		}
 
 		Marker() {
@@ -156,6 +156,16 @@ public:
 			tail = newNode;
 		}
 		size++;
+	}
+
+	Marker Find(const T& val) {
+		Marker marker(this);
+		for (marker; marker.IsValid(); ++marker) {
+			if (marker.GetValue() == val) {
+				break;
+			}
+		}
+		return marker;
 	}
 };
 

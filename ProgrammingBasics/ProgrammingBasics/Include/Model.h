@@ -2,6 +2,8 @@
 #define __MODEL
 
 #include "Data.h"
+//#define MODEL_VERSION_LINK
+#define MODEL_VERSION_DATA
 
 // ID
 // IDGenerator
@@ -41,6 +43,7 @@ private:
 	// Evgeny' graph
 	Data data; 
 
+#ifdef MODEL_VERSION_LINK 
 	void GetIDRequirementsInComponent(const ID&, Array<ID>&);
 
 	void FindRequirementsByID(Array<ID>&, Array<Requirement*>&);
@@ -51,7 +54,11 @@ private:
 	bool find(const ID&, Array<Primitive*>&);
 
 	bool find(const ID&, Array<Requirement*>&);
+
+	void ConnectPrimitives(Primitive*, Primitive*);
+
 	//..
+#endif
 
 	//similar functions!!
 	double GetError();
@@ -60,6 +67,7 @@ private:
 
 	double ErrorByAlpha(const Array<Requirement*>&, const Array<double*>&, const Array<double>&, double);
 	void OptimizeByGradient(const Array<Requirement*>&, const Array<double*>&, const Array<double>&);
+
 
 public:
 	class infoObject
@@ -81,31 +89,28 @@ public:
 	~Model();
 
 	bool DischargeInfoObjects(Array<infoObject>&);
-	bool createObject(prim_type, Array<double>&, ID&);
+
+#ifdef MODEL_VERSION_LINK
+	bool CreateObject(prim_type, Array<double>&, ID&);
 	
-	//carefully delete
-	//bool createSegment(ID&, ID&, ID&);
 	bool CreateRequirementByID(req_type, Array<ID>&, Array<double>&);
 	bool CreateRequirement(req_type, Array<Primitive*>&, Array<double>&);
 	void CreateLink(const ID&, Array<Primitive*>&);
 
+	bool DeletePrimitive(const ID&);
+	bool DeleteRequirement(const ID&);
+#endif
 	//rewrite!!!!!!!
 	bool getNearest(double, double, ID&, double&);
 
-
 	bool getObjType(const ID&, prim_type&);
 
-	//replace with GET CHILD 
-	bool GetSegmentPoints(ID, Array<ID>&);
-	bool GetArcPoints(ID, Array<ID>&);
-
+	////replace with GET CHILD 
+	//bool GetSegmentPoints(ID, Array<ID>&);
+	//bool GetArcPoints(ID, Array<ID>&);
 
 	bool getObjParam(const ID&, Array<double>&);
 	
-	// temp!!
-	// int Optimize1();
-	// end temp
-
 	void OptimizeRequirements(const Array<Requirement*>&);
 	// void PrintSystemRequirement();
 
@@ -114,7 +119,10 @@ public:
 
 	// XXX Function
 
+#ifdef MODEL_VERSION_DATA
 	bool XXXCreateObject(const prim_type, Array<double>&, ID&);
+
+	void XXXConnectPrimitives(Primitive*, Primitive*, Primitive*);
 
 	bool XXXCreateRequirementByID(const req_type, Array<int>&, Array<ID>&, Array<double>&);
 
@@ -129,6 +137,6 @@ public:
 	void XXXDeleteRequirement(int, const ID&);
 
 	void XXXDeletePrimitive(int, const ID&);
-
+#endif
 };
 #endif

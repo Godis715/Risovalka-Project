@@ -10,6 +10,8 @@ using std::string;
 #define LEVEL_3 3
 #define MAX_LEVEL 3
 
+#define LOG Logger::Log
+
 static class Logger {
 private:
 
@@ -45,7 +47,7 @@ public:
 		}
 	}
 
-	static void Log(std::string message, int priority, int) {
+	static void Log(std::string message, int priority) {
 		if (priority >= minLevel) {
 			(*output) << message << std::endl;
 		}
