@@ -32,6 +32,7 @@ typedef BinSearchTree<ID, Requirement*> DataReq;
 class Model
 {
 private:
+
 	DataPrim dataPrim;
 
 	DataReq dataReq;
@@ -46,6 +47,7 @@ private:
 #ifdef MODEL_VERSION_LINK 
 	void GetIDRequirementsInComponent(const ID&, Array<ID>&);
 
+
 	void FindRequirementsByID(Array<ID>&, Array<Requirement*>&);
 
 	//may be not using
@@ -58,8 +60,6 @@ private:
 	void ConnectPrimitives(Primitive*, Primitive*);
 
 	bool CreateRequirement(req_type, Array<Primitive*>&, Array<double>&);
-
-	//..
 #endif
 
 	//similar functions!!
@@ -100,6 +100,8 @@ public:
 
 	bool DeletePrimitive(const ID&);
 	bool DeleteRequirement(const ID&);
+
+	bool GetComponent(const ID&, BinSearchTree<ID, ID>&);
 #endif
 
 	bool getNearest(double, double, ID&, double&);

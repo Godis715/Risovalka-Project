@@ -60,8 +60,12 @@ int main()
 	model;
 	ID segment1 = CreateSegment(0.0, 0.0, 0.0, 20.0);
 	ID segment2 = CreateSegment(0.0, 0.0, 0.0, 5.0);
+	ID point = CreatePoint(0.0, 0.0);
 
 	EqualSegmentLenReq(segment1, segment2);
+
+	BinSearchTree<ID, ID> component;
+	model.GetComponent(segment1, component);
 
 	return 0;
 }

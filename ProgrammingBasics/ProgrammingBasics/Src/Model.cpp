@@ -62,6 +62,33 @@ void Model::GetIDRequirementsInComponent(const ID& idPrim, Array<ID>& IDReq)
 	}
 }
 
+bool Model::GetComponent(const ID& id, BinSearchTree<ID, ID>& component) {
+	BinSearchTree<ID, ID> labels;
+	Queue<ID> queue;
+	if (!dataLink.Find(id).IsValid()) {
+		return false;
+	}
+
+	queue.push(id);
+	labels.Add(id, id);
+
+	while (!queue.isEmpty()) {
+		ID currentID = queue.pop();
+		auto dataLinkMarker = dataLink.Find(currentID);
+		if (dataLinkMarker.IsValid()) {
+			for (auto l = dataLinkMarker.GetValue()->GetMarker(); l.IsValid(); ++l) {
+				currentID = l.GetValue();
+				if (!labels.Find(currentID).IsValid()) {
+					labels.Add(currentID, currentID);
+					queue.push(currentID);
+				}
+			}
+		}
+	}
+	component = labels;
+	return true;
+}
+
 void Model::FindRequirementsByID(Array<ID>& IDReq, Array<Requirement*>& Requirements) {
 	for (int i = 0; i < IDReq.GetSize(); ++i) {
 		auto marker = dataReq.Find(IDReq[i]);
