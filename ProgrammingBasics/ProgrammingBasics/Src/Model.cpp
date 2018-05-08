@@ -725,7 +725,8 @@ void Model::OptimizeRequirements(const Array<Requirement*>& requirments) {
 	// get parameters number
 	int params_number = 0;
 	for (int i = 0; i < requirments.GetSize(); ++i) {
-		Array<double*> params = requirments[i]->GetParams();
+		Array<double*> params =
+			requirments[i]->GetParams();
 		params_number += params.GetSize();
 	}
 

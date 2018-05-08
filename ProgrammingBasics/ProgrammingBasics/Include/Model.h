@@ -2,8 +2,6 @@
 #define __MODEL
 
 #include "Data.h"
-//#define MODEL_VERSION_LINK
-#define MODEL_VERSION_LINK
 
 // ID
 // IDGenerator
@@ -47,7 +45,6 @@ private:
 
 #ifdef MODEL_VERSION_LINK 
 	//void GetIDRequirementsInComponent(const ID&, Array<ID>&);
-
 
 	bool GetRequirementsFromComponent(BinSearchTree<ID, ID>&, Array<Requirement*>&);
 
@@ -105,13 +102,10 @@ public:
 
 	bool GetComponent(const ID&, BinSearchTree<ID, ID>&);
 
-	////replace with GET CHILD 
-	//bool GetSegmentPoints(ID, Array<ID>&);
-	//bool GetArcPoints(ID, Array<ID>&);
-
 	bool GetObjParam(const ID&, Array<double>&);
 	
 	void OptimizeRequirements(const Array<Requirement*>&);
+
 	// void PrintSystemRequirement();
 
 	void OptimizeByID(const ID&);
