@@ -54,18 +54,35 @@ void EqualSegmentLenReq(const ID& seg1, const ID& seg2) {
 		throw std::exception("Creating equalSegmentLen requirement failed");
 	}
 }
+void DistBetPointsReq(const ID& point1, const ID& point2, double dist) {
+	Array<ID> points(2);
+	points[0] = point1;
+	points[1] = point2;
+
+	Array<double> params(1);
+	params[0] = dist;
+
+	if (!model.CreateRequirementByID(distBetPoints_t, points, params)) {
+		throw std::exception("Creating distBetPoints requirement failed");
+	}
+}
+
 
 int main()
 {
 	model;
 	ID segment1 = CreateSegment(0.0, 0.0, 0.0, 20.0);
 	ID segment2 = CreateSegment(0.0, 0.0, 0.0, 5.0);
-	ID point = CreatePoint(0.0, 0.0);
 
 	EqualSegmentLenReq(segment1, segment2);
+	ID point1 = CreatePoint(0.0, 0.0);
+	ID point2 = CreatePoint(1.0, 1.0);
+	DistBetPointsReq(point1, point2, 9.0);
 
 	BinSearchTree<ID, ID> component;
 	model.GetComponent(segment1, component);
+
+	model.GetComponent(point1, component);
 
 	return 0;
 }

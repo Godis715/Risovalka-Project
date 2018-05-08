@@ -450,6 +450,31 @@ public:
 		size = 0;
 	}
 
+	BinSearchTree(const BinSearchTree& tree) {
+		this->head = tree.head;
+		this->size = tree.size;
+	}
+
+	BinSearchTree(BinSearchTree&& tree) {
+		this->head = tree.head;
+		this->size = tree.size;
+
+		tree->head = nullptr;
+	}
+
+	void operator=(const BinSearchTree& tree) {
+		this->head = tree.head;
+		this->size = tree.size;
+	}
+
+	void operator=(BinSearchTree&& tree) {
+		this->head = tree.head;
+		this->size = tree.size;
+
+		tree->head = nullptr;
+	}
+
+
 	~BinSearchTree() {
 		DeleteDict();
 	}
