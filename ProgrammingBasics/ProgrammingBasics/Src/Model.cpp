@@ -353,6 +353,7 @@ bool Model::CreateRequirementByID(const req_type type, Array<ID>& id_arr, Array<
 }
 
 bool Model::CreateRequirement(req_type type, Array<Primitive*>& primitives, Array<double>& params) {
+	Requirement* requirement;
 	switch (type)
 	{
 	case distBetPoints_t: {
@@ -364,14 +365,10 @@ bool Model::CreateRequirement(req_type type, Array<Primitive*>& primitives, Arra
 			return false;
 		}
 		// creating
-		DistBetPointsReq* requirement;
 		requirement = new DistBetPointsReq(cast<Point*>(primitives[0]),
 			cast<Point*>(primitives[1]),
 			params[0]);
-		dataReq.Add(requirement->GetID(), requirement);
-
-		CreateLink(requirement->GetID(), primitives);
-		return true;
+		break;
 	}
 	case equalSegmentLen_t: {
 		// verification parameters
@@ -382,16 +379,9 @@ bool Model::CreateRequirement(req_type type, Array<Primitive*>& primitives, Arra
 			return false;
 		}
 		// creating
-		EqualSegmentLenReq* requirement = new EqualSegmentLenReq(*cast<Segment*>(primitives[0]),
+		requirement = new EqualSegmentLenReq(*cast<Segment*>(primitives[0]),
 			*cast<Segment*>(primitives[1]));
-		dataReq.Add(requirement->GetID(), requirement);
-
-
-		CreateLink(requirement->GetID(), primitives);
-
-		OptimizeByID(requirement->GetID());
-
-		return true;
+		break;
 	}
 	case pointsOnTheOneHand: {
 		// verification parameters
@@ -404,16 +394,10 @@ bool Model::CreateRequirement(req_type type, Array<Primitive*>& primitives, Arra
 			return false;
 		}
 		// creating
-		PointsOnTheOneHand* requirement = new PointsOnTheOneHand(*cast<Segment*>(primitives[0]),
+		requirement = new PointsOnTheOneHand(*cast<Segment*>(primitives[0]),
 			*cast<Point*>(primitives[1]),
 			*cast<Point*>(primitives[2]));
-		dataReq.Add(requirement->GetID(), requirement);
-
-		CreateLink(requirement->GetID(), primitives);
-
-		OptimizeByID(requirement->GetID());
-
-		return true;
+		break;
 	}
 	case distBetPointSeg: {
 		// verification parameters
@@ -425,16 +409,10 @@ bool Model::CreateRequirement(req_type type, Array<Primitive*>& primitives, Arra
 			return false;
 		}
 		// creating
-		DistanceBetweenPointSegment* requirement = new DistanceBetweenPointSegment(*cast<Segment*>(primitives[0]),
+		requirement = new DistanceBetweenPointSegment(*cast<Segment*>(primitives[0]),
 			*cast<Point*>(primitives[1]),
 			params[0]);
-		dataReq.Add(requirement->GetID(), requirement);
-
-		CreateLink(requirement->GetID(), primitives);
-
-		OptimizeByID(requirement->GetID());
-
-		return true;
+		break;
 	}
 	case angleBetSeg: {
 		// verification parameters
@@ -446,14 +424,10 @@ bool Model::CreateRequirement(req_type type, Array<Primitive*>& primitives, Arra
 			return false;
 		}
 		// creating
-		AngleBetweenSegments* requirement = new AngleBetweenSegments(*cast<Segment*>(primitives[0]),
+		requirement = new AngleBetweenSegments(*cast<Segment*>(primitives[0]),
 			*cast<Segment*>(primitives[1]),
 			params[0]);
-		dataReq.Add(requirement->GetID(), requirement);
-
-		CreateLink(requirement->GetID(), primitives);
-		return true;
-
+		break;
 	}
 	case distBetPointArc: {
 		// verification parameters
@@ -465,13 +439,10 @@ bool Model::CreateRequirement(req_type type, Array<Primitive*>& primitives, Arra
 			return false;
 		}
 		// creating
-		DistanceBetweenPointArc* requirement = new DistanceBetweenPointArc(*cast<Arc*>(primitives[0]),
+		requirement = new DistanceBetweenPointArc(*cast<Arc*>(primitives[0]),
 			*cast<Point*>(primitives[1]),
 			params[0]);
-		dataReq.Add(requirement->GetID(), requirement);
-
-		CreateLink(requirement->GetID(), primitives);
-		return true;
+		break;
 	}
 	case pointInArc: {
 		// verification parameters
@@ -483,13 +454,10 @@ bool Model::CreateRequirement(req_type type, Array<Primitive*>& primitives, Arra
 			return false;
 		}
 		// creating
-		PointInArc* requirement = new PointInArc(*cast<Arc*>(primitives[0]),
+		requirement = new PointInArc(*cast<Arc*>(primitives[0]),
 			*cast<Point*>(primitives[1]));
-		dataReq.Add(requirement->GetID(), requirement);
-
-		CreateLink(requirement->GetID(), primitives);
-		return true;
-	}
+		break;
+		}
 					 //case correctTriangle: {
 					 //	CorrectTriangle* Requirement;
 					 //	if ((primitives[0]->GetType() == segment)
@@ -546,6 +514,14 @@ bool Model::CreateRequirement(req_type type, Array<Primitive*>& primitives, Arra
 	default:
 		return false;
 	}
+
+	dataReq.Add(requirement->GetID(), requirement);
+
+	CreateLink(requirement->GetID(), primitives);
+
+	OptimizeByID(requirement->GetID());
+
+	return true;
 }
 
 void Model::CreateLink(const ID& IDreq, Array<Primitive*>& primitives) {
