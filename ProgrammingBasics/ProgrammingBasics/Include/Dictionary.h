@@ -73,6 +73,7 @@ private:
 				{
 					node->left = CreateNode(key, val);
 					node->left->parent = node;
+					node->left->high = 1;
 					RestoreHigh(node);
 					return node->left;
 				}
@@ -238,6 +239,8 @@ protected:
 			node = node->parent;
 		}
 	}
+
+	//Andrey sotka
 
 	// Moving
 	Node<TKey, TVal>* FindNode(const TKey& key) {

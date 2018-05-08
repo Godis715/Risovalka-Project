@@ -44,21 +44,14 @@ private:
 	// Evgeny' graph
 	Data data; 
 
+
 #ifdef MODEL_VERSION_LINK 
 	//void GetIDRequirementsInComponent(const ID&, Array<ID>&);
 
-	bool GetComponent(const ID&, BinSearchTree<ID, ID>&);
 
 	bool GetRequirementsFromComponent(BinSearchTree<ID, ID>&, Array<Requirement*>&);
 
 	//void FindRequirementsByID(Array<ID>&, Array<Requirement*>&);
-
-	//may be not using
-	bool find(const ID&, Array<ID>);
-
-	bool find(const ID&, Array<Primitive*>&);
-
-	bool find(const ID&, Array<Requirement*>&);
 
 	void ConnectPrimitives(Primitive*, Primitive*);
 
@@ -109,6 +102,8 @@ public:
 	bool GetNearest(double, double, ID&, double&);
 
 	bool GetObjType(const ID&, prim_type&);
+
+	bool GetComponent(const ID&, BinSearchTree<ID, ID>&);
 
 	////replace with GET CHILD 
 	//bool GetSegmentPoints(ID, Array<ID>&);
