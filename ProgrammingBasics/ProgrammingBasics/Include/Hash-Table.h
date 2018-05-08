@@ -1,7 +1,7 @@
 #ifndef __HASH_TABLE
 #define __HASH_TABLE
 
-#include "Set.h"
+#include "Pair-Tree.h"
 
 #define TABLE_I ((ListE<Pair<Tkey, Tval>>*)table[i])
 #define TABLE_INDEX ((ListE<Pair<Tkey, Tval>>*)table[index])
