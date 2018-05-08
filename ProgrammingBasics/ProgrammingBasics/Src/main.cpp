@@ -79,10 +79,7 @@ int main()
 	ID point2 = CreatePoint(1.0, 1.0);
 	DistBetPointsReq(point1, point2, 9.0);
 
-	BinSearchTree<ID, ID> component;
-	model.GetComponent(segment1, component);
-
-	model.GetComponent(point1, component);
+	
 
 	return 0;
 }

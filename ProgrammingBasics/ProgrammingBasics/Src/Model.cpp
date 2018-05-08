@@ -3,64 +3,65 @@
 #define cast dynamic_cast
 
 #ifdef MODEL_VERSION_LINK
-void Model::GetIDRequirementsInComponent(const ID& idPrim, Array<ID>& IDReq)
-{
-	BinSearchTree<ID, ID> labels;
-	Queue<ID> queuePrim;
-	Queue<ID> queueReq;
-	auto marker = dataLink.GetMarker();
-	List<ID>* list;
-	List<ID>::Marker listMarker;
-	ID id;
-	DataLink::Marker treeMarker;
 
-	queuePrim.push(idPrim);
-	while (!queuePrim.isEmpty())
-	{
-		while (!queuePrim.isEmpty())
-		{
-			id = queuePrim.pop();
-			labels.Add(id, id);
-
-			treeMarker = dataLink.Find(id);
-			if (!treeMarker.IsValid()) {
-				continue;
-			}
-			list = treeMarker.GetValue();
-			listMarker = list->GetMarker();
-			if (!listMarker.IsValid()) {
-				continue;
-			}
-			id = listMarker.GetValue();
-			auto tempLabelsMarker = labels.Find(id);
-			if (!tempLabelsMarker.IsValid()) {
-				continue;
-			}
-			queueReq.push(id);
-		}
-		while (!queueReq.isEmpty())
-		{
-			id = queueReq.pop();
-			labels.Add(id, id);
-			IDReq.PushBack(id);
-
-			treeMarker = dataLink.Find(id);
-			if (!treeMarker.IsValid()) {
-				continue;
-			}
-			list = treeMarker.GetValue();
-			listMarker = list->GetMarker();
-			if (!listMarker.IsValid()) {
-				continue;
-			}
-			id = listMarker.GetValue();
-			if (labels.Find(id).IsValid()) {
-				continue;
-			}
-			queuePrim.push(id);
-		}
-	}
-}
+//void Model::GetIDRequirementsInComponent(const ID& idPrim, Array<ID>& IDReq)
+//{
+//	BinSearchTree<ID, ID> labels;
+//	Queue<ID> queuePrim;
+//	Queue<ID> queueReq;
+//	auto marker = dataLink.GetMarker();
+//	List<ID>* list;
+//	List<ID>::Marker listMarker;
+//	ID id;
+//	DataLink::Marker treeMarker;
+//
+//	queuePrim.push(idPrim);
+//	while (!queuePrim.isEmpty())
+//	{
+//		while (!queuePrim.isEmpty())
+//		{
+//			id = queuePrim.pop();
+//			labels.Add(id, id);
+//
+//			treeMarker = dataLink.Find(id);
+//			if (!treeMarker.IsValid()) {
+//				continue;
+//			}
+//			list = treeMarker.GetValue();
+//			listMarker = list->GetMarker();
+//			if (!listMarker.IsValid()) {
+//				continue;
+//			}
+//			id = listMarker.GetValue();
+//			auto tempLabelsMarker = labels.Find(id);
+//			if (!tempLabelsMarker.IsValid()) {
+//				continue;
+//			}
+//			queueReq.push(id);
+//		}
+//		while (!queueReq.isEmpty())
+//		{
+//			id = queueReq.pop();
+//			labels.Add(id, id);
+//			IDReq.PushBack(id);
+//
+//			treeMarker = dataLink.Find(id);
+//			if (!treeMarker.IsValid()) {
+//				continue;
+//			}
+//			list = treeMarker.GetValue();
+//			listMarker = list->GetMarker();
+//			if (!listMarker.IsValid()) {
+//				continue;
+//			}
+//			id = listMarker.GetValue();
+//			if (labels.Find(id).IsValid()) {
+//				continue;
+//			}
+//			queuePrim.push(id);
+//		}
+//	}
+//}
 
 bool Model::GetComponent(const ID& id, BinSearchTree<ID, ID>& component) {
 	auto labels = new BinSearchTree<ID, ID>;
@@ -89,15 +90,25 @@ bool Model::GetComponent(const ID& id, BinSearchTree<ID, ID>& component) {
 	return true;
 }
 
-void Model::FindRequirementsByID(Array<ID>& IDReq, Array<Requirement*>& Requirements) {
-	for (int i = 0; i < IDReq.GetSize(); ++i) {
-		auto marker = dataReq.Find(IDReq[i]);
-		if (!marker.IsValid()) {
-			continue;
+bool Model::GetRequirementsFromComponent(BinSearchTree<ID, ID>& component, Array<Requirement*>& reqs) {
+	for (auto i = component.GetMarker(); i.IsValid(); ++i) {
+		auto reqsMarker = dataReq.Find(i.GetValue());
+		if (reqsMarker.IsValid()) {
+			reqs.PushBack(reqsMarker.GetValue());
 		}
-		Requirements.PushBack(marker.GetValue());
 	}
+	return (reqs.GetSize() != 0);
 }
+
+//void Model::FindRequirementsByID(Array<ID>& IDReq, Array<Requirement*>& Requirements) {
+//	for (int i = 0; i < IDReq.GetSize(); ++i) {
+//		auto marker = dataReq.Find(IDReq[i]);
+//		if (!marker.IsValid()) {
+//			continue;
+//		}
+//		Requirements.PushBack(marker.GetValue());
+//	}
+//}
 
 bool Model::find(const ID& id, Array<ID> foundID)
 {
@@ -377,6 +388,9 @@ bool Model::CreateRequirement(req_type type, Array<Primitive*>& primitives, Arra
 
 
 		CreateLink(requirement->GetID(), primitives);
+
+		OptimizeByID(requirement->GetID());
+
 		return true;
 	}
 	case pointsOnTheOneHand: {
@@ -396,6 +410,9 @@ bool Model::CreateRequirement(req_type type, Array<Primitive*>& primitives, Arra
 		dataReq.Add(requirement->GetID(), requirement);
 
 		CreateLink(requirement->GetID(), primitives);
+
+		OptimizeByID(requirement->GetID());
+
 		return true;
 	}
 	case distBetPointSeg: {
@@ -414,6 +431,9 @@ bool Model::CreateRequirement(req_type type, Array<Primitive*>& primitives, Arra
 		dataReq.Add(requirement->GetID(), requirement);
 
 		CreateLink(requirement->GetID(), primitives);
+
+		OptimizeByID(requirement->GetID());
+
 		return true;
 	}
 	case angleBetSeg: {
@@ -560,8 +580,8 @@ bool Model::DischargeInfoObjects(Array<infoObject>& dataPrimInfoObjects)
 	do
 	{
 		infoObject temp;
-		getObjParam(dataPrimMarker.GetValue()->GetID(), temp.params);
-		getObjType(dataPrimMarker.GetValue()->GetID(), temp.type);
+		GetObjParam(dataPrimMarker.GetValue()->GetID(), temp.params);
+		GetObjType(dataPrimMarker.GetValue()->GetID(), temp.type);
 		dataPrimInfoObjects.PushBack(temp);
 	} while (++dataPrimMarker);
 	return true;
@@ -875,7 +895,20 @@ void Model::OptimizeRequirements(const Array<Requirement*>& requirments) {
 	}
 }
 
-bool Model::getObjType(const ID& obj_id, prim_type& type) {
+void Model::OptimizeByID(const ID& id) {
+	BinSearchTree<ID, ID> component;
+	if(!GetComponent(id, component)) {
+		return;
+	}
+	Array<Requirement*> reqs;
+	if (!GetRequirementsFromComponent(component, reqs)) {
+		return;
+	}
+	OptimizeRequirements(reqs);
+}
+
+
+bool Model::GetObjType(const ID& obj_id, prim_type& type) {
 	Primitive* obj = nullptr;
 	auto dataPrimMarker = dataPrim.Find(obj_id);
 
@@ -889,7 +922,7 @@ bool Model::getObjType(const ID& obj_id, prim_type& type) {
 	}
 }
 
-bool Model::getObjParam(const ID& obj_id, Array<double>& result) {
+bool Model::GetObjParam(const ID& obj_id, Array<double>& result) {
 	Primitive* obj = nullptr;
 	auto dataPrimMarker = dataPrim.Find(obj_id);
 	if (dataPrimMarker.IsValid()) {
@@ -939,7 +972,7 @@ bool Model::getObjParam(const ID& obj_id, Array<double>& result) {
 
 }
 
-bool Model::getNearest(double x, double y, ID& obj_id, double& distance) {
+bool Model::GetNearest(double x, double y, ID& obj_id, double& distance) {
 	if (dataPrim.GetSize() != 0) {
 		Vector2 pos(x, y);
 		auto dataPrimMarker = dataPrim.GetMarker();
@@ -965,16 +998,6 @@ bool Model::getNearest(double x, double y, ID& obj_id, double& distance) {
 	{
 		return false;
 	}
-}
-
-void Model::OptimizeAllRequirements() {
-	Array<Requirement*> req;
-	auto dataReqMarker = dataReq.GetMarker();
-	do
-	{
-		req.PushBack(dataReqMarker.GetValue());
-	} while (++dataReqMarker);
-	OptimizeRequirements(req);
 }
 
 #ifdef MODEL_VERSION_DATA

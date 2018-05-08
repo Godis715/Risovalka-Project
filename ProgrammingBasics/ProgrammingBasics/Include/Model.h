@@ -45,10 +45,13 @@ private:
 	Data data; 
 
 #ifdef MODEL_VERSION_LINK 
-	void GetIDRequirementsInComponent(const ID&, Array<ID>&);
+	//void GetIDRequirementsInComponent(const ID&, Array<ID>&);
 
+	bool GetComponent(const ID&, BinSearchTree<ID, ID>&);
 
-	void FindRequirementsByID(Array<ID>&, Array<Requirement*>&);
+	bool GetRequirementsFromComponent(BinSearchTree<ID, ID>&, Array<Requirement*>&);
+
+	//void FindRequirementsByID(Array<ID>&, Array<Requirement*>&);
 
 	//may be not using
 	bool find(const ID&, Array<ID>);
@@ -101,24 +104,22 @@ public:
 	bool DeletePrimitive(const ID&);
 	bool DeleteRequirement(const ID&);
 
-	bool GetComponent(const ID&, BinSearchTree<ID, ID>&);
 #endif
 
-	bool getNearest(double, double, ID&, double&);
+	bool GetNearest(double, double, ID&, double&);
 
-	bool getObjType(const ID&, prim_type&);
+	bool GetObjType(const ID&, prim_type&);
 
 	////replace with GET CHILD 
 	//bool GetSegmentPoints(ID, Array<ID>&);
 	//bool GetArcPoints(ID, Array<ID>&);
 
-	bool getObjParam(const ID&, Array<double>&);
+	bool GetObjParam(const ID&, Array<double>&);
 	
 	void OptimizeRequirements(const Array<Requirement*>&);
 	// void PrintSystemRequirement();
 
-	//temp function
-	void OptimizeAllRequirements();
+	void OptimizeByID(const ID&);
 
 	// XXX Function
 
