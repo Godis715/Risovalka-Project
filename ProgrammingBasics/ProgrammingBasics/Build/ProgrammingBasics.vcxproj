@@ -129,17 +129,18 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Include\Array.h" />
-    <ClInclude Include="..\Include\Data.h" />
     <ClInclude Include="..\Include\Dequeue.h" />
     <ClInclude Include="..\Include\Dictionary.h" />
     <ClInclude Include="..\Include\Hash-Table.h" />
     <ClInclude Include="..\Include\ID.h" />
     <ClInclude Include="..\Include\IDGenerator.h" />
     <ClInclude Include="..\Include\INumerable.h" />
+    <ClInclude Include="..\Include\IView.h" />
     <ClInclude Include="..\Include\List.h" />
     <ClInclude Include="..\Include\Logger.h" />
     <ClInclude Include="..\Include\Model.h" />
     <ClInclude Include="..\Include\Pair-Tree.h" />
+    <ClInclude Include="..\Include\Presenter.h" />
     <ClInclude Include="..\Include\Primitives.h" />
     <ClInclude Include="..\Include\Queue.h" />
     <ClInclude Include="..\Include\Requirement.h" />

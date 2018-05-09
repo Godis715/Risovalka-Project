@@ -4,66 +4,13 @@
 
 #ifdef MODEL_VERSION_LINK
 
-//void Model::GetIDRequirementsInComponent(const ID& idPrim, Array<ID>& IDReq)
-//{
-//	BinSearchTree<ID, ID> labels;
-//	Queue<ID> queuePrim;
-//	Queue<ID> queueReq;
-//	auto marker = dataLink.GetMarker();
-//	List<ID>* list;
-//	List<ID>::Marker listMarker;
-//	ID id;
-//	DataLink::Marker treeMarker;
-//
-//	queuePrim.push(idPrim);
-//	while (!queuePrim.isEmpty())
-//	{
-//		while (!queuePrim.isEmpty())
-//		{
-//			id = queuePrim.pop();
-//			labels.Add(id, id);
-//
-//			treeMarker = dataLink.Find(id);
-//			if (!treeMarker.IsValid()) {
-//				continue;
-//			}
-//			list = treeMarker.GetValue();
-//			listMarker = list->GetMarker();
-//			if (!listMarker.IsValid()) {
-//				continue;
-//			}
-//			id = listMarker.GetValue();
-//			auto tempLabelsMarker = labels.Find(id);
-//			if (!tempLabelsMarker.IsValid()) {
-//				continue;
-//			}
-//			queueReq.push(id);
-//		}
-//		while (!queueReq.isEmpty())
-//		{
-//			id = queueReq.pop();
-//			labels.Add(id, id);
-//			IDReq.PushBack(id);
-//
-//			treeMarker = dataLink.Find(id);
-//			if (!treeMarker.IsValid()) {
-//				continue;
-//			}
-//			list = treeMarker.GetValue();
-//			listMarker = list->GetMarker();
-//			if (!listMarker.IsValid()) {
-//				continue;
-//			}
-//			id = listMarker.GetValue();
-//			if (labels.Find(id).IsValid()) {
-//				continue;
-//			}
-//			queuePrim.push(id);
-//		}
-//	}
-//}
-
 bool Model::GetComponent(const ID& id, BinSearchTree<ID, ID>& component) {
+
+	if (currentComponent != nullptr && currentComponent->Find(id).IsValid()) {
+		component = *currentComponent;
+		return true;
+	}
+
 	auto labels = new BinSearchTree<ID, ID>;
 	Queue<ID> queue;
 	if (!dataLink.Find(id).IsValid()) {
@@ -87,6 +34,11 @@ bool Model::GetComponent(const ID& id, BinSearchTree<ID, ID>& component) {
 		}
 	}
 	component = *labels;
+
+	if (currentComponent != nullptr) {
+		delete currentComponent;
+	}
+	currentComponent = labels;
 	return true;
 }
 
@@ -99,16 +51,6 @@ bool Model::GetRequirementsFromComponent(BinSearchTree<ID, ID>& component, Array
 	}
 	return (reqs.GetSize() != 0);
 }
-
-//void Model::FindRequirementsByID(Array<ID>& IDReq, Array<Requirement*>& Requirements) {
-//	for (int i = 0; i < IDReq.GetSize(); ++i) {
-//		auto marker = dataReq.Find(IDReq[i]);
-//		if (!marker.IsValid()) {
-//			continue;
-//		}
-//		Requirements.PushBack(marker.GetValue());
-//	}
-//}
 
 void Model::ConnectPrimitives(Primitive* point, Primitive* prim) {
 	Requirement* _connection = new ConnectionReq;
@@ -495,166 +437,6 @@ bool Model::DischargeInfoObjects(Array<infoObject>& dataPrimInfoObjects)
 	return true;
 }
 
-// optimize function
-
-double Model::GetError(){
-	double sum_error = 0;
-	auto dataReqMarker = dataReq.GetMarker();
-	do
-	{
-		sum_error += dataReqMarker.GetValue()->error();
-	} while (++dataReqMarker);
-	return sum_error / dataReq.GetSize();
-}
-
-//int Model::Optimize1() {
-//
-//	if (dataPrim.GetSize() == 0) {
-//		return 0;
-//	}
-//
-//	Array<Point*> points;
-//	Array<Arc*> arcs;
-//
-//	dataPrim.MoveBegin();
-//	do {
-//		Primitive* obj = dataPrim.GetCurrent();
-//		if (obj->GetType() == point) {
-//			points.PushBack(dynamic_cast<Point*>(obj));
-//		}
-//		else if (obj->GetType() == arc) {
-//			arcs.PushBack(dynamic_cast<Arc*>(obj));
-//		}
-//	} while (dataPrim.MoveNext());
-//
-//	const double delta_increasing_k = 2.0;
-//	double sum_error = 0;
-//	sum_error = GetError();
-//	double prevError = sum_error;
-//	double prevLastError = sum_error;
-//	int count = 0;
-//	int iterInside = 3;
-//	double delta = sum_error;
-//	std::cout << sum_error << "   " << iterInside << "   " << EPS << "  " << delta << "\n";
-//
-//	while (sum_error > EPS) {
-//		++count;
-//		for (int i = 0; i < points.GetSize(); ++i) {
-//
-//			delta = sum_error;
-//
-//			Vector2 pos = points[i]->GetPosition();
-//			for (int k = 0; k < iterInside; ++k)
-//			{
-//				double shift_x[]{ delta, -delta, delta, -delta, delta, -delta, 0, 0 };
-//				double shift_y[]{ delta, delta, -delta, -delta, 0, 0, delta, -delta };
-//
-//				double minFuncValue = sum_error;
-//				Vector2 minFuncPos = pos;
-//				bool hasChanged = false;
-//
-//				for (int j = 0; j < 8; ++j) {
-//
-//					points[i]->SetPosition(pos.x + shift_x[j], pos.y + shift_y[j]);
-//
-//					double funcValue = GetError();
-//
-//					if (funcValue < minFuncValue) {
-//
-//						minFuncValue = funcValue;
-//
-//						minFuncPos = pos;
-//						minFuncPos.x += shift_x[j];
-//						minFuncPos.y += shift_y[j];
-//
-//						hasChanged = true;
-//					}
-//				}
-//
-//				if (!hasChanged) {
-//					delta /= delta_increasing_k;
-//				}
-//				else {
-//					sum_error = minFuncValue;
-//					points[i]->SetPosition(minFuncPos);
-//					break;
-//				}
-//				if (delta < 1e-6) {
-//					break;
-//				}
-//			}
-//		}
-//		for (int i = 0; i < arcs.GetSize(); ++i) {
-//			double delta = sum_error;
-//			while (delta > EPS) {
-//				double tempAngle = arcs[i]->GetAngle();
-//
-//				bool hasChanged = false;
-//
-//				double minFuncAngle = tempAngle;
-//				double minFuncValue = sum_error;
-//
-//				arcs[i]->SetAngle(tempAngle - delta);
-//				double funcValue = GetError();
-//
-//				if (funcValue < minFuncValue) {
-//					minFuncValue = funcValue;
-//					minFuncAngle = tempAngle - delta;
-//					hasChanged = true;
-//				}
-//
-//				arcs[i]->SetAngle(tempAngle + delta);
-//				funcValue = GetError();
-//
-//				if (funcValue < minFuncAngle) {
-//					minFuncValue = funcValue;
-//					minFuncAngle = tempAngle + delta;
-//					hasChanged = true;
-//				}
-//
-//				if (!hasChanged) {
-//					delta /= delta_increasing_k;
-//				}
-//				else {
-//					arcs[i]->SetAngle(minFuncAngle);
-//					sum_error = minFuncValue;
-//					break;
-//				}
-//			}
-//		}
-//
-//		if (count % 25 == 0) {
-//			std::cout << sum_error << "   "<< iterInside << "   " << EPS << "  " << delta << "\n";
-//			if (count % 50 == 0) {
-//				if (EPS < 0.01) {
-//					EPS *= 2;
-//				}
-//				if (count > 400) {
-//					//std::cout << sum_error << "   " << iterInside << "   " << EPS << "  " << delta << "\n";
-//					return count;
-//				}
-//				if (prevLastError == sum_error) {
-//					return count;
-//				}
-//				prevLastError = sum_error;
-//			}
-//		}
-//		if (prevError == sum_error) {
-//			if (iterInside < 24) {
-//				iterInside *= 2;
-//			}
-//		}
-//		else {
-//			if (iterInside > 3) {
-//				iterInside /= 2;
-//			}
-//		}
-//		prevError = sum_error;
-//	}
-//	std::cout << sum_error << "   " << iterInside << "   " << EPS << "  " << delta << "\n";
-//	return count;
-//}
-
 double Model::GetError(const Array<Requirement*>& requirments) const {
 	double error = 0.0;
 	for (int i = 0; i < requirments.GetSize(); ++i) {
@@ -816,7 +598,6 @@ void Model::OptimizeByID(const ID& id) {
 	OptimizeRequirements(reqs);
 }
 
-
 bool Model::GetObjType(const ID& obj_id, prim_type& type) {
 	Primitive* obj = nullptr;
 	auto dataPrimMarker = dataPrim.Find(obj_id);
@@ -883,7 +664,16 @@ bool Model::GetObjParam(const ID& obj_id, Array<double>& result) {
 
 #define SEARCH_AREA 3.0
 bool Model::GetObject(double x, double y, Array<ID>& obj_id, Array<double>& distances) {
-
+	bool isFound = false;
+	for (auto i = dataPrim.GetMarker(); i.IsValid(); ++i) {
+		double dist = i.GetValue()->GetDistance(Vector2(x, y));
+		if (dist < SEARCH_AREA) {
+			isFound = true;
+			distances.PushBack(dist);
+			obj_id.PushBack(i.GetValue()->GetID());
+		}
+	}
+	return isFound;
 }
 
 #ifdef MODEL_VERSION_DATA

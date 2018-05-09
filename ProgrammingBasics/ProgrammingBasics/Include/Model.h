@@ -1,7 +1,7 @@
 #ifndef __MODEL
 #define __MODEL
 
-#include "Data.h"
+#include "Logger.h"
 
 // ID
 // IDGenerator
@@ -33,12 +33,7 @@ private:
 
 	IDGenerator* idGen;
 
-	// Evgeny' graph
-	Data data; 
-
-
 #ifdef MODEL_VERSION_LINK 
-	//void GetIDRequirementsInComponent(const ID&, Array<ID>&);
 
 	DataPrim dataPrim;
 
@@ -46,21 +41,16 @@ private:
 
 	DataLink dataLink;
 
-	BinSearchTree<ID, ID>* component;
+	BinSearchTree<ID, ID>* currentComponent;
 
 	bool GetRequirementsFromComponent(BinSearchTree<ID, ID>&, Array<Requirement*>&);
-
-	//void FindRequirementsByID(Array<ID>&, Array<Requirement*>&);
 
 	void ConnectPrimitives(Primitive*, Primitive*);
 
 	bool CreateRequirement(req_type, Array<Primitive*>&, Array<double>&);
 #endif
 
-	//similar functions!!
-	double GetError();
 	double GetError(const Array<Requirement*>&) const;
-	//
 
 	double ErrorByAlpha(const Array<Requirement*>&, const Array<double*>&, const Array<double>&, double);
 	void OptimizeByGradient(const Array<Requirement*>&, const Array<double*>&, const Array<double>&);
@@ -102,14 +92,14 @@ public:
 
 	bool GetObjType(const ID&, prim_type&);
 
+	bool ImposeRequirement(req_type, const Array<ID>&);
+
 	// to private
 	bool GetComponent(const ID&, BinSearchTree<ID, ID>&);
 
 	bool GetObjParam(const ID&, Array<double>&);
 	
 	void OptimizeRequirements(const Array<Requirement*>&);
-
-	// void PrintSystemRequirement();
 
 	void OptimizeByID(const ID&);
 

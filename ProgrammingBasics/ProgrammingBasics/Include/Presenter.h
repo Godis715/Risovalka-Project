@@ -1,39 +1,38 @@
-#ifndef __PRESENTER
-#define __PRESENTER
-
-#include "Model.h"
+#pragma once
 #include "IView.h"
 
-class Controller;
+#define SINGLE_SELECTION
+#define POLY_SELECTION
 
-
-class Presenter
-{
+class Presenter {
 private:
-	Model* model;
-	IView* view;
+	BinSearchTree<ID, ID> selectedObjects;
 
-	// try this !!!!
-	bool CreateRequirement(Requirement_id, const Array<ID>&, const Array<double>&);
+	BinSearchTree<ID, ID> selectedReq;
 
-	// too many similar functions
-	bool CreateRequirmentDistBetPoints(ID, ID, double);
-	bool CreateRequirmentPointsOnTheOneHand(ID, ID, ID);
-	bool CreateRequirmentDistanceBetweenPointSegment(ID, ID, double);
-	bool CreateRequirmentAngleBetweenSegments(ID, ID, double);
-	bool CreateRequirmentDistanceBetweenPointArc(ID, ID, double);
-	bool CreateRequirmentPointInArc(ID, ID);
-	bool CreateRequirmentTriangle(ID, ID, ID);
-	bool CreateRequirmentCorrectTriangle(ID, ID, ID, double);
-	bool CreateRequirmentNsAngle(Array<ID>&);
-	bool CreateRequirmentCorrectNsAngle(Array<ID>&, double);
-	//
-	void DrawScene();
+
+
+	void SelectObject(const ID&, int);
+
+
 public:
 	Presenter(IView*);
-	//create destructor
-	~Presenter();
 
-	void Optimize();
+	/* using for creating figures
+	 points, segments, arcs, circles .. */
+	void CreateObject(prim_type, const Array<double>&);
+
+	/* trying to impose requirements
+	on selected object */
+	bool CreateRequirement(req_type, const Array<double>&);
+
+	void DeleteRequirement(int);
+
+	void ChangeParamsRequirement(int, double);
+
+	void ScaleObject(double);
+
+	void MoveObject(Vector2&);
+
+	void ChangeObject();
 };
-#endif // !__PRESENTER

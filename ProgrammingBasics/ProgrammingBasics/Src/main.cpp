@@ -70,7 +70,6 @@ void DistBetPointsReq(const ID& point1, const ID& point2, double dist) {
 
 int main()
 {
-	model;
 	ID segment1 = CreateSegment(0.0, 0.0, 0.0, 20.0);
 	ID segment2 = CreateSegment(0.0, 0.0, 0.0, 5.0);
 
