@@ -1,8 +1,7 @@
 #ifndef __ID
 #define __ID
 
-#define MODEL_VERSION_DATA
-
+#define MODEL_VERSION_LINK
 
 class ID {
 private:

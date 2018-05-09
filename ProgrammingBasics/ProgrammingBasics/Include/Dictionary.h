@@ -18,6 +18,7 @@ public:
 		parent = nullptr;
 		high = 0;
 	}
+
 	Node* right = nullptr;
 	Node* left = nullptr;
 	Node* parent = nullptr;

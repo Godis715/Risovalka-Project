@@ -74,9 +74,6 @@
     <ClInclude Include="..\Include\Hash-Table.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="..\Include\Set.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
     <ClInclude Include="..\Include\Queue.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>

@@ -31,12 +31,6 @@ class Model
 {
 private:
 
-	DataPrim dataPrim;
-
-	DataReq dataReq;
-
-	DataLink dataLink;
-
 	IDGenerator* idGen;
 
 	// Evgeny' graph
@@ -45,6 +39,14 @@ private:
 
 #ifdef MODEL_VERSION_LINK 
 	//void GetIDRequirementsInComponent(const ID&, Array<ID>&);
+
+	DataPrim dataPrim;
+
+	DataReq dataReq;
+
+	DataLink dataLink;
+
+	BinSearchTree<ID, ID>* component;
 
 	bool GetRequirementsFromComponent(BinSearchTree<ID, ID>&, Array<Requirement*>&);
 
@@ -96,10 +98,11 @@ public:
 
 #endif
 
-	bool GetNearest(double, double, ID&, double&);
+	bool GetObject(double, double, Array<ID>&, Array<double>&);
 
 	bool GetObjType(const ID&, prim_type&);
 
+	// to private
 	bool GetComponent(const ID&, BinSearchTree<ID, ID>&);
 
 	bool GetObjParam(const ID&, Array<double>&);

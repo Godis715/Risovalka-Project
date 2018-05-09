@@ -741,7 +741,7 @@ void Model::OptimizeRequirements(const Array<Requirement*>& requirments) {
 	//between not-unique parameters and their unique numbers
 
 	Array<double*> all_parameters(params_number);
-	Set<double*, UniqueParam> set;
+	BinSearchTree<double*, UniqueParam> set;
 	int* match_array = new int[params_number];
 
 	// from 0 to params_number
@@ -761,14 +761,14 @@ void Model::OptimizeRequirements(const Array<Requirement*>& requirments) {
 			all_parameters[all_parameters_iterator] = currentParameter;
 
 			UniqueParam unique_param;
-			bool notUniqueParam = set.GetByKey(currentParameter, unique_param);
+			bool notUniqueParam = set.Find(currentParameter).IsValid();
 
 			if (notUniqueParam) {
 				match_array[all_parameters_iterator] = unique_param.unique_number;
 			}
 			else {
 				unique_param = UniqueParam{ currentParameter, uniq_numbers_iterator };
-				set.Push(currentParameter, unique_param);
+				set.Add(currentParameter, unique_param);
 				match_array[all_parameters_iterator] = uniq_numbers_iterator;
 				uniq_numbers_iterator++;
 			}
@@ -881,38 +881,19 @@ bool Model::GetObjParam(const ID& obj_id, Array<double>& result) {
 
 }
 
-bool Model::GetNearest(double x, double y, ID& obj_id, double& distance) {
-	if (dataPrim.GetSize() != 0) {
-		Vector2 pos(x, y);
-		auto dataPrimMarker = dataPrim.GetMarker();
-		ID nearestObject = dataPrimMarker.GetValue()->GetID();
-		double minDist = dataPrimMarker.GetValue()->GetDistance(pos);
-		while (++dataPrimMarker) {
-			double dist = dataPrimMarker.GetValue()->GetDistance(pos);
-			if (dataPrimMarker.GetValue()->GetType() == point_t) {
-				if (dist < 5.0f) {
-					dist = 0.0;
-				}
-			}
-			if (dist < minDist && dataPrimMarker.GetValue()->GetType() == point_t) {
-				minDist = dist;
-				nearestObject = dataPrimMarker.GetValue()->GetID();
-			}
-		}
-		distance = minDist;
-		obj_id = nearestObject;
-		return true;
-	}
-	else
-	{
-		return false;
-	}
+#define SEARCH_AREA 3.0
+bool Model::GetObject(double x, double y, Array<ID>& obj_id, Array<double>& distances) {
+
 }
 
 #ifdef MODEL_VERSION_DATA
 
 void Model::XXXConnectPrimitives(Primitive* prim1, Primitive* prim2, Primitive* prim3) {
 	ConnectionReq* connect = new ConnectionReq;
+	Array<int> index(3);
+	index[0] = -1;
+	index[1] = -1;
+	index[2] = -1;
 	Array<ID> IDPrims(3);
 	IDPrims[0] = prim1->GetID();
 	IDPrims[1] = prim2->GetID();
@@ -921,7 +902,7 @@ void Model::XXXConnectPrimitives(Primitive* prim1, Primitive* prim2, Primitive* 
 	Prims[0] = prim1;
 	Prims[1] = prim2;
 	Prims[2] = prim3;
-	data.Add(IDPrims, Prims, connect->GetID(), connect);
+	data.Add(index, IDPrims, Prims, connect->GetID(), connect);
 }
 
 bool Model::XXXCreateObject(const prim_type type, Array<double>& params, ID& obj_id) {
@@ -996,7 +977,7 @@ bool Model::XXXCreateRequirementByID(const req_type type, Array<int>& index, Arr
 bool Model::XXXCreateRequirement(const req_type type, Array<int>& index, Array<ID>& IDPrims, Array<Primitive*>& primitives, Array<double>& params) {
 	switch (type)
 	{
-	case distBetPoints_t: {
+	case distBetPoints: {
 		// verification parameters
 		if ((primitives.GetSize() != 2)
 			&& (params.GetSize() != 1)
@@ -1012,10 +993,10 @@ bool Model::XXXCreateRequirement(const req_type type, Array<int>& index, Array<I
 		dataReq.Add(requirement->GetID(), requirement);
 
 
-		data.Add(IDPrims, primitives, requirement->GetID(), requirement);
+		data.Add(index, IDPrims, primitives, requirement->GetID(), requirement);
 		return true;
 	}
-	case equalSegmentLen_t: {
+	case equalSegmentLen: {
 		// verification parameters
 		if (primitives.GetSize() != 2
 			&& params.GetSize() == 0
@@ -1029,7 +1010,7 @@ bool Model::XXXCreateRequirement(const req_type type, Array<int>& index, Array<I
 		dataReq.Add(requirement->GetID(), requirement);
 
 
-		data.Add(IDPrims, primitives, requirement->GetID(), requirement);
+		data.Add(index, IDPrims, primitives, requirement->GetID(), requirement);
 		return true;
 	}
 	case pointsOnTheOneHand: {
@@ -1048,7 +1029,7 @@ bool Model::XXXCreateRequirement(const req_type type, Array<int>& index, Array<I
 			*cast<Point*>(primitives[2]));
 		dataReq.Add(requirement->GetID(), requirement);
 
-		data.Add(IDPrims, primitives, requirement->GetID(), requirement);
+		data.Add(index, IDPrims, primitives, requirement->GetID(), requirement);
 		return true;
 	}
 	case distBetPointSeg: {
@@ -1066,7 +1047,7 @@ bool Model::XXXCreateRequirement(const req_type type, Array<int>& index, Array<I
 			params[0]);
 		dataReq.Add(requirement->GetID(), requirement);
 
-		data.Add(IDPrims, primitives, requirement->GetID(), requirement);
+		data.Add(index, IDPrims, primitives, requirement->GetID(), requirement);
 		return true;
 	}
 	case angleBetSeg: {
@@ -1084,7 +1065,7 @@ bool Model::XXXCreateRequirement(const req_type type, Array<int>& index, Array<I
 			params[0]);
 		dataReq.Add(requirement->GetID(), requirement);
 
-		data.Add(IDPrims, primitives, requirement->GetID(), requirement);
+		data.Add(index, IDPrims, primitives, requirement->GetID(), requirement);
 		return true;
 
 	}
@@ -1103,7 +1084,7 @@ bool Model::XXXCreateRequirement(const req_type type, Array<int>& index, Array<I
 			params[0]);
 		dataReq.Add(requirement->GetID(), requirement);
 
-		data.Add(IDPrims, primitives, requirement->GetID(), requirement);
+		data.Add(index, IDPrims, primitives, requirement->GetID(), requirement);
 		return true;
 	}
 	case pointInArc: {
@@ -1120,7 +1101,7 @@ bool Model::XXXCreateRequirement(const req_type type, Array<int>& index, Array<I
 			*cast<Point*>(primitives[1]));
 		dataReq.Add(requirement->GetID(), requirement);
 
-		data.Add(IDPrims, primitives, requirement->GetID(), requirement);
+		data.Add(index, IDPrims, primitives, requirement->GetID(), requirement);
 		return true;
 	}
 	default:
@@ -1145,7 +1126,7 @@ void Model::XXXGetRequirementsType(int index, const ID& id, Array<req_type>& arr
 }
 
 void Model::XXXDeleteRequirement(int index, const ID& id) {
-	data.DeleteRequirement(id);
+	data.DeleteRequirement(index, id);
 }
 
 void Model::XXXDeletePrimitive(int index, const ID& id) {
@@ -1154,7 +1135,7 @@ void Model::XXXDeletePrimitive(int index, const ID& id) {
 		marker.DeleteCurrent();
 		return;
 	}
-	data.DeletePrimitive(id);
+	data.DeletePrimitive(index, id);
 }
 
 #endif

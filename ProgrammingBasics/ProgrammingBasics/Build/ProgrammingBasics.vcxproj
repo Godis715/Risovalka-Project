@@ -143,7 +143,6 @@
     <ClInclude Include="..\Include\Primitives.h" />
     <ClInclude Include="..\Include\Queue.h" />
     <ClInclude Include="..\Include\Requirement.h" />
-    <ClInclude Include="..\Include\Set.h" />
     <ClInclude Include="..\Include\Type.h" />
     <ClInclude Include="..\Include\Vector2.h" />
   </ItemGroup>
