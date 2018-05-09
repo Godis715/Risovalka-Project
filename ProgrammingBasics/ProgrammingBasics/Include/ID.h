@@ -1,7 +1,7 @@
 #ifndef __ID
 #define __ID
 
-#define MODEL_VERSION_LINK
+#define MODEL_VERSION_DATA
 
 
 class ID {
@@ -9,11 +9,12 @@ private:
 	unsigned long long hash;
 public:
 #ifdef MODEL_VERSION_DATA
-	int index = -1;
+	int index;
 #endif
 
 	ID(unsigned long long);
 	ID();
+	void operator=(const ID&);
 	bool operator== (const ID&) const;
 	bool operator< (const ID&) const;
 	bool operator> (const ID&) const;

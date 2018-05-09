@@ -131,7 +131,7 @@ private:
 		data.Erase(index);
 	}
 
-	void CreateNewComponent(Array<ID>& keys, Array<Prim>& elements, const ID& key, Req& value) {
+	void CreateNewComponent(Array<ID>& keys, Array<Prim>& elements, ID& key, Req& value) {
 		Component* component = new Component;
 		int index = data.GetSize();
 		data.PushBack(component);
@@ -139,6 +139,7 @@ private:
 		PairNode<ID, Req, Prim>* nodeReq = new PairNode<ID, Req, Prim>(key, value);
 		nodeReq->list = new List<PairNode<ID, Prim, Req>*>;
 		data[index]->treeReq->Add(nodeReq);
+		key.index = index;
 		// pushing new node
 		for (int i = 0; i < elements.GetSize(); ++i) {
 			PairNode<ID, Prim, Req>* nodePrim = new PairNode<ID, Prim, Req>(keys[i], elements[i]);
@@ -146,7 +147,94 @@ private:
 			nodePrim->list->PushTail(nodeReq);
 			nodeReq->list->PushTail(nodePrim);
 			data[index]->treePrim->Add(nodePrim);
+			keys[i].index = index;
 		}
+	}
+
+	void DeletePrim(const int index, const ID& key) {
+		PairTree<ID, Prim, Req>* treeFirst = data[index]->treePrim;
+		PairTree<ID, Req, Prim>* treeSecond = data[index]->treeReq;
+		PairNode<ID, Prim, Req>* temp;
+		PairNode<ID, Prim, Req>* node1;
+		PairNode<ID, Req, Prim>* node2;
+
+		temp = treeFirst->GetNode(key);
+		if (temp == nullptr) {
+			return;
+		}
+		List<PairNode<ID, Req, Prim>*>* list = temp->list;
+		auto listMarker = list->GetMarker();
+
+		do
+		{
+			node2 = listMarker.GetValue();
+			List<PairNode<ID, Prim, Req>*>* listReqOnPrim = node2->list;
+			auto listMarkerReq = listReqOnPrim->GetMarker();
+
+			do
+			{
+				node1 = listMarkerReq.GetValue();
+				// Clearing link on this Req
+				if (node1 != temp) {
+					List<PairNode<ID, Req, Prim>*>* listPrimOnReq = node1->list;
+					auto listMarkerPrim = listPrimOnReq->GetMarker();
+
+					do
+					{
+						if (node2 == listMarkerPrim.GetValue()) {
+							listMarkerPrim.DeleteCurrent();
+
+							break;
+						}
+					} while (++listMarkerPrim);
+				}
+			} while (++listMarkerReq);
+			// delete Requariments
+
+			delete listReqOnPrim;
+			delete node2->value;
+			treeSecond->Delete(node2);
+		} while (++listMarker);
+		// delete Primitive
+		delete list;
+		delete temp->value;
+		treeFirst->Delete(temp);
+	}
+
+	void DeleteReq(const int index, const ID& key) {
+		PairTree<ID, Req, Prim>* treeSecond = data[index]->treeReq;
+		PairNode<ID, Prim, Req>* node1;
+		PairNode<ID, Req, Prim>* node2;
+
+		node2 = treeSecond->GetNode(key);
+		if (node2 == nullptr) {
+			return;
+		}
+
+		List<PairNode<ID, Prim, Req>*>* listReqOnPrim = node2->list;
+		auto listMarkerReq = listReqOnPrim->GetMarker();
+
+		do
+		{
+			node1 = listMarkerReq.GetValue();
+			// Clearing link on this Req
+			List<PairNode<ID, Req, Prim>*>* listPrimOnReq = node1->list;
+			auto listMarkerPrim = listPrimOnReq->GetMarker();
+
+			do
+			{
+				if (node2 == listMarkerPrim.GetValue()) {
+					listMarkerPrim.DeleteCurrent();
+
+					break;
+				}
+			} while (++listMarkerPrim);
+		} while (++listMarkerReq);
+		// delete Requariments
+
+		delete listReqOnPrim;
+		delete node2->value;
+		treeSecond->Delete(node2);
 	}
 public:
 	Data() {
@@ -286,100 +374,56 @@ public:
 		} while (++marker);
 	}
 
-	void DeleteComponent(int index) {
-		data.Erase(index);
-	}
-
-	void DeletePrimitive(const int index, const ID& key) {
-		PairTree<ID, Prim, Req>* treeFirst = data[index]->treePrim;
-		PairTree<ID, Req, Prim>* treeSecond = data[index]->treeReq;
-		PairNode<ID, Prim, Req>* temp;
-		PairNode<ID, Prim, Req>* node1;
-		PairNode<ID, Req, Prim>* node2;
-
-		temp = treeFirst->GetNode(key);
-		if (temp == nullptr) {
-			return;
-		}
-		List<PairNode<ID, Req, Prim>*>* list = temp->list;
-		auto listMarker = list->GetMarker();
-
-		do
+	void DeleteComponent(const ID& id) {
+		Queue<Node<ID, Prim>*> primQueue;
+		Queue<Node<ID, Req>*> reqQueue;
+		primQueue.push(data[id.index]->treePrim->GetNode());
+		reqQueue.push(data[id.index]->treeReq->GetNode());
+		while (!primQueue.isEmpty())
 		{
-			node2 = listMarker.GetValue();
-			List<PairNode<ID, Prim, Req>*>* listReqOnPrim = node2->list;
-			auto listMarkerReq = listReqOnPrim->GetMarker();
-
-			do
-			{
-				node1 = listMarkerReq.GetValue();
-				// Clearing link on this Req
-				if (node1 != temp) {
-					List<PairNode<ID, Req, Prim>*>* listPrimOnReq = node1->list;
-					auto listMarkerPrim = listPrimOnReq->GetMarker();
-
-					do
-					{
-						if (node2 == listMarkerPrim.GetValue()) {
-							listMarkerPrim.DeleteCurrent();
-							
-							break;
-						}
-					} while (++listMarkerPrim);
-				}
-			} while (++listMarkerReq);
-			// delete Requariments
-			
-			delete listReqOnPrim;
-			delete node2->value;
-			treeSecond->Delete(node2);
-		} while (++listMarker);
-		// delete Primitive
-		delete list;
-		delete temp->value;
-		treeFirst->Delete(temp);
-		SplitingAndBFS(index);
-	}
-
-	void DeleteRequirement(const int index, const ID& key) {
-		PairTree<ID, Req, Prim>* treeSecond = data[index]->treeReq;
-		PairNode<ID, Prim, Req>* node1;
-		PairNode<ID, Req, Prim>* node2;
-
-		node2 = treeSecond->GetNode(key);
-		if (node2 == nullptr) {
-			return;
+			Node<ID, Prim>* node = primQueue.pop();
+			if (node->left != nullptr) {
+				primQueue.push(node->left);
+			}
+			if (node->right != nullptr) {
+				primQueue.push(node->right);
+			}
+			delete node->value;
 		}
-
-		List<PairNode<ID, Prim, Req>*>* listReqOnPrim = node2->list;
-		auto listMarkerReq = listReqOnPrim->GetMarker();
-
-		do
+		while (!reqQueue.isEmpty())
 		{
-			node1 = listMarkerReq.GetValue();
-			// Clearing link on this Req
-			List<PairNode<ID, Req, Prim>*>* listPrimOnReq = node1->list;
-			auto listMarkerPrim = listPrimOnReq->GetMarker();
-
-			do
-			{
-				if (node2 == listMarkerPrim.GetValue()) {
-					listMarkerPrim.DeleteCurrent();
-					
-					break;
-				}
-			} while (++listMarkerPrim);
-		} while (++listMarkerReq);
-		// delete Requariments
-		
-		delete listReqOnPrim;
-		delete node2->value;
-		treeSecond->Delete(node2);
-
-		SplitingAndBFS(index);
+			Node<ID, Req>* node = reqQueue.pop();
+			if (node->left != nullptr) {
+				reqQueue.push(node->left);
+			}
+			if (node->right != nullptr) {
+				reqQueue.push(node->right);
+			}
+			delete node->value;
+		}
+		delete data[id.index];
+		data.Erase(id.index);
 	}
 
-	void Add(Array<int>& indexes, Array<ID>& keys, Array<Prim>& elements, const ID& key, Req value) {
+	void DeletePrimitive(const ID& key) {
+		auto marker = data[key.index]->treePrim->Find(key);
+		Primitive* primitive = marker.GetValue();
+		if (primitive->GetType() == point_t) {
+			Point* point = dynamic_cast<Point*>(primitive);
+			if (point->GetParent() != nullptr) {
+				DeletePrim(point->GetParent()->GetID().index, point->GetParent()->GetID());
+			}
+		}
+		DeletePrim(key.index, key);
+		SplitingAndBFS(key.index);
+	}
+
+	void DeleteRequirement(const ID& key) {
+		DeleteReq(key.index, key);
+		SplitingAndBFS(key.index);
+	}
+
+	void Add(Array<ID>& keys, Array<Prim>& elements, ID& key, Req value) {
 		// Component* component;
 		bool newComponent = true;
 		bool* components = new bool[data.GetSize()];
@@ -387,11 +431,11 @@ public:
 			components[i] = false;
 		}
 
-		for (int i = 0; i < indexes.GetSize(); ++i) {
-			// indexes[i] = -1 - new element
-			// indexes[i] >= 0 - it was in components
-			if (indexes[i] >= 0) {
-				components[indexes[i]] = true;
+		for (int i = 0; i < keys.GetSize(); ++i) {
+			// keys[i].index = -1 - new element
+			// keys[i].index >= 0 - it was in components
+			if (keys[i].index >= 0) {
+				components[keys[i].index] = true;
 				newComponent = false;
 			}
 		}
@@ -416,18 +460,19 @@ public:
 		data[bigestComponent]->treeReq->Add(nodeReq);
 		// creating link
 		for (int i = 0; i < elements.GetSize(); ++i) {
-			if (indexes[i] >= 0) {
+			if (keys[i].index >= 0) {
 				PairNode<ID, Prim, Req>* nodePrim;
 
-				nodePrim = data[indexes[i]]->treePrim->GetNode(keys[i]);
+				nodePrim = data[keys[i].index]->treePrim->GetNode(keys[i]);
 
 				nodePrim->list->PushTail(nodeReq);
 				nodeReq->list->PushTail(nodePrim);
+				keys[i].index = bigestComponent;
 			}
 		}
 		// pushing new node
 		for (int i = 0; i < elements.GetSize(); ++i) {
-			if (indexes[i] < 0) {
+			if (keys[i].index < 0) {
 				// remove from dictionary
 				dict->Find(keys[i]).DeleteCurrent();
 				// 
@@ -436,6 +481,7 @@ public:
 				nodePrim->list->PushTail(nodeReq);
 				nodeReq->list->PushTail(nodePrim);
 				data[bigestComponent]->treePrim->Add(nodePrim);
+				keys[i].index = bigestComponent;
 			}
 		}
 		// merging
@@ -444,6 +490,7 @@ public:
 				if (i != bigestComponent) {
 					data[bigestComponent]->treePrim->Merge(data[i]->treePrim);
 					data[bigestComponent]->treeReq->Merge(data[i]->treeReq);
+					delete data[i];
 					data.Erase(i);
 				}
 			}
@@ -451,11 +498,11 @@ public:
 
 	}
 
-	void UploadingDataPrim(int index, Array<Prim>& prims) {
-		if (index >= data.GetSize()) {
+	void UploadingDataPrim(const ID& key, Array<Prim>& prims) {
+		if (key.index >= data.GetSize()) {
 			return;
 		}
-		PairTree<ID, Prim, Req>::PairMarker marker = data[index]->treePrim->GetPairMarker();
+		PairTree<ID, Prim, Req>::PairMarker marker = data[key.index]->treePrim->GetPairMarker();
 		do
 		{
 			prims.PushBack(marker.GetValue());
@@ -463,11 +510,11 @@ public:
 		return;
 	}
 
-	void UploadingDataReq(int index, Array<Req>& Reqs) {
-		if (index >= data.GetSize()) {
+	void UploadingDataReq(const ID& key, Array<Req>& Reqs) {
+		if (key.index >= data.GetSize()) {
 			return;
 		}
-		PairTree<ID, Req, Prim>::PairMarker marker = data[index]->treeReq->GetPairMarker();
+		PairTree<ID, Req, Prim>::PairMarker marker = data[key.index]->treeReq->GetPairMarker();
 		do
 		{
 			Reqs.PushBack(marker.GetValue());

@@ -913,10 +913,6 @@ bool Model::GetNearest(double x, double y, ID& obj_id, double& distance) {
 
 void Model::XXXConnectPrimitives(Primitive* prim1, Primitive* prim2, Primitive* prim3) {
 	ConnectionReq* connect = new ConnectionReq;
-	Array<int> index(3);
-	index[0] = -1;
-	index[1] = -1;
-	index[2] = -1;
 	Array<ID> IDPrims(3);
 	IDPrims[0] = prim1->GetID();
 	IDPrims[1] = prim2->GetID();
@@ -925,7 +921,7 @@ void Model::XXXConnectPrimitives(Primitive* prim1, Primitive* prim2, Primitive* 
 	Prims[0] = prim1;
 	Prims[1] = prim2;
 	Prims[2] = prim3;
-	data.Add(index, IDPrims, Prims, connect->GetID(), connect);
+	data.Add(IDPrims, Prims, connect->GetID(), connect);
 }
 
 bool Model::XXXCreateObject(const prim_type type, Array<double>& params, ID& obj_id) {
@@ -1000,7 +996,7 @@ bool Model::XXXCreateRequirementByID(const req_type type, Array<int>& index, Arr
 bool Model::XXXCreateRequirement(const req_type type, Array<int>& index, Array<ID>& IDPrims, Array<Primitive*>& primitives, Array<double>& params) {
 	switch (type)
 	{
-	case distBetPoints: {
+	case distBetPoints_t: {
 		// verification parameters
 		if ((primitives.GetSize() != 2)
 			&& (params.GetSize() != 1)
@@ -1016,10 +1012,10 @@ bool Model::XXXCreateRequirement(const req_type type, Array<int>& index, Array<I
 		dataReq.Add(requirement->GetID(), requirement);
 
 
-		data.Add(index, IDPrims, primitives, requirement->GetID(), requirement);
+		data.Add(IDPrims, primitives, requirement->GetID(), requirement);
 		return true;
 	}
-	case equalSegmentLen: {
+	case equalSegmentLen_t: {
 		// verification parameters
 		if (primitives.GetSize() != 2
 			&& params.GetSize() == 0
@@ -1033,7 +1029,7 @@ bool Model::XXXCreateRequirement(const req_type type, Array<int>& index, Array<I
 		dataReq.Add(requirement->GetID(), requirement);
 
 
-		data.Add(index, IDPrims, primitives, requirement->GetID(), requirement);
+		data.Add(IDPrims, primitives, requirement->GetID(), requirement);
 		return true;
 	}
 	case pointsOnTheOneHand: {
@@ -1052,7 +1048,7 @@ bool Model::XXXCreateRequirement(const req_type type, Array<int>& index, Array<I
 			*cast<Point*>(primitives[2]));
 		dataReq.Add(requirement->GetID(), requirement);
 
-		data.Add(index, IDPrims, primitives, requirement->GetID(), requirement);
+		data.Add(IDPrims, primitives, requirement->GetID(), requirement);
 		return true;
 	}
 	case distBetPointSeg: {
@@ -1070,7 +1066,7 @@ bool Model::XXXCreateRequirement(const req_type type, Array<int>& index, Array<I
 			params[0]);
 		dataReq.Add(requirement->GetID(), requirement);
 
-		data.Add(index, IDPrims, primitives, requirement->GetID(), requirement);
+		data.Add(IDPrims, primitives, requirement->GetID(), requirement);
 		return true;
 	}
 	case angleBetSeg: {
@@ -1088,7 +1084,7 @@ bool Model::XXXCreateRequirement(const req_type type, Array<int>& index, Array<I
 			params[0]);
 		dataReq.Add(requirement->GetID(), requirement);
 
-		data.Add(index, IDPrims, primitives, requirement->GetID(), requirement);
+		data.Add(IDPrims, primitives, requirement->GetID(), requirement);
 		return true;
 
 	}
@@ -1107,7 +1103,7 @@ bool Model::XXXCreateRequirement(const req_type type, Array<int>& index, Array<I
 			params[0]);
 		dataReq.Add(requirement->GetID(), requirement);
 
-		data.Add(index, IDPrims, primitives, requirement->GetID(), requirement);
+		data.Add(IDPrims, primitives, requirement->GetID(), requirement);
 		return true;
 	}
 	case pointInArc: {
@@ -1124,7 +1120,7 @@ bool Model::XXXCreateRequirement(const req_type type, Array<int>& index, Array<I
 			*cast<Point*>(primitives[1]));
 		dataReq.Add(requirement->GetID(), requirement);
 
-		data.Add(index, IDPrims, primitives, requirement->GetID(), requirement);
+		data.Add(IDPrims, primitives, requirement->GetID(), requirement);
 		return true;
 	}
 	default:
@@ -1149,7 +1145,7 @@ void Model::XXXGetRequirementsType(int index, const ID& id, Array<req_type>& arr
 }
 
 void Model::XXXDeleteRequirement(int index, const ID& id) {
-	data.DeleteRequirement(index, id);
+	data.DeleteRequirement(id);
 }
 
 void Model::XXXDeletePrimitive(int index, const ID& id) {
@@ -1158,7 +1154,7 @@ void Model::XXXDeletePrimitive(int index, const ID& id) {
 		marker.DeleteCurrent();
 		return;
 	}
-	data.DeletePrimitive(index, id);
+	data.DeletePrimitive(id);
 }
 
 #endif
