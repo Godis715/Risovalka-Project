@@ -10,11 +10,11 @@
 class Requirement {
 private:
 	const ID id;
-	const req_type type;
+	const object_type type;
 protected:
 	Array<double*> params;
 public:
-	Requirement(const ID& _id, req_type _type) : id(_id), type(_type) { 
+	Requirement(const ID& _id, object_type _type) : id(_id), type(_type) {
 		int size;
 
 		switch (type) {
@@ -38,7 +38,7 @@ public:
 	Array<double> gradient();
 	ID GetID() const;
 	Array<double*> GetParams();
-	req_type GetType() const;
+	object_type GetType() const;
 };
 
 class DistBetPointsReq : public Requirement

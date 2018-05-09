@@ -20,11 +20,11 @@ public:
 
 	/* using for creating figures
 	 points, segments, arcs, circles .. */
-	void CreateObject(prim_type, const Array<double>&);
+	void CreateObject(object_type, const Array<double>&);
 
 	/* trying to impose requirements
 	on selected object */
-	bool CreateRequirement(req_type, const Array<double>&);
+	bool CreateRequirement(object_type, const Array<double>&);
 
 	void DeleteRequirement(int);
 

@@ -3,13 +3,11 @@
 
 #include "Hash-Table.h"
 
-enum prim_type {
+enum object_type {
 	point_t,
 	segment_t,
-	arc_t
-};
+	arc_t,
 
-enum req_type {
 	connection_t,
 	distBetPoints_t,
 	equalSegmentLen_t,

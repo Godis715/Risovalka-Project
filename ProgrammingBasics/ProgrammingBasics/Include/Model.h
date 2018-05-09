@@ -12,8 +12,6 @@
 // List
 // Array
 // Dictionary
-// Pair-Tree
-// Set
 // Hash-Table
 // Type
 // Vector2
@@ -33,8 +31,6 @@ private:
 
 	IDGenerator* idGen;
 
-#ifdef MODEL_VERSION_LINK 
-
 	DataPrim dataPrim;
 
 	DataReq dataReq;
@@ -45,17 +41,21 @@ private:
 
 	bool GetRequirementsFromComponent(BinSearchTree<ID, ID>&, Array<Requirement*>&);
 
+	bool GetPrimitiveFromComponent(BinSearchTree<ID, ID>&, Array<Primitive*>&);
+
 	void ConnectPrimitives(Primitive*, Primitive*);
 
-	bool CreateRequirement(req_type, Array<Primitive*>&, Array<double>&);
-#endif
+	bool CreateRequirement(object_type, Array<Primitive*>&, Array<double>&);
+
 
 	double GetError(const Array<Requirement*>&) const;
 
 	double ErrorByAlpha(const Array<Requirement*>&, const Array<double*>&, const Array<double>&, double);
 	void OptimizeByGradient(const Array<Requirement*>&, const Array<double*>&, const Array<double>&);
 
+	void OptitmizeNewton(const ID&);
 
+	void GetDoublesForOptimize(Array<Primitive*>&, Array<double*>&);
 public:
 	class infoObject
 	{
@@ -67,7 +67,7 @@ public:
 			this->type = input.type;
 		}
 		Array<double> params;
-		prim_type type;
+		object_type type;
 	};
 
 	Model() { }
@@ -77,22 +77,20 @@ public:
 
 	bool DischargeInfoObjects(Array<infoObject>&);
 
-#ifdef MODEL_VERSION_LINK
-	bool CreateObject(prim_type, Array<double>&, ID&);
+	bool CreateObject(object_type, Array<double>&, ID&);
 	
-	bool CreateRequirementByID(req_type, Array<ID>&, Array<double>&);
+	bool CreateRequirementByID(object_type, Array<ID>&, Array<double>&);
 	void CreateLink(const ID&, Array<Primitive*>&);
 
 	bool DeletePrimitive(const ID&);
 	bool DeleteRequirement(const ID&);
 
-#endif
 
 	bool GetObject(double, double, Array<ID>&, Array<double>&);
 
-	bool GetObjType(const ID&, prim_type&);
+	bool GetObjType(const ID&, object_type&);
 
-	bool ImposeRequirement(req_type, const Array<ID>&);
+	bool ImposeRequirement(object_type, const Array<ID>&);
 
 	// to private
 	bool GetComponent(const ID&, BinSearchTree<ID, ID>&);
@@ -103,26 +101,5 @@ public:
 
 	void OptimizeByID(const ID&);
 
-	// XXX Function
-
-#ifdef MODEL_VERSION_DATA
-	bool XXXCreateObject(const prim_type, Array<double>&, ID&);
-
-	void XXXConnectPrimitives(Primitive*, Primitive*, Primitive*);
-
-	bool XXXCreateRequirementByID(const req_type, Array<int>&, Array<ID>&, Array<double>&);
-
-	bool XXXCreateRequirement(const req_type, Array<int>&, Array<ID>&, Array<Primitive*>&, Array<double>&);
-
-	void XXXGetRequirementsByID(int, const ID&, Array<Requirement*>&);
-
-	void XXXGetRequirementsIDByID(int, const ID&, Array<ID>&);
-
-	void XXXGetRequirementsType(int, const ID&, Array<req_type>&);
-
-	void XXXDeleteRequirement(int, const ID&);
-
-	void XXXDeletePrimitive(int, const ID&);
-#endif
 };
 #endif

@@ -8,12 +8,12 @@
 class Primitive {
 private:
 	const ID id;
-	const prim_type type;
+	const object_type type;
 public:
-	Primitive(ID, prim_type);
+	Primitive(ID, object_type);
 	virtual double GetDistance(const Vector2&) const = 0;
 	ID GetID() const;
-	prim_type GetType();
+	object_type GetType();
 };
 
 class Point : public Primitive {

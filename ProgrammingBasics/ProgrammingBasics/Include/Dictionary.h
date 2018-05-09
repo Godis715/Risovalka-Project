@@ -438,8 +438,6 @@ protected:
 			//
 			temp->left = node->left;
 			node->left->parent = temp;
-			// ��� ��� �������������� ������ ���������� � ����������������,
-			// �� �� ������ ���� �� ������ � ���������
 
 			delete node;
 			RestoreHigh(tempParent);
@@ -463,7 +461,8 @@ public:
 		this->head = tree.head;
 		this->size = tree.size;
 
-		tree->head = nullptr;
+		tree.head = nullptr;
+		tree.size = 0;
 	}
 
 	void operator=(const BinSearchTree& tree) {
@@ -475,7 +474,8 @@ public:
 		this->head = tree.head;
 		this->size = tree.size;
 
-		tree->head = nullptr;
+		tree.head = nullptr;
+		tree.size = 0;
 	}
 
 

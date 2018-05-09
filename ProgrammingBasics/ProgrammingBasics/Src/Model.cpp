@@ -1,8 +1,6 @@
-﻿
-#include "Model.h"
+﻿#include "Model.h"
 #define cast dynamic_cast
 
-#ifdef MODEL_VERSION_LINK
 
 bool Model::GetComponent(const ID& id, BinSearchTree<ID, ID>& component) {
 
@@ -52,6 +50,17 @@ bool Model::GetRequirementsFromComponent(BinSearchTree<ID, ID>& component, Array
 	return (reqs.GetSize() != 0);
 }
 
+bool Model::GetPrimitiveFromComponent(BinSearchTree<ID, ID>& component, Array<Primitive*>& prims) {
+	for (auto i = component.GetMarker(); i.IsValid(); ++i) {
+		auto primsMarker = dataPrim.Find(i.GetValue());
+		if (primsMarker.IsValid()) {
+			prims.PushBack(primsMarker.GetValue());
+		}
+	}
+	return (prims.GetSize() != 0);
+}
+
+
 void Model::ConnectPrimitives(Primitive* point, Primitive* prim) {
 	Requirement* _connection = new ConnectionReq;
 	Array<Primitive*> prims(2);
@@ -60,7 +69,7 @@ void Model::ConnectPrimitives(Primitive* point, Primitive* prim) {
 	CreateLink(_connection->GetID(), prims);
 }
 
-bool Model::CreateObject(const prim_type type, Array<double>& params, ID& obj_id) {
+bool Model::CreateObject(const object_type type, Array<double>& params, ID& obj_id) {
 	switch (type)
 	{
 	case point_t: {
@@ -214,7 +223,7 @@ bool Model::DeletePrimitive(const ID& prim_id) {
 //	return false;
 //}
 
-bool Model::CreateRequirementByID(const req_type type, Array<ID>& id_arr, Array<double>& params) {
+bool Model::CreateRequirementByID(const object_type type, Array<ID>& id_arr, Array<double>& params) {
 	Array<Primitive*> primitives;
 	for (int i = 0; i < id_arr.GetSize(); ++i) {
 		auto marker = dataPrim.Find(id_arr[i]);
@@ -226,7 +235,7 @@ bool Model::CreateRequirementByID(const req_type type, Array<ID>& id_arr, Array<
 	return CreateRequirement(type, primitives, params);
 }
 
-bool Model::CreateRequirement(req_type type, Array<Primitive*>& primitives, Array<double>& params) {
+bool Model::CreateRequirement(object_type type, Array<Primitive*>& primitives, Array<double>& params) {
 	Requirement* requirement;
 	switch (type)
 	{
@@ -419,7 +428,7 @@ void Model::CreateLink(const ID& IDreq, Array<Primitive*>& primitives) {
 	dataLink.Add(IDreq, list);
 }
 
-#endif
+
 
 bool Model::DischargeInfoObjects(Array<infoObject>& dataPrimInfoObjects)
 {
@@ -436,6 +445,8 @@ bool Model::DischargeInfoObjects(Array<infoObject>& dataPrimInfoObjects)
 	} while (++dataPrimMarker);
 	return true;
 }
+
+// optimize
 
 double Model::GetError(const Array<Requirement*>& requirments) const {
 	double error = 0.0;
@@ -598,7 +609,32 @@ void Model::OptimizeByID(const ID& id) {
 	OptimizeRequirements(reqs);
 }
 
-bool Model::GetObjType(const ID& obj_id, prim_type& type) {
+void Model::OptitmizeNewton(const ID& id) {
+	BinSearchTree<ID, ID> tree;
+	GetComponent(id, tree);
+	Array<Primitive*> prims(currentComponent->GetSize());
+	Array<Requirement*> reqs(currentComponent->GetSize());
+	GetPrimitiveFromComponent(tree, prims);
+	GetRequirementsFromComponent(tree, reqs);
+}
+
+void GetDoublesForOptimize(Array<Primitive*>& prims, Array<double*>& params) {
+	for (int i = 0; i < prims.GetSize(); ++i) {
+		if (prims[i]->GetType() == point_t) {
+			Point* point = cast<Point*>(prims[i]);
+			params.PushBack(&point->position.x);
+			params.PushBack(&point->position.y);
+		}
+		if (prims[i]->GetType() == arc_t) {
+			Arc* arc = cast<Arc*>(prims[i]);
+			params.PushBack(&arc->angle);
+		}
+	}
+}
+
+//
+
+bool Model::GetObjType(const ID& obj_id, object_type& type) {
 	Primitive* obj = nullptr;
 	auto dataPrimMarker = dataPrim.Find(obj_id);
 
@@ -675,257 +711,3 @@ bool Model::GetObject(double x, double y, Array<ID>& obj_id, Array<double>& dist
 	}
 	return isFound;
 }
-
-#ifdef MODEL_VERSION_DATA
-
-void Model::XXXConnectPrimitives(Primitive* prim1, Primitive* prim2, Primitive* prim3) {
-	ConnectionReq* connect = new ConnectionReq;
-	Array<int> index(3);
-	index[0] = -1;
-	index[1] = -1;
-	index[2] = -1;
-	Array<ID> IDPrims(3);
-	IDPrims[0] = prim1->GetID();
-	IDPrims[1] = prim2->GetID();
-	IDPrims[2] = prim3->GetID();
-	Array<Primitive*> Prims(3);
-	Prims[0] = prim1;
-	Prims[1] = prim2;
-	Prims[2] = prim3;
-	data.Add(index, IDPrims, Prims, connect->GetID(), connect);
-}
-
-bool Model::XXXCreateObject(const prim_type type, Array<double>& params, ID& obj_id) {
-	switch (type)
-	{
-	case point_t: {
-		if (params.GetSize() != 2) {
-			return false;
-		}
-		Point* point = new Point(params[0], params[1]);
-		obj_id = point->GetID();
-		data.dict->Add(obj_id, point);
-		return true;
-	}
-	case segment_t: {
-		if (params.GetSize() != 4) {
-			return false;
-		}
-		Point* point1 = new Point(params[0], params[1]);
-		Point* point2 = new Point(params[2], params[3]);
-
-		Segment* segment = new Segment(point1, point2);
-		obj_id = segment->GetID();
-
-		point1->SetParent(segment);
-		point2->SetParent(segment);
-
-		XXXConnectPrimitives(point1, point2, segment);
-		return true;
-	}
-	case arc_t: {
-		if (params.GetSize() != 5) {
-			return false;
-		}
-		Point* point1 = new Point(params[0], params[1]);
-		Point* point2 = new Point(params[2], params[3]);
-
-		Arc* arc = new Arc(point1, point2, params[4]);
-		obj_id = arc->GetID();
-
-		point1->SetParent(arc);
-		point2->SetParent(arc);
-
-		XXXConnectPrimitives(point1, point2, arc);
-		return true;
-	}
-	default:
-		return false;
-	}
-}
-
-bool Model::XXXCreateRequirementByID(const req_type type, Array<int>& index, Array<ID>& IDPrims, Array<double>& params) {
-	// verification size arrays	
-	if (IDPrims.GetSize() != index.GetSize()) {
-		throw std::exception("size is not equal!!!");
-	}
-
-	Array<Primitive*> arrayPrim(IDPrims.GetSize());
-	for (int i = 0; i < IDPrims.GetSize(); ++i) {
-		if (index[i] < 0) {
-			auto marker = data.dict->Find(IDPrims[i]);
-			arrayPrim.PushBack(marker.GetValue());
-		}
-		else {
-			auto gMarker = data.Find(index[i], IDPrims[i]);
-			arrayPrim.PushBack(gMarker.GetValue());
-		}
-	}
-	return XXXCreateRequirement(type, index, IDPrims, arrayPrim, params);
-}
-
-bool Model::XXXCreateRequirement(const req_type type, Array<int>& index, Array<ID>& IDPrims, Array<Primitive*>& primitives, Array<double>& params) {
-	switch (type)
-	{
-	case distBetPoints: {
-		// verification parameters
-		if ((primitives.GetSize() != 2)
-			&& (params.GetSize() != 1)
-			&& (primitives[0]->GetType() != point_t)
-			&& (primitives[1]->GetType() != point_t)) {
-			return false;
-		}
-		// creating
-		DistBetPointsReq* requirement;
-		requirement = new DistBetPointsReq(cast<Point*>(primitives[0]),
-			cast<Point*>(primitives[1]),
-			params[0]);
-		dataReq.Add(requirement->GetID(), requirement);
-
-
-		data.Add(index, IDPrims, primitives, requirement->GetID(), requirement);
-		return true;
-	}
-	case equalSegmentLen: {
-		// verification parameters
-		if (primitives.GetSize() != 2
-			&& params.GetSize() == 0
-			&& (primitives[0]->GetType() != segment_t)
-			&& (primitives[1]->GetType() != segment_t)) {
-			return false;
-		}
-		// creating
-		EqualSegmentLenReq* requirement = new EqualSegmentLenReq(*cast<Segment*>(primitives[0]),
-			*cast<Segment*>(primitives[1]));
-		dataReq.Add(requirement->GetID(), requirement);
-
-
-		data.Add(index, IDPrims, primitives, requirement->GetID(), requirement);
-		return true;
-	}
-	case pointsOnTheOneHand: {
-		// verification parameters
-		if ((primitives.GetSize() != 3)
-			&& (params.GetSize() == 0)
-			&& (primitives[0]->GetType() == segment_t)
-			&& (primitives[1]->GetType() == point_t)
-			&& (primitives[2]->GetType() == point_t))
-		{
-			return false;
-		}
-		// creating
-		PointsOnTheOneHand* requirement = new PointsOnTheOneHand(*cast<Segment*>(primitives[0]),
-			*cast<Point*>(primitives[1]),
-			*cast<Point*>(primitives[2]));
-		dataReq.Add(requirement->GetID(), requirement);
-
-		data.Add(index, IDPrims, primitives, requirement->GetID(), requirement);
-		return true;
-	}
-	case distBetPointSeg: {
-		// verification parameters
-		if ((primitives.GetSize() != 2)
-			&& (params.GetSize() != 1)
-			&& (primitives[0]->GetType() != segment_t)
-			&& (primitives[1]->GetType() != point_t))
-		{
-			return false;
-		}
-		// creating
-		DistanceBetweenPointSegment* requirement = new DistanceBetweenPointSegment(*cast<Segment*>(primitives[0]),
-			*cast<Point*>(primitives[1]),
-			params[0]);
-		dataReq.Add(requirement->GetID(), requirement);
-
-		data.Add(index, IDPrims, primitives, requirement->GetID(), requirement);
-		return true;
-	}
-	case angleBetSeg: {
-		// verification parameters
-		if ((primitives.GetSize() != 2)
-			&& (params.GetSize() == 1)
-			&& (primitives[0]->GetType() == segment_t)
-			&& (primitives[1]->GetType() == segment_t))
-		{
-			return false;
-		}
-		// creating
-		AngleBetweenSegments* requirement = new AngleBetweenSegments(*cast<Segment*>(primitives[0]),
-			*cast<Segment*>(primitives[1]),
-			params[0]);
-		dataReq.Add(requirement->GetID(), requirement);
-
-		data.Add(index, IDPrims, primitives, requirement->GetID(), requirement);
-		return true;
-
-	}
-	case distBetPointArc: {
-		// verification parameters
-		if ((primitives.GetSize() != 2)
-			&& (params.GetSize() != 1)
-			&& (primitives[0]->GetType() != arc_t)
-			&& (primitives[1]->GetType() != point_t))
-		{
-			return false;
-		}
-		// creating
-		DistanceBetweenPointArc* requirement = new DistanceBetweenPointArc(*cast<Arc*>(primitives[0]),
-			*cast<Point*>(primitives[1]),
-			params[0]);
-		dataReq.Add(requirement->GetID(), requirement);
-
-		data.Add(index, IDPrims, primitives, requirement->GetID(), requirement);
-		return true;
-	}
-	case pointInArc: {
-		// verification parameters
-		if ((primitives.GetSize() != 2)
-			&& (params.GetSize() != 0)
-			&& (primitives[0]->GetType() != arc_t)
-			&& (primitives[1]->GetType() != point_t))
-		{
-			return false;
-		}
-		// creating
-		PointInArc* requirement = new PointInArc(*cast<Arc*>(primitives[0]),
-			*cast<Point*>(primitives[1]));
-		dataReq.Add(requirement->GetID(), requirement);
-
-		data.Add(index, IDPrims, primitives, requirement->GetID(), requirement);
-		return true;
-	}
-	default:
-		return false;
-	}
-}
-
-void Model::XXXGetRequirementsByID(int index, const ID& id, Array<Requirement*>& arrayReq) {
-	data.GetRequirementsByPrim(index, id, arrayReq);
-}
-
-void Model::XXXGetRequirementsIDByID(int index, const ID& id, Array<ID>& arrayReqID) {
-	data.GetIDRequirementsByPrim(index, id, arrayReqID);
-}
-
-void Model::XXXGetRequirementsType(int index, const ID& id, Array<req_type>& arrayReqType) {
-	Array<Requirement*> arrayReq;
-	data.GetRequirementsByPrim(index, id, arrayReq);
-	for (int i = 0; i < arrayReq.GetSize(); ++i) {
-		arrayReqType.PushBack(arrayReq[i]->GetType());
-	}
-}
-
-void Model::XXXDeleteRequirement(int index, const ID& id) {
-	data.DeleteRequirement(index, id);
-}
-
-void Model::XXXDeletePrimitive(int index, const ID& id) {
-	if (index < 0) {
-		auto marker = data.dict->Find(id);
-		marker.DeleteCurrent();
-		return;
-	}
-	data.DeletePrimitive(index, id);
-}
-
-#endif
