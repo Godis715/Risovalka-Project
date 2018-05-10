@@ -3,13 +3,13 @@
 ID Primitive::GetID() const {
 	return id;
 }
-Primitive::Primitive(ID _id, prim_type _type) :
+Primitive::Primitive(ID _id, object_type _type) :
 	id(_id),
 	type(_type)
 {
 
 }
-prim_type Primitive::GetType() {
+object_type Primitive::GetType() {
 	return type;
 }
 

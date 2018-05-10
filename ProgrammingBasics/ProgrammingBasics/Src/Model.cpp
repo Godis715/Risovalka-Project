@@ -40,6 +40,78 @@ bool Model::GetComponent(const ID& id, BinSearchTree<ID, ID>& component) {
 	return true;
 }
 
+void Model::NewComponent(const ID& id, Array<ID>& Prims, Array<ID>& Reqs)
+{
+	delete currentComponent;
+	currentComponent = new BinSearchTree<ID, ID>;
+	Queue<ID> queuePrim;
+	Queue<ID> queueReq;
+	ID currentID;
+
+	auto tempMarker = dataPrim.Find(id);
+	if (tempMarker.IsValid()) {
+		// get ID Requirement
+		currentID = dataLink.Find(id).GetValue()->GetMarker().GetValue();
+	}
+	else {
+		currentID = id;
+	}
+
+	queueReq.push(currentID);
+	while (!queueReq.isEmpty())
+	{
+		while (!queueReq.isEmpty())
+		{
+			currentID = queueReq.pop();
+			currentComponent->Add(currentID, currentID);
+			Reqs.PushBack(currentID);
+			
+			auto marker = dataLink.Find(currentID);
+			if (marker.IsValid()) {
+				for (auto l = marker.GetValue()->GetMarker(); l.IsValid(); ++l) {
+					currentID = l.GetValue();
+					if (!currentComponent->Find(currentID).IsValid()) {
+						queuePrim.push(currentID);
+					}
+				}
+			}
+		}
+		while (!queuePrim.isEmpty())
+		{
+			currentID = queuePrim.pop();
+			currentComponent->Add(currentID, currentID);
+			Prims.PushBack(currentID);
+
+			auto marker = dataLink.Find(currentID);
+			if (marker.IsValid()) {
+				for (auto l = marker.GetValue()->GetMarker(); l.IsValid(); ++l) {
+					currentID = l.GetValue();
+					if (!currentComponent->Find(currentID).IsValid()) {
+						queueReq.push(currentID);
+					}
+				}
+			}
+		}
+	}
+}
+
+bool Model::GetRequirements(Array<ID>& ids, Array<Requirement*>& req) {
+	for (int i = 0; i < ids.GetSize; ++i) {
+		
+		req.PushBack(dataReq.Find(ids[i]).GetValue());
+	}
+	return (req.GetSize() != ids.GetSize());
+}
+
+bool Model::GetPrimitives(Array<ID>& ids, Array<Primitive*>& prim) {
+	for (int i = 0; i < ids.GetSize; ++i) {
+
+		prim.PushBack(dataPrim.Find(ids[i]).GetValue());
+	}
+	return (prim.GetSize() != ids.GetSize());
+}
+
+
 bool Model::GetRequirementsFromComponent(BinSearchTree<ID, ID>& component, Array<Requirement*>& reqs) {
 	for (auto i = component.GetMarker(); i.IsValid(); ++i) {
 		auto reqsMarker = dataReq.Find(i.GetValue());
@@ -50,7 +122,7 @@ bool Model::GetRequirementsFromComponent(BinSearchTree<ID, ID>& component, Array
 	return (reqs.GetSize() != 0);
 }
 
-bool Model::GetPrimitiveFromComponent(BinSearchTree<ID, ID>& component, Array<Primitive*>& prims) {
+bool Model::GetPrimitivesFromComponent(BinSearchTree<ID, ID>& component, Array<Primitive*>& prims) {
 	for (auto i = component.GetMarker(); i.IsValid(); ++i) {
 		auto primsMarker = dataPrim.Find(i.GetValue());
 		if (primsMarker.IsValid()) {
@@ -518,8 +590,7 @@ void Model::OptimizeRequirements(const Array<Requirement*>& requirments) {
 	// get parameters number
 	int params_number = 0;
 	for (int i = 0; i < requirments.GetSize(); ++i) {
-		Array<double*> params =
-			requirments[i]->GetParams();
+		Array<double*> params = requirments[i]->GetParams();
 		params_number += params.GetSize();
 	}
 
@@ -610,15 +681,20 @@ void Model::OptimizeByID(const ID& id) {
 }
 
 void Model::OptitmizeNewton(const ID& id) {
-	BinSearchTree<ID, ID> tree;
-	GetComponent(id, tree);
-	Array<Primitive*> prims(currentComponent->GetSize());
-	Array<Requirement*> reqs(currentComponent->GetSize());
-	GetPrimitiveFromComponent(tree, prims);
-	GetRequirementsFromComponent(tree, reqs);
+	Array<ID> primID;
+	Array<ID> reqID;
+	Array<Primitive*> prim;
+	Array<Requirement*> req;
+	Array<double*> params;
+	NewComponent(id, primID, reqID);
+	GetRequirements(reqID, req);
+	GetPrimitives(primID, prim);
+	GetDoublesForOptimize(prim, params);
+
+
 }
 
-void GetDoublesForOptimize(Array<Primitive*>& prims, Array<double*>& params) {
+void Model::GetDoublesForOptimize(Array<Primitive*>& prims, Array<double*>& params) {
 	for (int i = 0; i < prims.GetSize(); ++i) {
 		if (prims[i]->GetType() == point_t) {
 			Point* point = cast<Point*>(prims[i]);
@@ -629,6 +705,15 @@ void GetDoublesForOptimize(Array<Primitive*>& prims, Array<double*>& params) {
 			Arc* arc = cast<Arc*>(prims[i]);
 			params.PushBack(&arc->angle);
 		}
+	}
+}
+
+void Model::GetDifferential(const Array<Requirement*>& reqs, Array<double*>& params, Array<double>& diff) {
+	double begin = GetError(reqs);
+	for (int i = 0; i < params.GetSize(); ++i) {
+		*params[i] += DELTA_X;
+		diff[i] = (begin - GetError(reqs)) / DELTA_X;
+		*params[i] -= DELTA_X;
 	}
 }
 

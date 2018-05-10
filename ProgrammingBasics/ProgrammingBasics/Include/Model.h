@@ -39,9 +39,15 @@ private:
 
 	BinSearchTree<ID, ID>* currentComponent;
 
+	void NewComponent(const ID&, Array<ID>&, Array<ID>&);
+
+	bool GetRequirements(Array<ID>&, Array<Requirement*>&);
+
+	bool GetPrimitives(Array<ID>&, Array<Primitive*>&);
+
 	bool GetRequirementsFromComponent(BinSearchTree<ID, ID>&, Array<Requirement*>&);
 
-	bool GetPrimitiveFromComponent(BinSearchTree<ID, ID>&, Array<Primitive*>&);
+	bool GetPrimitivesFromComponent(BinSearchTree<ID, ID>&, Array<Primitive*>&);
 
 	void ConnectPrimitives(Primitive*, Primitive*);
 
@@ -56,6 +62,8 @@ private:
 	void OptitmizeNewton(const ID&);
 
 	void GetDoublesForOptimize(Array<Primitive*>&, Array<double*>&);
+
+	void GetDifferential(const Array<Requirement*>&, Array<double*>&, Array<double>&);
 public:
 	class infoObject
 	{
