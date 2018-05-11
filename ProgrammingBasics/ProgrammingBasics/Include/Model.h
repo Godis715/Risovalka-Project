@@ -12,13 +12,11 @@
 // List
 // Array
 // Dictionary
-// Hash-Table
 // Type
 // Vector2
 // Primitives
 // Requirement
 // Logger
-// Data
 // Model
 
 typedef BinSearchTree<ID, List<ID>*> DataLink;
@@ -39,12 +37,13 @@ private:
 
 	BinSearchTree<ID, ID>* currentComponent;
 
-	void NewComponent(const ID&, Array<ID>&, Array<ID>&);
+
+	bool NewComponent(const ID&, Array<ID>&, Array<ID>&);
 
 	bool GetRequirements(Array<ID>&, Array<Requirement*>&);
 
 	bool GetPrimitives(Array<ID>&, Array<Primitive*>&);
-
+	
 	bool GetRequirementsFromComponent(BinSearchTree<ID, ID>&, Array<Requirement*>&);
 
 	bool GetPrimitivesFromComponent(BinSearchTree<ID, ID>&, Array<Primitive*>&);
@@ -59,6 +58,7 @@ private:
 	double ErrorByAlpha(const Array<Requirement*>&, const Array<double*>&, const Array<double>&, double);
 	void OptimizeByGradient(const Array<Requirement*>&, const Array<double*>&, const Array<double>&);
 
+	/*version 2*/
 	void OptitmizeNewton(const ID&);
 
 	void GetDoublesForOptimize(Array<Primitive*>&, Array<double*>&);
@@ -99,9 +99,6 @@ public:
 	bool GetObjType(const ID&, object_type&);
 
 	bool ImposeRequirement(object_type, const Array<ID>&);
-
-	// to private
-	bool GetComponent(const ID&, BinSearchTree<ID, ID>&);
 
 	bool GetObjParam(const ID&, Array<double>&);
 	

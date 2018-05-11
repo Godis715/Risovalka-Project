@@ -2,45 +2,7 @@
 #define cast dynamic_cast
 
 
-bool Model::GetComponent(const ID& id, BinSearchTree<ID, ID>& component) {
-
-	if (currentComponent != nullptr && currentComponent->Find(id).IsValid()) {
-		component = *currentComponent;
-		return true;
-	}
-
-	auto labels = new BinSearchTree<ID, ID>;
-	Queue<ID> queue;
-	if (!dataLink.Find(id).IsValid()) {
-		return false;
-	}
-
-	queue.push(id);
-	labels->Add(id, id);
-
-	while (!queue.isEmpty()) {
-		ID currentID = queue.pop();
-		auto dataLinkMarker = dataLink.Find(currentID);
-		if (dataLinkMarker.IsValid()) {
-			for (auto l = dataLinkMarker.GetValue()->GetMarker(); l.IsValid(); ++l) {
-				currentID = l.GetValue();
-				if (!labels->Find(currentID).IsValid()) {
-					labels->Add(currentID, currentID);
-					queue.push(currentID);
-				}
-			}
-		}
-	}
-	component = *labels;
-
-	if (currentComponent != nullptr) {
-		delete currentComponent;
-	}
-	currentComponent = labels;
-	return true;
-}
-
-void Model::NewComponent(const ID& id, Array<ID>& Prims, Array<ID>& Reqs)
+bool Model::NewComponent(const ID& id, Array<ID>& Prims, Array<ID>& Reqs)
 {
 	delete currentComponent;
 	currentComponent = new BinSearchTree<ID, ID>;
@@ -48,13 +10,27 @@ void Model::NewComponent(const ID& id, Array<ID>& Prims, Array<ID>& Reqs)
 	Queue<ID> queueReq;
 	ID currentID;
 
-	auto tempMarker = dataPrim.Find(id);
-	if (tempMarker.IsValid()) {
+	auto tempPrimMarker = dataPrim.Find(id);
+	if (tempPrimMarker.IsValid()) {
 		// get ID Requirement
-		currentID = dataLink.Find(id).GetValue()->GetMarker().GetValue();
+		auto tempLinkMarker = dataLink.Find(id);
+		if(tempLinkMarker.IsValid()) {
+			currentID = dataLink.Find(id).GetValue()->GetMarker().GetValue();
+		}
+		else {
+			currentComponent->Add(id, id);
+			Prims.PushBack(id);
+			return true;
+		}
 	}
 	else {
-		currentID = id;
+		auto tempReqMarker = dataReq.Find(id);
+		if (tempReqMarker.IsValid()) {
+			currentID = id;
+		}
+		else {
+			return false;
+		}
 	}
 
 	queueReq.push(currentID);
@@ -93,6 +69,7 @@ void Model::NewComponent(const ID& id, Array<ID>& Prims, Array<ID>& Reqs)
 			}
 		}
 	}
+	return (Prims.GetSize() != 0) || (Reqs.GetSize() != 0);
 }
 
 bool Model::GetRequirements(Array<ID>& ids, Array<Requirement*>& req) {
@@ -683,11 +660,13 @@ void Model::OptimizeByID(const ID& id) {
 }
 
 void Model::OptitmizeNewton(const ID& id) {
+
 	Array<ID> primID;
 	Array<ID> reqID;
 	Array<Primitive*> prim;
 	Array<Requirement*> req;
 	Array<double*> params;
+
 	NewComponent(id, primID, reqID);
 	GetRequirements(reqID, req);
 	GetPrimitives(primID, prim);
