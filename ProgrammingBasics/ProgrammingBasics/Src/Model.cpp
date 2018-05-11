@@ -141,7 +141,7 @@ void Model::ConnectPrimitives(Primitive* point, Primitive* prim) {
 	CreateLink(_connection->GetID(), prims);
 }
 
-bool Model::CreateObject(const object_type type, Array<double>& params, ID& obj_id) {
+bool Model::CreateObject(const object_type type, const Array<double>& params, ID& obj_id) {
 	switch (type)
 	{
 	case point_t: {
@@ -295,7 +295,7 @@ bool Model::DeletePrimitive(const ID& prim_id) {
 //	return false;
 //}
 
-bool Model::CreateRequirementByID(const object_type type, Array<ID>& id_arr, Array<double>& params) {
+bool Model::CreateRequirementByID(const object_type type, Array<ID>& id_arr, const Array<double>& params, ID& req_id) {
 	Array<Primitive*> primitives;
 	for (int i = 0; i < id_arr.GetSize(); ++i) {
 		auto marker = dataPrim.Find(id_arr[i]);
@@ -304,10 +304,10 @@ bool Model::CreateRequirementByID(const object_type type, Array<ID>& id_arr, Arr
 		}
 		primitives.PushBack(marker.GetValue());
 	}
-	return CreateRequirement(type, primitives, params);
+	return CreateRequirement(type, primitives, params, req_id);
 }
 
-bool Model::CreateRequirement(object_type type, Array<Primitive*>& primitives, Array<double>& params) {
+bool Model::CreateRequirement(object_type type, Array<Primitive*>& primitives, const Array<double>& params, ID& req_id) {
 	Requirement* requirement;
 	switch (type)
 	{
@@ -470,11 +470,13 @@ bool Model::CreateRequirement(object_type type, Array<Primitive*>& primitives, A
 		return false;
 	}
 
-	dataReq.Add(requirement->GetID(), requirement);
+	req_id = requirement->GetID();
 
-	CreateLink(requirement->GetID(), primitives);
+	dataReq.Add(req_id, requirement);
 
-	OptimizeByID(requirement->GetID());
+	CreateLink(req_id, primitives);
+
+	OptimizeByID(req_id);
 
 	return true;
 }
@@ -795,4 +797,13 @@ bool Model::GetObject(double x, double y, Array<ID>& obj_id, Array<double>& dist
 		}
 	}
 	return isFound;
+}
+
+
+void Model::ChangeRequirement(const ID& id, const double param) {
+	auto marker = dataReq.Find(id);
+	if (marker.IsValid()) {
+		marker.GetValue()->Change(param);
+		OptimizeByID(id);
+	}
 }

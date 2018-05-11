@@ -51,7 +51,7 @@ private:
 
 	void ConnectPrimitives(Primitive*, Primitive*);
 
-	bool CreateRequirement(object_type, Array<Primitive*>&, Array<double>&);
+	bool CreateRequirement(object_type, Array<Primitive*>&, const Array<double>&, ID&);
 
 
 	double GetError(const Array<Requirement*>&) const;
@@ -85,9 +85,9 @@ public:
 
 	bool DischargeInfoObjects(Array<infoObject>&);
 
-	bool CreateObject(object_type, Array<double>&, ID&);
+	bool CreateObject(object_type, const Array<double>&, ID&);
 	
-	bool CreateRequirementByID(object_type, Array<ID>&, Array<double>&);
+	bool CreateRequirementByID(object_type, Array<ID>&, const Array<double>&, ID&);
 	void CreateLink(const ID&, Array<Primitive*>&);
 
 	bool DeletePrimitive(const ID&);
@@ -108,6 +108,8 @@ public:
 	void OptimizeRequirements(const Array<Requirement*>&);
 
 	void OptimizeByID(const ID&);
+	// new functon
 
+	void ChangeRequirement(const ID&, const double);
 };
 #endif

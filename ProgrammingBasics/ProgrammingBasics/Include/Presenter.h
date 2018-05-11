@@ -1,5 +1,6 @@
 #pragma once
 #include "IView.h"
+#include "Model.h"
 
 #define SINGLE_SELECTION
 #define POLY_SELECTION
@@ -9,6 +10,11 @@ private:
 	BinSearchTree<ID, ID> selectedObjects;
 
 	BinSearchTree<ID, ID> selectedReq;
+
+	Array<ID> _selObj;
+	Array<ID> _selReq;
+
+	Model* model;
 
 
 
@@ -26,13 +32,17 @@ public:
 	on selected object */
 	bool CreateRequirement(object_type, const Array<double>&);
 
+	void DeletePrimitives();
+
 	void DeleteRequirement(int);
 
-	void ChangeParamsRequirement(int, double);
+	void ChangeParamRequirement(int, const double);
 
 	void ScaleObject(double);
 
-	void MoveObject(Vector2&);
+	void MoveObject(const Vector2&);
 
 	void ChangeObject();
+
+	void GetRequirements();
 };
