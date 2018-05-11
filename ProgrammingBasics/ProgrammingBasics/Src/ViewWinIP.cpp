@@ -1,5 +1,5 @@
-#include "View.h"
-View::View()
+#include "ViewWinIP.h"
+ViewWinIP::ViewWinIP()
 {
 	presenter = new Presenter(this);
 	hWnd = GetConsoleWindow();
@@ -13,12 +13,12 @@ View::View()
 	SetConsoleMode(hWnd, Mode | ENABLE_MOUSE_INPUT);
 }
 
-void View::Clear() {
+void ViewWinIP::Clear() {
 	HBRUSH brush = CreateSolidBrush(0);
 	FillRect(hDC, &screen, brush);
 }
 
-void View::Run() {
+int ViewWinIP::Run() {
 
 	HANDLE hStdin = GetStdHandle(STD_INPUT_HANDLE);
 	while (true) {
@@ -34,19 +34,20 @@ void View::Run() {
 			presenter->ClickSceneEvent(pos.x, pos.y);
 		}
 	}
+	return 0;
 }
 
 
-void View::DrawArc(const Vector2& point1, const Vector2& point2) {
+void ViewWinIP::DrawArc(const Vector2& point1, const Vector2& point2) {
 	
 }
 
-void View::DrawLine(const Vector2& point1, const Vector2& point2) {
+void ViewWinIP::DrawLine(const Vector2& point1, const Vector2& point2) {
 	MoveToEx(hDC, (int)point1.x, (int)point1.y, NULL);
 	LineTo(hDC,(int)point2.x, (int)point2.y);
 }
 
-void View::DrawPoint(const Vector2& point) {
+void ViewWinIP::DrawPoint(const Vector2& point) {
 	const double size = 3.0;
 	MoveToEx(hDC, (int)(point.x - size), (int)(point.y - size), NULL);
 	LineTo(hDC, (int)(point.x + size), (int)(point.y + size));
@@ -55,7 +56,7 @@ void View::DrawPoint(const Vector2& point) {
 	LineTo(hDC, (int)(point.x - size), (int)(point.y + size));
 }
 
-void View::SetColor(color col) {
+void ViewWinIP::SetColor(color col) {
 	
 	COLORREF pen_color;
 	if (col == red) {

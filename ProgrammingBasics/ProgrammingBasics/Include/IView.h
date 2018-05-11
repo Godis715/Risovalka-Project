@@ -13,7 +13,7 @@ public:
 	virtual void DrawArc(const Vector2&, const Vector2&) = 0;
 	virtual void DrawPoint(const Vector2&) = 0;
 	virtual void SetColor(color) = 0;
-	virtual void Run() = 0;
+	virtual int Run() = 0; // int for viewFLTK
 	virtual void Clear() = 0;
 
 };

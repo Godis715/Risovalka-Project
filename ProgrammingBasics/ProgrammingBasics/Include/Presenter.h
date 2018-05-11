@@ -11,7 +11,7 @@ class Presenter
 {
 private:
 	Model* model;
-	IView* view;
+	IView* ViewWinIP;
 	Controller* controller;
 	//ID CreatePoint(double, double);
 	//ID CreateSegment(double, double, double, double);

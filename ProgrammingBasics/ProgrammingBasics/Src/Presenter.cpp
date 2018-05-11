@@ -2,36 +2,37 @@
 #include "Controller.h"
 
 void Presenter::DrawScene() {
-	view->Clear();
-	view->SetColor(white);
+	
+	ViewWinIP->Clear();
+	ViewWinIP->SetColor(white);
 	Array<Model::infoObject> scene;
 	if (model->DischargeInfoObjects(scene)) {
 		for (int i = 0; i < scene.GetSize(); ++i) {
 			if (scene[i].type == segment) {
-				view->DrawLine(Vector2(scene[i].params[0], scene[i].params[1]),
+				ViewWinIP->DrawLine(Vector2(scene[i].params[0], scene[i].params[1]),
 					Vector2(scene[i].params[2], scene[i].params[3]));
 			}
 			if (scene[i].type == point) {
-				view->DrawPoint(Vector2(scene[i].params[0], scene[i].params[1]));
+				ViewWinIP->DrawPoint(Vector2(scene[i].params[0], scene[i].params[1]));
 			}
 		}
 	}
 
 	for (int i = 0; i < controller->buttons.GetSize(); ++i) {
 
-		view->DrawLine(controller->buttons[i].leftUp,
+		ViewWinIP->DrawLine(controller->buttons[i].leftUp,
 			Vector2(controller->buttons[i].leftUp.x, controller->buttons[i].rightDown.y));
-		view->DrawLine(controller->buttons[i].leftUp,
+		ViewWinIP->DrawLine(controller->buttons[i].leftUp,
 			Vector2(controller->buttons[i].rightDown.x, controller->buttons[i].leftUp.y));
-		view->DrawLine(controller->buttons[i].rightDown,
+		ViewWinIP->DrawLine(controller->buttons[i].rightDown,
 			Vector2(controller->buttons[i].leftUp.x, controller->buttons[i].rightDown.y));
-		view->DrawLine(controller->buttons[i].rightDown,
+		ViewWinIP->DrawLine(controller->buttons[i].rightDown,
 			Vector2(controller->buttons[i].rightDown.x, controller->buttons[i].leftUp.y));
 	}
 
-	view->SetColor(red);
+	ViewWinIP->SetColor(red);
 	for (int i = 0; i < controller->clickedPoints.GetSize(); ++i) {
-		view->DrawPoint(controller->clickedPoints[i]);
+		ViewWinIP->DrawPoint(controller->clickedPoints[i]);
 	}
 	for (int i = 0; i < controller->selectedObjects.GetSize(); ++i) {
 		type_id type;
@@ -41,13 +42,13 @@ void Presenter::DrawScene() {
 		switch (type) {
 		case point: {
 			Vector2 pos(params[0], params[1]);
-			view->DrawPoint(pos);
+			ViewWinIP->DrawPoint(pos);
 			break;
 		}
 		case segment: {
 			Vector2 pos1(params[0], params[1]);
 			Vector2 pos2(params[2], params[3]);
-			view->DrawLine(pos1, pos2);
+			ViewWinIP->DrawLine(pos1, pos2);
 			break;
 		}
 		}
@@ -96,9 +97,9 @@ ID Presenter::CreateArc(double x1, double y1, double x2, double y2, double angle
 	return id;
 }
 
-Presenter::Presenter(IView* view)
+Presenter::Presenter(IView* ViewWinIP)
 {
-	this->view = view;
+	this->ViewWinIP = ViewWinIP;
 	model = new Model();
 	controller = new Controller(this);
 

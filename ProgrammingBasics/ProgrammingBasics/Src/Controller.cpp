@@ -7,7 +7,7 @@ Controller::Controller(Presenter* _presenter) {
 }
 
 void Controller::ClickAt(double x, double y) {
-
+	SetState(segment_creating);
 	for (int i = 0; i < buttons.GetSize(); ++i) {
 		if (buttons[i].IsClicked(Vector2(x, y))) {
 			SetState(buttons[i].state);
@@ -130,6 +130,7 @@ Button::Button(state_id _state, Vector2 lu, Vector2 rd) {
 	leftUp = lu;
 	rightDown = rd;
 }
+
 bool  Button::IsClicked(Vector2 pos) {
 	return pos.y >= rightDown.y &&
 		pos.y <= leftUp.y &&

@@ -1,10 +1,11 @@
-#pragma once
+#ifndef __VIEW_WINIP
+#define __VIEW_WINIP
 
 #include "Presenter.h"
 #include "IView.h"
 #include <windows.h>
 
-class View : public IView
+class ViewWinIP : public IView
 {
 private:
 	Presenter* presenter;
@@ -14,13 +15,15 @@ private:
 	HPEN hPen;
 	RECT screen;
 public:
-	View();
+	ViewWinIP();
 	void DrawLine(const Vector2&, const Vector2&);
 	void DrawArc(const Vector2&, const Vector2&);
 	void DrawPoint(const Vector2&);
 	void SetColor(color);
 
-	void Run();
+	int Run();
 	void Clear();
 };
+
+#endif
 

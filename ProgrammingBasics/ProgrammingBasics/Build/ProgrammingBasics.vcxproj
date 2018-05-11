@@ -74,13 +74,22 @@
     <IncludePath>../Include;$(IncludePath)</IncludePath>
     <SourcePath>../src;$(VC_SourcePath);</SourcePath>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ExecutablePath>$(ExecutablePath)</ExecutablePath>
+    <IncludePath>../Include;$(IncludePath)</IncludePath>
+    <SourcePath>../src;$(VC_SourcePath);</SourcePath>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
     </ClCompile>
+    <Link>
+      <AdditionalDependencies>fltk.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -89,6 +98,7 @@
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
     </ClCompile>
+    <Link />
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -128,7 +138,7 @@
     <ClCompile Include="..\Src\Requirement.cpp" />
     <ClCompile Include="..\Src\Presenter.cpp" />
     <ClCompile Include="..\Src\Vector2.cpp" />
-    <ClCompile Include="..\Src\View.cpp" />
+    <ClCompile Include="..\Src\ViewWinIP.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Include\Array.h" />
@@ -148,7 +158,8 @@
     <ClInclude Include="..\Include\Set.h" />
     <ClInclude Include="..\Include\Type.h" />
     <ClInclude Include="..\Include\Vector2.h" />
-    <ClInclude Include="..\Include\View.h" />
+    <ClInclude Include="..\Include\ViewWinIP.h" />
+    <ClInclude Include="..\Include\ViewFLTK.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
