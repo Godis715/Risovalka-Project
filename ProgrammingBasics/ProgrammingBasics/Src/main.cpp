@@ -1,5 +1,6 @@
 #include <ctime>
 #include "Model.h"
+#include "ViewFLTK.h"
 
 Model model;
 
@@ -42,7 +43,6 @@ ID CreateArc(double x1, double y1, double x2, double y2, double angle) {
 	}
 	return id;
 }
-
 void EqualSegmentLenReq(const ID& seg1, const ID& seg2) {
 	Array<ID> segments(2);
 	segments[0] = seg1;
@@ -67,12 +67,10 @@ void DistBetPointsReq(const ID& point1, const ID& point2, double dist) {
 	}
 }
 
-
 int main()
 {
-	ID segment1 = CreateSegment(0.0, 0.0, 0.0, 20.0);
+	/*ID segment1 = CreateSegment(0.0, 0.0, 0.0, 20.0);
 	ID segment2 = CreateSegment(0.0, 0.0, 0.0, 5.0);
-
 	EqualSegmentLenReq(segment1, segment2);
 	ID point1 = CreatePoint(0.0, 0.0);
 	ID point2 = CreatePoint(1.0, 1.0);
@@ -80,8 +78,10 @@ int main()
 
 	BinSearchTree<ID, ID>* component = new BinSearchTree<ID, ID>;
 	model.GetComponent(segment1, *component);
+	model.GetComponent(point1, *component);*/
+	
+	IView* view = new ViewFLTK();
+	
 
-	model.GetComponent(point1, *component);
-
-	return 0;
+	return view->Run();
 }

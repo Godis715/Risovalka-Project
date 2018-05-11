@@ -96,7 +96,7 @@ void Model::NewComponent(const ID& id, Array<ID>& Prims, Array<ID>& Reqs)
 }
 
 bool Model::GetRequirements(Array<ID>& ids, Array<Requirement*>& req) {
-	for (int i = 0; i < ids.GetSize; ++i) {
+	for (int i = 0; i < ids.GetSize(); ++i) {
 		
 		req.PushBack(dataReq.Find(ids[i]).GetValue());
 	}
@@ -104,7 +104,7 @@ bool Model::GetRequirements(Array<ID>& ids, Array<Requirement*>& req) {
 }
 
 bool Model::GetPrimitives(Array<ID>& ids, Array<Primitive*>& prim) {
-	for (int i = 0; i < ids.GetSize; ++i) {
+	for (int i = 0; i < ids.GetSize(); ++i) {
 
 		prim.PushBack(dataPrim.Find(ids[i]).GetValue());
 	}
