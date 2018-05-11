@@ -1,7 +1,7 @@
 #ifndef __TYPE
 #define __TYPE
 
-#include "Hash-Table.h"
+#include "Dictionary.h"
 
 enum object_type {
 	point_t,

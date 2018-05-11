@@ -11,8 +11,6 @@
 #include <FL/fl_draw.H>
 #include <FL/Fl_Button.h>
 
-
-
 class ViewFLTK : public IView
 {
 private:
@@ -118,7 +116,6 @@ public:
 	{
 		drawWindow->clear();
 	}
-
 };
 
 Presenter* ViewFLTK::presenter = nullptr;

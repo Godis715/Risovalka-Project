@@ -32,3 +32,5 @@ ID Requirement::GetID() const {
 object_type Requirement::GetType() const {
 	return type;
 }
+
+void Requirement::Change(const double) {}

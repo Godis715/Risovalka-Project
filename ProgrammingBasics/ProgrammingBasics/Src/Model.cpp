@@ -2,45 +2,7 @@
 #define cast dynamic_cast
 
 
-bool Model::GetComponent(const ID& id, BinSearchTree<ID, ID>& component) {
-
-	if (currentComponent != nullptr && currentComponent->Find(id).IsValid()) {
-		component = *currentComponent;
-		return true;
-	}
-
-	auto labels = new BinSearchTree<ID, ID>;
-	Queue<ID> queue;
-	if (!dataLink.Find(id).IsValid()) {
-		return false;
-	}
-
-	queue.push(id);
-	labels->Add(id, id);
-
-	while (!queue.isEmpty()) {
-		ID currentID = queue.pop();
-		auto dataLinkMarker = dataLink.Find(currentID);
-		if (dataLinkMarker.IsValid()) {
-			for (auto l = dataLinkMarker.GetValue()->GetMarker(); l.IsValid(); ++l) {
-				currentID = l.GetValue();
-				if (!labels->Find(currentID).IsValid()) {
-					labels->Add(currentID, currentID);
-					queue.push(currentID);
-				}
-			}
-		}
-	}
-	component = *labels;
-
-	if (currentComponent != nullptr) {
-		delete currentComponent;
-	}
-	currentComponent = labels;
-	return true;
-}
-
-void Model::NewComponent(const ID& id, Array<ID>& Prims, Array<ID>& Reqs)
+bool Model::NewComponent(const ID& id, Array<ID>& Prims, Array<ID>& Reqs)
 {
 	delete currentComponent;
 	currentComponent = new BinSearchTree<ID, ID>;
@@ -48,13 +10,27 @@ void Model::NewComponent(const ID& id, Array<ID>& Prims, Array<ID>& Reqs)
 	Queue<ID> queueReq;
 	ID currentID;
 
-	auto tempMarker = dataPrim.Find(id);
-	if (tempMarker.IsValid()) {
+	auto tempPrimMarker = dataPrim.Find(id);
+	if (tempPrimMarker.IsValid()) {
 		// get ID Requirement
-		currentID = dataLink.Find(id).GetValue()->GetMarker().GetValue();
+		auto tempLinkMarker = dataLink.Find(id);
+		if(tempLinkMarker.IsValid()) {
+			currentID = dataLink.Find(id).GetValue()->GetMarker().GetValue();
+		}
+		else {
+			currentComponent->Add(id, id);
+			Prims.PushBack(id);
+			return true;
+		}
 	}
 	else {
-		currentID = id;
+		auto tempReqMarker = dataReq.Find(id);
+		if (tempReqMarker.IsValid()) {
+			currentID = id;
+		}
+		else {
+			return false;
+		}
 	}
 
 	queueReq.push(currentID);
@@ -93,6 +69,7 @@ void Model::NewComponent(const ID& id, Array<ID>& Prims, Array<ID>& Reqs)
 			}
 		}
 	}
+	return (Prims.GetSize() != 0) || (Reqs.GetSize() != 0);
 }
 
 bool Model::GetRequirements(Array<ID>& ids, Array<Requirement*>& req) {
@@ -141,7 +118,7 @@ void Model::ConnectPrimitives(Primitive* point, Primitive* prim) {
 	CreateLink(_connection->GetID(), prims);
 }
 
-bool Model::CreateObject(const object_type type, Array<double>& params, ID& obj_id) {
+bool Model::CreateObject(const object_type type, const Array<double>& params, ID& obj_id) {
 	switch (type)
 	{
 	case point_t: {
@@ -295,7 +272,7 @@ bool Model::DeletePrimitive(const ID& prim_id) {
 //	return false;
 //}
 
-bool Model::CreateRequirementByID(const object_type type, Array<ID>& id_arr, Array<double>& params) {
+bool Model::CreateRequirementByID(const object_type type, Array<ID>& id_arr, const Array<double>& params, ID& req_id) {
 	Array<Primitive*> primitives;
 	for (int i = 0; i < id_arr.GetSize(); ++i) {
 		auto marker = dataPrim.Find(id_arr[i]);
@@ -304,10 +281,10 @@ bool Model::CreateRequirementByID(const object_type type, Array<ID>& id_arr, Arr
 		}
 		primitives.PushBack(marker.GetValue());
 	}
-	return CreateRequirement(type, primitives, params);
+	return CreateRequirement(type, primitives, params, req_id);
 }
 
-bool Model::CreateRequirement(object_type type, Array<Primitive*>& primitives, Array<double>& params) {
+bool Model::CreateRequirement(object_type type, Array<Primitive*>& primitives, const Array<double>& params, ID& req_id) {
 	Requirement* requirement;
 	switch (type)
 	{
@@ -470,11 +447,13 @@ bool Model::CreateRequirement(object_type type, Array<Primitive*>& primitives, A
 		return false;
 	}
 
-	dataReq.Add(requirement->GetID(), requirement);
+	req_id = requirement->GetID();
 
-	CreateLink(requirement->GetID(), primitives);
+	dataReq.Add(req_id, requirement);
 
-	OptimizeByID(requirement->GetID());
+	CreateLink(req_id, primitives);
+
+	OptimizeByID(req_id);
 
 	return true;
 }
@@ -670,22 +649,28 @@ void Model::OptimizeRequirements(const Array<Requirement*>& requirments) {
 
 void Model::OptimizeByID(const ID& id) {
 	BinSearchTree<ID, ID> component;
-	if(!GetComponent(id, component)) {
+	Array<ID> reqID;
+	Array<ID> primID;
+	if(!NewComponent(id, primID, reqID)) {
 		return;
 	}
 	Array<Requirement*> reqs;
-	if (!GetRequirementsFromComponent(component, reqs)) {
+	GetRequirements(reqID, reqs);
+
+	/*if (!GetRequirementsFromComponent(component, reqs)) {
 		return;
-	}
+	}*/
 	OptimizeRequirements(reqs);
 }
 
 void Model::OptitmizeNewton(const ID& id) {
+
 	Array<ID> primID;
 	Array<ID> reqID;
 	Array<Primitive*> prim;
 	Array<Requirement*> req;
 	Array<double*> params;
+
 	NewComponent(id, primID, reqID);
 	GetRequirements(reqID, req);
 	GetPrimitives(primID, prim);
@@ -795,4 +780,13 @@ bool Model::GetObject(double x, double y, Array<ID>& obj_id, Array<double>& dist
 		}
 	}
 	return isFound;
+}
+
+
+void Model::ChangeRequirement(const ID& id, const double param) {
+	auto marker = dataReq.Find(id);
+	if (marker.IsValid()) {
+		marker.GetValue()->Change(param);
+		OptimizeByID(id);
+	}
 }

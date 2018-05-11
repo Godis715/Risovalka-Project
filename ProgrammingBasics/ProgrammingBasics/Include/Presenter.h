@@ -1,5 +1,6 @@
 #pragma once
 #include "IView.h"
+#include "Model.h"
 
 #define SINGLE_SELECTION
 #define POLY_SELECTION
@@ -9,6 +10,11 @@ private:
 	BinSearchTree<ID, ID> selectedObjects;
 
 	BinSearchTree<ID, ID> selectedReq;
+
+	Array<ID> _selObj;
+	Array<ID> _selReq;
+
+	Model* model;
 
 
 
@@ -24,22 +30,28 @@ public:
 
 	/* using for creating figures
 	 points, segments, arcs, circles .. */
-	void CreateObject(object_type, const Array<double>&){}
+	void CreateObject(object_type, const Array<double>&);
 
 	/* trying to impose requirements
 	on selected object */
-	bool CreateRequirement(object_type, const Array<double>&){}
 
-	void DeleteRequirement(int){}
+	bool CreateRequirement(object_type, const Array<double>&);
 
-	void ChangeParamsRequirement(int, double){}
+	void DeletePrimitives();
 
-	void ScaleObject(double){}
+	void DeleteRequirement(int);
 
-	void MoveObject(Vector2&){}
+	void ChangeParamRequirement(int, const double);
+
+	void ScaleObject(const double);
+
+	void MoveObject(const Vector2&);
 
 	void ChangeObject(){}
 
+	void GetRequirements();
+
+	//function for test viewFLTK
 	void test(int x, int y)
 	{
 		view->SetColor(red);
@@ -49,4 +61,5 @@ public:
 	{
 		view->Clear();
 	}
+	//
 };

@@ -35,6 +35,7 @@ public:
 		params = Array<double*>(size);
 	}
 	virtual double error() = 0;
+	virtual void Change(const double);
 	Array<double> gradient();
 	ID GetID() const;
 	Array<double*> GetParams();
