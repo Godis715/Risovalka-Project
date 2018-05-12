@@ -89,7 +89,7 @@ bool Model::GetPrimitives(const Array<ID>& ids, Array<Primitive*>& prim) {
 			prim.PushBack(marker.GetValue());
 		}
 	}
-	return (prim.GetSize() != ids.GetSize());
+	return (prim.GetSize() == ids.GetSize());
 }
 
 
@@ -114,12 +114,15 @@ bool Model::GetPrimitivesFromComponent(BinSearchTree<ID, ID>& component, Array<P
 }
 
 
-void Model::ConnectPrimitives(Primitive* point, Primitive* prim) {
+void Model::ConnectPrimitives(Primitive* point1, Primitive* point2, Primitive* prim) {
 	Requirement* _connection = new ConnectionReq;
-	Array<Primitive*> prims(2);
-	prims[0] = point;
-	prims[1] = prim;
+	dataReq.Add(_connection->GetID(), _connection);
+	Array<Primitive*> prims(3);
+	prims[0] = point1;
+	prims[1] = point2;
+	prims[2] = prim;
 	CreateLink(_connection->GetID(), prims);
+
 }
 
 bool Model::CreateObject(const object_type type, const Array<double>& params, ID& obj_id) {
@@ -152,8 +155,7 @@ bool Model::CreateObject(const object_type type, const Array<double>& params, ID
 		dataPrim.Add(p2->GetID(), p2);
 		dataPrim.Add(_seg->GetID(), _seg);
 
-		ConnectPrimitives(p1, _seg);
-		ConnectPrimitives(p2, _seg);
+		ConnectPrimitives(p1, p2, _seg);
 
 		obj_id = _seg->GetID();
 		return true;
@@ -175,8 +177,7 @@ bool Model::CreateObject(const object_type type, const Array<double>& params, ID
 		dataPrim.Add(p2->GetID(), p2);
 		dataPrim.Add(_arc->GetID(), _arc);
 
-		ConnectPrimitives(p1, _arc);
-		ConnectPrimitives(p2, _arc);
+		ConnectPrimitives(p1, p2, _arc);
 
 		obj_id = _arc->GetID();
 		return true;
@@ -216,7 +217,7 @@ bool Model::DeleteRequirement(const ID& req_id) {
 		throw std::exception("Invalid link requirement->primitive");
 	}
 
-	auto listPrim = dataLink.GetMarker().GetValue();
+	auto listPrim = dataLinkMarker.GetValue();
 	dataLinkMarker.DeleteCurrent();
 
 	for (auto i = listPrim->GetMarker(); i.IsValid(); ++i) {
@@ -274,26 +275,6 @@ bool Model::DeletePrimitive(const ID& prim_id) {
 	return DeletePrimitive(true);
 }
 
-//bool Model::createSegment(ID& p1ID, ID& p2ID, ID& segID) {
-//	Primitive* point1PR;
-//	Primitive* point2PR;
-//	bool error = false;
-//	if (dataPrim.Find(p1ID)) {
-//		point1PR = dataPrim.GetCurrent();
-//		if (dataPrim.Find(p2ID)) {
-//			point2PR = dataPrim.GetCurrent();
-//			if ((point1PR->GetType() == point) && (point2PR->GetType() == point)) {
-//				Point* point1 = dynamic_cast<Point*>(point1PR);
-//				Point* point2 = dynamic_cast<Point*>(point2PR);
-//				Segment* segment = new Segment(point1, point2);
-//				segID = segment->GetID();
-//				dataPrim.Add(segID, segment);
-//				return true;
-//			}
-//		}
-//	}
-//	return false;
-//}
 
 bool Model::CreateRequirementByID(const object_type type, Array<ID>& id_arr, const Array<double>& params, ID& req_id) {
 	Array<Primitive*> primitives;
@@ -484,8 +465,6 @@ bool Model::CreateRequirement(object_type type, Array<Primitive*>& primitives, c
 
 	CreateLink(req_id, primitives);
 
-	OptimizeByID(req_id);
-
 	return true;
 }
 
@@ -635,10 +614,11 @@ bool Model::OptimizeRequirements(const Array<Requirement*>& requirments) {
 			all_parameters[all_parameters_iterator] = currentParameter;
 
 			UniqueParam unique_param;
-			bool notUniqueParam = set.Find(currentParameter).IsValid();
+			auto setMarker = set.Find(currentParameter);
+			bool notUniqueParam = setMarker.IsValid();
 
 			if (notUniqueParam) {
-				match_array[all_parameters_iterator] = unique_param.unique_number;
+				match_array[all_parameters_iterator] = setMarker.GetValue().unique_number;
 			}
 			else {
 				unique_param = UniqueParam{ currentParameter, uniq_numbers_iterator };
@@ -662,7 +642,8 @@ bool Model::OptimizeRequirements(const Array<Requirement*>& requirments) {
 
 	//filling anti gradient
 	double err = GetError(requirments);
-	while (GetError(requirments) > OPTIM_EPS) {
+	int optimization_iter = 0;
+	while (err > OPTIM_EPS) {
 		int match_array_iterator = 0;
 		for (int i = 0; i < requirments.GetSize(); ++i) {
 			Array<double> currentGradient = requirments[i]->Gradient();
@@ -675,7 +656,15 @@ bool Model::OptimizeRequirements(const Array<Requirement*>& requirments) {
 		OptimizeByGradient(requirments, unique_parameters, aGradient);
 		aGradient.FillDefault(0.0);
 		err = GetError(requirments);
+		
+		optimization_iter++;
+		// temp
+		if (optimization_iter >= 1000) {
+			return (err < OPTIM_EPS * 10);
+		}
 	}
+
+
 	return true;
 }
 
@@ -757,7 +746,7 @@ bool Model::GetObjParam(const ID& obj_id, Array<double>& result) {
 		obj = dataPrimMarker.GetValue();
 		switch (obj->GetType()) {
 		case point_t: {
-			Point* point = dynamic_cast<Point*>(obj);
+			Point* point = cast<Point*>(obj);
 			result.Clear();
 			Vector2 pos = point->GetPosition();
 			result.PushBack(pos.x);
@@ -766,7 +755,7 @@ bool Model::GetObjParam(const ID& obj_id, Array<double>& result) {
 			break;
 		}
 		case segment_t: {
-			Segment* segment = dynamic_cast<Segment*>(obj);
+			Segment* segment = cast<Segment*>(obj);
 			result.Clear();
 			Vector2 pos1 = segment->GetPoint1_pos();
 			Vector2 pos2 = segment->GetPoint2_pos();
@@ -778,7 +767,7 @@ bool Model::GetObjParam(const ID& obj_id, Array<double>& result) {
 			break;
 		}
 		case arc_t: {
-			Arc* arc = dynamic_cast<Arc*>(obj);
+			Arc* arc = cast<Arc*>(obj);
 			result.Clear();
 			Vector2 pos1 = arc->GetPoint1_pos();
 			Vector2 pos2 = arc->GetPoint2_pos();
@@ -856,7 +845,7 @@ void Model::LockPoint(Point* _point, ID& id) {
 	point[0] = _point;
 	Array<double> params(2);
 	params[0] = _point->position.x;
-	params[0] = _point->position.y;
+	params[1] = _point->position.y;
 
 	CreateRequirement(pointPosReq_t, point, params, id);
 }
