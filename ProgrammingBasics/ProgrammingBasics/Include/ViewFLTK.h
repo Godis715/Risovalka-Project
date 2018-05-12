@@ -3,6 +3,7 @@
 #include <iostream>
 #include "IView.h"
 #include "Presenter.h"
+#include <string>
 
 #include <FL/Fl.H>
 #include <FL/Fl_Double_Window.H>
@@ -10,11 +11,18 @@
 #include <FL/Fl_Box.H>
 #include <FL/fl_draw.H>
 #include <FL/Fl_Button.h>
+#include <FL/Fl_Round_Button.H>
+#include <FL/math.h>
 
 class ViewFLTK : public IView
 {
 private:
 	static Presenter * presenter;
+
+	Fl_Round_Button* status1;
+	Fl_Round_Button* status2;
+	Fl_Round_Button* status3;
+
 	class SecondWindow : public Fl_Double_Window
 	{
 	private:
@@ -25,7 +33,6 @@ private:
 			box(FL_UP_BOX);
 			color(FL_BLACK);
 			resizable(this);
-			show();
 		}
 		~SecondWindow() {}
 		int handle(int e)
@@ -37,44 +44,82 @@ private:
 			}
 			return(ret);
 		}
-		void clear()
-		{
-			fl_color(FL_BLACK);
-			fl_rectf(0, 0, w(), h());
-			redraw();
-		}
 	};
 
 	//callbacks
-	static void cl_buttenClear(Fl_Widget* o, void*)
+	static void cl_buttonClear(Fl_Widget* o, void*)
 	{
-		presenter->test2();
+		presenter->clearScene();
 	}
+	
 	static void cl_clickOnScene(Fl_Widget* o, void*)
 	{
-		presenter->test(Fl::event_x(), Fl::event_y());
-		//((SecondWindow*)o)->color(FL_YELLOW);
-		//((SecondWindow*)o)->redraw();
+		presenter->clickOnScene(Fl::event_x(), Fl::event_y());
 	}
-	//
+
+	static void cl_changeStatusCreate(Fl_Widget* o, void*)
+	{
+		if (((Fl_Round_Button*)o)->label() == "Create point")
+		{
+			presenter->changeStatusCreate(drawPoint);
+		}
+		if (((Fl_Round_Button*)o)->label() == "Create segment")
+		{
+			presenter->changeStatusCreate(drawSegment);
+		}
+		if (((Fl_Round_Button*)o)->label() == "Create arc")
+		{
+			presenter->changeStatusCreate(drawArc);
+		}
+	}
+	//..
 
 	Fl_Window* mainWindow;
 	SecondWindow* drawWindow;
 	Fl_Button* buttonClear;
+	Fl_Button* buttonOk;
 public:
 	ViewFLTK()
 	{
+		
 		presenter = new Presenter(this);
 
 		mainWindow = new Fl_Window(820, 420, "Main Window");
 		mainWindow->color(FL_WHITE);
 
 		drawWindow = new SecondWindow(10, 10, 400, 400, "Draw Window");
+		drawWindow->callback(cl_clickOnScene);
 		drawWindow->end();
 
 		buttonClear = new Fl_Button(420, 10, 100, 30, "Clear scene");
-		mainWindow->end();
+		buttonClear->callback(cl_buttonClear);
 
+		//buttonOk = new Fl_Button(640, 180, 50, 30, "Ok");
+		{Fl_Group* StatusCreate = new Fl_Group(540, 30, 150, 150, "Status Create");
+		StatusCreate->box(FL_THIN_UP_FRAME);
+		{status1 = new Fl_Round_Button(540, 50, 100, 30, "Create point");
+		status1->tooltip("Info.");
+		status1->type(102);
+		status1->down_box(FL_ROUND_DOWN_BOX);
+		status1->callback(cl_changeStatusCreate);
+		} 
+		{status2 = new Fl_Round_Button(540, 100, 100, 30, "Create segment");
+		status2->tooltip("Info.");
+		status2->type(102);
+		status2->down_box(FL_ROUND_DOWN_BOX);
+		status2->callback(cl_changeStatusCreate);
+		} 
+		{status3 = new Fl_Round_Button(540, 150, 100, 30, "Create arc");
+		status3->tooltip("Info.");
+		status3->type(102);
+		status3->down_box(FL_ROUND_DOWN_BOX);
+		status3->callback(cl_changeStatusCreate);
+		}
+		StatusCreate->end();
+		}
+
+		mainWindow->end();
+		
 		mainWindow->show();
 		drawWindow->show();
 	}
@@ -82,24 +127,96 @@ public:
 
 	int Run()
 	{
-		buttonClear->callback(cl_buttenClear);
-		drawWindow->when(FL_WHEN_CHANGED);
-		drawWindow->callback(cl_clickOnScene);
 		return Fl::run();
 	}
 
-	void DrawLine(const Vector2& pos1, const Vector2& pos2)
+	void DrawLine(const Vector2& start, const Vector2& end, typeDrawing type)
 	{
-		fl_color(FL_WHITE);
-		fl_line(pos1.x, pos1.y, pos2.x, pos2.y);
+		switch (type)
+		{
+		case points:
+			fl_line_style(FL_DOT, 2);
+			fl_line(start.x, start.y, end.x, end.y);
+			break;
+		case line:
+			fl_line(start.x, start.y, end.x, end.y);
+			break;
+		default:
+			fl_line(start.x, start.y, end.x, end.y);
+			break;
+		}
 	}
-	void DrawArc(const Vector2&, const Vector2&){}
+
+	void DrawCircle(const Vector2& center, const Vector2& pointForCircle, typeDrawing type)
+	{
+		double r = (pointForCircle - center).GetLength();
+
+		switch (type)
+		{
+		case points:
+			fl_begin_points();
+			fl_arc(center.x, center.y, r, 0.0, 360.0);
+			fl_end_points();
+			break;
+		case line:
+			fl_begin_line();
+			fl_arc(center.x, center.y, r, 0.0, 360.0);
+			fl_end_line();
+			break;
+		case polygon:
+			fl_begin_polygon();
+			fl_arc(center.x, center.y, r, 0.0, 360.0);
+			fl_end_polygon();
+			break;
+		}
+	}
+
+	void DrawArc(const Vector2& center, const Vector2& start, const Vector2& end, typeDrawing type)
+	{
+
+		double r = (center - start).GetLength();
+		double angleStart = acos((start.x - center.x) / r) * (180 / PI);
+		if (center.y - start.y < 0) {
+			angleStart = 360.0 - angleStart;
+		}
+
+		double r2 = (center - end).GetLength();
+		double angleEnd = acos((end.x - center.x) / r2) * (180 / PI);
+
+		//std::cout << Vector2::Angle(start - center, end - center);
+		//std::cout << std::endl;
+		//std::cout << acos((end.x - center.x) / r2) - acos((start.x - center.x) / r);
+		if (center.y - end.y < 0) {
+			angleEnd = 360.0 - angleEnd;
+		}
+
+		switch (type)
+		{
+		case points:
+			fl_begin_points();
+			fl_arc(center.x, center.y, r, angleStart, angleEnd);
+			fl_end_points();
+			break;
+		case line:
+			fl_begin_line();
+			fl_arc(center.x, center.y, r, angleStart, angleEnd);
+			fl_end_line();
+			break;
+		case polygon:
+			fl_begin_polygon();
+			fl_arc(center.x, center.y, r, angleStart, angleEnd);
+			fl_end_polygon();
+			break;
+		}
+	}
+
 	void DrawPoint(const Vector2& pos)
 	{
 		int size = 2;
 		fl_line(pos.x - size, pos.y - size, pos.x + size, pos.y + size);
 		fl_line(pos.x + size, pos.y - size, pos.x - size, pos.y + size);
 	}
+	
 	void SetColor(color col)
 	{
 		switch (col)
@@ -110,11 +227,15 @@ public:
 			case red:
 				fl_color(FL_RED);
 				break;
+			case black:
+				fl_color(FL_BLACK);
+				break;
 		}
 	}
+	
 	void Clear()
 	{
-		drawWindow->clear();
+		drawWindow->redraw();
 	}
 };
 

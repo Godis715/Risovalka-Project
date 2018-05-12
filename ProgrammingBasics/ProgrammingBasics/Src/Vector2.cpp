@@ -41,7 +41,7 @@ double Vector2::Angle(const Vector2& vec1, const Vector2& vec2) {
 	}
 	double PI = 3.141592653589793;
 	double angle = acos(Cos);
-	return angle + 2 * (angle - PI);
+	return angle - 2 * (angle - PI);
 }
 
 Vector2 Vector2::operator*(double val) const {
