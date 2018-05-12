@@ -48,7 +48,7 @@ private:
 
 	bool GetPrimitivesFromComponent(BinSearchTree<ID, ID>&, Array<Primitive*>&);
 
-	void ConnectPrimitives(Primitive*, Primitive*, Primitive*);
+	void ConnectPrimitives(const Array<Primitive*>&);
 
 	bool CreateRequirement(object_type, Array<Primitive*>&, const Array<double>&, ID&);
 
@@ -93,7 +93,7 @@ public:
 	bool CreateObject(object_type, const Array<double>&, ID&);
 	
 	bool CreateRequirementByID(object_type, Array<ID>&, const Array<double>&, ID&);
-	void CreateLink(const ID&, Array<Primitive*>&);
+	void CreateLink(const ID&, const Array<Primitive*>&);
 
 	bool DeletePrimitive(const ID&);
 	bool DeleteRequirement(const ID&);

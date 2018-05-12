@@ -114,13 +114,9 @@ bool Model::GetPrimitivesFromComponent(BinSearchTree<ID, ID>& component, Array<P
 }
 
 
-void Model::ConnectPrimitives(Primitive* point1, Primitive* point2, Primitive* prim) {
+void Model::ConnectPrimitives(const Array<Primitive*>& prims) {
 	Requirement* _connection = new ConnectionReq;
 	dataReq.Add(_connection->GetID(), _connection);
-	Array<Primitive*> prims(3);
-	prims[0] = point1;
-	prims[1] = point2;
-	prims[2] = prim;
 	CreateLink(_connection->GetID(), prims);
 
 }
@@ -155,7 +151,11 @@ bool Model::CreateObject(const object_type type, const Array<double>& params, ID
 		dataPrim.Add(p2->GetID(), p2);
 		dataPrim.Add(_seg->GetID(), _seg);
 
-		ConnectPrimitives(p1, p2, _seg);
+		Array<Primitive*> prims(3);
+		prims[0] = p1;
+		prims[1] = p2;
+		prims[2] = _seg;
+		ConnectPrimitives(prims);
 
 		obj_id = _seg->GetID();
 		return true;
@@ -177,7 +177,11 @@ bool Model::CreateObject(const object_type type, const Array<double>& params, ID
 		dataPrim.Add(p2->GetID(), p2);
 		dataPrim.Add(_arc->GetID(), _arc);
 
-		ConnectPrimitives(p1, p2, _arc);
+		Array<Primitive*> prims(3);
+		prims[0] = p1;
+		prims[1] = p2;
+		prims[2] = _arc;
+		ConnectPrimitives(prims);
 
 		obj_id = _arc->GetID();
 		return true;
@@ -196,7 +200,10 @@ bool Model::CreateObject(const object_type type, const Array<double>& params, ID
 		dataPrim.Add(center->GetID(), center);
 		dataPrim.Add(_circle->GetID(), _circle);
 
-		ConnectPrimitives(center, _circle);
+		Array<Primitive*> prims(2);
+		prims[0] = center;
+		prims[1] = _circle;
+		ConnectPrimitives(prims);
 
 		obj_id = _circle->GetID();
 		return true;
@@ -468,7 +475,7 @@ bool Model::CreateRequirement(object_type type, Array<Primitive*>& primitives, c
 	return true;
 }
 
-void Model::CreateLink(const ID& IDreq, Array<Primitive*>& primitives) {
+void Model::CreateLink(const ID& IDreq, const Array<Primitive*>& primitives) {
 	// create link Prim on Req
 	for (int i = 0; i < primitives.GetSize(); ++i) {
 		auto markerLink = dataLink.Find(primitives[i]->GetID());
