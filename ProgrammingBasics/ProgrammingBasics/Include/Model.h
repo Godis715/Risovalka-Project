@@ -48,7 +48,7 @@ private:
 
 	bool GetPrimitivesFromComponent(BinSearchTree<ID, ID>&, Array<Primitive*>&);
 
-	void ConnectPrimitives(Primitive*, Primitive*);
+	void ConnectPrimitives(Primitive*, Primitive*, Primitive*);
 
 	bool CreateRequirement(object_type, Array<Primitive*>&, const Array<double>&, ID&);
 
