@@ -1,5 +1,5 @@
 #pragma once
-#include "IView.h"
+// #include "IView.h"
 #include "Model.h"
 
 #define SINGLE_SELECTION
@@ -8,7 +8,6 @@
 class Presenter {
 private:
 	BinSearchTree<ID, ID> selectedObjects;
-
 	BinSearchTree<ID, ID> selectedReq;
 
 	Array<ID> _selObj;
@@ -20,13 +19,13 @@ private:
 
 	void SelectObject(const ID&, int){}
 
-	IView* view;
+	// IView* view;
 
 public:
-	Presenter(IView* _view)
+	/*Presenter(IView* _view)
 	{
 		view = _view;
-	}
+	}*/
 
 	/* using for creating figures
 	 points, segments, arcs, circles .. */
@@ -43,7 +42,7 @@ public:
 
 	void ChangeParamRequirement(int, const double);
 
-	void ScaleObject(const double);
+	void ScaleObjects(const double);
 
 	void MoveObject(const Vector2&);
 

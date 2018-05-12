@@ -72,18 +72,22 @@ bool Model::NewComponent(const ID& id, Array<ID>& Prims, Array<ID>& Reqs)
 	return (Prims.GetSize() != 0) || (Reqs.GetSize() != 0);
 }
 
-bool Model::GetRequirements(Array<ID>& ids, Array<Requirement*>& req) {
+bool Model::GetRequirements(const Array<ID>& ids, Array<Requirement*>& req) {
 	for (int i = 0; i < ids.GetSize(); ++i) {
-		
-		req.PushBack(dataReq.Find(ids[i]).GetValue());
+		auto marker = dataReq.Find(ids[i]);
+		if (marker.IsValid()) {
+			req.PushBack(marker.GetValue());
+		}
 	}
 	return (req.GetSize() != ids.GetSize());
 }
 
-bool Model::GetPrimitives(Array<ID>& ids, Array<Primitive*>& prim) {
+bool Model::GetPrimitives(const Array<ID>& ids, Array<Primitive*>& prim) {
 	for (int i = 0; i < ids.GetSize(); ++i) {
-
-		prim.PushBack(dataPrim.Find(ids[i]).GetValue());
+		auto marker = dataPrim.Find(ids[i]);
+		if (marker.IsValid()) {
+			prim.PushBack(marker.GetValue());
+		}
 	}
 	return (prim.GetSize() != ids.GetSize());
 }
@@ -311,8 +315,8 @@ bool Model::CreateRequirement(object_type type, Array<Primitive*>& primitives, c
 			return false;
 		}
 		// creating
-		requirement = new EqualSegmentLenReq(*cast<Segment*>(primitives[0]),
-			*cast<Segment*>(primitives[1]));
+		requirement = new EqualSegmentLenReq(cast<Segment*>(primitives[0]),
+			cast<Segment*>(primitives[1]));
 		break;
 	}
 	case pointsOnTheOneHand: {
@@ -326,9 +330,9 @@ bool Model::CreateRequirement(object_type type, Array<Primitive*>& primitives, c
 			return false;
 		}
 		// creating
-		requirement = new PointsOnTheOneHand(*cast<Segment*>(primitives[0]),
-			*cast<Point*>(primitives[1]),
-			*cast<Point*>(primitives[2]));
+		requirement = new PointsOnTheOneHand(cast<Segment*>(primitives[0]),
+			cast<Point*>(primitives[1]),
+			cast<Point*>(primitives[2]));
 		break;
 	}
 	case distBetPointSeg: {
@@ -341,8 +345,8 @@ bool Model::CreateRequirement(object_type type, Array<Primitive*>& primitives, c
 			return false;
 		}
 		// creating
-		requirement = new DistanceBetweenPointSegment(*cast<Segment*>(primitives[0]),
-			*cast<Point*>(primitives[1]),
+		requirement = new DistanceBetweenPointSegment(cast<Segment*>(primitives[0]),
+			cast<Point*>(primitives[1]),
 			params[0]);
 		break;
 	}
@@ -356,8 +360,8 @@ bool Model::CreateRequirement(object_type type, Array<Primitive*>& primitives, c
 			return false;
 		}
 		// creating
-		requirement = new AngleBetweenSegments(*cast<Segment*>(primitives[0]),
-			*cast<Segment*>(primitives[1]),
+		requirement = new AngleBetweenSegments(cast<Segment*>(primitives[0]),
+			cast<Segment*>(primitives[1]),
 			params[0]);
 		break;
 	}
@@ -371,8 +375,8 @@ bool Model::CreateRequirement(object_type type, Array<Primitive*>& primitives, c
 			return false;
 		}
 		// creating
-		requirement = new DistanceBetweenPointArc(*cast<Arc*>(primitives[0]),
-			*cast<Point*>(primitives[1]),
+		requirement = new DistanceBetweenPointArc(cast<Arc*>(primitives[0]),
+			cast<Point*>(primitives[1]),
 			params[0]);
 		break;
 	}
@@ -386,8 +390,8 @@ bool Model::CreateRequirement(object_type type, Array<Primitive*>& primitives, c
 			return false;
 		}
 		// creating
-		requirement = new PointInArc(*cast<Arc*>(primitives[0]),
-			*cast<Point*>(primitives[1]));
+		requirement = new PointInArc(cast<Arc*>(primitives[0]),
+			cast<Point*>(primitives[1]));
 		break;
 		}
 					 //case correctTriangle: {
@@ -634,7 +638,7 @@ void Model::OptimizeRequirements(const Array<Requirement*>& requirments) {
 	while (GetError(requirments) > OPTIM_EPS) {
 		int match_array_iterator = 0;
 		for (int i = 0; i < requirments.GetSize(); ++i) {
-			Array<double> currentGradient = requirments[i]->gradient();
+			Array<double> currentGradient = requirments[i]->Gradient();
 			for (int j = 0; j < currentGradient.GetSize(); ++j) {
 				aGradient[match_array[match_array_iterator]] -= currentGradient[j] / requirments.GetSize();
 				++match_array_iterator;
@@ -788,5 +792,84 @@ void Model::ChangeRequirement(const ID& id, const double param) {
 	if (marker.IsValid()) {
 		marker.GetValue()->Change(param);
 		OptimizeByID(id);
+	}
+}
+
+bool Model::Scale(const Array<ID>& idPrim, const double koef) {
+	Array<Primitive*> primitives;
+	if (!GetPrimitives(idPrim, primitives)) {
+		// in presenter invalid ID
+		// LOG
+		return false;
+	}
+
+	BinSearchTree<ID, Point*> points;
+	GetPointOfPrimitive(primitives, points);
+	// geting center
+	Vector2 center;
+	for (auto i = points.GetMarker(); i.IsValid(); ++i) {
+		center += i.GetValue()->position;
+	}
+	center /= points.GetSize();
+	// Moving
+	for (auto i = points.GetMarker(); i.IsValid(); ++i) {
+		Vector2 newPos((i.GetValue()->position - center) * koef);
+		i.GetValue()->position = center + newPos;
+	}
+
+	OptimizeByID(primitives[0]->GetID());
+	while (primitives.GetSize() > 0)
+	{
+		for (int i = 0; i < primitives.GetSize(); ++i) {
+			if (currentComponent->Find(primitives[i]->GetID()).IsValid()) {
+				primitives.EraseO_1_(i);
+				--i;
+			}
+		}
+
+		if (primitives.GetSize() > 0) {
+			OptimizeByID(primitives[0]->GetID()); 
+		}
+	}
+}
+
+void Model::GetPointOfPrimitive(Array<Primitive*>& primitives, BinSearchTree<ID, Point*>& pointTree ) {
+	for (int i = 0; i < primitives.GetSize(); ++i) {
+		switch (primitives[i]->GetType())
+		{
+		case point_t: {
+			if (!pointTree.Find(primitives[i]->GetID()).IsValid()) {
+				Point* point = cast<Point*>(primitives[i]);
+				pointTree.Add(point->GetID, point);
+			}
+			break;
+		}
+		case segment_t: {
+			Segment* segment = cast<Segment*>(primitives[i]);
+			if (!pointTree.Find(segment->GetPoint1_ID()).IsValid()) {
+				Point* point = segment->point1;
+				pointTree.Add(point->GetID(), point);
+			}
+			if (!pointTree.Find(segment->GetPoint2_ID()).IsValid()) {
+				Point* point = segment->point2;
+				pointTree.Add(point->GetID(), point);
+			}
+			break;
+		}
+		case arc_t: {
+			Arc* arc = cast<Arc*>(primitives[i]);
+			if (!pointTree.Find(arc->GetPoint1_ID()).IsValid()) {
+				Point* point = arc->point1;
+				pointTree.Add(point->GetID(), point);
+			}
+			if (!pointTree.Find(arc->GetPoint2_ID()).IsValid()) {
+				Point* point = arc->point2;
+				pointTree.Add(point->GetID(), point);
+			}
+			break;
+		}
+		default:
+			break;
+		}
 	}
 }

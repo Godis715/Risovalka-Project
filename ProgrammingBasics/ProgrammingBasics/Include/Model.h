@@ -40,9 +40,9 @@ private:
 
 	bool NewComponent(const ID&, Array<ID>&, Array<ID>&);
 
-	bool GetRequirements(Array<ID>&, Array<Requirement*>&);
+	bool GetRequirements(const Array<ID>&, Array<Requirement*>&);
 
-	bool GetPrimitives(Array<ID>&, Array<Primitive*>&);
+	bool GetPrimitives(const Array<ID>&, Array<Primitive*>&);
 	
 	bool GetRequirementsFromComponent(BinSearchTree<ID, ID>&, Array<Requirement*>&);
 
@@ -64,6 +64,8 @@ private:
 	void GetDoublesForOptimize(Array<Primitive*>&, Array<double*>&);
 
 	void GetDifferential(const Array<Requirement*>&, Array<double*>&, Array<double>&);
+
+	void GetPointOfPrimitive(Array<Primitive*>&, BinSearchTree<ID, Point*>&);
 public:
 	class infoObject
 	{
@@ -108,5 +110,7 @@ public:
 	// new functon
 
 	void ChangeRequirement(const ID&, const double);
+
+	bool Scale(const Array<ID>&, const double);
 };
 #endif

@@ -13,8 +13,11 @@ public:
 	static double Angle(const Vector2&, const Vector2&);
 	Vector2 operator -(const Vector2&) const;
 	Vector2 operator +(const Vector2&) const;
-	Vector2 operator *(double) const;
-	Vector2 operator /(double) const;
+	Vector2 operator *(const double) const;
+	Vector2 operator /(const double) const;
+	void operator /=(const double);
+	void operator +=(const Vector2&);
+	void operator =(const Vector2&);
 	double GetLength() const;
 
 	double x;
