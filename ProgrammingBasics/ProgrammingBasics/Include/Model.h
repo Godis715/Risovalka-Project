@@ -52,6 +52,7 @@ private:
 
 	bool CreateRequirement(object_type, Array<Primitive*>&, const Array<double>&, ID&);
 
+	bool OptimizeGroup(Array<Primitive*>&);
 
 	double GetError(const Array<Requirement*>&) const;
 
@@ -65,7 +66,7 @@ private:
 
 	void GetDifferential(const Array<Requirement*>&, Array<double*>&, Array<double>&);
 
-	void GetPointOfPrimitive(Array<Primitive*>&, BinSearchTree<ID, Point*>&);
+	void GetPointsFromPrimitives(Array<Primitive*>&, BinSearchTree<ID, Point*>&);
 public:
 	class infoObject
 	{
@@ -104,13 +105,15 @@ public:
 
 	bool GetObjParam(const ID&, Array<double>&);
 	
-	void OptimizeRequirements(const Array<Requirement*>&);
+	bool OptimizeRequirements(const Array<Requirement*>&);
 
-	void OptimizeByID(const ID&);
+	bool OptimizeByID(const ID&);
 	// new functon
 
 	void ChangeRequirement(const ID&, const double);
 
 	bool Scale(const Array<ID>&, const double);
+
+	bool Move(const Array<ID>&, const Vector2&);
 };
 #endif

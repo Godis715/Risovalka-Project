@@ -161,7 +161,15 @@ class PointPosReq : public Requirement {
 private:
 
 public:
-	PointPosReq(Point* _point, Vector2 _vec) :
+	PointPosReq(Point* _point, double _x, double _y) :
+		Requirement(IDGenerator::getInstance()->generateID(), pointPosReq_t) {
+		arguments[0] = &_point->position.x;
+		arguments[1] = &_point->position.y;
+
+		params[0] = _x;
+		params[1] = _y;
+	}
+	PointPosReq(Point* _point, const Vector2& _vec) :
 		Requirement(IDGenerator::getInstance()->generateID(), pointPosReq_t) {
 		arguments[0] = &_point->position.x;
 		arguments[1] = &_point->position.y;

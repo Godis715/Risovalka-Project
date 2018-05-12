@@ -295,9 +295,9 @@ bool Model::CreateRequirement(object_type type, Array<Primitive*>& primitives, c
 	case distBetPoints_t: {
 		// verification parameters
 		if ((primitives.GetSize() != 2)
-			&& (params.GetSize() != 1)
-			&& (primitives[0]->GetType() != point_t)
-			&& (primitives[1]->GetType() != point_t)) {
+			|| (params.GetSize() != 1)
+			|| (primitives[0]->GetType() != point_t)
+			|| (primitives[1]->GetType() != point_t)) {
 			return false;
 		}
 		// creating
@@ -309,9 +309,9 @@ bool Model::CreateRequirement(object_type type, Array<Primitive*>& primitives, c
 	case equalSegmentLen_t: {
 		// verification parameters
 		if ((primitives.GetSize() != 2)
-			&& (params.GetSize() != 0)
-			&& (primitives[0]->GetType() != segment_t)
-			&& (primitives[1]->GetType() != segment_t)) {
+			|| (params.GetSize() != 0)
+			|| (primitives[0]->GetType() != segment_t)
+			|| (primitives[1]->GetType() != segment_t)) {
 			return false;
 		}
 		// creating
@@ -322,10 +322,10 @@ bool Model::CreateRequirement(object_type type, Array<Primitive*>& primitives, c
 	case pointsOnTheOneHand: {
 		// verification parameters
 		if ((primitives.GetSize() != 3)
-			&& (params.GetSize() == 0)
-			&& (primitives[0]->GetType() == segment_t)
-			&& (primitives[1]->GetType() == point_t)
-			&& (primitives[2]->GetType() == point_t))
+			|| (params.GetSize() != 0)
+			|| (primitives[0]->GetType() != segment_t)
+			|| (primitives[1]->GetType() != point_t)
+			|| (primitives[2]->GetType() != point_t))
 		{
 			return false;
 		}
@@ -338,9 +338,9 @@ bool Model::CreateRequirement(object_type type, Array<Primitive*>& primitives, c
 	case distBetPointSeg: {
 		// verification parameters
 		if ((primitives.GetSize() != 2)
-			&& (params.GetSize() != 1)
-			&& (primitives[0]->GetType() != segment_t)
-			&& (primitives[1]->GetType() != point_t))
+			|| (params.GetSize() != 1)
+			|| (primitives[0]->GetType() != segment_t)
+			|| (primitives[1]->GetType() != point_t))
 		{
 			return false;
 		}
@@ -350,12 +350,20 @@ bool Model::CreateRequirement(object_type type, Array<Primitive*>& primitives, c
 			params[0]);
 		break;
 	}
+	case pointPosReq_t: {
+		if (primitives.GetSize() != 1
+			|| params.GetSize() != 2
+			|| primitives[0]->GetType() != point_t) {
+		}
+		requirement = new PointPosReq(cast<Point*>(primitives[0]), params[0], params[1]);
+		break;
+	}
 	case angleBetSeg: {
 		// verification parameters
 		if ((primitives.GetSize() != 2)
-			&& (params.GetSize() == 1)
-			&& (primitives[0]->GetType() == segment_t)
-			&& (primitives[1]->GetType() == segment_t))
+			|| (params.GetSize() != 1)
+			|| (primitives[0]->GetType() != segment_t)
+			|| (primitives[1]->GetType() != segment_t))
 		{
 			return false;
 		}
@@ -569,7 +577,7 @@ void Model::OptimizeByGradient(const Array<Requirement*>& requirments, const Arr
 	}
 }
 
-void Model::OptimizeRequirements(const Array<Requirement*>& requirments) {
+bool Model::OptimizeRequirements(const Array<Requirement*>& requirments) {
 	// get parameters number
 	int params_number = 0;
 	for (int i = 0; i < requirments.GetSize(); ++i) {
@@ -649,14 +657,15 @@ void Model::OptimizeRequirements(const Array<Requirement*>& requirments) {
 		aGradient.FillDefault(0.0);
 		err = GetError(requirments);
 	}
+	return true;
 }
 
-void Model::OptimizeByID(const ID& id) {
+bool Model::OptimizeByID(const ID& id) {
 	BinSearchTree<ID, ID> component;
 	Array<ID> reqID;
 	Array<ID> primID;
 	if(!NewComponent(id, primID, reqID)) {
-		return;
+		return true;
 	}
 	Array<Requirement*> reqs;
 	GetRequirements(reqID, reqs);
@@ -664,7 +673,7 @@ void Model::OptimizeByID(const ID& id) {
 	/*if (!GetRequirementsFromComponent(component, reqs)) {
 		return;
 	}*/
-	OptimizeRequirements(reqs);
+	return OptimizeRequirements(reqs);
 }
 
 void Model::OptitmizeNewton(const ID& id) {
@@ -795,6 +804,21 @@ void Model::ChangeRequirement(const ID& id, const double param) {
 	}
 }
 
+bool Model::OptimizeGroup(Array<Primitive*>& group) {
+	do {
+		if (!OptimizeByID(group[0]->GetID())) {
+			return false;
+		}
+		for (int i = 0; i < group.GetSize(); ++i) {
+			if (currentComponent->Find(group[i]->GetID()).IsValid()) {
+				group.EraseO_1_(i);
+				--i;
+			}
+		}
+	} while (group.GetSize() > 0);
+	return true;
+}
+
 bool Model::Scale(const Array<ID>& idPrim, const double koef) {
 	Array<Primitive*> primitives;
 	if (!GetPrimitives(idPrim, primitives)) {
@@ -804,36 +828,78 @@ bool Model::Scale(const Array<ID>& idPrim, const double koef) {
 	}
 
 	BinSearchTree<ID, Point*> points;
-	GetPointOfPrimitive(primitives, points);
+	GetPointsFromPrimitives(primitives, points);
 	// geting center
 	Vector2 center;
 	for (auto i = points.GetMarker(); i.IsValid(); ++i) {
 		center += i.GetValue()->position;
 	}
 	center /= points.GetSize();
+	Array<ID> reqs;
 	// Moving
 	for (auto i = points.GetMarker(); i.IsValid(); ++i) {
+
 		Vector2 newPos((i.GetValue()->position - center) * koef);
 		i.GetValue()->position = center + newPos;
+
+		ID id;
+		Array<Primitive*> point(1);
+		point[0] = i.GetValue();
+		Array<double> params(2);
+		params[0] = i.GetValue()->position.x;
+		params[0] = i.GetValue()->position.y;
+		
+		CreateRequirement(pointPosReq_t, point, params, id);
+		reqs.PushBack(id);
 	}
 
-	OptimizeByID(primitives[0]->GetID());
-	while (primitives.GetSize() > 0)
-	{
-		for (int i = 0; i < primitives.GetSize(); ++i) {
-			if (currentComponent->Find(primitives[i]->GetID()).IsValid()) {
-				primitives.EraseO_1_(i);
-				--i;
-			}
-		}
-
-		if (primitives.GetSize() > 0) {
-			OptimizeByID(primitives[0]->GetID()); 
-		}
+	if (!OptimizeGroup(primitives)) {
+		return false;
 	}
+
+	for (int i = 0; i < reqs.GetSize(); ++i) {
+		DeleteRequirement(reqs[i]);
+	}
+	return true;
 }
 
-void Model::GetPointOfPrimitive(Array<Primitive*>& primitives, BinSearchTree<ID, Point*>& pointTree ) {
+bool Model::Move(const Array<ID>& idPrim, const Vector2& shift) {
+	Array<Primitive*> primitives;
+	if (!GetPrimitives(idPrim, primitives)) {
+		// LOG
+		return false;
+	}
+	BinSearchTree<ID, Point*> points;
+	GetPointsFromPrimitives(primitives, points);
+
+	Array<ID> reqs;
+
+	for (auto i = points.GetMarker; i.IsValid(); ++i) {
+		i.GetValue()->position += shift;
+
+		ID id;
+		Array<Primitive*> point(1);
+		point[0] = i.GetValue();
+		Array<double> params(2);
+		params[0] = i.GetValue()->position.x;
+		params[0] = i.GetValue()->position.y;
+
+		CreateRequirement(pointPosReq_t, point, params, id);
+		reqs.PushBack(id);
+	}
+
+	if (!OptimizeGroup(primitives)) {
+		return false;
+	}
+
+	for (int i = 0; i < reqs.GetSize(); ++i) {
+		DeleteRequirement(reqs[i]);
+	}
+	return true;
+}
+
+
+void Model::GetPointsFromPrimitives(Array<Primitive*>& primitives, BinSearchTree<ID, Point*>& pointTree ) {
 	for (int i = 0; i < primitives.GetSize(); ++i) {
 		switch (primitives[i]->GetType())
 		{
