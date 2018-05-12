@@ -181,6 +181,25 @@ bool Model::CreateObject(const object_type type, const Array<double>& params, ID
 		obj_id = _arc->GetID();
 		return true;
 	}
+	case circle_t: {
+		if (params.GetSize() != 3) {
+			return false;
+		}
+		Point* center = new Point(params[0], params[1]);
+
+		Circle* _circle = new Circle(center, params[2]);
+
+		// points belong to arc
+		center->SetParent(_circle);
+
+		dataPrim.Add(center->GetID(), center);
+		dataPrim.Add(_circle->GetID(), _circle);
+
+		ConnectPrimitives(center, _circle);
+
+		obj_id = _circle->GetID();
+		return true;
+	}
 	default:
 		return false;
 	}
@@ -770,6 +789,17 @@ bool Model::GetObjParam(const ID& obj_id, Array<double>& result) {
 			result.PushBack(pos1.y);
 			result.PushBack(pos2.x);
 			result.PushBack(pos2.y);
+			return true;
+			break;
+		}
+		case circle_t: {
+			Circle* circle = dynamic_cast<Circle*>(obj);
+			result.Clear();
+			Vector2 center = circle->GetCenter();
+			double radius = circle->GetRadius();
+			result.PushBack(center.x);
+			result.PushBack(center.y);
+			result.PushBack(radius);
 			return true;
 			break;
 		}

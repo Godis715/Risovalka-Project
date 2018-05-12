@@ -104,4 +104,23 @@ public:
 	//
 };
 
+class Circle : public Primitive {
+private:
+public:
+	double radius;
+	Point* center;
+
+	Circle(Point*, double);
+
+	double GetDistance(const Vector2&) const;
+	Vector2 GetCenter() const;
+
+	// temp functions
+	ID GetCenter_ID() const;
+	void SetCenter_pos(Vector2);
+	double GetRadius() const;
+	void SetRadius(double);
+	//
+};
+
 #endif

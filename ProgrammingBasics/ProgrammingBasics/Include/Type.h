@@ -7,6 +7,7 @@ enum object_type {
 	point_t,
 	segment_t,
 	arc_t,
+	circle_t,
 
 	connection_t,
 	distBetPoints_t,

@@ -23,7 +23,7 @@ double Vector2::GetLength() const {
 }
 
 double Vector2::Dot(const Vector2& vec1, const Vector2& vec2) {
-	return vec1.x * vec2.x + vec1.y + vec2.y;
+	return vec1.x * vec2.x + vec1.y * vec2.y;
 }
 
 double Vector2::Cross(const Vector2& vec1, const Vector2& vec2) {

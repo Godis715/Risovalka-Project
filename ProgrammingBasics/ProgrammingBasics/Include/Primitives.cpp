@@ -187,6 +187,49 @@ void Arc::SetAngle(double newAngle) {
 	}
 }
 
+Circle::Circle(Point* _center,  double _radius) :
+	Primitive(IDGenerator::getInstance()->generateID(), circle_t)
+{
+	if (_center == nullptr) {
+		throw std::invalid_argument("Circle::Circle::_center was nullptr");
+	}
+	if (_radius < 0) {
+		throw std::invalid_argument("Circle::Circle::_radius was negative");
+	}
+
+	center = _center;
+
+	radius = _radius;
+
+	_center->SetParent(this);
+}
+
+// write this function
+double Circle::GetDistance(const Vector2& _point) const {
+	return 0.0;
+}
+
+Vector2 Circle::GetCenter() const {
+	return center->GetPosition();
+}
+
+ID Circle::GetCenter_ID() const {
+	return center->GetID();
+}
+
+void Circle::SetCenter_pos(Vector2 _pos) {
+	center->SetPosition(_pos);
+}
+
+double Circle::GetRadius() const {
+	return radius;
+}
+
+void Circle::SetRadius(double _radius)
+{
+	radius = _radius;
+}
+
 Primitive* Point::GetParent() {
 	return parent;
 }

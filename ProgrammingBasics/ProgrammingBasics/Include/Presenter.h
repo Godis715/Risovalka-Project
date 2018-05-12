@@ -4,7 +4,7 @@
 
 #define SINGLE_SELECTION
 #define POLY_SELECTION
-enum statusCreate { drawPoint, drawSegment, drawArc };
+enum statusCreate { drawPoint, drawSegment, drawArc, drawCircle };
 
 class Presenter {
 private:
@@ -42,6 +42,11 @@ public:
 						Vector2(scene[i].params[2], scene[i].params[3]),
 						Vector2(scene[i].params[4], scene[i].params[5]), line);
 				}
+				if(scene[i].type == circle_t) {
+					view->SetColor(white);
+					view->DrawCircle(Vector2(scene[i].params[0], scene[i].params[1]),
+						Vector2(scene[i].params[0] + scene[i].params[2], scene[i].params[1]), line);
+				}
 			}
 		}
 	}
@@ -77,11 +82,9 @@ public:
 
 	//function for viewFLTK
 	
-	statusCreate status = drawSegment;
+	statusCreate status = drawCircle;
 	Array<Vector2> posClicks;
 	Array<double> params;
-
-	bool isChangeStatus = false;
 
 	void changeStatusCreate(statusCreate newStatus)
 	{
@@ -162,6 +165,31 @@ public:
 						view->DrawPoint(posClicks[0]);
 						posClicks.Clear();
 						break;
+				}
+				break;
+			case drawCircle:
+				switch (posClicks.GetSize())
+				{
+				case 0:
+					posClicks.PushBack(Vector2(x, y));
+					break;
+				case 1:
+					params.PushBack(posClicks[0].x);
+					params.PushBack(posClicks[0].y);
+					params.PushBack((Vector2(x, y) - posClicks[0]).GetLength());
+					CreateObject(circle_t, params);
+					params.Clear();
+
+					view->SetColor(black);
+					view->DrawPoint(Vector2(x, y));
+
+					//..
+					view->SetColor(white);
+					view->DrawCircle(posClicks[0], Vector2(x, y), line);
+					
+					posClicks.Clear();
+					//..
+					break;
 				}
 				break;
 			}

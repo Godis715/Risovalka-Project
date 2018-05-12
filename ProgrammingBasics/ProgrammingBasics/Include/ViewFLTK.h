@@ -22,11 +22,13 @@ private:
 	Fl_Round_Button* status1;
 	Fl_Round_Button* status2;
 	Fl_Round_Button* status3;
+	Fl_Round_Button* status4;
 
 	class SecondWindow : public Fl_Double_Window
 	{
 		void draw()
 		{
+			redraw();
 			ViewFLTK::presenter->drawScene();
 		}
 	public:
@@ -74,6 +76,10 @@ private:
 		{
 			presenter->changeStatusCreate(drawArc);
 		}
+		if (((Fl_Round_Button*)o)->label() == "Create circle")
+		{
+			presenter->changeStatusCreate(drawCircle);
+		}
 	}
 	//..
 
@@ -98,25 +104,31 @@ public:
 		buttonClear->callback(cl_buttonClear);
 
 		//buttonOk = new Fl_Button(640, 180, 50, 30, "Ok");
-		{Fl_Group* StatusCreate = new Fl_Group(540, 30, 150, 150, "Status Create");
+		{Fl_Group* StatusCreate = new Fl_Group(540, 30, 140, 170, "Status Create");
 		StatusCreate->box(FL_THIN_UP_FRAME);
-		{status1 = new Fl_Round_Button(540, 50, 100, 30, "Create point");
+		{status1 = new Fl_Round_Button(StatusCreate->x(), StatusCreate->y() + 10, 100, 30, "Create point");
 		status1->tooltip("Info.");
 		status1->type(102);
 		status1->down_box(FL_ROUND_DOWN_BOX);
 		status1->callback(cl_changeStatusCreate);
 		} 
-		{status2 = new Fl_Round_Button(540, 100, 100, 30, "Create segment");
+		{status2 = new Fl_Round_Button(StatusCreate->x(), StatusCreate->y() + 50, 100, 30, "Create segment");
 		status2->tooltip("Info.");
 		status2->type(102);
 		status2->down_box(FL_ROUND_DOWN_BOX);
 		status2->callback(cl_changeStatusCreate);
 		} 
-		{status3 = new Fl_Round_Button(540, 150, 100, 30, "Create arc");
+		{status3 = new Fl_Round_Button(StatusCreate->x(), StatusCreate->y() + 90, 100, 30, "Create arc");
 		status3->tooltip("Info.");
 		status3->type(102);
 		status3->down_box(FL_ROUND_DOWN_BOX);
 		status3->callback(cl_changeStatusCreate);
+		}
+		{status4 = new Fl_Round_Button(StatusCreate->x(), StatusCreate->y() + 130, 100, 30, "Create circle");
+		status4->tooltip("Info.");
+		status4->type(102);
+		status4->down_box(FL_ROUND_DOWN_BOX);
+		status4->callback(cl_changeStatusCreate);
 		}
 		StatusCreate->end();
 		}
