@@ -753,11 +753,12 @@ bool Model::GetObjParam(const ID& obj_id, Array<double>& result) {
 			Vector2 pos1 = arc->GetPoint1_pos();
 			Vector2 pos2 = arc->GetPoint2_pos();
 			double angle = arc->GetAngle();
+			result.PushBack(arc->GetCenter().x);
+			result.PushBack(arc->GetCenter().y);
 			result.PushBack(pos1.x);
 			result.PushBack(pos1.y);
 			result.PushBack(pos2.x);
 			result.PushBack(pos2.y);
-			result.PushBack(angle);
 			return true;
 			break;
 		}

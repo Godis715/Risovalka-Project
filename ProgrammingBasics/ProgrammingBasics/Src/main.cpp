@@ -1,6 +1,6 @@
 #include <ctime>
 #include "Presenter.h"
-// #include "ViewFLTK.h"
+#include "ViewFLTK.h"
 
 Model model;
 
@@ -151,9 +151,8 @@ int main()
 	model.GetComponent(segment1, *component);
 	model.GetComponent(point1, *component);*/
 	
-	// IView* view = new ViewFLTK();
+	IView* view = new ViewFLTK();
 	
 
-	// return view->Run();
-	return 0;
+	return view->Run();
 }

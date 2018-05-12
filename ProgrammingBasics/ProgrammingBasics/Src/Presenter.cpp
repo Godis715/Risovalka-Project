@@ -1,11 +1,9 @@
 #include "Presenter.h"
 
-
-
 void Presenter::CreateObject(object_type type, const Array<double>& params) {
 	ID id;
 	bool result = model->CreateObject(type, params, id);
-	if (result) {
+	if (!result) {
 		throw std::exception("could not creata object");
 	}
 	//

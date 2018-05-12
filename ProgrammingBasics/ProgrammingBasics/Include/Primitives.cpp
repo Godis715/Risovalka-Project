@@ -121,6 +121,10 @@ Arc::Arc(Point* _p1, Point* _p2, double _angle) :
 	if (_p1 == nullptr || _p2 == nullptr) {
 		throw std::invalid_argument("Arc::Arc::parameters was nullptr");
 	}
+
+	point1 = _p1;
+	point2 = _p2;
+
 	angle = _angle;
 
 	_p1->SetParent(this);
