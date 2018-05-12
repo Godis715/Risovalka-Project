@@ -819,6 +819,17 @@ bool Model::OptimizeGroup(Array<Primitive*>& group) {
 	return true;
 }
 
+void Model::LockPoint(Point* _point, ID& id) {
+
+	Array<Primitive*> point(1);
+	point[0] = _point;
+	Array<double> params(2);
+	params[0] = _point->position.x;
+	params[0] = _point->position.y;
+
+	CreateRequirement(pointPosReq_t, point, params, id);
+}
+
 bool Model::Scale(const Array<ID>& idPrim, const double koef) {
 	Array<Primitive*> primitives;
 	if (!GetPrimitives(idPrim, primitives)) {
@@ -843,17 +854,18 @@ bool Model::Scale(const Array<ID>& idPrim, const double koef) {
 		i.GetValue()->position = center + newPos;
 
 		ID id;
-		Array<Primitive*> point(1);
-		point[0] = i.GetValue();
-		Array<double> params(2);
-		params[0] = i.GetValue()->position.x;
-		params[0] = i.GetValue()->position.y;
-		
-		CreateRequirement(pointPosReq_t, point, params, id);
+
+		LockPoint(i.GetValue(), id);
+
 		reqs.PushBack(id);
 	}
 
 	if (!OptimizeGroup(primitives)) {
+
+		for (int i = 0; i < reqs.GetSize(); ++i) {
+			DeleteRequirement(reqs[i]);
+		}
+
 		return false;
 	}
 
@@ -878,17 +890,18 @@ bool Model::Move(const Array<ID>& idPrim, const Vector2& shift) {
 		i.GetValue()->position += shift;
 
 		ID id;
-		Array<Primitive*> point(1);
-		point[0] = i.GetValue();
-		Array<double> params(2);
-		params[0] = i.GetValue()->position.x;
-		params[0] = i.GetValue()->position.y;
 
-		CreateRequirement(pointPosReq_t, point, params, id);
+		LockPoint(i.GetValue(), id);
+
 		reqs.PushBack(id);
 	}
 
 	if (!OptimizeGroup(primitives)) {
+
+		for (int i = 0; i < reqs.GetSize(); ++i) {
+			DeleteRequirement(reqs[i]);
+		}
+
 		return false;
 	}
 

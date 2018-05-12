@@ -59,6 +59,8 @@ private:
 	double ErrorByAlpha(const Array<Requirement*>&, const Array<double*>&, const Array<double>&, double);
 	void OptimizeByGradient(const Array<Requirement*>&, const Array<double*>&, const Array<double>&);
 
+	void LockPoint(Point* point, ID&);
+
 	/*version 2*/
 	void OptitmizeNewton(const ID&);
 
