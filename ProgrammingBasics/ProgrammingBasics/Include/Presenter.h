@@ -51,7 +51,7 @@ public:
 	void GetRequirements();
 
 	//function for test viewFLTK
-	void test(int x, int y)
+	/*void test(int x, int y)
 	{
 		view->SetColor(red);
 		view->DrawPoint(Vector2(x, y));
@@ -59,6 +59,6 @@ public:
 	void test2()
 	{
 		view->Clear();
-	}
+	}*/
 	//
 };

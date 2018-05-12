@@ -886,7 +886,7 @@ bool Model::Move(const Array<ID>& idPrim, const Vector2& shift) {
 
 	Array<ID> reqs;
 
-	for (auto i = points.GetMarker; i.IsValid(); ++i) {
+	for (auto i = points.GetMarker(); i.IsValid(); ++i) {
 		i.GetValue()->position += shift;
 
 		ID id;
@@ -919,7 +919,7 @@ void Model::GetPointsFromPrimitives(Array<Primitive*>& primitives, BinSearchTree
 		case point_t: {
 			if (!pointTree.Find(primitives[i]->GetID()).IsValid()) {
 				Point* point = cast<Point*>(primitives[i]);
-				pointTree.Add(point->GetID, point);
+				pointTree.Add(point->GetID(), point);
 			}
 			break;
 		}

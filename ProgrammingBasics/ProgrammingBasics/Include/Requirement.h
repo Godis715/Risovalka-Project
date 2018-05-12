@@ -195,10 +195,10 @@ public:
 		point2(_point2),
 		Requirement(IDGenerator::getInstance()->generateID(), pointsOnTheOneHand)
 	{
-		arguments[0] = &_segment->GetPoint1_pos.x;
-		arguments[1] = &_segment->GetPoint1_pos.y;
-		arguments[2] = &_segment->GetPoint2_pos.x;
-		arguments[3] = &_segment->GetPoint2_pos.y;
+		arguments[0] = &_segment->point1->position.x;
+		arguments[1] = &_segment->point1->position.y;
+		arguments[2] = &_segment->point2->position.x;
+		arguments[3] = &_segment->point2->position.y;
 		arguments[4] = &_point1->position.x;
 		arguments[5] = &_point1->position.y;
 		arguments[6] = &_point2->position.x;
@@ -235,10 +235,10 @@ public:
 		point(_point),
 		Requirement(IDGenerator::getInstance()->generateID(), distBetPointSeg)
 	{
-		arguments[0] = &_segment->GetPoint1_pos.x;
-		arguments[1] = &_segment->GetPoint1_pos.y;
-		arguments[2] = &_segment->GetPoint2_pos.x;
-		arguments[3] = &_segment->GetPoint2_pos.y;
+		arguments[0] = &_segment->point1->position.x;
+		arguments[1] = &_segment->point1->position.y;
+		arguments[2] = &_segment->point2->position.x;
+		arguments[3] = &_segment->point2->position.y;
 		arguments[4] = &_point->position.x;
 		arguments[5] = &_point->position.y;
 
@@ -264,14 +264,14 @@ public:
 		segment2(_segment2),
 		Requirement(IDGenerator::getInstance()->generateID(), angleBetSeg)
 	{
-		arguments[0] = &_segment1->GetPoint1_pos.x;
-		arguments[1] = &_segment1->GetPoint1_pos.y;
-		arguments[2] = &_segment1->GetPoint2_pos.x;
-		arguments[3] = &_segment1->GetPoint2_pos.y;
-		arguments[4] = &_segment2->GetPoint1_pos.x;
-		arguments[5] = &_segment2->GetPoint1_pos.y;
-		arguments[6] = &_segment2->GetPoint2_pos.x;
-		arguments[7] = &_segment2->GetPoint2_pos.y;
+		arguments[0] = &_segment1->point1->position.x;
+		arguments[1] = &_segment1->point1->position.y;
+		arguments[2] = &_segment1->point2->position.x;
+		arguments[3] = &_segment1->point2->position.y;
+		arguments[4] = &_segment2->point1->position.x;
+		arguments[5] = &_segment2->point1->position.y;
+		arguments[6] = &_segment2->point2->position.x;
+		arguments[7] = &_segment2->point2->position.y;
 
 		params[0] = cos(_andle);
 	}
@@ -308,10 +308,10 @@ public:
 		point(_point),
 		Requirement(IDGenerator::getInstance()->generateID(), distBetPointArc)
 	{
-		arguments[0] = &_arc->GetPoint1_pos.x;
-		arguments[1] = &_arc->GetPoint1_pos.y;
-		arguments[2] = &_arc->GetPoint2_pos.x;
-		arguments[3] = &_arc->GetPoint2_pos.y;
+		arguments[0] = &_arc->point1->position.x;
+		arguments[1] = &_arc->point1->position.y;
+		arguments[2] = &_arc->point2->position.x;
+		arguments[3] = &_arc->point2->position.y;
 		arguments[4] = &_arc->angle;
 		arguments[5] = &_point->position.x;
 		arguments[6] = &_point->position.y;
@@ -337,10 +337,10 @@ public:
 		point(_point),
 		Requirement(IDGenerator::getInstance()->generateID(), pointInArc)
 	{
-		arguments[0] = &_arc->GetPoint1_pos.x;
-		arguments[1] = &_arc->GetPoint1_pos.y;
-		arguments[2] = &_arc->GetPoint2_pos.x;
-		arguments[3] = &_arc->GetPoint2_pos.y;
+		arguments[0] = &_arc->point1->position.x;
+		arguments[1] = &_arc->point1->position.y;
+		arguments[2] = &_arc->point2->position.x;
+		arguments[3] = &_arc->point2->position.y;
 		arguments[4] = &_arc->angle;
 		arguments[5] = &_point->position.x;
 		arguments[6] = &_point->position.y;
