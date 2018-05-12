@@ -97,11 +97,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
     </ClCompile>
-    <Link>
-      <AdditionalDependencies>fltk.lib;%(AdditionalDependencies)</AdditionalDependencies>
-    </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -145,7 +141,6 @@
     <ClInclude Include="..\Include\Array.h" />
     <ClInclude Include="..\Include\Dequeue.h" />
     <ClInclude Include="..\Include\Dictionary.h" />
-    <ClInclude Include="..\Include\Hash-Table.h" />
     <ClInclude Include="..\Include\ID.h" />
     <ClInclude Include="..\Include\IDGenerator.h" />
     <ClInclude Include="..\Include\INumerable.h" />

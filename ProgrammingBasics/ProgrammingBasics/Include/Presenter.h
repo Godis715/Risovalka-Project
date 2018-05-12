@@ -9,15 +9,12 @@ enum statusCreate { drawPoint, drawSegment, drawArc };
 class Presenter {
 private:
 	BinSearchTree<ID, ID> selectedObjects;
-
 	BinSearchTree<ID, ID> selectedReq;
 
 	Array<ID> _selObj;
 	Array<ID> _selReq;
 
 	Model* model;
-
-
 
 	void SelectObject(const ID&, int){}
 
@@ -69,7 +66,7 @@ public:
 
 	void ChangeParamRequirement(int, const double);
 
-	void ScaleObject(const double);
+	void ScaleObjects(const double);
 
 	void MoveObject(const Vector2&);
 
@@ -172,7 +169,6 @@ public:
 						break;
 				}
 				break;
+			}
 		}
-		}
-	//
 };

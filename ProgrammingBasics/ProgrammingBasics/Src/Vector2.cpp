@@ -44,10 +44,25 @@ double Vector2::Angle(const Vector2& vec1, const Vector2& vec2) {
 	return angle - 2 * (angle - PI);
 }
 
-Vector2 Vector2::operator*(double val) const {
+Vector2 Vector2::operator*(const double val) const {
 	return Vector2(this->x * val, this->y * val);
 }
 
-Vector2 Vector2::operator /(double val) const {
+Vector2 Vector2::operator /(const double val) const {
 	return Vector2(this->x / val, this->y / val);
+}
+
+void Vector2::operator /=(const double val) {
+	this->x /= val;
+	this->y /= val;
+}
+
+void Vector2::operator +=(const Vector2& vector) {
+	this->x += vector.x;
+	this->y += vector.y;
+}
+
+void Vector2::operator =(const Vector2& vector) {
+	this->x = vector.x;
+	this->y = vector.y;
 }

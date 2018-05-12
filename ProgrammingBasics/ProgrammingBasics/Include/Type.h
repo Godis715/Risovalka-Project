@@ -11,6 +11,7 @@ enum object_type {
 	connection_t,
 	distBetPoints_t,
 	equalSegmentLen_t,
+	pointPosReq_t,
 
 	pointsOnTheOneHand,
 	distBetPointSeg,

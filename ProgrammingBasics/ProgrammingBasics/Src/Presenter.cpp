@@ -1,10 +1,14 @@
 #include "Presenter.h"
 
-
-
 void Presenter::CreateObject(object_type type, const Array<double>& params) {
 	ID id;
-	model->CreateObject(type, params, id);
+	bool result = model->CreateObject(type, params, id);
+	if (!result) {
+		throw std::exception("could not creata object");
+	}
+	//
+	// possible clear selected Objects
+	//
 	selectedObjects.Add(id, id);
 	// _selObj.PushBack(id);
 }
@@ -19,7 +23,9 @@ bool Presenter::CreateRequirement(object_type type, const Array<double>& params)
 		++index;
 	}
 	bool result = model->CreateRequirementByID(type, objects, params, id);
-	selectedReq.Add(id, id);
+	if (result) {
+		selectedReq.Add(id, id);
+	}
 
 	return result;
 }
@@ -27,15 +33,14 @@ bool Presenter::CreateRequirement(object_type type, const Array<double>& params)
 //bool Presenter::CreateRequirement(object_type type, const Array<double>& params) {
 //	ID id;
 //	bool result = model->CreateRequirementByID(type, _selObj, params, id);
+//	if (result) {
 //	_selReq.PushBack(id);
-//
+//	}
 //	return result;
 //}
 
 void Presenter::DeleteRequirement(int index) {
-	// ID id = _selReq[index];
-	// model->DeleteRequirement(id);
-	auto marker = selectedObjects.GetMarker();
+	// model->DeleteRequirement(_selReq[index]);
 	for (auto i = selectedObjects.GetMarker(); i.IsValid(); ++i) {
 		if (index == 0) {
 			model->DeleteRequirement(i.GetValue());
@@ -55,8 +60,7 @@ void Presenter::DeletePrimitives() {
 }
 
 void Presenter::ChangeParamRequirement(int index, const double param) {
-	// model->FFF(_selReq[index], param);
-	auto marker = selectedObjects.GetMarker();
+	// model->ChangeRequirement(_selReq[index], param);
 	for (auto i = selectedObjects.GetMarker(); i.IsValid(); ++i) {
 		if (index == 0) {
 			model->ChangeRequirement(i.GetValue(), param);
@@ -66,7 +70,7 @@ void Presenter::ChangeParamRequirement(int index, const double param) {
 	}
 }
 
-void Presenter::ScaleObject(const double koef) {
+void Presenter::ScaleObjects(const double koef) {
 	// model->Scale(_selObj, koef);
 	
 	Array<ID> objects(selectedObjects.GetSize());

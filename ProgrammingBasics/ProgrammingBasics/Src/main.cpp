@@ -1,5 +1,5 @@
 #include <ctime>
-#include "Model.h"
+#include "Presenter.h"
 #include "ViewFLTK.h"
 
 Model model;
@@ -69,6 +69,9 @@ Model model;
 
 int main()
 {
+	Point* p1 = new Point(0, 0);
+	Point* p2 = new Point(0, 0);
+	DistBetPointsReq(p1, p2, 0);
 	/*ID segment1 = CreateSegment(0.0, 0.0, 0.0, 20.0);
 	ID segment2 = CreateSegment(0.0, 0.0, 0.0, 5.0);
 	EqualSegmentLenReq(segment1, segment2);

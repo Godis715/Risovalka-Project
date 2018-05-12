@@ -184,6 +184,9 @@ public:
 	}
 	
 	void operator=(Array&& arr) {
+
+		delete this->_storage;
+
 		this->_capacity = arr._capacity;
 		this->_size = arr._size;
 		this->_storage = arr._storage;
@@ -191,6 +194,9 @@ public:
 	}
 
 	void operator=(const Array& arr) {
+		
+		delete this->_storage;
+
 		this->_capacity = arr._capacity;
 		this->_size = arr._size;
 		this->_storage = new T[_capacity];
@@ -243,7 +249,7 @@ public:
 		{
 			throw std::out_of_range("Array is empty");
 		}
-		_size--;
+		--_size;
 		return _storage[_size];
 	}
 
@@ -346,7 +352,7 @@ public:
 		PopBack();
 	}
 
-	/*void EraseO_1_(int index){
+	void EraseO_1_(int index){
 		if (index >= _size) {
 			throw std::out_of_range("Index out of range!");
 		}
@@ -357,7 +363,7 @@ public:
 		_storage[index] = _storage[GetSize() - 1];
 		_storage[GetSize() - 1] = Temp;
 		PopBack();
-	}*/
+	}
 
 	/*int BinSearch(int l, int r, T value)
 	{
