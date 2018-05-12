@@ -25,7 +25,10 @@ private:
 
 	class SecondWindow : public Fl_Double_Window
 	{
-	private:
+		void draw()
+		{
+			ViewFLTK::presenter->drawScene();
+		}
 	public:
 		SecondWindow(int x, int y, int w, int h, const char *l)
 			: Fl_Double_Window(x, y, w, h, l)

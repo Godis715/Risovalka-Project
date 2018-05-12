@@ -20,6 +20,8 @@ private:
 
 	IView* view;
 
+
+public:
 	void drawScene()
 	{
 		Array<Model::infoObject> scene;
@@ -37,14 +39,13 @@ private:
 				if (scene[i].type == arc_t) {
 					view->SetColor(white);
 					view->DrawArc(Vector2(scene[i].params[0], scene[i].params[1]),
-						Vector2(scene[i].params[2], scene[i].params[3]), 
+						Vector2(scene[i].params[2], scene[i].params[3]),
 						Vector2(scene[i].params[4], scene[i].params[5]), line);
 				}
 			}
 		}
 	}
 
-public:
 	Presenter(IView* _view)
 	{
 		view = _view;
@@ -88,7 +89,6 @@ public:
 		posClicks.Clear();
 		params.Clear();
 		view->Clear();
-		isChangeStatus = true;
 	}
 
 	void clearScene()
@@ -99,11 +99,6 @@ public:
 
 	void clickOnScene(double x, double y)
 	{
-		if (isChangeStatus)
-		{
-			drawScene();
-			isChangeStatus = false;
-		}
 		view->SetColor(red);
 		view->DrawPoint(Vector2(x, y));
 		switch (status)
