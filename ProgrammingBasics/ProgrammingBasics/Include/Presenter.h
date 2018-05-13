@@ -6,6 +6,133 @@
 #define POLY_SELECTION
 enum statusCreate { drawPoint, drawSegment, drawArc, drawCircle };
 
+enum Event {
+	ev_createPoint = 1,
+	ev_createSegment,
+	ev_createArc,
+	ev_createCircle,
+	// 4
+	ev_move,
+	ev_scale,
+	ev_turn,
+	ev_ch_radius,
+	ev_ch_angle,
+	// 9
+	ev_del,
+	ev_delReq,
+	// 11
+	ev_leftMouseClick,
+	rev_ightMouseClick,
+	ev_save
+	// 14
+};
+
+class Mode {
+protected:
+	Presenter* presenter;
+	Event lastEvent;
+public:
+	Mode(Presenter* _pres) {
+		presenter = _pres;
+	}
+
+	BinSearchTree<ID, ID>* selectedObjects;
+	BinSearchTree<ID, ID>* selectedReq;
+
+	Array<ID>* _selObj;
+	Array<ID>* _selReq;
+	virtual Mode* ProcesseEvent(const Event, Array<double>&) = 0;
+};
+
+class Creating : public Mode {
+private:
+	Array<double> params;
+	int index;
+public:
+	Creating(Event event, Presenter* pres) : Mode(pres) {
+		lastEvent = event;
+		index = 0;
+		switch (event)
+		{
+		case ev_createPoint: {
+			params = Array<double>(2);
+			return;
+		}
+		case ev_createSegment: {
+			params = Array<double>(4);
+			return;
+		}
+		case ev_createArc: {
+			params = Array<double>(6);
+			return;
+		}
+		case ev_createCircle: {
+			params = Array<double>(4);
+			return;
+		}
+		default:
+			throw std::exception("Invalid Event type");
+		}
+	}
+
+	Mode* ProcesseEvent(const Event event, Array<double>& newParams) {
+		if (event == ev_leftMouseClick) {
+			if (newParams.GetSize() != 2) {
+				throw std::exception("uncorrect params for leftMouseClick");
+			}
+			switch (lastEvent)
+			{
+			case ev_createPoint: {
+				this->presenter->CreateObject(point_t, newParams);
+				Selection* mode= new Selection(presenter);
+				return mode;
+			}
+			case ev_createSegment: {
+				params = Array<double>(4);
+				return;
+			}
+			case ev_createArc: {
+				params = Array<double>(6);
+				return;
+			}
+			case ev_createCircle: {
+				params = Array<double>(4);
+				return;
+			}
+			default:
+				throw std::exception("Invalid Event type");
+			}
+		}
+	}
+};
+
+class Selection : public Mode {
+public:
+	// must take containers in constructor
+	Selection(Presenter*);
+	Selection(Event, Presenter*);
+	Selection(Event, Array<double>&, Presenter*);
+
+	Mode* ProcesseEvent(const Event, Array<double>&);
+};
+
+class Redaction : public Mode {
+public:
+	// must take containers in constructor
+	Redaction(Event, Presenter*);
+	Redaction(Event, Array<double>&, Presenter*);
+
+	Mode* ProcesseEvent(const Event, Array<double>&);
+};
+
+class RedactionReq : public Mode {
+public:
+	// must take containers in constructor
+	RedactionReq(Event, Presenter*);
+
+	Mode* ProcesseEvent(const Event, Array<double>&);
+};
+
 class Presenter {
 private:
 	BinSearchTree<ID, ID> selectedObjects;
