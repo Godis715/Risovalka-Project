@@ -87,6 +87,13 @@ Mode* CreatingPoint::HandleEvent(const Event ev, Array<double>& params) {
 	return UnexpectedEvent(ev);
 }
 
+bool CreatingPoint::DrawMode() {
+	return true;
+}
+
+void CreatingPoint::Cancel() {}
+
+// CIRCLE
 CreatingCircle::CreatingCircle() : CircleParameters(4) {
 	state = noClick;
 }
@@ -126,6 +133,12 @@ Mode* CreatingCircle::HandleEvent(const Event ev, Array<double>& params) {
 
 	return this->UnexpectedEvent(ev);
 }
+
+bool CreatingCircle::DrawMode() { return true; }
+
+void CreatingCircle::Cancel() {}
+
+// ARC
 
 CreatingArc::CreatingArc() : arcParameters(6) {
 	state = noClick;
@@ -177,6 +190,10 @@ Mode* CreatingArc::HandleEvent(const Event ev, Array<double>& params) {
 
 	return this->UnexpectedEvent(ev);
 }
+
+bool CreatingArc::DrawMode() { return true; }
+
+void CreatingArc::Cancel() {}
 
 Selection::Selection(Array<ID> _selObjects) : Mode(), selectedObject(_selObjects) {
 	if (selectedObject.GetSize() == 0) {
