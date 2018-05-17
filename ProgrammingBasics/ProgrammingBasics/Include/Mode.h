@@ -242,7 +242,7 @@ public:
 
 class Selection : public Mode {
 private:
-	Array<ID> selectedObject;
+	Array<ID> selectedObjects;
 public:
 	// must take containers in constructor
 	Selection(Presenter* _pres) : Mode(_pres), selectedObject(1) {
@@ -258,17 +258,30 @@ public:
 };
 
 class Redaction : public Mode {
+private:
+	Array<ID> selectedObjects;
 public:
 	// must take containers in constructor
-	Redaction(Array<ID>, Presenter*);
+	Redaction(Array<ID> _selecObj, Presenter* _pres) : Mode(_pres),
+		selectedObjects(_selecObj)
+	{}
 
-	bool HandleEvent(const Event, Array<double>&, Mode*&);
+	Mode* HandleEvent(const Event, Array<double>&);
 };
 
 class RedactionReq : public Mode {
+private:
+	Array<ID> selectedObjects;
+	Array<ID> Reqs;
+	ID selectedReq;
+	Array<ID> objectsOfreq;
 public:
 	// must take containers in constructor
-	RedactionReq(Array<ID>, Presenter*);
+	RedactionReq(Array<ID> _selecObj, Presenter* _pres) : Mode(_pres),
+		selectedObjects(_selecObj)
+	{
+		presenter->GetRequirements(selectedObjects[0]);
+	}
 
-	bool HandleEvent(const Event, Array<double>&, Mode*&);
+	Mode* HandleEvent(const Event, Array<double>&);
 };

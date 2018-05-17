@@ -98,9 +98,9 @@ void Presenter::MoveObject(const Vector2& vector) {
 
 }
 
-void Presenter::GetRequirements() {
+void Presenter::GetRequirements(const ID& id, Array<ID>& reqs) {
 	Array<ID> reqs;
-	ID id = selectedObjects.GetMarker().GetValue();
+	id;
 	// ID id = _selObj[0];
 
 	// model->GetRequirements(id, reqs);

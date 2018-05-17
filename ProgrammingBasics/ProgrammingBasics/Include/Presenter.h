@@ -82,7 +82,7 @@ public:
 
 	void ChangeObject(){}
 
-	void GetRequirements();
+	void GetRequirements(const ID&, Array<ID>&);
 
 	//function for viewFLTK
 	
