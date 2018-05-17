@@ -1,6 +1,8 @@
 #include "Mode.h"
 #include "Presenter.h"
 
+// SEGMENT
+
 Mode* Mode::UnexpectedEvent(const Event e) {
 	this->Cancel();
 	switch (e) {
@@ -59,6 +61,17 @@ Mode* CreatingSegment::HandleEvent(const Event ev, Array<double>& params) {
 	}
 	return UnexpectedEvent(ev);
 }
+
+bool CreatingSegment::DrawMode() {
+	return true;
+}
+
+void CreatingSegment::Cancel() {
+	segmentParameters.Clear();
+	state = noClick;
+}
+
+// POINT
 
 Mode* CreatingPoint::HandleEvent(const Event ev, Array<double>& params) {
 	if (ev == ev_leftMouseClick) {
@@ -165,6 +178,27 @@ Mode* CreatingArc::HandleEvent(const Event ev, Array<double>& params) {
 	return this->UnexpectedEvent(ev);
 }
 
+Selection::Selection(Array<ID> _selObjects) : Mode(), selectedObject(_selObjects) {
+	if (selectedObject.GetSize() == 0) {
+		selectedObject = Array<ID>(1);
+	}
+	state = single_selection;
+}
+
+Selection::Selection() : Mode(), selectedObject(1) {
+	state = single_selection;
+}
+
+void Selection::AddObject(const ID& obj) {
+	for (int i = 0; i < selectedObject.GetSize(); ++i) {
+		if (selectedObject[i] == obj) {
+			selectedObject.EraseO_1_(i);
+			return;
+		}
+	}
+	selectedObject.PushBack(obj);
+}
+
 Mode* Selection::HandleEvent(const Event e, Array<double>& params) {
 	if (e == ev_leftMouseClick) {
 		if (params.GetSize() != 2) {
@@ -210,15 +244,12 @@ Mode* Selection::HandleEvent(const Event e, Array<double>& params) {
 	return UnexpectedEvent(e);
 }
 
-Selection::Selection(Array<ID> _selObjects) : Mode(), selectedObject(_selObjects) {
-	if (selectedObject.GetSize() == 0) {
-		selectedObject = Array<ID>(1);
-	}
-	state = single_selection;
+bool Selection::DrawMode() {
+	return true;
 }
 
-Selection::Selection() : Mode(), selectedObject(1) {
-	state = single_selection;
+void Selection::Cancel() {
+	selectedObject.Clear();
 }
 
 Redaction::Redaction(Array<ID> _selecObj) : selectedObjects(_selecObj)

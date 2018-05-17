@@ -4,7 +4,6 @@
 #include "Vector2.h"
 
 enum Event
-
 {
 	ev_createPoint = 1,
 	ev_createSegment,
@@ -56,53 +55,44 @@ public:
 };
 
 class Selection : public Mode {
-
 private:
 	Array<ID> selectedObject;
 	enum State { single_selection, poly_selection };
 	State state;
 
-	void AddObject(const ID& obj) {
-		for (int i = 0; i < selectedObject.GetSize(); ++i) {
-			if (selectedObject[i] == obj) {
-				selectedObject.EraseO_1_(i);
-				return;
-			}
-		}
-		selectedObject.PushBack(obj);
-	}
+	void AddObject(const ID& obj);
 public:
-	// must take containers in constructor
 	Selection();
-
 	Selection(Array<ID> _selObjects);
 
 	Mode* HandleEvent(const Event e, Array<double>& params);
 
-	bool DrawMode() { return true; }
-	void Cancel() {}
+	bool DrawMode();
+
+	void Cancel();
 };
 
 class CreatingSegment : public Mode {
 private:
-	enum State { noClick, oneClick };
+	enum State {
+		noClick,
+		oneClick
+	};
 	State state;
 	Array<double> segmentParameters;
 public:
 	CreatingSegment();
 	Mode* HandleEvent(const Event, Array<double>&);
 
-	bool DrawMode() { return true; }
-	void Cancel() {}
+	bool DrawMode();
+
+	void Cancel();
 };
 
 class CreatingPoint : public Mode {
 public:
 	CreatingPoint() {}
 	Mode* HandleEvent(const Event, Array<double>&);
-
-	bool DrawMode() { return true; }
-	void Cancel() {}
 };
 
 class CreatingCircle : public Mode {
@@ -116,7 +106,6 @@ public:
 	bool DrawMode() { return true; }
 	void Cancel() {}
 };
-
 
 class CreatingArc : public Mode {
 private:
