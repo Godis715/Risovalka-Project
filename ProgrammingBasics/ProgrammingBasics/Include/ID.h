@@ -7,10 +7,10 @@ private:
 public:
 	ID(unsigned long long);
 	ID();
+	void operator=(const ID&);
 	bool operator== (const ID&) const;
 	bool operator< (const ID&) const;
 	bool operator> (const ID&) const;
-	//int operator %(int) const;
 	unsigned long long GetHash() const;
 };
 

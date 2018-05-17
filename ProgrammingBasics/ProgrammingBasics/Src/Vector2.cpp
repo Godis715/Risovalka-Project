@@ -1,5 +1,4 @@
 #include "Vector2.h"
-#include <cmath>
 
 Vector2::Vector2(double _x, double _y) {
 	x = _x;
@@ -11,11 +10,11 @@ Vector2::Vector2() {
 	y = 0.0f;
 }
 
-Vector2 Vector2::operator -(const Vector2& vector) {
+Vector2 Vector2::operator -(const Vector2& vector) const {
 	return Vector2(this->x - vector.x, this->y - vector.y);
 }
 
-Vector2 Vector2::operator +(const Vector2& vector) {
+Vector2 Vector2::operator +(const Vector2& vector) const {
 	return Vector2(this->x + vector.x, this->y + vector.y);
 }
 
@@ -24,7 +23,7 @@ double Vector2::GetLength() const {
 }
 
 double Vector2::Dot(const Vector2& vec1, const Vector2& vec2) {
-	return vec1.x * vec2.x + vec1.y + vec2.y;
+	return (vec1.x * vec2.x + vec1.y * vec2.y);
 }
 
 double Vector2::Cross(const Vector2& vec1, const Vector2& vec2) {
@@ -42,13 +41,28 @@ double Vector2::Angle(const Vector2& vec1, const Vector2& vec2) {
 	}
 	double PI = 3.141592653589793;
 	double angle = acos(Cos);
-	return angle + 2 * (angle - PI);
+	return angle - 2 * (angle - PI);
 }
 
-Vector2 Vector2::operator*(double val) {
+Vector2 Vector2::operator*(const double val) const {
 	return Vector2(this->x * val, this->y * val);
 }
 
-Vector2 Vector2::operator /(double val) {
+Vector2 Vector2::operator /(const double val) const {
 	return Vector2(this->x / val, this->y / val);
+}
+
+void Vector2::operator /=(const double val) {
+	this->x /= val;
+	this->y /= val;
+}
+
+void Vector2::operator +=(const Vector2& vector) {
+	this->x += vector.x;
+	this->y += vector.y;
+}
+
+void Vector2::operator =(const Vector2& vector) {
+	this->x = vector.x;
+	this->y = vector.y;
 }

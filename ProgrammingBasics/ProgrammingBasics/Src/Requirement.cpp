@@ -3,39 +3,34 @@
 template Array<double>;
 template Array<double*>;
 
-Array<double*> IRequirement::GetParams() {
-	return params;
+Array<double*> Requirement::GetParams() {
+	return arguments;
 }
 
-Array<double> IRequirement::gradient() {
-	Array<double> grad(params.GetSize());
+Array<double> Requirement::Gradient() {
+	Array<double> grad(arguments.GetSize());
 	double err = error();
-	for (int i = 0; i < params.GetSize(); ++i) {
-
-		(*params[i]) += DELTA_X;
+	for (int i = 0; i < arguments.GetSize(); ++i) {
+		double test = *arguments[i];
+		(*arguments[i]) += DELTA_X;
 		double delta_error_right = error();
 
-		(*params[i]) -= 2 * DELTA_X;
+		(*arguments[i]) -= 2 * DELTA_X;
 		double delta_error_left = error();
 
-		(*params[i]) += DELTA_X;
-
-		grad[i] = (delta_error_right - delta_error_left) / (DELTA_X * 2);
+		(*arguments[i]) += DELTA_X;
+		test = (delta_error_right - delta_error_left) / (DELTA_X * 2);
+		grad[i] = test;
 	}
 	return grad;
 }
 
-bool IRequirement::Contains(ID id) {
-	for (int i = 0; i < primitives.GetSize(); ++i) {
-		if (primitives[i]->GetID() == id) {
-			return true;
-		}
-	}
-	return false;
+ID Requirement::GetID() const {
+	return id;
 }
 
-void IRequirement::GetPrimitivesID(Array<ID>& IDArray) {
-	for (int i = 0; i < primitives.GetSize(); ++i) {
-		IDArray.PushBack(primitives[i]->GetID());
-	}
+object_type Requirement::GetType() const {
+	return type;
 }
+
+void Requirement::Change(const double) {}

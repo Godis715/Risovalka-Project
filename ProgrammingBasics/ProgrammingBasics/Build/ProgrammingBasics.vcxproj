@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -98,7 +98,6 @@
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
     </ClCompile>
-    <Link />
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -130,35 +129,31 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\Include\Primitives.cpp" />
-    <ClCompile Include="..\Src\Controller.cpp" />
-    <ClCompile Include="..\Src\HyperGraph.cpp" />
     <ClCompile Include="..\Src\ID.cpp" />
+    <ClCompile Include="..\Src\Logger.cpp" />
     <ClCompile Include="..\Src\main.cpp" />
     <ClCompile Include="..\Src\Model.cpp" />
-    <ClCompile Include="..\Src\Requirement.cpp" />
     <ClCompile Include="..\Src\Presenter.cpp" />
+    <ClCompile Include="..\Src\Requirement.cpp" />
     <ClCompile Include="..\Src\Vector2.cpp" />
-    <ClCompile Include="..\Src\ViewWinIP.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Include\Array.h" />
-    <ClInclude Include="..\Include\Controller.h" />
     <ClInclude Include="..\Include\Dequeue.h" />
     <ClInclude Include="..\Include\Dictionary.h" />
-    <ClInclude Include="..\Include\Hash-Table.h" />
-    <ClInclude Include="..\Include\HyperGraph.h" />
     <ClInclude Include="..\Include\ID.h" />
     <ClInclude Include="..\Include\IDGenerator.h" />
+    <ClInclude Include="..\Include\INumerable.h" />
     <ClInclude Include="..\Include\IView.h" />
     <ClInclude Include="..\Include\List.h" />
+    <ClInclude Include="..\Include\Logger.h" />
     <ClInclude Include="..\Include\Model.h" />
     <ClInclude Include="..\Include\Presenter.h" />
     <ClInclude Include="..\Include\Primitives.h" />
+    <ClInclude Include="..\Include\Queue.h" />
     <ClInclude Include="..\Include\Requirement.h" />
-    <ClInclude Include="..\Include\Set.h" />
     <ClInclude Include="..\Include\Type.h" />
     <ClInclude Include="..\Include\Vector2.h" />
-    <ClInclude Include="..\Include\ViewWinIP.h" />
     <ClInclude Include="..\Include\ViewFLTK.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

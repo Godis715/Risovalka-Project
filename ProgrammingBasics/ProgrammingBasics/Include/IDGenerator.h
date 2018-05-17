@@ -16,5 +16,4 @@ class IDGenerator
 	static unsigned long long _lastGivenHash;
 };
 
-
-#endif // IDGENERATOR_H
+#endif

@@ -1,21 +1,19 @@
 #ifndef __TYPE
 #define __TYPE
 
-enum type_id { point = 1, segment, arc };
+#include "Dictionary.h"
 
-//class Type {
-//private:
-//	std::string name;
-//	type_id id;
-//public:
-//	Type(type_id);
-//	std::string GetName() const;
-//	type_id GetTypeId() const;
-//};
+enum object_type {
+	point_t,
+	segment_t,
+	arc_t,
+	circle_t,
 
-enum Requirement_id {
-	distBetPoints = 1,
-	equalSegmentLen,
+	connection_t,
+	distBetPoints_t,
+	equalSegmentLen_t,
+	pointPosReq_t,
+
 	pointsOnTheOneHand,
 	distBetPointSeg,
 	angleBetSeg,
@@ -26,15 +24,5 @@ enum Requirement_id {
 	nsAngle,
 	correctNsAngle
 };
-
-//class TypeRequirement {
-//private:
-//	std::string name;
-//	Requirement_id id;
-//public:
-//	TypeRequirement(Requirement_id);
-//	std::string GetName() const;
-//	Requirement_id GetRequirementId() const;
-//};
 
 #endif

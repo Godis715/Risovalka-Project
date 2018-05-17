@@ -1,7 +1,7 @@
 #ifndef __ARRAY
 #define __ARRAY
 
-#include <stdexcept>
+#include "List.h"
 
 template <class T> class Array
 {
@@ -80,6 +80,52 @@ private:
 
 public:
 
+	class ReadMarker {
+	private:
+		size_t index;
+		Array<T>* arr;
+	public:
+
+		ReadMarker(Array<T>* _arr, size_t _index) {
+			arr = _arr;
+			if (index > arr->_size) {
+				index = arr->_size;
+			}
+			else {
+				index = _index;
+			}
+		}
+
+		ReadMarker(const ReadMarker& marker) {
+			this->arr = marker.arr;
+			this->index = marker.index;
+		}
+
+		ReadMarker(ReadMarker&& marker) {
+			this->arr = marker.arr;
+			this->index = marker.index;
+
+			marker.arr = nullptr;
+		}
+
+		T GetValue() const {
+			return arr->_storage[index];
+		}
+
+		void operator ++() {
+			index++;
+		}
+
+		bool operator == (const ReadMarker& marker) {
+			if (this->arr != marker.arr) {
+				throw std::exception("Trying to compare non-native markers");
+			}
+
+			return (this->index == marker.index);
+		}
+
+	};
+
 	Array() : _default_capacity(64)
 	{
 		_capacity = _default_capacity;
@@ -89,13 +135,19 @@ public:
 
 	Array(int size) : _default_capacity(size)
 	{
-		if (size <= 0)
+		if (size < 0)
 		{
 			throw std::invalid_argument("Bad array size!");
 		}
 		_capacity = size;
 		_size = size;
-		_storage = new T[_capacity];
+
+		if (size == 0) {
+			_storage = nullptr;
+		}
+		else {
+			_storage = new T[_capacity];
+		}
 	}
 
 	Array(int size, const T& default_value) : _default_capacity(size)
@@ -132,6 +184,9 @@ public:
 	}
 	
 	void operator=(Array&& arr) {
+
+		delete this->_storage;
+
 		this->_capacity = arr._capacity;
 		this->_size = arr._size;
 		this->_storage = arr._storage;
@@ -139,6 +194,9 @@ public:
 	}
 
 	void operator=(const Array& arr) {
+		
+		delete this->_storage;
+
 		this->_capacity = arr._capacity;
 		this->_size = arr._size;
 		this->_storage = new T[_capacity];
@@ -157,7 +215,6 @@ public:
 			_storage[i] = default_value;
 		}
 	}
-
 
 	T& operator[](int index)
 	{
@@ -192,7 +249,7 @@ public:
 		{
 			throw std::out_of_range("Array is empty");
 		}
-		_size--;
+		--_size;
 		return _storage[_size];
 	}
 
@@ -295,6 +352,19 @@ public:
 		PopBack();
 	}
 
+	void EraseO_1_(int index){
+		if (index >= _size) {
+			throw std::out_of_range("Index out of range!");
+		}
+		if (index < 0) {
+			throw std::invalid_argument("Negative index!");
+		}
+		T Temp = _storage[index];
+		_storage[index] = _storage[GetSize() - 1];
+		_storage[GetSize() - 1] = Temp;
+		PopBack();
+	}
+
 	/*int BinSearch(int l, int r, T value)
 	{
 		if (l < 0 || r < 0 || l > r || l >= _size || r >= _size)
@@ -345,7 +415,7 @@ public:
 		return index;
 	} */
 
-	/*bool find(T value)
+	bool find(T& value, bool(*cmp)())
 	{
 		for (size_t i = 0; i < _size; i++)
 		{
@@ -355,7 +425,16 @@ public:
 			}
 		}
 		return false;
-	} */
+	}
+
+	ReadMarker Begin() {
+		return ReadMarker(this, 0);
+	}
+
+	ReadMarker End() {
+		return ReadMarker(this, _size);
+	}
+
 }; 
 
 //template <class T> std::ostream& operator<< (std::ostream& out, Array<T>& arr)

@@ -1,43 +1,44 @@
 #include "Primitives.h"
-#include <cmath>
 
 ID Primitive::GetID() const {
 	return id;
 }
-Primitive::Primitive(ID _id, type_id _type) :
+Primitive::Primitive(ID _id, object_type _type) :
 	id(_id),
 	type(_type)
 {
 
 }
-type_id Primitive::GetType() {
+object_type Primitive::GetType() {
 	return type;
 }
 
-
-Point::Point(Vector2 pos) :
-	Primitive(IDGenerator::getInstance()->generateID(), point)
+Point::Point(const Vector2& pos) :
+	Primitive(IDGenerator::getInstance()->generateID(), point_t)
 {
+	this->parent = nullptr;
 	this->position = pos;
 }
 Point::Point(double _x, double _y) :
-	Primitive(IDGenerator::getInstance()->generateID(), point)
+	Primitive(IDGenerator::getInstance()->generateID(), point_t)
 {
+	this->parent = nullptr;
 	this->position = Vector2(_x, _y);
 }
 Point::Point(const Point& _p) :
-	Primitive(IDGenerator::getInstance()->generateID(), point)
+	Primitive(IDGenerator::getInstance()->generateID(), point_t)
 {
+	this->parent = nullptr;
 	this->position = _p.position;
 }
-double Point::GetDistance(Vector2 point) const {
+double Point::GetDistance(const Vector2& point) const {
 	return sqrt((position.x - point.x)*(position.x - point.x) +
 		(position.y - point.y)*(position.y - point.y));
 }
 Vector2 Point::GetPosition() const {
 	return position;
 }
-void Point::SetPosition(Vector2 _pos) {
+void Point::SetPosition(const Vector2& _pos) {
 	position = _pos;
 }
 void Point::SetPosition(double x, double y) {
@@ -47,7 +48,7 @@ void Point::SetPosition(double x, double y) {
 
 
 Segment::Segment(Point* _p1, Point* _p2) :
-	Primitive(IDGenerator::getInstance()->generateID(), segment)
+	Primitive(IDGenerator::getInstance()->generateID(), segment_t)
 {
 	if (_p1 == nullptr || _p2 == nullptr) {
 		throw std::invalid_argument("Segment::Segment::parameters was nullptr");
@@ -55,6 +56,10 @@ Segment::Segment(Point* _p1, Point* _p2) :
 
 	point1 = _p1;
 	point2 = _p2;
+
+	_p1->SetParent(this);
+	_p1->SetParent(this);
+
 }
 double Segment::GetLength() const {
 	return (point1->GetPosition() - point2->GetPosition()).GetLength();
@@ -83,7 +88,7 @@ double Segment::Inequality(Vector2 vector) {
 	delete equation;
 	return answer;
 }
-double Segment::GetDistance(Vector2 point) const {
+double Segment::GetDistance(const Vector2& point) const {
 	double dotProduct1 = 0.0;
 	double dotProduct2 = 0.0;
 	Vector2 point1 = this->point1->GetPosition();
@@ -97,7 +102,9 @@ double Segment::GetDistance(Vector2 point) const {
 	dotProduct2 *= -1;
 	double answer = 0;
 	if (dotProduct1 >= 0 && dotProduct2 >= 0) {
-		answer = abs(pointTo1.x * segment.y - pointTo1.y * segment.x) / (2.0 * segment.GetLength());
+		answer = pointTo1.x * segment.y - pointTo1.y * segment.x;
+		answer /= 2;
+		answer /= segment.GetLength();
 	}
 	else {
 		answer = pointTo1.GetLength();
@@ -109,14 +116,23 @@ double Segment::GetDistance(Vector2 point) const {
 }
 
 Arc::Arc(Point* _p1, Point* _p2, double _angle) :
-	Primitive(IDGenerator::getInstance()->generateID(), arc)
+	Primitive(IDGenerator::getInstance()->generateID(), arc_t)
 {
 	if (_p1 == nullptr || _p2 == nullptr) {
 		throw std::invalid_argument("Arc::Arc::parameters was nullptr");
 	}
+
+	point1 = _p1;
+	point2 = _p2;
+
 	angle = _angle;
+
+	_p1->SetParent(this);
+	_p2->SetParent(this);
 }
-double Arc::GetDistance(Vector2) const {
+
+// write this function
+double Arc::GetDistance(const Vector2& _point) const {
 	return 0.0;
 }
 Vector2 Arc::GetCenter() const {
@@ -169,4 +185,58 @@ void Arc::SetAngle(double newAngle) {
 		angle = newAngle + ((double)((int)(abs(newAngle) / (2 * PI)) + 1) * 2 * PI);
 		return;
 	}
+}
+
+Circle::Circle(Point* _center,  double _radius) :
+	Primitive(IDGenerator::getInstance()->generateID(), circle_t)
+{
+	if (_center == nullptr) {
+		throw std::invalid_argument("Circle::Circle::_center was nullptr");
+	}
+	if (_radius < 0) {
+		throw std::invalid_argument("Circle::Circle::_radius was negative");
+	}
+
+	center = _center;
+
+	radius = _radius;
+
+	_center->SetParent(this);
+}
+
+// write this function
+double Circle::GetDistance(const Vector2& _point) const {
+	return 0.0;
+}
+
+Vector2 Circle::GetCenter() const {
+	return center->GetPosition();
+}
+
+ID Circle::GetCenter_ID() const {
+	return center->GetID();
+}
+
+void Circle::SetCenter_pos(Vector2 _pos) {
+	center->SetPosition(_pos);
+}
+
+double Circle::GetRadius() const {
+	return radius;
+}
+
+void Circle::SetRadius(double _radius)
+{
+	radius = _radius;
+}
+
+Primitive* Point::GetParent() {
+	return parent;
+}
+
+bool Point::SetParent(Primitive* _parent) {
+	if (parent != nullptr || _parent == nullptr) {
+		return false;
+	}
+	parent = _parent;
 }
