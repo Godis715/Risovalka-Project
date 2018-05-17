@@ -806,12 +806,11 @@ bool Model::GetObjParam(const ID& obj_id, Array<double>& result) {
 		}
 	}
 	return false;
-
 }
 
-#define SEARCH_AREA 3.0
+#define SEARCH_AREA 5.0
 
-bool Model::GetObject(double x, double y, Array<ID>& obj_id, Array<double>& distances) {
+bool Model::GetObject(double x, double y, Array<ID>& obj_id, Array<object_type>& types, Array<double>& distances) {
 	bool isFound = false;
 	for (auto i = dataPrim.GetMarker(); i.IsValid(); ++i) {
 		double dist = i.GetValue()->GetDistance(Vector2(x, y));
@@ -819,6 +818,7 @@ bool Model::GetObject(double x, double y, Array<ID>& obj_id, Array<double>& dist
 			isFound = true;
 			distances.PushBack(dist);
 			obj_id.PushBack(i.GetValue()->GetID());
+			types.PushBack(i.GetValue()->GetType());
 		}
 	}
 	return isFound;

@@ -126,13 +126,16 @@ Mode* CreatingCircle::HandleEvent(const Event ev, Array<double>& params) {
 			return new Selection(selectedObjects);
 		}
 	}
-
 	return this->UnexpectedEvent(ev);
 }
 
-bool CreatingCircle::DrawMode() { return true; }
+bool CreatingCircle::DrawMode() {
+	return true;
+}
 
-CreatingCircle::~CreatingCircle() {}
+CreatingCircle::~CreatingCircle() {
+	CircleParameters.Clear();
+}
 
 // ARC
 
@@ -183,7 +186,6 @@ Mode* CreatingArc::HandleEvent(const Event ev, Array<double>& params) {
 			return new Selection(selectedObjects);
 		}
 	}
-
 	return this->UnexpectedEvent(ev);
 }
 
@@ -275,7 +277,7 @@ bool Selection::DrawMode() {
 // REDACTION
 
 Redaction::Redaction(Array<ID> _selecObj) : selectedObjects(_selecObj)
-{ }
+{}
 
 Redaction::~Redaction() {
 	selectedObjects.Clear();
@@ -293,7 +295,13 @@ RedactionReq::RedactionReq(ID _selecObj) : selectedPrim(_selecObj) {
 	Presenter::GetComponent(selectedPrim, objects, reqs);
 }
 
-RedactionReq::RedactionReq() {}
+RedactionReq::RedactionReq() { }
+
+RedactionReq::~RedactionReq() {
+	objects.Clear();
+	reqs.Clear();
+	objectsOfreq.Clear();
+}
 
 Mode* RedactionReq::HandleEvent(const Event ev, Array<double>& param) {
 	return nullptr;

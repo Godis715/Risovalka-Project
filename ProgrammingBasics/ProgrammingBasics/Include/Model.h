@@ -99,7 +99,7 @@ public:
 	bool DeleteRequirement(const ID&);
 
 
-	bool GetObject(double, double, Array<ID>&, Array<double>&);
+	bool GetObject(double, double, Array<ID>&, Array<object_type>&, Array<double>&);
 
 	bool GetObjType(const ID&, object_type&);
 

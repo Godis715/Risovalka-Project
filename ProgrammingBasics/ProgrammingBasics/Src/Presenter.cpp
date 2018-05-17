@@ -79,6 +79,48 @@ void Presenter::GetComponent(const ID& id, Array<ID>& primID, Array<ID>& reqID) 
 	}
 }
 
+bool Presenter::GetObject(double x, double y, ID& obj_id) {
+	Array<ID> ids;
+	Array<object_type> types;
+	Array<double> distances;
+	bool isFound = model->GetObject(x, y, ids, types, distances);
+	if (isFound) {
+		if (ids.GetSize() == 0) {
+			//LOG!!
+			return false;
+		}
+		bool foundPoint = (types[0] == point_t);
+		double minDist = distances[0];
+		obj_id = ids[0];
+		for (int i = 1; i < distances.GetSize(); ++i) {
+			if (types[i] == point_t) {
+				if (foundPoint) {
+					if (minDist > distances[i]) {
+						obj_id = ids[i];
+						minDist = distances[i];
+					}
+				}
+				else {
+					foundPoint = true;
+					obj_id = ids[i];
+					minDist = distances[i];
+				}
+			}
+			else {
+				if (!foundPoint) {
+					if (minDist > distances[i]) {
+						obj_id = ids[i];
+						minDist = distances[i];
+					}
+				}
+			}
+		}
+	}
+	else {
+		return false;
+	}
+}
+
 void Presenter::drawScene()
 {
 	Array<Model::infoObject> scene;

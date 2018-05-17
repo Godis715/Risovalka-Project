@@ -27,7 +27,8 @@ public:
 	on selected object */
 
 	static bool CreateRequirement(object_type, const Array<ID>&, const Array<double>&);
-	static bool GetObject(double, double, ID&) { return true; }
+
+	static bool GetObject(double, double, ID&);
 
 	static void DeletePrimitives(const Array<ID>&);
 

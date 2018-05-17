@@ -158,6 +158,7 @@ private:
 public:
 	RedactionReq(ID _selecObj);
 	RedactionReq();
+	~RedactionReq();
 
 	Mode* HandleEvent(const Event, Array<double>&);
 
