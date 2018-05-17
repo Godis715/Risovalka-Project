@@ -14,7 +14,7 @@ enum Event
 	// 4
 	ev_move,
 	ev_scale,
-	ev_turn,
+	ev_rotate,
 	ev_ch_radius,
 	ev_ch_angle,
 	// 9
@@ -29,6 +29,7 @@ enum Event
 	ev_rightMouseDown,
 	ev_leftMouseUp,
 	ev_rightMouseUp,
+	ev_mouseMove,
 	ev_escape,
 	//end new events
 
@@ -38,7 +39,7 @@ enum Event
 
 class Mode {
 protected:
-	Presenter* presenter;
+	static Presenter* presenter;
 	Event lastEvent;
 
 	Mode* UnexpectedEvent(const Event e) {
@@ -240,12 +241,20 @@ public:
 };
 
 class Selection : public Mode {
+private:
+	Array<ID> selectedObject;
 public:
 	// must take containers in constructor
-	Selection(Presenter*);
-	Selection(Array<ID>, Presenter*);
+	Selection(Presenter* _pres) : Mode(_pres), selectedObject(1) {
 
-	Mode* HandleEvent(const Event, Array<double>&);
+	}
+	Selection(Array<ID> _selObjects, Presenter* _pres) : Mode(_pres), selectedObject(_selObjects) {
+		
+	}
+
+	Mode* HandleEvent(const Event e, Array<double>& params) {
+		
+	}
 };
 
 class Redaction : public Mode {
