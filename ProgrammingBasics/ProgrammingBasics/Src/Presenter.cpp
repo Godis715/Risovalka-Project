@@ -1,6 +1,6 @@
 #include "Presenter.h"
 
-void Presenter::CreateObject(object_type type, const Array<double>& params) {
+ID Presenter::CreateObject(object_type type, const Array<double>& params) {
 	ID id;
 	bool result = model->CreateObject(type, params, id);
 	if (!result) {
@@ -9,7 +9,7 @@ void Presenter::CreateObject(object_type type, const Array<double>& params) {
 	//
 	// possible clear selected Objects
 	//
-	selectedObjects.Add(id, id);
+	return id;
 	// _selObj.PushBack(id);
 }
 

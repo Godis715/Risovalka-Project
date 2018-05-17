@@ -63,7 +63,7 @@ public:
 
 	/* using for creating figures
 	 points, segments, arcs, circles .. */
-	void CreateObject(object_type, const Array<double>&);
+	ID CreateObject(object_type, const Array<double>&);
 
 	/* trying to impose requirements
 	on selected object */

@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Presenter.h"
 #include "IView.h"
 #include "Model.h"
 
@@ -44,16 +45,16 @@ protected:
 		this->Cancel();
 		switch (e) {
 		case ev_createPoint: {
-			return new CreatingPoint();
+			return new CreatingPoint(presenter);
 		}
 		case ev_createArc: {
-			return new CreateArc();
+			return new CreatingArc(presenter);
 		}
 		case ev_createSegment: {
-			return new CreateSegment();
+			return new CreatingSegment(presenter);
 		}
 		case ev_createCircle: {
-			return new CreateCircle();
+			return new CreatingCircle(presenter);
 		}
 		}
 	}
@@ -68,69 +69,6 @@ public:
 	virtual Mode* HandleEvent(const Event, Array<double>&) = 0;
 	virtual bool DrawMode() { }
 	virtual void Cancel() { }
-};
-
-class Creating : public Mode {
-private:
-	Array<double> params;
-	int index;
-public:
-	Creating(Event event, Presenter* pres) : Mode(pres) {
-		lastEvent = event;
-		index = 0;
-		switch (event)
-		{
-		case ev_createPoint: {
-			params = Array<double>(2);
-			return;
-		}
-		case ev_createSegment: {
-			params = Array<double>(4);
-			return;
-		}
-		case ev_createArc: {
-			params = Array<double>(6);
-			return;
-		}
-		case ev_createCircle: {
-			params = Array<double>(4);
-			return;
-		}
-		default:
-			throw std::exception("Invalid Event type");
-		}
-	}
-
-	Mode* HandleEvent(const Event event, Array<double>& newParams) {
-		if (event == ev_leftMouseClick) {
-			if (newParams.GetSize() != 2) {
-				throw std::exception("uncorrect params for leftMouseClick");
-			}
-			switch (lastEvent)
-			{
-			case ev_createPoint: {
-
-				this->presenter->CreateObject(point_t, newParams);
-				Selection* mode = new Selection(presenter);
-				return mode;
-			}
-			case ev_createSegment: {
-				params = Array<double>(4);
-				return;
-			}
-			case ev_createArc: {
-				params = Array<double>(6);
-				return;
-			}
-			case ev_createCircle: {
-				params = Array<double>(4);
-				return;
-			}
-			default:
-				throw std::exception("Invalid Event type");
-			}
-		}
-	}
 };
 
 class CreatingSegment : public Mode {
@@ -169,13 +107,12 @@ public:
 				segmentParameters[2] = params[0];
 				segmentParameters[3] = params[1];
 
-				ID newSegment;
-				presenter->CreateSegment(segment_t, segmentParameters/*, newSegment*/);
+				ID id;
+				id = presenter->CreateObject(segment_t, segmentParameters);
 				
 				Array<ID> selectedObjects(1);
-				selectedObjects[0] = newSegment;
-				/*return new Selection(selectedObjects); */
-			break;
+				selectedObjects[0] = id;
+				return new Selection(selectedObjects, presenter);
 		}
 		}
 		case ev_escape: {
@@ -191,12 +128,127 @@ public:
 	}
 };
 
+class CreatingPoint : public Mode {
+public:
+	CreatingPoint(Presenter* _pres) : Mode(_pres) {}
+	Mode* HandleEvent(const Event ev, Array<double>& params) {
+		if (ev == ev_leftMouseClick) {
+			if (params.GetSize() != 2) {
+				throw std::exception("Bad number of parameters");
+			}
+
+			ID id = presenter->CreateObject(point_t, params);
+			Array<ID> selectedObjects(1);
+			selectedObjects[0] = id;
+			return new Selection(selectedObjects, presenter);
+		}
+		return UnexpectedEvent(ev);
+	}
+};
+
+class CreatingCircle : public Mode {
+private:
+	enum State { noClick, oneClick };
+	State state;
+	Array<double> CircleParameters;
+public:
+	CreatingCircle(Presenter* _pres) : Mode(_pres), CircleParameters(4) {
+		state = noClick;
+	}
+	Mode* HandleEvent(const Event ev, Array<double>& params) {
+		if (ev == ev_leftMouseClick) {
+			if (params.GetSize() != 2) {
+				throw std::exception("Bad number of parameters");
+			}
+			// if it were no clicks
+			// then create one point and change the state
+			// to one click
+			if (state == noClick) {
+
+				CircleParameters[0] = params[0];
+				CircleParameters[1] = params[1];
+
+				state = oneClick;
+				return nullptr;
+			}
+			// if it was one click
+			// then create a segment
+			// and turn to single selection mode
+			// with selected segment
+			if (state == oneClick) {
+
+				CircleParameters[2] = params[0];
+				CircleParameters[3] = params[1];
+
+				ID id = presenter->CreateSegment(circle_t, CircleParameters);
+
+				Array<ID> selectedObjects(1);
+				selectedObjects[0] = id;
+				return new Selection(selectedObjects, presenter); 
+			}
+		}
+		
+		return this->UnexpectedEvent(ev);
+	}
+};
+
+class CreatingArc : public Mode {
+private:
+	enum State { noClick, oneClick, twoClick};
+	State state;
+	Array<double> CircleParameters;
+public:
+	CreatingArc(Presenter* _pres) : Mode(_pres), CircleParameters(7) {
+		state = noClick;
+	}
+	Mode* HandleEvent(const Event ev, Array<double>& params) {
+		if (ev == ev_leftMouseClick) {
+			if (params.GetSize() != 2) {
+				throw std::exception("Bad number of parameters");
+			}
+
+			if (state == noClick) {
+
+				CircleParameters[0] = params[0];
+				CircleParameters[1] = params[1];
+
+				state = oneClick;
+				return nullptr;
+			}
+
+			if (state == oneClick) {
+
+				CircleParameters[2] = params[0];
+				CircleParameters[3] = params[1];
+
+				state = twoClick;
+				return nullptr;
+			}
+
+			if (state == twoClick) {
+
+				CircleParameters[4] = params[0];
+				CircleParameters[5] = params[1];
+
+				ID id = presenter->CreateObject(circle_t, CircleParameters);
+
+				Array<ID> selectedObjects(1);
+				selectedObjects[0] = id;
+				return new Selection(selectedObjects, presenter);
+			}
+		}
+
+		return this->UnexpectedEvent(ev);
+	}
+};
+
 class Selection : public Mode {
 public:
 	// must take containers in constructor
 	Selection(Presenter*);
 	Selection(Event, Presenter*);
 	Selection(Event, Array<double>&, Presenter*);
+	Selection(Array<ID>, Presenter*);
 
 	Mode* HandleEvent(const Event, Array<double>&);
 };
@@ -217,4 +269,3 @@ public:
 
 	bool HandleEvent(const Event, Array<double>&, Mode*&);
 };
-vm
