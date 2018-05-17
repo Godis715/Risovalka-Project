@@ -41,6 +41,7 @@ protected:
 	Event lastEvent;
 
 	Mode* UnexpectedEvent(const Event e) {
+		this->Cancel();
 		switch (e) {
 		case ev_createPoint: {
 			return new CreatingPoint();
@@ -54,8 +55,6 @@ protected:
 		case ev_createCircle: {
 			return new CreateCircle();
 		}
-
-
 		}
 	}
 public:
@@ -68,6 +67,7 @@ public:
 
 	virtual Mode* HandleEvent(const Event, Array<double>&) = 0;
 	virtual bool DrawMode() { }
+	virtual void Cancel() { }
 };
 
 class Creating : public Mode {
