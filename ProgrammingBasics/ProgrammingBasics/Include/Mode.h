@@ -12,11 +12,7 @@ enum Event
 	ev_createArc,
 	ev_createCircle,
 	// 4
-	ev_move,
-	ev_scale,
-	ev_rotate,
-	ev_ch_radius,
-	ev_ch_angle,
+	ev_transform,
 	// 9
 	ev_del,
 	ev_delReq,
@@ -31,6 +27,8 @@ enum Event
 	ev_rightMouseUp,
 	ev_mouseMove,
 	ev_escape,
+	ev_ctrlDown,
+	ev_ctrlUp,
 	//end new events
 
 	ev_save
@@ -242,19 +240,96 @@ public:
 
 class Selection : public Mode {
 private:
-	Array<ID> selectedObjects;
+	Array<ID> selectedObject;
+	enum State {single_selection, poly_selection};
+	State state;
+
+	void AddObject(const ID& obj) {
+		for (int i = 0; i < selectedObject.GetSize(); ++i) {
+			if (selectedObject[i] == obj) {
+				selectedObject.EraseO_1_(i);
+				return;
+			}
+		}
+		selectedObject.PushBack(obj);
+	}
+
 public:
 	// must take containers in constructor
 	Selection(Presenter* _pres) : Mode(_pres), selectedObject(1) {
-
+		state = single_selection;
 	}
 	Selection(Array<ID> _selObjects, Presenter* _pres) : Mode(_pres), selectedObject(_selObjects) {
-		
+		if (selectedObject.GetSize() == 0) {
+			selectedObject = Array<ID>(1);
+		}
+		state = single_selection;
 	}
 
 	Mode* HandleEvent(const Event e, Array<double>& params) {
-		
+
+		if (e == ev_leftMouseClick) {
+			if (params.GetSize() != 2) {
+				throw std::exception("Bad number of parameters");
+			}
+			ID obj;
+			bool isFound = presenter->GetObject(params[0], params[1], obj);
+			if (isFound) {
+				if (state == single_selection) {
+					selectedObject.Clear();
+					selectedObject[0] = obj;
+					return nullptr;
+				}
+
+				if (state == poly_selection) {
+					AddObject(obj);
+					return nullptr;
+				}
+				
+			}
+			else {
+				selectedObject.Clear();
+				return nullptr;
+			}
+		}
+
+		if (e == ev_ctrlDown) {
+			state = poly_selection;
+			return nullptr;
+		}
+
+		if (e == ev_ctrlUp) {
+			state = single_selection;
+			return nullptr;
+		}
+
+		if (e == ev_escape) {
+			selectedObject.Clear();
+			return nullptr;
+		}
+
+		if (e == ev_transform) {
+			if (selectedObject.GetSize() == 0) {
+				return nullptr;
+			}
+			return new Redaction(selectedObject, presenter);
+		}
+
+		return UnexpectedEvent(e);
 	}
+};
+
+class Control {
+protected:
+	Vector2 center;
+public:
+	virtual bool IsClicked(double, double);
+};
+
+class RotationControl : public Control {
+private:
+
+public:
 };
 
 class Redaction : public Mode {
