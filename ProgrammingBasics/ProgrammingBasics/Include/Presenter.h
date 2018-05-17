@@ -21,7 +21,7 @@ public:
 	
 	/* using for creating figures
 	 points, segments, arcs, circles .. */
-	ID CreateObject(object_type, const Array<double>&);
+	static ID CreateObject(object_type, const Array<double>&);
 	bool GetObject(double, double, const ID&);
 
 	/* trying to impose requirements
