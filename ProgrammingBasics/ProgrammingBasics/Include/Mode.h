@@ -243,8 +243,6 @@ class Selection : public Mode {
 public:
 	// must take containers in constructor
 	Selection(Presenter*);
-	Selection(Event, Presenter*);
-	Selection(Event, Array<double>&, Presenter*);
 	Selection(Array<ID>, Presenter*);
 
 	Mode* HandleEvent(const Event, Array<double>&);
@@ -253,8 +251,7 @@ public:
 class Redaction : public Mode {
 public:
 	// must take containers in constructor
-	Redaction(Event, Presenter*);
-	Redaction(Event, Array<double>&, Presenter*);
+	Redaction(Array<ID>, Presenter*);
 
 	bool HandleEvent(const Event, Array<double>&, Mode*&);
 };
@@ -262,7 +259,7 @@ public:
 class RedactionReq : public Mode {
 public:
 	// must take containers in constructor
-	RedactionReq(Event, Presenter*);
+	RedactionReq(Array<ID>, Presenter*);
 
 	bool HandleEvent(const Event, Array<double>&, Mode*&);
 };
