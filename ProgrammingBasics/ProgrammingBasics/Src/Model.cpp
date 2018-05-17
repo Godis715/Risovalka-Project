@@ -1,4 +1,5 @@
 ﻿#include "Model.h"
+#include <functional>
 #define cast dynamic_cast
 
 
@@ -809,6 +810,7 @@ bool Model::GetObjParam(const ID& obj_id, Array<double>& result) {
 }
 
 #define SEARCH_AREA 3.0
+
 bool Model::GetObject(double x, double y, Array<ID>& obj_id, Array<double>& distances) {
 	bool isFound = false;
 	for (auto i = dataPrim.GetMarker(); i.IsValid(); ++i) {
@@ -832,6 +834,7 @@ void Model::ChangeRequirement(const ID& id, const double param) {
 }
 
 bool Model::OptimizeGroup(Array<Primitive*>& group) {
+
 	do {
 		if (!OptimizeByID(group[0]->GetID())) {
 			return false;
@@ -937,6 +940,7 @@ bool Model::Move(const Array<ID>& idPrim, const Vector2& shift) {
 	}
 	return true;
 }
+
 
 
 void Model::GetPointsFromPrimitives(Array<Primitive*>& primitives, BinSearchTree<ID, Point*>& pointTree ) {

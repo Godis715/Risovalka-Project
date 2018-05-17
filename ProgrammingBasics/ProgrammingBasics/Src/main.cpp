@@ -94,7 +94,8 @@ int main()
 	ID segment3 = CreateSegment(-3, -3, 2, 5);
 
 	DistBetPointsReq(ID(1), ID(2), 5.5);
-	DistBetPointsReq(ID(2), ID(5), 0.0);
+	DistBetPointsReq(ID(2), ID(
+		5), 0.0);
 	DistBetPointsReq(ID(5), ID(6), 5.5);
 	DistBetPointsReq(ID(6), ID(9), 0.0);
 	DistBetPointsReq(ID(9), ID(10), 5.5);
