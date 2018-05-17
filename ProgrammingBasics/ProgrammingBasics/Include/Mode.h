@@ -27,6 +27,7 @@ enum Event
 	ev_ctrlDown,
 	ev_ctrlUp,
 	ev_escape,
+	ev_clockOnReq,
 	//end new events
 
 	ev_save
@@ -51,7 +52,6 @@ public:
 
 	virtual Mode* HandleEvent(const Event, Array<double>&) = 0;
 	virtual bool DrawMode() = 0;
-	virtual void Cancel() = 0;
 };
 
 class Selection : public Mode {
@@ -64,12 +64,11 @@ private:
 public:
 	Selection();
 	Selection(Array<ID> _selObjects);
+	~Selection();
 
 	Mode* HandleEvent(const Event e, Array<double>& params);
 
 	bool DrawMode();
-
-	void Cancel();
 };
 
 class CreatingSegment : public Mode {
@@ -82,11 +81,11 @@ private:
 	Array<double> segmentParameters;
 public:
 	CreatingSegment();
+	~CreatingSegment();
+
 	Mode* HandleEvent(const Event, Array<double>&);
 
 	bool DrawMode();
-
-	void Cancel();
 };
 
 class CreatingPoint : public Mode {
@@ -94,9 +93,7 @@ public:
 	CreatingPoint() {}
 	Mode* HandleEvent(const Event, Array<double>&);
 
-	bool DrawMode() { return true; }
-
-	void Cancel(){}
+	bool DrawMode();
 };
 
 class CreatingCircle : public Mode {
@@ -106,9 +103,10 @@ private:
 	Array<double> CircleParameters;
 public:
 	CreatingCircle();
+	~CreatingCircle();
+
 	Mode* HandleEvent(const Event, Array<double>&);
-	bool DrawMode() { return true; }
-	void Cancel(){}
+	bool DrawMode();
 };
 
 class CreatingArc : public Mode {
@@ -118,10 +116,10 @@ private:
 	Array<double> arcParameters;
 public:
 	CreatingArc();
+	~CreatingArc();
 	Mode* HandleEvent(const Event, Array<double>&);
 
-	bool DrawMode() { return true; }
-	void Cancel() {}
+	bool DrawMode();
 };
 
 class Control {
@@ -143,30 +141,27 @@ private:
 public:
 	// must take containers in constructor
 	Redaction(Array<ID>);
+	~Redaction();
 
-	Mode* HandleEvent(const Event, Array<double>&) { return nullptr; }
+	Mode* HandleEvent(const Event, Array<double>&);
 
-	bool DrawMode() { return true; }
-	void Cancel() {}
+	bool DrawMode();
 };
-/*
+
 class RedactionReq : public Mode {
 private:
-	Array<ID> selectedObjects;
-	Array<ID> Reqs;
+	Array<ID> objects;
+	Array<ID> reqs;
 	ID selectedReq;
+	ID selectedPrim;
 	Array<ID> objectsOfreq;
 public:
-	// must take containers in constructor
-	RedactionReq(Array<ID> _selecObj) : selectedObjects(_selecObj)
-	{
-		//presenter->GetRequirements(selectedObjects[0]);
-	}
+	RedactionReq(ID _selecObj);
+	RedactionReq();
 
-	Mode* HandleEvent(const Event, Array<double>&){}
+	Mode* HandleEvent(const Event, Array<double>&);
 
-	bool DrawMode() {}
-	void Cancel() {}
+	bool DrawMode();
 };
-*/
+
 #endif // !__MODE

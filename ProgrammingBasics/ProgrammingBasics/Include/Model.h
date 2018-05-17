@@ -38,8 +38,6 @@ private:
 	BinSearchTree<ID, ID>* currentComponent;
 
 
-	bool NewComponent(const ID&, Array<ID>&, Array<ID>&);
-
 	bool GetRequirements(const Array<ID>&, Array<Requirement*>&);
 
 	bool GetPrimitives(const Array<ID>&, Array<Primitive*>&);
@@ -87,6 +85,8 @@ public:
 
 	// Create destructor
 	~Model() { }
+
+	bool NewComponent(const ID&, Array<ID>&, Array<ID>&);
 
 	bool DischargeInfoObjects(Array<infoObject>&);
 
