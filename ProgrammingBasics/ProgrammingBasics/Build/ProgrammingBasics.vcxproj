@@ -147,6 +147,7 @@
     <ClInclude Include="..\Include\IView.h" />
     <ClInclude Include="..\Include\List.h" />
     <ClInclude Include="..\Include\Logger.h" />
+    <ClInclude Include="..\Include\Mode.h" />
     <ClInclude Include="..\Include\Model.h" />
     <ClInclude Include="..\Include\Presenter.h" />
     <ClInclude Include="..\Include\Primitives.h" />
