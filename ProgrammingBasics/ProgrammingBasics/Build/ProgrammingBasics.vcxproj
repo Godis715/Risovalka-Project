@@ -136,6 +136,7 @@
     <ClCompile Include="..\Src\Presenter.cpp" />
     <ClCompile Include="..\Src\Requirement.cpp" />
     <ClCompile Include="..\Src\Vector2.cpp" />
+    <ClCompile Include="Mode.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Include\Array.h" />

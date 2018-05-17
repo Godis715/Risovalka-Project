@@ -1,8 +1,7 @@
-#pragma once
+#ifndef __MODE
+#define __MODE
 
-#include "Presenter.h"
-#include "IView.h"
-#include "Model.h"
+#include "Array.h"
 
 enum Event
 
@@ -12,11 +11,7 @@ enum Event
 	ev_createArc,
 	ev_createCircle,
 	// 4
-	ev_move,
-	ev_scale,
-	ev_rotate,
-	ev_ch_radius,
-	ev_ch_angle,
+	ev_transform,
 	// 9
 	ev_del,
 	ev_delReq,
@@ -30,6 +25,8 @@ enum Event
 	ev_leftMouseUp,
 	ev_rightMouseUp,
 	ev_mouseMove,
+	ev_ctrlDown,
+	ev_ctrlUp,
 	ev_escape,
 	//end new events
 
@@ -39,37 +36,51 @@ enum Event
 
 class Mode {
 protected:
-	static Presenter* presenter;
 	Event lastEvent;
 
-	Mode* UnexpectedEvent(const Event e) {
-		this->Cancel();
-		switch (e) {
-		case ev_createPoint: {
-			return new CreatingPoint(presenter);
-		}
-		case ev_createArc: {
-			return new CreatingArc(presenter);
-		}
-		case ev_createSegment: {
-			return new CreatingSegment(presenter);
-		}
-		case ev_createCircle: {
-			return new CreatingCircle(presenter);
-		}
-		}
-	}
+	Mode* UnexpectedEvent(const Event e);
+
 public:
-	Mode(Presenter* _pres) {
-		if (_pres == nullptr) {
-			throw std::exception("Invalid argument. Presenter was nullptr");
-		}
-		presenter = _pres;
-	}
+
+	//Mode(Presenter* _pres) {
+	//	if (_pres == nullptr) {
+	//		throw std::exception("Invalid argument. Presenter was nullptr");
+	//	}
+	//	presenter = _pres;
+	//}
+	Mode() {}
 
 	virtual Mode* HandleEvent(const Event, Array<double>&) = 0;
-	virtual bool DrawMode() { }
-	virtual void Cancel() { }
+	virtual bool DrawMode() = 0;
+	virtual void Cancel() = 0;
+};
+
+class Selection : public Mode {
+
+private:
+	Array<ID> selectedObject;
+	enum State { single_selection, poly_selection };
+	State state;
+
+	void AddObject(const ID& obj) {
+		for (int i = 0; i < selectedObject.GetSize(); ++i) {
+			if (selectedObject[i] == obj) {
+				selectedObject.EraseO_1_(i);
+				return;
+			}
+		}
+		selectedObject.PushBack(obj);
+	}
+public:
+	// must take containers in constructor
+	Selection();
+
+	Selection(Array<ID> _selObjects);
+
+	Mode* HandleEvent(const Event e, Array<double>& params);
+
+	bool DrawMode() { return true; }
+	void Cancel() {}
 };
 
 class CreatingSegment : public Mode {
@@ -78,63 +89,20 @@ private:
 	State state;
 	Array<double> segmentParameters;
 public:
-	CreatingSegment(Presenter* _pres) : Mode(_pres), segmentParameters(4) {
-		state = noClick;
-	}
-	Mode* HandleEvent(const Event ev, Array<double>& params) {
-		if (ev == ev_leftMouseClick) {
-			if (params.GetSize() != 2) {
-				throw std::exception("Bad number of parameters");
-			}
-			// if it were no clicks
-			// then create one point and change the state
-			// to one click
-			if (state == noClick) {
+	CreatingSegment();
+	Mode* HandleEvent(const Event, Array<double>&);
 
-				segmentParameters[0] = params[0];
-				segmentParameters[1] = params[1];
-
-				state = oneClick;
-				return nullptr;
-			}
-
-			// if it was one click
-			// then create a segment
-			// and turn to single selection mode
-			// with selected segment
-			if (state == oneClick) {
-
-				segmentParameters[2] = params[0];
-				segmentParameters[3] = params[1];
-
-				ID id;
-				id = presenter->CreateObject(segment_t, segmentParameters);
-
-				Array<ID> selectedObjects(1);
-				selectedObjects[0] = id;
-				return new Selection(selectedObjects, presenter);
-			}
-		}
-		return UnexpectedEvent(ev);
-	}
+	bool DrawMode() { return true; }
+	void Cancel() {}
 };
 
 class CreatingPoint : public Mode {
 public:
-	CreatingPoint(Presenter* _pres) : Mode(_pres) {}
-	Mode* HandleEvent(const Event ev, Array<double>& params) {
-		if (ev == ev_leftMouseClick) {
-			if (params.GetSize() != 2) {
-				throw std::exception("Bad number of parameters");
-			}
+	CreatingPoint() {}
+	Mode* HandleEvent(const Event, Array<double>&);
 
-			ID id = presenter->CreateObject(point_t, params);
-			Array<ID> selectedObjects(1);
-			selectedObjects[0] = id;
-			return new Selection(selectedObjects, presenter);
-		}
-		return UnexpectedEvent(ev);
-	}
+	bool DrawMode() { return true; }
+	void Cancel() {}
 };
 
 class CreatingCircle : public Mode {
@@ -143,45 +111,12 @@ private:
 	State state;
 	Array<double> CircleParameters;
 public:
-	CreatingCircle(Presenter* _pres) : Mode(_pres), CircleParameters(4) {
-		state = noClick;
-	}
-	Mode* HandleEvent(const Event ev, Array<double>& params) {
-		if (ev == ev_leftMouseClick) {
-			if (params.GetSize() != 2) {
-				throw std::exception("Bad number of parameters");
-			}
-			// if it were no clicks
-			// then create one point and change the state
-			// to one click
-			if (state == noClick) {
-
-				CircleParameters[0] = params[0];
-				CircleParameters[1] = params[1];
-
-				state = oneClick;
-				return nullptr;
-			}
-			// if it was one click
-			// then create a circle
-			// and turn to single selection mode
-			// with selected circle
-			if (state == oneClick) {
-
-				CircleParameters[2] = params[0];
-				CircleParameters[3] = params[1];
-
-				ID id = presenter->CreateObject(circle_t, CircleParameters);
-
-				Array<ID> selectedObjects(1);
-				selectedObjects[0] = id;
-				return new Selection(selectedObjects, presenter); 
-			}
-		}
-		
-		return this->UnexpectedEvent(ev);
-	}
+	CreatingCircle();
+	Mode* HandleEvent(const Event, Array<double>&);
+	bool DrawMode() { return true; }
+	void Cancel() {}
 };
+
 
 class CreatingArc : public Mode {
 private:
@@ -189,72 +124,11 @@ private:
 	State state;
 	Array<double> arcParameters;
 public:
-	CreatingArc(Presenter* _pres) : Mode(_pres), arcParameters(6) {
-		state = noClick;
-	}
-	Mode* HandleEvent(const Event ev, Array<double>& params) {
-		if (ev == ev_leftMouseClick) {
-			if (params.GetSize() != 2) {
-				throw std::exception("Bad number of parameters");
-			}
-			// if it were no clicks
-			// then create one point and change the state
-			// to one click
-			if (state == noClick) {
+	CreatingArc();
+	Mode* HandleEvent(const Event, Array<double>&);
 
-				arcParameters[0] = params[0];
-				arcParameters[1] = params[1];
-
-				state = oneClick;
-				return nullptr;
-			}
-			// if it were one clicks
-			// then create one point and change the state
-			// to two click
-			if (state == oneClick) {
-
-				arcParameters[2] = params[0];
-				arcParameters[3] = params[1];
-
-				state = twoClick;
-				return nullptr;
-			}
-			// if it was two click
-			// then create a arc
-			// and turn to single selection mode
-			// with selected arc
-			if (state == twoClick) {
-
-				arcParameters[4] = params[0];
-				arcParameters[5] = params[1];
-
-				ID id = presenter->CreateObject(circle_t, arcParameters);
-
-				Array<ID> selectedObjects(1);
-				selectedObjects[0] = id;
-				return new Selection(selectedObjects, presenter);
-			}
-		}
-
-		return this->UnexpectedEvent(ev);
-	}
-};
-
-class Selection : public Mode {
-private:
-	Array<ID> selectedObjects;
-public:
-	// must take containers in constructor
-	Selection(Presenter* _pres) : Mode(_pres), selectedObject(1) {
-
-	}
-	Selection(Array<ID> _selObjects, Presenter* _pres) : Mode(_pres), selectedObject(_selObjects) {
-		
-	}
-
-	Mode* HandleEvent(const Event e, Array<double>& params) {
-		
-	}
+	bool DrawMode() { return true; }
+	void Cancel() {}
 };
 
 class Redaction : public Mode {
@@ -262,13 +136,14 @@ private:
 	Array<ID> selectedObjects;
 public:
 	// must take containers in constructor
-	Redaction(Array<ID> _selecObj, Presenter* _pres) : Mode(_pres),
-		selectedObjects(_selecObj)
-	{}
+	Redaction(Array<ID>);
 
-	Mode* HandleEvent(const Event, Array<double>&);
+	Mode* HandleEvent(const Event, Array<double>&) { return nullptr; }
+
+	bool DrawMode() { return true; }
+	void Cancel() {}
 };
-
+/*
 class RedactionReq : public Mode {
 private:
 	Array<ID> selectedObjects;
@@ -277,11 +152,15 @@ private:
 	Array<ID> objectsOfreq;
 public:
 	// must take containers in constructor
-	RedactionReq(Array<ID> _selecObj, Presenter* _pres) : Mode(_pres),
-		selectedObjects(_selecObj)
+	RedactionReq(Array<ID> _selecObj) : selectedObjects(_selecObj)
 	{
-		presenter->GetRequirements(selectedObjects[0]);
+		//presenter->GetRequirements(selectedObjects[0]);
 	}
 
-	Mode* HandleEvent(const Event, Array<double>&);
+	Mode* HandleEvent(const Event, Array<double>&){}
+
+	bool DrawMode() {}
+	void Cancel() {}
 };
+*/
+#endif // !__MODE

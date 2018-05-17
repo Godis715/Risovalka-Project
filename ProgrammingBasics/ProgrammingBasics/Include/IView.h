@@ -1,9 +1,10 @@
-#pragma once
-
+#ifndef __IVIEW
+#define __IVIEW
 #include "Vector2.h"
 
 enum color { white, red, black};
 enum typeDrawing{points, line, polygon};
+enum statusCreate { drawPoint, drawSegment, drawArc, drawCircle };
 
 class IView
 {
@@ -20,3 +21,4 @@ public:
 
 };
 
+#endif // !__IVIEW

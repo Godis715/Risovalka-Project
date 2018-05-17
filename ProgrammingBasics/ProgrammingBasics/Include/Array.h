@@ -419,7 +419,7 @@ public:
 	{
 		for (size_t i = 0; i < _size; i++)
 		{
-			if (value = _storage[i])
+			if (value == _storage[i])
 			{
 				return true;
 			}

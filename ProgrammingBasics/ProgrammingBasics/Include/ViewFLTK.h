@@ -17,7 +17,6 @@
 class ViewFLTK : public IView
 {
 private:
-	static Presenter * presenter;
 
 	Fl_Round_Button* status1;
 	Fl_Round_Button* status2;
@@ -29,7 +28,7 @@ private:
 		void draw()
 		{
 			redraw();
-			ViewFLTK::presenter->drawScene();
+			Presenter::drawScene();
 		}
 	public:
 		SecondWindow(int x, int y, int w, int h, const char *l)
@@ -54,31 +53,31 @@ private:
 	//callbacks
 	static void cl_buttonClear(Fl_Widget* o, void*)
 	{
-		presenter->clearScene();
+		Presenter::clearScene();
 	}
 	
 	static void cl_clickOnScene(Fl_Widget* o, void*)
 	{
-		presenter->clickOnScene(Fl::event_x(), Fl::event_y());
+		Presenter::clickOnScene(Fl::event_x(), Fl::event_y());
 	}
 
 	static void cl_changeStatusCreate(Fl_Widget* o, void*)
 	{
 		if (((Fl_Round_Button*)o)->label() == "Create point")
 		{
-			presenter->changeStatusCreate(drawPoint);
+			Presenter::changeStatusCreate(drawPoint);
 		}
 		if (((Fl_Round_Button*)o)->label() == "Create segment")
 		{
-			presenter->changeStatusCreate(drawSegment);
+			Presenter::changeStatusCreate(drawSegment);
 		}
 		if (((Fl_Round_Button*)o)->label() == "Create arc")
 		{
-			presenter->changeStatusCreate(drawArc);
+			Presenter::changeStatusCreate(drawArc);
 		}
 		if (((Fl_Round_Button*)o)->label() == "Create circle")
 		{
-			presenter->changeStatusCreate(drawCircle);
+			Presenter::changeStatusCreate(drawCircle);
 		}
 	}
 	//..
@@ -91,7 +90,7 @@ public:
 	ViewFLTK()
 	{
 		
-		presenter = new Presenter(this);
+		Presenter::Initializer(this);
 
 		mainWindow = new Fl_Window(820, 420, "Main Window");
 		mainWindow->color(FL_WHITE);
@@ -254,6 +253,5 @@ public:
 	}
 };
 
-Presenter* ViewFLTK::presenter = nullptr;
 
 #endif // !__VIEW_FLTK

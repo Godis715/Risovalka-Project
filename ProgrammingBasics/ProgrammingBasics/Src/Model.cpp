@@ -284,7 +284,7 @@ bool Model::DeletePrimitive(const ID& prim_id) {
 }
 
 
-bool Model::CreateRequirementByID(const object_type type, Array<ID>& id_arr, const Array<double>& params, ID& req_id) {
+bool Model::CreateRequirementByID(const object_type type, const Array<ID>& id_arr, const Array<double>& params, ID& req_id) {
 	Array<Primitive*> primitives;
 	for (int i = 0; i < id_arr.GetSize(); ++i) {
 		auto marker = dataPrim.Find(id_arr[i]);

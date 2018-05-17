@@ -92,7 +92,7 @@ public:
 
 	bool CreateObject(object_type, const Array<double>&, ID&);
 	
-	bool CreateRequirementByID(object_type, Array<ID>&, const Array<double>&, ID&);
+	bool CreateRequirementByID(object_type, const Array<ID>&, const Array<double>&, ID&);
 	void CreateLink(const ID&, const Array<Primitive*>&);
 
 	bool DeletePrimitive(const ID&);

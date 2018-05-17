@@ -1,201 +1,58 @@
-#pragma once
-
-#include "Mode.h"
-
 #define SINGLE_SELECTION
 #define POLY_SELECTION
-enum statusCreate { drawPoint, drawSegment, drawArc, drawCircle };
 
+#ifndef __PRESENTER
+
+#include "IView.h"
+#include "Model.h"
+#include "Mode.h"
 
 class Presenter {
 private:
-	BinSearchTree<ID, ID> selectedObjects;
-	BinSearchTree<ID, ID> selectedReq;
-
-	Array<ID> _selObj;
-	Array<ID> _selReq;
-
-	Model* model;
-	IView* view;
-	Mode* mode;
-
-	void SelectObject(const ID&, int) {}
-
+	static Mode* mode;
+	static Model* model;
+	static IView* view;
 public:
-	void drawScene()
-	{
-		Array<Model::infoObject> scene;
-		if (model->DischargeInfoObjects(scene)) {
-			for (int i = 0; i < scene.GetSize(); ++i) {
-				if (scene[i].type == point_t) {
-					view->SetColor(red);
-					view->DrawPoint(Vector2(scene[i].params[0], scene[i].params[1]));
-				}
-				if (scene[i].type == segment_t) {
-					view->SetColor(white);
-					view->DrawLine(Vector2(scene[i].params[0], scene[i].params[1]),
-						Vector2(scene[i].params[2], scene[i].params[3]), line);
-				}
-				if (scene[i].type == arc_t) {
-					view->SetColor(white);
-					view->DrawArc(Vector2(scene[i].params[0], scene[i].params[1]),
-						Vector2(scene[i].params[2], scene[i].params[3]),
-						Vector2(scene[i].params[4], scene[i].params[5]), line);
-				}
-				if(scene[i].type == circle_t) {
-					view->SetColor(white);
-					view->DrawCircle(Vector2(scene[i].params[0], scene[i].params[1]),
-						Vector2(scene[i].params[0] + scene[i].params[2], scene[i].params[1]), line);
-				}
-			}
-		}
+	static void drawScene();
 
-		mode->DrawMode();
-	}
+	//static void DrawSelected(const Array<ID>&){}
 
-	void DrawSelected(const Array<ID>&);
-
-	Presenter(IView* _view)
-	{
-		view = _view;
-		model = new Model();
-	}
-
+	static void Initializer(IView* _view);
+	
 	/* using for creating figures
 	 points, segments, arcs, circles .. */
-	ID CreateObject(object_type, const Array<double>&);
+	static ID CreateObject(object_type, const Array<double>&);
 
 	/* trying to impose requirements
 	on selected object */
 
-	bool CreateRequirement(object_type, const Array<double>&);
+	static bool CreateRequirement(object_type, const Array<ID>&, const Array<double>&);
+	static bool GetObject(double, double, ID&) { return true; }
 
-	void DeletePrimitives();
+	/*void DeletePrimitives();
 
-	void DeleteRequirement(int);
+	void DeleteRequirement(const ID&);
 
-	void ChangeParamRequirement(int, const double);
+	void ChangeParamRequirement(const ID&, const double);
 
 	void ScaleObjects(const double);
 
-	void MoveObject(const Vector2&);
+	void MoveObject(const Vector2&);*/
 
-	void ChangeObject(){}
+	/*static void ChangeObject(){}*/
 
-	void GetRequirements(const ID&, Array<ID>&);
+	static void GetRequirements(const ID&, Array<ID>&);
 
 	//function for viewFLTK
 	
-	statusCreate status = drawCircle;
-	Array<Vector2> posClicks;
-	Array<double> params;
+	static statusCreate status;
+	static Array<Vector2> posClicks;
+	static Array<double> params;
 
-	void changeStatusCreate(statusCreate newStatus)
-	{
-		status = newStatus;
-		posClicks.Clear();
-		params.Clear();
-		view->Clear();
-	}
+	static void changeStatusCreate(const statusCreate newStatus);
 
-	void clearScene()
-	{
-		view->Clear();
-		posClicks.Clear();
-	}
+	static void clearScene();
 
-	void clickOnScene(double x, double y)
-	{
-		view->SetColor(red);
-		view->DrawPoint(Vector2(x, y));
-		switch (status)
-		{
-			case drawPoint:
-				params.PushBack(x);
-				params.PushBack(y);
-				CreateObject(point_t, params);
-				params.Clear();
-				break;
-			case drawSegment:
-				params.PushBack(x);
-				params.PushBack(y);
-				switch (posClicks.GetSize())
-				{
-				case 0:
-					posClicks.PushBack(Vector2(x, y));
-					break;
-				case 1:
-					CreateObject(segment_t, params);
-					params.Clear();
-
-					view->SetColor(white);
-					view->DrawLine(posClicks[0], Vector2(x, y), line);
-					posClicks.Clear();
-					break;
-				}
-				break;
-			case drawArc:
-				switch (posClicks.GetSize())
-				{
-					case 0:
-						posClicks.PushBack(Vector2(x, y));
-						break;
-					case 1:
-						posClicks.PushBack(Vector2(x, y));
-
-						//..
-						view->SetColor(white);
-						view->DrawCircle(posClicks[0], posClicks[1], points);
-						//..
-						break;
-					case 2:
-						params.PushBack(posClicks[1].x);
-						params.PushBack(posClicks[1].y);
-						params.PushBack(x);
-						params.PushBack(y);
-						params.PushBack(Vector2::Angle(posClicks[1] - posClicks[0], Vector2(x, y) - posClicks[0]));
-						CreateObject(arc_t, params);
-						params.Clear();
-
-						//..
-						view->SetColor(black);
-						view->DrawCircle(posClicks[0], posClicks[1], points);
-						//..
-
-						view->SetColor(white);
-						view->DrawArc(posClicks[0], posClicks[1], Vector2(x, y), line);
-
-						view->SetColor(black);
-						view->DrawPoint(posClicks[0]);
-						posClicks.Clear();
-						break;
-				}
-				break;
-			case drawCircle:
-				switch (posClicks.GetSize())
-				{
-				case 0:
-					posClicks.PushBack(Vector2(x, y));
-					break;
-				case 1:
-					params.PushBack(posClicks[0].x);
-					params.PushBack(posClicks[0].y);
-					params.PushBack((Vector2(x, y) - posClicks[0]).GetLength());
-					CreateObject(circle_t, params);
-					params.Clear();
-
-					view->SetColor(black);
-					view->DrawPoint(Vector2(x, y));
-
-					//..
-					view->SetColor(white);
-					view->DrawCircle(posClicks[0], Vector2(x, y), line);
-					
-					posClicks.Clear();
-					//..
-					break;
-				}
-				break;
-			}
-		}
+	static void clickOnScene(double x, double y);
 };
+#endif

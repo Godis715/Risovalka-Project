@@ -240,4 +240,3 @@ bool Point::SetParent(Primitive* _parent) {
 	}
 	parent = _parent;
 }
--
