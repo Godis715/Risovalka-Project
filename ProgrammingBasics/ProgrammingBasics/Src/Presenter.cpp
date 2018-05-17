@@ -45,67 +45,38 @@ bool Presenter::CreateRequirement(object_type type, const Array<ID>& objects, co
 //	return result;
 //}
 
-//void Presenter::DeleteRequirement(int index) {
-//	// model->DeleteRequirement(_selReq[index]);
-//	for (auto i = selectedObjects.GetMarker(); i.IsValid(); ++i) {
-//		if (index == 0) {
-//			model->DeleteRequirement(i.GetValue());
-//			return;
-//		}
-//		--index;
-//	}
-//}
-//
-//void Presenter::DeletePrimitives() {
-//	/*for (int i = 0; i < _selObj.GetSize(); ++i) {
-//		model->DeletePrimitive(_selObj[i]);
-//	}*/
-//	for (auto i = selectedObjects.GetMarker(); i.IsValid(); ++i) {
-//		model->DeletePrimitive(i.GetValue());
-//	}
-//}
-//
-//void Presenter::ChangeParamRequirement(int index, const double param) {
-//	// model->ChangeRequirement(_selReq[index], param);
-//	for (auto i = selectedObjects.GetMarker(); i.IsValid(); ++i) {
-//		if (index == 0) {
-//			model->ChangeRequirement(i.GetValue(), param);
-//			return;
-//		}
-//		--index;
-//	}
-//}
-//
-//void Presenter::ScaleObjects(const double koef) {
-//	// model->Scale(_selObj, koef);
-//	
-//	Array<ID> objects(selectedObjects.GetSize());
-//
-//	int index = 0;
-//	for (auto i = selectedObjects.GetMarker(); i.IsValid(); ++i) {
-//		objects[index] = i.GetValue();
-//		++index;
-//	}
-//	// model->Scale(objects, koef);
-//	
-//}
-//
-//void Presenter::MoveObject(const Vector2& vector) {
-//	// model->Move(_selObj, vector);
-//
-//	Array<ID> objects(selectedObjects.GetSize());
-//
-//	int index = 0;
-//	for (auto i = selectedObjects.GetMarker(); i.IsValid(); ++i) {
-//		objects[index] = i.GetValue();
-//		++index;
-//	}
-//	// model->Move(objects, vector);
-//
-//}
+void Presenter::DeletePrimitives(const Array<ID>& primitiveID) {
+	for (int i = 0; i < primitiveID.GetSize(); ++i) {
+		if (!model->DeletePrimitive(primitiveID[i])) {
+			// LOG
+		}
+	}
+}
 
-void Presenter::GetRequirements(const ID& id, Array<ID>& reqs) {
-	// model->GetRequirements(id, reqs);
+void Presenter::DeleteRequirement(const ID& id) {
+	
+}
+
+void Presenter::ChangeParamRequirement(const ID& id, const double param) {
+	model->ChangeRequirement(id, param);
+}
+
+void Presenter::ScaleObjects(const Array<ID>& primitiveID, const double koef) {
+	if (!model->Scale(primitiveID, koef)) {
+		// LOG
+	}
+}
+
+void Presenter::MoveObject(const Array<ID>& primitiveID,const Vector2& vector) {
+	if (!model->Move(primitiveID, vector)) {
+		// LOG
+	}
+}
+
+void Presenter::GetComponent(const ID& id, Array<ID>& primID, Array<ID>& reqID) {
+	if (!model->NewComponent(id, primID, reqID)) {
+		// LOG
+	}
 }
 
 void Presenter::drawScene()
@@ -138,6 +109,8 @@ void Presenter::drawScene()
 
 	//mode->DrawMode();
 }
+
+
 
 
 void  Presenter::changeStatusCreate(const statusCreate newStatus)

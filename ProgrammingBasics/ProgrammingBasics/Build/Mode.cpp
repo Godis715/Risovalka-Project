@@ -4,7 +4,6 @@
 // SEGMENT
 
 Mode* Mode::UnexpectedEvent(const Event e) {
-	this->Cancel();
 	switch (e) {
 	case ev_createPoint: {
 		return new CreatingPoint();
@@ -66,7 +65,7 @@ bool CreatingSegment::DrawMode() {
 	return true;
 }
 
-void CreatingSegment::Cancel() {
+CreatingSegment::~CreatingSegment() {
 	segmentParameters.Clear();
 	state = noClick;
 }
@@ -90,8 +89,6 @@ Mode* CreatingPoint::HandleEvent(const Event ev, Array<double>& params) {
 bool CreatingPoint::DrawMode() {
 	return true;
 }
-
-void CreatingPoint::Cancel() {}
 
 // CIRCLE
 CreatingCircle::CreatingCircle() : CircleParameters(4) {
@@ -136,7 +133,7 @@ Mode* CreatingCircle::HandleEvent(const Event ev, Array<double>& params) {
 
 bool CreatingCircle::DrawMode() { return true; }
 
-void CreatingCircle::Cancel() {}
+CreatingCircle::~CreatingCircle() {}
 
 // ARC
 
@@ -193,7 +190,9 @@ Mode* CreatingArc::HandleEvent(const Event ev, Array<double>& params) {
 
 bool CreatingArc::DrawMode() { return true; }
 
-void CreatingArc::Cancel() {}
+CreatingArc::~CreatingArc() {}
+
+// SELECTION
 
 Selection::Selection(Array<ID> _selObjects) : Mode(), selectedObject(_selObjects) {
 	if (selectedObject.GetSize() == 0) {
@@ -265,7 +264,7 @@ bool Selection::DrawMode() {
 	return true;
 }
 
-void Selection::Cancel() {
+Selection::~Selection() {
 	selectedObject.Clear();
 }
 

@@ -51,7 +51,6 @@ public:
 
 	virtual Mode* HandleEvent(const Event, Array<double>&) = 0;
 	virtual bool DrawMode() = 0;
-	virtual void Cancel() = 0;
 };
 
 class Selection : public Mode {
@@ -64,12 +63,11 @@ private:
 public:
 	Selection();
 	Selection(Array<ID> _selObjects);
+	~Selection();
 
 	Mode* HandleEvent(const Event e, Array<double>& params);
 
 	bool DrawMode();
-
-	void Cancel();
 };
 
 class CreatingSegment : public Mode {
@@ -82,11 +80,11 @@ private:
 	Array<double> segmentParameters;
 public:
 	CreatingSegment();
+	~CreatingSegment();
+
 	Mode* HandleEvent(const Event, Array<double>&);
 
 	bool DrawMode();
-
-	void Cancel();
 };
 
 class CreatingPoint : public Mode {
@@ -95,8 +93,6 @@ public:
 	Mode* HandleEvent(const Event, Array<double>&);
 
 	bool DrawMode();
-
-	void Cancel();
 };
 
 class CreatingCircle : public Mode {
@@ -106,9 +102,10 @@ private:
 	Array<double> CircleParameters;
 public:
 	CreatingCircle();
+	~CreatingCircle();
+
 	Mode* HandleEvent(const Event, Array<double>&);
 	bool DrawMode();
-	void Cancel();
 };
 
 class CreatingArc : public Mode {
@@ -118,10 +115,10 @@ private:
 	Array<double> arcParameters;
 public:
 	CreatingArc();
+	~CreatingArc();
 	Mode* HandleEvent(const Event, Array<double>&);
 
-	bool DrawMode() { return true; }
-	void Cancel() {}
+	bool DrawMode();
 };
 
 class Control {
