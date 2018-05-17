@@ -22,7 +22,7 @@ private:
 	Fl_Round_Button* status2;
 	Fl_Round_Button* status3;
 	Fl_Round_Button* status4;
-
+	static int test;
 	class SecondWindow : public Fl_Double_Window
 	{
 		void draw()
@@ -30,6 +30,7 @@ private:
 			redraw();
 			Presenter::drawScene();
 		}
+		int a = 0;
 	public:
 		SecondWindow(int x, int y, int w, int h, const char *l)
 			: Fl_Double_Window(x, y, w, h, l)
@@ -41,12 +42,49 @@ private:
 		~SecondWindow() {}
 		int handle(int e)
 		{
-			int ret = Fl_Double_Window::handle(e);
-			if (e == FL_PUSH)
+			Array<double> params;
+			switch (e)
 			{
-				this->do_callback();
+			case FL_PUSH:
+			{
+				a++;
+				if (a == 3)
+				{
+					a = 0;
+				}
+				params.PushBack(Fl::event_x());
+				params.PushBack(Fl::event_y());
+				Presenter::Set_event(ev_leftMouseDown, params);
+				break;
 			}
-			return(ret);
+			case FL_RELEASE:
+				//params.PushBack(Fl::event_x());
+				//params.PushBack(Fl::event_y());
+				//Presenter::Set_event(ev_leftMouseUp, params);
+				break;
+
+			case FL_ENTER:
+				//std::cout << "Enter!";
+				//fl_color(FL_CYAN); fl_rectf(0, 0, w(), h());
+				break;
+
+			case FL_LEAVE:
+				//std::cout << "Leave!";
+				//fl_color(FL_BLACK); fl_rectf(0, 0, w(), h());
+				break;
+
+			case FL_MOVE:
+				params.PushBack(Fl::event_x());
+				params.PushBack(Fl::event_y());
+				//Presenter::Set_event(ev_mouseMove, params);
+				break;
+			case FL_DRAG:
+				params.PushBack(Fl::event_x());
+				params.PushBack(Fl::event_y());
+				//Presenter::Set_event(ev_mouseMove, params);
+				break;
+			}
+			return e;
 		}
 	};
 
@@ -56,28 +94,28 @@ private:
 		Presenter::clearScene();
 	}
 	
-	static void cl_clickOnScene(Fl_Widget* o, void*)
+	/*static void cl_clickOnScene(Fl_Widget* o, void*)
 	{
 		Presenter::clickOnScene(Fl::event_x(), Fl::event_y());
-	}
-
+	}*/
 	static void cl_changeStatusCreate(Fl_Widget* o, void*)
 	{
+		Array<double> params(0);
 		if (((Fl_Round_Button*)o)->label() == "Create point")
 		{
-			Presenter::changeStatusCreate(drawPoint);
+			Presenter::Set_event(ev_createPoint, params);
 		}
 		if (((Fl_Round_Button*)o)->label() == "Create segment")
 		{
-			Presenter::changeStatusCreate(drawSegment);
+			Presenter::Set_event(ev_createSegment, params);
 		}
 		if (((Fl_Round_Button*)o)->label() == "Create arc")
 		{
-			Presenter::changeStatusCreate(drawArc);
+			Presenter::Set_event(ev_createArc, params);
 		}
 		if (((Fl_Round_Button*)o)->label() == "Create circle")
 		{
-			Presenter::changeStatusCreate(drawCircle);
+			Presenter::Set_event(ev_createCircle, params);
 		}
 	}
 	//..
@@ -85,7 +123,6 @@ private:
 	Fl_Window* mainWindow;
 	SecondWindow* drawWindow;
 	Fl_Button* buttonClear;
-	Fl_Button* buttonOk;
 public:
 	ViewFLTK()
 	{
@@ -96,7 +133,6 @@ public:
 		mainWindow->color(FL_WHITE);
 
 		drawWindow = new SecondWindow(10, 10, 400, 400, "Draw Window");
-		drawWindow->callback(cl_clickOnScene);
 		drawWindow->end();
 
 		buttonClear = new Fl_Button(420, 10, 100, 30, "Clear scene");
@@ -247,11 +283,11 @@ public:
 		}
 	}
 	
-	void Clear()
+	void Update()
 	{
 		drawWindow->redraw();
 	}
 };
 
-
+int ViewFLTK::test = 0;
 #endif // !__VIEW_FLTK

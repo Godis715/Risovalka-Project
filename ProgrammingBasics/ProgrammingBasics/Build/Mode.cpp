@@ -26,7 +26,7 @@ CreatingSegment::CreatingSegment() : segmentParameters(4) {
 }
 
 Mode* CreatingSegment::HandleEvent(const Event ev, Array<double>& params) {
-	if (ev == ev_leftMouseClick) {
+	if (ev == ev_leftMouseDown) {
 		if (params.GetSize() != 2) {
 			throw std::exception("Bad number of parameters");
 		}
@@ -56,7 +56,7 @@ Mode* CreatingSegment::HandleEvent(const Event ev, Array<double>& params) {
 
 			Array<ID> selectedObjects(1);
 			selectedObjects[0] = id;
-			//return new Selection(selectedObjects);
+			return new Selection(selectedObjects);
 		}
 	}
 	return UnexpectedEvent(ev);
@@ -74,7 +74,7 @@ void CreatingSegment::Cancel() {
 // POINT
 
 Mode* CreatingPoint::HandleEvent(const Event ev, Array<double>& params) {
-	if (ev == ev_leftMouseClick) {
+	if (ev == ev_leftMouseDown) {
 		if (params.GetSize() != 2) {
 			throw std::exception("Bad number of parameters");
 		}
@@ -87,19 +87,12 @@ Mode* CreatingPoint::HandleEvent(const Event ev, Array<double>& params) {
 	return UnexpectedEvent(ev);
 }
 
-bool CreatingPoint::DrawMode() {
-	return true;
-}
-
-void CreatingPoint::Cancel() {}
-
-// CIRCLE
-CreatingCircle::CreatingCircle() : CircleParameters(4) {
+CreatingCircle::CreatingCircle() : CircleParameters(3) {
 	state = noClick;
 }
 
 Mode* CreatingCircle::HandleEvent(const Event ev, Array<double>& params) {
-	if (ev == ev_leftMouseClick) {
+	if (ev == ev_leftMouseDown) {
 		if (params.GetSize() != 2) {
 			throw std::exception("Bad number of parameters");
 		}
@@ -119,10 +112,7 @@ Mode* CreatingCircle::HandleEvent(const Event ev, Array<double>& params) {
 		// and turn to single selection mode
 		// with selected circle
 		if (state == oneClick) {
-
-			CircleParameters[2] = params[0];
-			CircleParameters[3] = params[1];
-
+			CircleParameters[2] = (Vector2(params[0], params[1]) - Vector2(CircleParameters[0], CircleParameters[1])).GetLength();
 			ID id = Presenter::CreateObject(circle_t, CircleParameters);
 
 			Array<ID> selectedObjects(1);
@@ -134,18 +124,12 @@ Mode* CreatingCircle::HandleEvent(const Event ev, Array<double>& params) {
 	return this->UnexpectedEvent(ev);
 }
 
-bool CreatingCircle::DrawMode() { return true; }
-
-void CreatingCircle::Cancel() {}
-
-// ARC
-
 CreatingArc::CreatingArc() : arcParameters(6) {
 	state = noClick;
 }
 
 Mode* CreatingArc::HandleEvent(const Event ev, Array<double>& params) {
-	if (ev == ev_leftMouseClick) {
+	if (ev == ev_leftMouseDown) {
 		if (params.GetSize() != 2) {
 			throw std::exception("Bad number of parameters");
 		}
@@ -191,10 +175,6 @@ Mode* CreatingArc::HandleEvent(const Event ev, Array<double>& params) {
 	return this->UnexpectedEvent(ev);
 }
 
-bool CreatingArc::DrawMode() { return true; }
-
-void CreatingArc::Cancel() {}
-
 Selection::Selection(Array<ID> _selObjects) : Mode(), selectedObject(_selObjects) {
 	if (selectedObject.GetSize() == 0) {
 		selectedObject = Array<ID>(1);
@@ -217,7 +197,7 @@ void Selection::AddObject(const ID& obj) {
 }
 
 Mode* Selection::HandleEvent(const Event e, Array<double>& params) {
-	if (e == ev_leftMouseClick) {
+	if (e == ev_leftMouseDown) {
 		if (params.GetSize() != 2) {
 			throw std::exception("Bad number of parameters");
 		}

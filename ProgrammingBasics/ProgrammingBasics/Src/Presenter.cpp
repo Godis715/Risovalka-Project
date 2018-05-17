@@ -135,22 +135,12 @@ void Presenter::drawScene()
 			}
 		}
 	}
-
 	//mode->DrawMode();
 }
 
-
-void  Presenter::changeStatusCreate(const statusCreate newStatus)
+void Presenter::clearScene()
 {
-	status = newStatus;
-	posClicks.Clear();
-	params.Clear();
-	view->Clear();
-}
-
-void  Presenter::clearScene()
-{
-	view->Clear();
+	//view->Clear();
 	posClicks.Clear();
 }
 
@@ -247,4 +237,15 @@ void  Presenter::clickOnScene(double x, double y)
 		}
 		break;
 	}
+}
+
+void Presenter::Set_event(Event _ev, Array<double>& _params)
+{
+	Mode* temp = mode->HandleEvent(_ev, _params);
+	if (temp != nullptr)
+	{
+		delete mode;
+		mode = temp;
+	}
+	view->Update();
 }

@@ -94,9 +94,9 @@ public:
 	CreatingPoint() {}
 	Mode* HandleEvent(const Event, Array<double>&);
 
-	bool DrawMode();
+	bool DrawMode() { return true; }
 
-	void Cancel();
+	void Cancel(){}
 };
 
 class CreatingCircle : public Mode {
@@ -107,8 +107,8 @@ private:
 public:
 	CreatingCircle();
 	Mode* HandleEvent(const Event, Array<double>&);
-	bool DrawMode();
-	void Cancel();
+	bool DrawMode() { return true; }
+	void Cancel(){}
 };
 
 class CreatingArc : public Mode {

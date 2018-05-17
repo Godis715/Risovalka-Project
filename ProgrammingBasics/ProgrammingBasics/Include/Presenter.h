@@ -45,6 +45,7 @@ public:
 	static void GetRequirements(const ID&, Array<ID>&);
 
 	//function for viewFLTK
+	static void Set_event(Event, Array<double>&);
 	
 	static statusCreate status;
 	static Array<Vector2> posClicks;

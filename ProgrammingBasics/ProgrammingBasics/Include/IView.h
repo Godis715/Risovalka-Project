@@ -17,7 +17,7 @@ public:
 	virtual void DrawCircle(const Vector2&, const Vector2&, typeDrawing) = 0;
 	virtual void SetColor(color) = 0;
 	virtual int Run() = 0;
-	virtual void Clear() = 0;
+	virtual void Update() = 0;
 
 };
 
