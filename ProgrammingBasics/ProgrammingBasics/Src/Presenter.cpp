@@ -110,9 +110,6 @@ void Presenter::drawScene()
 	//mode->DrawMode();
 }
 
-
-
-
 void  Presenter::changeStatusCreate(const statusCreate newStatus)
 {
 	status = newStatus;

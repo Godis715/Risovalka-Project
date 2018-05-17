@@ -27,6 +27,7 @@ enum Event
 	ev_ctrlDown,
 	ev_ctrlUp,
 	ev_escape,
+	ev_clockOnReq,
 	//end new events
 
 	ev_save
@@ -140,30 +141,27 @@ private:
 public:
 	// must take containers in constructor
 	Redaction(Array<ID>);
+	~Redaction();
 
 	Mode* HandleEvent(const Event, Array<double>&) { return nullptr; }
 
 	bool DrawMode() { return true; }
-	void Cancel() {}
 };
-/*
+
 class RedactionReq : public Mode {
 private:
-	Array<ID> selectedObjects;
-	Array<ID> Reqs;
+	Array<ID> objects;
+	Array<ID> reqs;
 	ID selectedReq;
+	ID selectedPrim;
 	Array<ID> objectsOfreq;
 public:
-	// must take containers in constructor
-	RedactionReq(Array<ID> _selecObj) : selectedObjects(_selecObj)
-	{
-		//presenter->GetRequirements(selectedObjects[0]);
-	}
+	RedactionReq(ID _selecObj);
+	RedactionReq();
 
-	Mode* HandleEvent(const Event, Array<double>&){}
+	Mode* HandleEvent(const Event, Array<double>&);
 
-	bool DrawMode() {}
-	void Cancel() {}
+	bool DrawMode();
 };
-*/
+
 #endif // !__MODE

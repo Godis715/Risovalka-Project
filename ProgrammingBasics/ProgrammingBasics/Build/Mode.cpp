@@ -1,8 +1,6 @@
 #include "Mode.h"
 #include "Presenter.h"
 
-// SEGMENT
-
 Mode* Mode::UnexpectedEvent(const Event e) {
 	switch (e) {
 	case ev_createPoint: {
@@ -17,8 +15,12 @@ Mode* Mode::UnexpectedEvent(const Event e) {
 	case ev_createCircle: {
 		return new CreatingCircle();
 	}
+	default:
+		return new Selection();
 	}
 }
+
+// SEGMENT
 
 CreatingSegment::CreatingSegment() : segmentParameters(4) {
 	state = noClick;
@@ -188,9 +190,13 @@ Mode* CreatingArc::HandleEvent(const Event ev, Array<double>& params) {
 	return this->UnexpectedEvent(ev);
 }
 
-bool CreatingArc::DrawMode() { return true; }
+bool CreatingArc::DrawMode() {
+	return true;
+}
 
-CreatingArc::~CreatingArc() {}
+CreatingArc::~CreatingArc() {
+	arcParameters.Clear();
+}
 
 // SELECTION
 
@@ -203,6 +209,10 @@ Selection::Selection(Array<ID> _selObjects) : Mode(), selectedObject(_selObjects
 
 Selection::Selection() : Mode(), selectedObject(1) {
 	state = single_selection;
+}
+
+Selection::~Selection() {
+	selectedObject.Clear();
 }
 
 void Selection::AddObject(const ID& obj) {
@@ -264,10 +274,34 @@ bool Selection::DrawMode() {
 	return true;
 }
 
-Selection::~Selection() {
-	selectedObject.Clear();
-}
+
+// REDACTION
 
 Redaction::Redaction(Array<ID> _selecObj) : selectedObjects(_selecObj)
 { }
 
+Redaction::~Redaction() {
+	selectedObjects.Clear();
+}
+
+Mode* Redaction::HandleEvent(const Event, Array<double>&) { return nullptr; }
+
+bool Redaction::DrawMode() {
+	return true;
+}
+
+// REDACTION_REQ
+
+RedactionReq::RedactionReq(ID _selecObj) : selectedPrim(_selecObj) {
+	Presenter::GetComponent(selectedPrim, objects, reqs);
+}
+
+RedactionReq::RedactionReq() {}
+
+Mode* RedactionReq::HandleEvent(const Event ev, Array<double>& param) {
+	 
+}
+
+bool RedactionReq::DrawMode() {
+	return true;
+}
