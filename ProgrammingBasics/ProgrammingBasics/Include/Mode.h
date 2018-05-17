@@ -81,9 +81,8 @@ public:
 		state = noClick;
 	}
 	Mode* HandleEvent(const Event ev, Array<double>& params) {
-		switch (ev) {
-		case ev_leftMouseClick: {
-			if (params.GetSize() < 1) {
+		if (ev == ev_leftMouseClick) {
+			if (params.GetSize() != 2) {
 				throw std::exception("Bad number of parameters");
 			}
 			// if it were no clicks
@@ -109,22 +108,13 @@ public:
 
 				ID id;
 				id = presenter->CreateObject(segment_t, segmentParameters);
-				
+
 				Array<ID> selectedObjects(1);
 				selectedObjects[0] = id;
 				return new Selection(selectedObjects, presenter);
+			}
 		}
-		}
-		case ev_escape: {
-
-			//return new Selection();
-			break; 
-		}
-		default: {
-		
-			break;
-		}
-		}
+		return UnexpectedEvent(ev);
 	}
 };
 
@@ -172,15 +162,15 @@ public:
 				return nullptr;
 			}
 			// if it was one click
-			// then create a segment
+			// then create a circle
 			// and turn to single selection mode
-			// with selected segment
+			// with selected circle
 			if (state == oneClick) {
 
 				CircleParameters[2] = params[0];
 				CircleParameters[3] = params[1];
 
-				ID id = presenter->CreateSegment(circle_t, CircleParameters);
+				ID id = presenter->CreateObject(circle_t, CircleParameters);
 
 				Array<ID> selectedObjects(1);
 				selectedObjects[0] = id;
@@ -196,9 +186,9 @@ class CreatingArc : public Mode {
 private:
 	enum State { noClick, oneClick, twoClick};
 	State state;
-	Array<double> CircleParameters;
+	Array<double> arcParameters;
 public:
-	CreatingArc(Presenter* _pres) : Mode(_pres), CircleParameters(7) {
+	CreatingArc(Presenter* _pres) : Mode(_pres), arcParameters(6) {
 		state = noClick;
 	}
 	Mode* HandleEvent(const Event ev, Array<double>& params) {
@@ -206,31 +196,38 @@ public:
 			if (params.GetSize() != 2) {
 				throw std::exception("Bad number of parameters");
 			}
-
+			// if it were no clicks
+			// then create one point and change the state
+			// to one click
 			if (state == noClick) {
 
-				CircleParameters[0] = params[0];
-				CircleParameters[1] = params[1];
+				arcParameters[0] = params[0];
+				arcParameters[1] = params[1];
 
 				state = oneClick;
 				return nullptr;
 			}
-
+			// if it were one clicks
+			// then create one point and change the state
+			// to two click
 			if (state == oneClick) {
 
-				CircleParameters[2] = params[0];
-				CircleParameters[3] = params[1];
+				arcParameters[2] = params[0];
+				arcParameters[3] = params[1];
 
 				state = twoClick;
 				return nullptr;
 			}
-
+			// if it was two click
+			// then create a arc
+			// and turn to single selection mode
+			// with selected arc
 			if (state == twoClick) {
 
-				CircleParameters[4] = params[0];
-				CircleParameters[5] = params[1];
+				arcParameters[4] = params[0];
+				arcParameters[5] = params[1];
 
-				ID id = presenter->CreateObject(circle_t, CircleParameters);
+				ID id = presenter->CreateObject(circle_t, arcParameters);
 
 				Array<ID> selectedObjects(1);
 				selectedObjects[0] = id;
