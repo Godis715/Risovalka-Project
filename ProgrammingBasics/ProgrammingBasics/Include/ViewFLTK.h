@@ -91,7 +91,7 @@ private:
 	//callbacks
 	static void cl_buttonClear(Fl_Widget* o, void*)
 	{
-		Presenter::clearScene();
+		//Presenter::clearScene();
 	}
 	
 	/*static void cl_clickOnScene(Fl_Widget* o, void*)
@@ -279,6 +279,9 @@ public:
 				break;
 			case black:
 				fl_color(FL_BLACK);
+				break;
+			case green:
+				fl_color(FL_GREEN);
 				break;
 		}
 	}

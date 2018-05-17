@@ -102,7 +102,7 @@ double Segment::GetDistance(const Vector2& point) const {
 	dotProduct2 *= -1;
 	double answer = 0;
 	if (dotProduct1 >= 0 && dotProduct2 >= 0) {
-		answer = pointTo1.x * segment.y - pointTo1.y * segment.x;
+		answer = abs(Vector2::Cross(pointTo1, segment));
 		answer /= 2;
 		answer /= segment.GetLength();
 	}

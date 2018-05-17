@@ -51,7 +51,7 @@ public:
 	Mode() {}
 
 	virtual Mode* HandleEvent(const Event, Array<double>&) = 0;
-	virtual bool DrawMode() = 0;
+	virtual void DrawMode() { }
 };
 
 class Selection : public Mode {
@@ -68,7 +68,7 @@ public:
 
 	Mode* HandleEvent(const Event e, Array<double>& params);
 
-	bool DrawMode();
+	void DrawMode();
 };
 
 class CreatingSegment : public Mode {
@@ -85,7 +85,7 @@ public:
 
 	Mode* HandleEvent(const Event, Array<double>&);
 
-	bool DrawMode();
+	void DrawMode();
 };
 
 class CreatingPoint : public Mode {
@@ -93,7 +93,7 @@ public:
 	CreatingPoint() {}
 	Mode* HandleEvent(const Event, Array<double>&);
 
-	bool DrawMode();
+	void DrawMode();
 };
 
 class CreatingCircle : public Mode {
@@ -106,12 +106,12 @@ public:
 	~CreatingCircle();
 
 	Mode* HandleEvent(const Event, Array<double>&);
-	bool DrawMode();
+	void DrawMode();
 };
 
 class CreatingArc : public Mode {
 private:
-	enum State { noClick, oneClick, twoClick};
+	enum State { noClick, oneClick, twoClick };
 	State state;
 	Array<double> arcParameters;
 public:
@@ -119,7 +119,7 @@ public:
 	~CreatingArc();
 	Mode* HandleEvent(const Event, Array<double>&);
 
-	bool DrawMode();
+	void DrawMode();
 };
 
 class Control {
@@ -145,7 +145,7 @@ public:
 
 	Mode* HandleEvent(const Event, Array<double>&);
 
-	bool DrawMode();
+	void DrawMode();
 };
 
 class RedactionReq : public Mode {
@@ -162,7 +162,6 @@ public:
 
 	Mode* HandleEvent(const Event, Array<double>&);
 
-	bool DrawMode();
+	void DrawMode();
 };
-
 #endif // !__MODE

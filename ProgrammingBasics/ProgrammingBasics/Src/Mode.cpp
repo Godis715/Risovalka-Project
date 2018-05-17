@@ -1,6 +1,7 @@
 #include "Mode.h"
 #include "Presenter.h"
 
+
 Mode* Mode::UnexpectedEvent(const Event e) {
 	switch (e) {
 	case ev_createPoint: {
@@ -63,8 +64,8 @@ Mode* CreatingSegment::HandleEvent(const Event ev, Array<double>& params) {
 	return UnexpectedEvent(ev);
 }
 
-bool CreatingSegment::DrawMode() {
-	return true;
+void CreatingSegment::DrawMode() {
+
 }
 
 CreatingSegment::~CreatingSegment() {
@@ -88,8 +89,7 @@ Mode* CreatingPoint::HandleEvent(const Event ev, Array<double>& params) {
 	return UnexpectedEvent(ev);
 }
 
-bool CreatingPoint::DrawMode() {
-	return true;
+void CreatingPoint::DrawMode() {
 }
 
 // CIRCLE
@@ -129,8 +129,8 @@ Mode* CreatingCircle::HandleEvent(const Event ev, Array<double>& params) {
 	return this->UnexpectedEvent(ev);
 }
 
-bool CreatingCircle::DrawMode() {
-	return true;
+void CreatingCircle::DrawMode() {
+
 }
 
 CreatingCircle::~CreatingCircle() {
@@ -189,8 +189,8 @@ Mode* CreatingArc::HandleEvent(const Event ev, Array<double>& params) {
 	return this->UnexpectedEvent(ev);
 }
 
-bool CreatingArc::DrawMode() {
-	return true;
+void CreatingArc::DrawMode() {
+
 }
 
 CreatingArc::~CreatingArc() {
@@ -234,7 +234,7 @@ Mode* Selection::HandleEvent(const Event e, Array<double>& params) {
 		if (isFound) {
 			if (state == single_selection) {
 				selectedObject.Clear();
-				selectedObject[0] = obj;
+				selectedObject.PushBack(obj);
 				return nullptr;
 			}
 
@@ -269,10 +269,41 @@ Mode* Selection::HandleEvent(const Event e, Array<double>& params) {
 	return UnexpectedEvent(e);
 }
 
-bool Selection::DrawMode() {
-	return true;
-}
+void Selection::DrawMode()
+{
+	for (int i = 0; i < selectedObject.GetSize(); i++)
+	{
+		Array<double> params;
+		object_type type;
 
+		Presenter::GetObjParam(selectedObject[i], params);
+		Presenter::GetObjType(selectedObject[i], type);
+
+		switch (type)
+		{
+		case point_t:
+			Presenter::GetView()->SetColor(green);
+			Presenter::GetView()->DrawPoint(Vector2(params[0], params[1]));
+			break;
+		case segment_t:
+			Presenter::GetView()->SetColor(green);
+			Presenter::GetView()->DrawLine(Vector2(params[0], params[1]),
+				Vector2(params[2], params[3]), line);
+			break;
+		case arc_t:
+			Presenter::GetView()->SetColor(green);
+			Presenter::GetView()->DrawArc(Vector2(params[0], params[1]),
+				Vector2(params[2], params[3]),
+				Vector2(params[4], params[5]), line);
+			break;
+		case circle_t:
+			Presenter::GetView()->SetColor(green);
+			Presenter::GetView()->DrawCircle(Vector2(params[0], params[1]),
+				Vector2(params[0] + params[2], params[1]), line);
+			break;
+		}
+	}
+}
 
 // REDACTION
 
@@ -285,8 +316,8 @@ Redaction::~Redaction() {
 
 Mode* Redaction::HandleEvent(const Event, Array<double>&) { return nullptr; }
 
-bool Redaction::DrawMode() {
-	return true;
+void Redaction::DrawMode() {
+
 }
 
 // REDACTION_REQ
@@ -307,6 +338,6 @@ Mode* RedactionReq::HandleEvent(const Event ev, Array<double>& param) {
 	return nullptr;
 }
 
-bool RedactionReq::DrawMode() {
-	return true;
+void RedactionReq::DrawMode() {
+
 }

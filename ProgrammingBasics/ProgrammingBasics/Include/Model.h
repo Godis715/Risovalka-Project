@@ -93,11 +93,12 @@ public:
 	bool CreateObject(object_type, const Array<double>&, ID&);
 	
 	bool CreateRequirementByID(object_type, const Array<ID>&, const Array<double>&, ID&);
+
 	void CreateLink(const ID&, const Array<Primitive*>&);
 
 	bool DeletePrimitive(const ID&);
-	bool DeleteRequirement(const ID&);
 
+	bool DeleteRequirement(const ID&);
 
 	bool GetObject(double, double, Array<ID>&, Array<object_type>&, Array<double>&);
 

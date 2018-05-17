@@ -2,10 +2,12 @@
 #define POLY_SELECTION
 
 #ifndef __PRESENTER
+#define __PRESENTER
 
 #include "IView.h"
 #include "Model.h"
 #include "Mode.h"
+
 
 class Presenter {
 private:
@@ -13,9 +15,16 @@ private:
 	static Model* model;
 	static IView* view;
 public:
+	static IView* GetView();
 	static void drawScene();
 
+	//static void DrawObject(const ID&, color);
+
 	//static void DrawSelected(const Array<ID>&){}
+
+	static bool GetObjType(const ID&, object_type&);
+
+	static bool GetObjParam(const ID&, Array<double>&);
 
 	static void Initializer(IView* _view);
 	
@@ -46,15 +55,8 @@ public:
 
 	//function for viewFLTK
 	static void Set_event(Event, Array<double>&);
-	
-	static statusCreate status;
-	static Array<Vector2> posClicks;
-	static Array<double> params;
-
-	static void changeStatusCreate(const statusCreate newStatus);
-
-	static void clearScene();
-
-	static void clickOnScene(double x, double y);
 };
+
+
+
 #endif

@@ -5,9 +5,11 @@ Model* Presenter::model(nullptr);
 Mode* Presenter::mode(nullptr);
 IView* Presenter::view(nullptr);
 //temp
-statusCreate Presenter::status(drawCircle);
-Array<Vector2> Presenter::posClicks(3);
-Array<double> Presenter::params(6);
+
+IView* Presenter::GetView()
+{
+	return view;
+}
 
 void Presenter::Initializer(IView* _view)
 {
@@ -148,109 +150,7 @@ void Presenter::drawScene()
 			}
 		}
 	}
-	//mode->DrawMode();
-}
-
-
-void  Presenter::clearScene()
-{
-	//view->Clear();
-	posClicks.Clear();
-}
-
-void  Presenter::clickOnScene(double x, double y)
-{
-	view->SetColor(red);
-	view->DrawPoint(Vector2(x, y));
-	switch (status)
-	{
-	case drawPoint:
-		params.PushBack(x);
-		params.PushBack(y);
-		CreateObject(point_t, params);
-		params.Clear();
-		break;
-	case drawSegment:
-		params.PushBack(x);
-		params.PushBack(y);
-		switch (posClicks.GetSize())
-		{
-		case 0:
-			posClicks.PushBack(Vector2(x, y));
-			break;
-		case 1:
-			CreateObject(segment_t, params);
-			params.Clear();
-
-			view->SetColor(white);
-			view->DrawLine(posClicks[0], Vector2(x, y), line);
-			posClicks.Clear();
-			break;
-		}
-		break;
-	case drawArc:
-		switch (posClicks.GetSize())
-		{
-		case 0:
-			posClicks.PushBack(Vector2(x, y));
-			break;
-		case 1:
-			posClicks.PushBack(Vector2(x, y));
-
-			//..
-			view->SetColor(white);
-			view->DrawCircle(posClicks[0], posClicks[1], points);
-			//..
-			break;
-		case 2:
-			params.PushBack(posClicks[1].x);
-			params.PushBack(posClicks[1].y);
-			params.PushBack(x);
-			params.PushBack(y);
-			params.PushBack(Vector2::Angle(posClicks[1] - posClicks[0], Vector2(x, y) - posClicks[0]));
-			CreateObject(arc_t, params);
-			params.Clear();
-
-			//..
-			view->SetColor(black);
-			view->DrawCircle(posClicks[0], posClicks[1], points);
-			//..
-
-			view->SetColor(white);
-			view->DrawArc(posClicks[0], posClicks[1], Vector2(x, y), line);
-
-			view->SetColor(black);
-			view->DrawPoint(posClicks[0]);
-			posClicks.Clear();
-			break;
-		}
-		break;
-	case drawCircle:
-		switch (posClicks.GetSize())
-		{
-		case 0:
-			posClicks.PushBack(Vector2(x, y));
-			break;
-		case 1:
-			params.PushBack(posClicks[0].x);
-			params.PushBack(posClicks[0].y);
-			params.PushBack((Vector2(x, y) - posClicks[0]).GetLength());
-			CreateObject(circle_t, params);
-			params.Clear();
-
-			view->SetColor(black);
-			view->DrawPoint(Vector2(x, y));
-
-			//..
-			view->SetColor(white);
-			view->DrawCircle(posClicks[0], Vector2(x, y), line);
-
-			posClicks.Clear();
-			//..
-			break;
-		}
-		break;
-	}
+	mode->DrawMode();
 }
 
 void Presenter::Set_event(Event _ev, Array<double>& _params)
@@ -263,3 +163,14 @@ void Presenter::Set_event(Event _ev, Array<double>& _params)
 	}
 	view->Update();
 }
+
+bool Presenter::GetObjType(const ID& id, object_type& type)
+{
+	return model->GetObjType(id, type);
+}
+
+bool Presenter::GetObjParam(const ID& id, Array<double>& params)
+{
+	return model->GetObjParam(id, params);
+}
+

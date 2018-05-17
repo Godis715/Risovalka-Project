@@ -27,7 +27,7 @@ double Vector2::Dot(const Vector2& vec1, const Vector2& vec2) {
 }
 
 double Vector2::Cross(const Vector2& vec1, const Vector2& vec2) {
-	return (vec1.x * vec2.y - vec1.y * vec1.x);
+	return (vec1.x * vec2.y - vec1.y * vec2.x);
 }
 
 double Vector2::Angle(const Vector2& vec1, const Vector2& vec2) {
