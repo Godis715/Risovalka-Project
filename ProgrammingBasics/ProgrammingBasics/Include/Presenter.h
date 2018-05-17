@@ -5,7 +5,7 @@
 #define SINGLE_SELECTION
 #define POLY_SELECTION
 enum statusCreate { drawPoint, drawSegment, drawArc, drawCircle };
-/*
+
 enum Event {
 	ev_createPoint = 1,
 	ev_createSegment,
@@ -23,10 +23,20 @@ enum Event {
 	// 11
 	ev_leftMouseClick,
 	ev_rightMouseClick,
+
+	// new events
+	ev_leftMouseDown,
+	ev_rightMouseDown,
+	ev_leftMouseUp,
+	ev_rightMouseUp,
+	ev_moveMouse,
+	ev_escape,
+	//end new events
+
 	ev_save
 	// 14
 };
-
+/*
 class Mode {
 protected:
 	Presenter* presenter;
@@ -151,6 +161,10 @@ private:
 
 
 public:
+	void set_event(Event ev, Array<double>& params)
+	{
+		//...
+	}
 	void drawScene()
 	{
 		Array<Model::infoObject> scene;

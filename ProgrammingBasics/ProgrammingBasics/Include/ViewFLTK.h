@@ -31,6 +31,7 @@ private:
 			redraw();
 			ViewFLTK::presenter->drawScene();
 		}
+		int count = 0;
 	public:
 		SecondWindow(int x, int y, int w, int h, const char *l)
 			: Fl_Double_Window(x, y, w, h, l)
@@ -42,20 +43,37 @@ private:
 		~SecondWindow() {}
 		int handle(int e)
 		{
-			int ret = Fl_Double_Window::handle(e);
+			//int ret;
+			Array<double> params;
 			
 			switch (e)
 			{
 			case FL_PUSH:
 			{
-				//std::cout << "FL_PUSH!" << std::endl;
+				count++;
+				std::cout << "FL_PUSH!" << std::endl;
 				//std::cout << Fl::event_x() << " ";
-				this->do_callback();
+
+				//for status
+				params.PushBack(Fl::event_x());
+				params.PushBack(Fl::event_y());
+				ViewFLTK::presenter->set_event(ev_leftMouseDown, params);
+				//...
+				//this->do_callback();
 
 				break;
 			}
+			case FL_SINGLE:
+				std::cout << "FL_SINGLE!" << std::endl;
+				break;
 			case FL_RELEASE:
-				//std::cout << "FL_RELEASE!" << std::endl;
+				//for status
+				params.PushBack(Fl::event_x());
+				params.PushBack(Fl::event_y());
+				ViewFLTK::presenter->set_event(ev_leftMouseUp, params);
+				//...
+
+				std::cout << "FL_RELEASE!" << std::endl;
 				//std::cout << Fl::event_x() << " " << std::endl;
 				break;
 
@@ -69,9 +87,25 @@ private:
 				//fl_color(FL_BLACK); fl_rectf(0, 0, w(), h());
 				break;
 
+			case FL_MOVE:
+				//for status
+				params.PushBack(Fl::event_x());
+				params.PushBack(Fl::event_y());
+				ViewFLTK::presenter->set_event(ev_moveMouse, params);
+				//...
+
+				std::cout << "FL_MOVE!" << std::endl;
+				break;
 			case FL_DRAG:
+				//for status
+				params.PushBack(Fl::event_x());
+				params.PushBack(Fl::event_y());
+				ViewFLTK::presenter->set_event(ev_moveMouse, params);
+				//...
+
 				std::cout << "FL_DRAG!" << std::endl;
 				break;
+			/*
 
 			case FL_FOCUS:
 				std::cout << "FL_FOCUS!" << std::endl;
@@ -84,11 +118,6 @@ private:
 				break;
 
 			case FL_CLOSE:
-				break;
-
-			case FL_MOVE:
-				//std::cout << "FL_MOVE!" << std::endl;
-
 				break;
 
 			case FL_DEACTIVATE:
@@ -116,10 +145,10 @@ private:
 
 			case  FL_NO_EVENT:
 				std::cout << "FL_NO_EVENT!" << std::endl;
-				break;
+				break;*/
 			}
 			
-			return(ret);
+			return e;
 		}
 	};
 
@@ -137,20 +166,25 @@ private:
 
 	static void cl_changeStatusCreate(Fl_Widget* o, void*)
 	{
+		Array<double> params(0);
 		if (((Fl_Round_Button*)o)->label() == "Create point")
 		{
+			presenter->set_event(ev_createPoint, params);
 			presenter->changeStatusCreate(drawPoint);
 		}
 		if (((Fl_Round_Button*)o)->label() == "Create segment")
 		{
+			presenter->set_event(ev_createSegment, params);
 			presenter->changeStatusCreate(drawSegment);
 		}
 		if (((Fl_Round_Button*)o)->label() == "Create arc")
 		{
+			presenter->set_event(ev_createArc, params);
 			presenter->changeStatusCreate(drawArc);
 		}
 		if (((Fl_Round_Button*)o)->label() == "Create circle")
 		{
+			presenter->set_event(ev_createCircle, params);
 			presenter->changeStatusCreate(drawCircle);
 		}
 	}
