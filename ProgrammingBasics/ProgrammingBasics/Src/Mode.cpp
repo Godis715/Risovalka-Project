@@ -179,7 +179,7 @@ Mode* CreatingArc::HandleEvent(const Event ev, Array<double>& params) {
 			arcParameters[4] = params[0];
 			arcParameters[5] = params[1];
 
-			ID id = Presenter::CreateObject(circle_t, arcParameters);
+			ID id = Presenter::CreateObject(arc_t, arcParameters);
 
 			Array<ID> selectedObjects(1);
 			selectedObjects[0] = id;

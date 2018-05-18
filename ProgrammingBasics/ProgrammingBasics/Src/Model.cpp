@@ -162,9 +162,15 @@ bool Model::CreateObject(const object_type type, const Array<double>& params, ID
 		return true;
 	}
 	case arc_t: {
-		if (params.GetSize() != 5) {
+		if (params.GetSize() != 6) {
 			return false;
 		}
+
+		Vector2 point1(params[0], params[1]);
+		Vector2 point2(params[2], params[3]);
+
+		double angle = Vector2::Dot(point1, point2);
+
 		Point* p1 = new Point(params[0], params[1]);
 		Point* p2 = new Point(params[2], params[3]);
 

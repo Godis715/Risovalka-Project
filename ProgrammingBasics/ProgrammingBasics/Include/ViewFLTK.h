@@ -221,6 +221,17 @@ public:
 		}
 	}
 
+	void _DrawArc(const Vector2& center, double R, double angleStart, double angleEnd) {
+		if (angleStart < angleEnd) {
+			fl_arc(center.x, center.y, R, angleStart, angleEnd);
+			return;
+		}
+		else {
+			fl_arc(center.x, center.y, R, angleStart, 360.0);
+			fl_arc(center.x, center.y, R, 0.0, angleEnd);
+		}
+	}
+
 	void DrawArc(const Vector2& center, const Vector2& start, const Vector2& end, typeDrawing type)
 	{
 
@@ -244,17 +255,17 @@ public:
 		{
 		case points:
 			fl_begin_points();
-			fl_arc(center.x, center.y, r, angleStart, angleEnd);
+			_DrawArc(center, r, angleStart, angleEnd);
 			fl_end_points();
 			break;
 		case line:
 			fl_begin_line();
-			fl_arc(center.x, center.y, r, angleStart, angleEnd);
+			_DrawArc(center, r, angleStart, angleEnd);
 			fl_end_line();
 			break;
 		case polygon:
 			fl_begin_polygon();
-			fl_arc(center.x, center.y, r, angleStart, angleEnd);
+			_DrawArc(center, r, angleStart, angleEnd);
 			fl_end_polygon();
 			break;
 		}
