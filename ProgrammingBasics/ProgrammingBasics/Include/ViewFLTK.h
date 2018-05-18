@@ -1,5 +1,6 @@
 #ifndef __VIEW_FLTK
 #define __VIEW_FLTK
+#define text_type 102
 #include <iostream>
 #include "IView.h"
 #include "Presenter.h"
@@ -27,7 +28,8 @@ private:
 	{
 		void draw()
 		{
-			redraw();
+			fl_color(FL_BLACK);
+			fl_rectf(0, 0, w(), h());
 			Presenter::drawScene();
 		}
 		Event lastEvent = ev_ctrlUp;
@@ -100,7 +102,9 @@ private:
 	//callbacks
 	static void cl_buttonClear(Fl_Widget* o, void*)
 	{
-		//Presenter::clearScene();
+		// Presenter::clearScene();
+		((Fl_Round_Button*)o)->deactivate();
+		((Fl_Round_Button*)o)->activate();
 	}
 	
 	/*static void cl_clickOnScene(Fl_Widget* o, void*)
@@ -138,7 +142,6 @@ private:
 public:
 	ViewFLTK()
 	{
-		
 		Presenter::Initializer(this);
 
 		mainWindow = new Fl_Window(820, 420, "Main Window");
@@ -150,30 +153,30 @@ public:
 		buttonClear = new Fl_Button(420, 10, 100, 30, "Clear scene");
 		buttonClear->callback(cl_buttonClear);
 
-		//buttonOk = new Fl_Button(640, 180, 50, 30, "Ok");
+		// buttonOk = new Fl_Button(640, 180, 50, 30, "Ok");
 		{Fl_Group* StatusCreate = new Fl_Group(540, 30, 140, 170, "Status Create");
 		StatusCreate->box(FL_THIN_UP_FRAME);
 		{status1 = new Fl_Round_Button(StatusCreate->x(), StatusCreate->y() + 10, 100, 30, "Create point");
-		status1->tooltip("Info.");
-		status1->type(102);
+		status1->tooltip("1 click");
+		status1->type(text_type);
 		status1->down_box(FL_ROUND_DOWN_BOX);
 		status1->callback(cl_changeStatusCreate);
-		} 
+		}
 		{status2 = new Fl_Round_Button(StatusCreate->x(), StatusCreate->y() + 50, 100, 30, "Create segment");
-		status2->tooltip("Info.");
-		status2->type(102);
+		status2->tooltip("2 click");
+		status2->type(text_type);
 		status2->down_box(FL_ROUND_DOWN_BOX);
 		status2->callback(cl_changeStatusCreate);
-		} 
+		}
 		{status3 = new Fl_Round_Button(StatusCreate->x(), StatusCreate->y() + 90, 100, 30, "Create arc");
-		status3->tooltip("Info.");
-		status3->type(102);
+		status3->tooltip("3 click");
+		status3->type(text_type);
 		status3->down_box(FL_ROUND_DOWN_BOX);
 		status3->callback(cl_changeStatusCreate);
 		}
 		{status4 = new Fl_Round_Button(StatusCreate->x(), StatusCreate->y() + 130, 100, 30, "Create circle");
-		status4->tooltip("Info.");
-		status4->type(102);
+		status4->tooltip("2 click");
+		status4->type(text_type);
 		status4->down_box(FL_ROUND_DOWN_BOX);
 		status4->callback(cl_changeStatusCreate);
 		}
