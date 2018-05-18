@@ -206,7 +206,7 @@ Circle::Circle(Point* _center,  double _radius) :
 
 // write this function
 double Circle::GetDistance(const Vector2& _point) const {
-	return 0.0;
+	return abs(radius - (_point - Vector2(center->position.x, center->position.y)).GetLength());
 }
 
 Vector2 Circle::GetCenter() const {
