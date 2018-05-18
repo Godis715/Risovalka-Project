@@ -31,7 +31,7 @@ double Vector2::Cross(const Vector2& vec1, const Vector2& vec2) {
 }
 
 double Vector2::Angle(const Vector2& vec1, const Vector2& vec2) {
-	double Cos = Vector2::Dot(vec1, vec2) / (vec1.GetLength() * vec2.GetLength());
+	/*double Cos = Vector2::Dot(vec1, vec2) / (vec1.GetLength() * vec2.GetLength());
 	double Sin = Vector2::Cross(vec1, vec2) / (vec1.GetLength() * vec2.GetLength());
 	if (Sin >= 0) {
 		return acos(Cos);
@@ -41,7 +41,15 @@ double Vector2::Angle(const Vector2& vec1, const Vector2& vec2) {
 	}
 	double PI = 3.141592653589793;
 	double angle = acos(Cos);
-	return angle - 2 * (angle - PI);
+	return angle - 2 * (angle - PI);*/
+	double PI = 3.141592653589793;
+	double angle = acos(Vector2::Dot(vec1, vec2) / (vec1.GetLength() * vec2.GetLength()));
+	if (Vector2::Cross(vec1, vec2) >= 0) {
+		return angle;
+	}
+	else {
+		return PI * 2 - angle;
+	}
 }
 
 Vector2 Vector2::operator*(const double val) const {
