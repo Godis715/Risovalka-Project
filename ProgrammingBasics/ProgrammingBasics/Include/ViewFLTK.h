@@ -30,7 +30,7 @@ private:
 			redraw();
 			Presenter::drawScene();
 		}
-		int a = 0;
+		Event lastEvent = ev_ctrlUp;
 	public:
 		SecondWindow(int x, int y, int w, int h, const char *l)
 			: Fl_Double_Window(x, y, w, h, l)
@@ -42,16 +42,12 @@ private:
 		~SecondWindow() {}
 		int handle(int e)
 		{
+			//std::cout << Fl::event_text() << std::endl;
 			Array<double> params;
 			switch (e)
 			{
 			case FL_PUSH:
 			{
-				a++;
-				if (a == 3)
-				{
-					a = 0;
-				}
 				params.PushBack(Fl::event_x());
 				params.PushBack(Fl::event_y());
 				Presenter::Set_event(ev_leftMouseDown, params);
@@ -72,7 +68,20 @@ private:
 				//std::cout << "Leave!";
 				//fl_color(FL_BLACK); fl_rectf(0, 0, w(), h());
 				break;
-
+			case FL_KEYDOWN:
+				if (Fl::event_key() == FL_Control_L && lastEvent != ev_ctrlDown)
+				{
+					Presenter::Set_event(ev_ctrlDown, params);
+					lastEvent = ev_ctrlDown;
+				}
+				break;
+			case FL_KEYUP:
+				if (Fl::event_key() == FL_Control_L)
+				{
+					Presenter::Set_event(ev_ctrlUp, params);
+					lastEvent = ev_ctrlUp;
+				}
+				break;
 			case FL_MOVE:
 				params.PushBack(Fl::event_x());
 				params.PushBack(Fl::event_y());
@@ -117,6 +126,9 @@ private:
 		{
 			Presenter::Set_event(ev_createCircle, params);
 		}
+		((Fl_Round_Button*)o)->deactivate();
+		((Fl_Round_Button*)o)->activate();
+		((Fl_Round_Button*)o)->clear();
 	}
 	//..
 

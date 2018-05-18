@@ -16,6 +16,10 @@ Mode* Mode::UnexpectedEvent(const Event e) {
 	case ev_createCircle: {
 		return new CreatingCircle();
 	}
+	case ev_ctrlDown:
+		return nullptr;
+	case ev_ctrlUp:
+		return nullptr;
 	default:
 		return new Selection();
 	}
