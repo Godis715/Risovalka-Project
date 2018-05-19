@@ -16,6 +16,8 @@ Mode* Mode::UnexpectedEvent(const Event e) {
 	case ev_createCircle: {
 		return new CreatingCircle();
 	}
+	case ev_mouseMove:
+		return nullptr;
 	case ev_ctrlDown:
 		return nullptr;
 	case ev_ctrlUp:
@@ -45,6 +47,9 @@ Mode* CreatingSegment::HandleEvent(const Event ev, Array<double>& params) {
 			segmentParameters[1] = params[1];
 
 			state = oneClick;
+			//for draw mode
+			infoMode.x = params[0];
+			infoMode.y = params[1];
 			return nullptr;
 		}
 
@@ -65,11 +70,33 @@ Mode* CreatingSegment::HandleEvent(const Event ev, Array<double>& params) {
 			return new Selection(selectedObjects);
 		}
 	}
+	if (ev == ev_mouseMove)
+	{
+		if (params.GetSize() != 2) {
+			throw std::exception("Bad number of parameters");
+		}
+
+		if (state == noClick) {
+			return nullptr;
+		}
+
+		if (state == oneClick) {
+			infoMode.x = params[0];
+			infoMode.y = params[1];
+			return nullptr;
+		}
+	}
 	return UnexpectedEvent(ev);
 }
 
 void CreatingSegment::DrawMode() {
-
+	if (state == oneClick)
+	{
+		Presenter::GetView()->SetColor(red);
+		Presenter::GetView()->DrawPoint(Vector2(segmentParameters[0], segmentParameters[1]));
+		Presenter::GetView()->SetColor(yellow);
+		Presenter::GetView()->DrawLine(Vector2(segmentParameters[0], segmentParameters[1]), infoMode, points);
+	}
 }
 
 CreatingSegment::~CreatingSegment() {
@@ -115,6 +142,9 @@ Mode* CreatingCircle::HandleEvent(const Event ev, Array<double>& params) {
 			CircleParameters[1] = params[1];
 
 			state = oneClick;
+			//for draw mode
+			infoMode.x = params[0];
+			infoMode.y = params[1];
 			return nullptr;
 		}
 		// if it was one click
@@ -130,11 +160,32 @@ Mode* CreatingCircle::HandleEvent(const Event ev, Array<double>& params) {
 			return new Selection(selectedObjects);
 		}
 	}
+	if (ev == ev_mouseMove)
+	{
+		if (params.GetSize() != 2) {
+			throw std::exception("Bad number of parameters");
+		}
+		if (state == noClick) {
+			return nullptr;
+		}
+
+		if (state == oneClick) {
+			infoMode.x = params[0];
+			infoMode.y = params[1];
+			return nullptr;
+		}
+	}
 	return this->UnexpectedEvent(ev);
 }
 
 void CreatingCircle::DrawMode() {
-
+	if (state == oneClick)
+	{
+		Presenter::GetView()->SetColor(red);
+		Presenter::GetView()->DrawPoint(Vector2(CircleParameters[0], CircleParameters[1]));
+		Presenter::GetView()->SetColor(yellow);
+		Presenter::GetView()->DrawCircle(Vector2(CircleParameters[0], CircleParameters[1]), infoMode, points);
+	}
 }
 
 CreatingCircle::~CreatingCircle() {
@@ -161,6 +212,9 @@ Mode* CreatingArc::HandleEvent(const Event ev, Array<double>& params) {
 			arcParameters[1] = params[1];
 
 			state = oneClick;
+			//for draw mode
+			infoMode.x = params[0];
+			infoMode.y = params[1];
 			return nullptr;
 		}
 		// if it were one clicks
@@ -190,10 +244,47 @@ Mode* CreatingArc::HandleEvent(const Event ev, Array<double>& params) {
 			return new Selection(selectedObjects);
 		}
 	}
+	if (ev == ev_mouseMove)
+	{
+		if (params.GetSize() != 2) {
+			throw std::exception("Bad number of parameters");
+		}
+		if (state == noClick) {
+			return nullptr;
+		}
+
+		if (state == oneClick || state == twoClick) {
+			infoMode.x = params[0];
+			infoMode.y = params[1];
+			return nullptr;
+		}
+	}
 	return this->UnexpectedEvent(ev);
 }
 
 void CreatingArc::DrawMode() {
+	if (state == oneClick)
+	{
+		Presenter::GetView()->SetColor(red);
+		Presenter::GetView()->DrawPoint(Vector2(arcParameters[0], arcParameters[1]));
+
+		Presenter::GetView()->SetColor(yellow);
+		Presenter::GetView()->DrawCircle(Vector2(arcParameters[0], arcParameters[1]), infoMode, points);
+	}
+	if (state == twoClick)
+	{
+		Presenter::GetView()->SetColor(red);
+		Presenter::GetView()->DrawPoint(Vector2(arcParameters[0], arcParameters[1]));
+
+		Presenter::GetView()->SetColor(yellow);
+		Presenter::GetView()->DrawCircle(Vector2(arcParameters[0], arcParameters[1]), Vector2(arcParameters[2], arcParameters[3]), points);
+		
+		Presenter::GetView()->SetColor(red);
+		Presenter::GetView()->DrawPoint(Vector2(arcParameters[2], arcParameters[3]));
+		
+		Presenter::GetView()->SetColor(yellow);
+		Presenter::GetView()->DrawArc(Vector2(arcParameters[0], arcParameters[1]), Vector2(arcParameters[2], arcParameters[3]), infoMode, line);
+	}
 
 }
 

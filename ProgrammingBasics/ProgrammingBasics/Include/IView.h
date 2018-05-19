@@ -2,7 +2,7 @@
 #define __IVIEW
 #include "Vector2.h"
 
-enum color { white, red, black, green};
+enum color { white, red, black, green, yellow};
 enum typeDrawing{points, line, polygon};
 enum statusCreate { drawPoint, drawSegment, drawArc, drawCircle };
 

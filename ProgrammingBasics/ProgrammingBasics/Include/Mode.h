@@ -79,6 +79,7 @@ private:
 	};
 	State state;
 	Array<double> segmentParameters;
+	Vector2 infoMode;
 public:
 	CreatingSegment();
 	~CreatingSegment();
@@ -101,6 +102,7 @@ private:
 	enum State { noClick, oneClick };
 	State state;
 	Array<double> CircleParameters;
+	Vector2 infoMode;
 public:
 	CreatingCircle();
 	~CreatingCircle();
@@ -114,6 +116,7 @@ private:
 	enum State { noClick, oneClick, twoClick };
 	State state;
 	Array<double> arcParameters;
+	Vector2 infoMode;
 public:
 	CreatingArc();
 	~CreatingArc();

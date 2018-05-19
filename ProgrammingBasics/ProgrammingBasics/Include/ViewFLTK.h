@@ -20,7 +20,6 @@
 class ViewFLTK : public IView
 {
 private:
-
 	Fl_Round_Button* createPoint_But;
 	Fl_Round_Button* createSegment_But;
 	Fl_Round_Button* createArc_But;
@@ -48,7 +47,6 @@ private:
 		~SecondWindow() {}
 		int handle(int e)
 		{
-			//std::cout << Fl::event_text() << std::endl;
 			Array<double> params;
 			switch (e)
 			{
@@ -91,7 +89,7 @@ private:
 			case FL_MOVE:
 				params.PushBack(Fl::event_x());
 				params.PushBack(Fl::event_y());
-				//Presenter::Set_event(ev_mouseMove, params);
+				Presenter::Set_event(ev_mouseMove, params);
 				break;
 			case FL_DRAG:
 				params.PushBack(Fl::event_x());
@@ -104,10 +102,6 @@ private:
 	};
 
 	//callbacks
-	/*static void cl_clickOnScene(Fl_Widget* o, void*)
-	{
-		Presenter::clickOnScene(Fl::event_x(), Fl::event_y());
-	}*/
 	static void cl_ChangeStatusCreate(Fl_Widget* o, void*)
 	{
 		Array<double> params(0);
@@ -159,7 +153,7 @@ public:
 		drawWindow->end();
 
 		{
-			Fl_Tabs* modes = new Fl_Tabs(420, 10, 250, 190);
+			Fl_Tabs* modes = new Fl_Tabs(420, 10, 200, 190);
 			{
 				modes->box(FL_THIN_UP_FRAME);
 				modes->color(FL_WHITE);
@@ -228,10 +222,7 @@ public:
 	}
 	~ViewFLTK(){}
 
-	int Run()
-	{
-		return Fl::run();
-	}
+	int Run(){return Fl::run();}
 
 	void DrawLine(const Vector2& start, const Vector2& end, typeDrawing type)
 	{
@@ -345,6 +336,9 @@ public:
 				break;
 			case green:
 				fl_color(FL_GREEN);
+				break;
+			case yellow:
+				fl_color(FL_YELLOW);
 				break;
 		}
 	}
