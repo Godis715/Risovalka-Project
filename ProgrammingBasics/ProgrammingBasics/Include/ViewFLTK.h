@@ -277,16 +277,22 @@ public:
 
 	void DrawArc(const Vector2& center, const Vector2& start, const Vector2& end, typeDrawing type)
 	{
-
+		system("cls");
+		std::cout << "Center "<< center.x << " " << center.y << std::endl;
+		std::cout << "start "<< start.x << " " << start.y << std::endl;
+		std::cout << "end "<< end.x << " " << end.y << std::endl;
 		double r = (center - start).GetLength();
+		std::cout << "rad " << r << std::endl;
 		double angleStart = acos((start.x - center.x) / r) * (180 / PI);
+		std::cout << "angleStart " << angleStart << std::endl;
 		if (center.y - start.y < 0) {
 			angleStart = 360.0 - angleStart;
 		}
 
 		double r2 = (center - end).GetLength();
 		double angleEnd = acos((end.x - center.x) / r2) * (180 / PI);
-
+		std::cout << "angleEnd " << angleEnd << std::endl;
+		std::cout << "angle1 " << angleEnd - angleStart << std::endl;
 		//std::cout << Vector2::Angle(start - center, end - center);
 		//std::cout << std::endl;
 		//std::cout << acos((end.x - center.x) / r2) - acos((start.x - center.x) / r);

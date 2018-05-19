@@ -285,7 +285,6 @@ void CreatingArc::DrawMode() {
 		Presenter::GetView()->SetColor(yellow);
 		Presenter::GetView()->DrawArc(Vector2(arcParameters[0], arcParameters[1]), Vector2(arcParameters[2], arcParameters[3]), infoMode, line);
 	}
-
 }
 
 CreatingArc::~CreatingArc() {
@@ -339,7 +338,10 @@ Mode* Selection::HandleEvent(const Event e, Array<double>& params) {
 			}
 		}
 		else {
-			selectedObject.Clear();
+			if (state != poly_selection)
+			{
+				selectedObject.Clear();
+			}
 			return nullptr;
 		}
 	}
