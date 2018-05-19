@@ -19,18 +19,20 @@ class ViewFLTK : public IView
 {
 private:
 
-	Fl_Round_Button* status1;
-	Fl_Round_Button* status2;
-	Fl_Round_Button* status3;
-	Fl_Round_Button* status4;
-	static int test;
+	Fl_Round_Button* createPoint_But;
+	Fl_Round_Button* createSegment_But;
+	Fl_Round_Button* createArc_But;
+	Fl_Round_Button* createCircle_But;
+
+	Fl_Button* deleteBut;
+	Fl_Button* buttonClear;
 	class SecondWindow : public Fl_Double_Window
 	{
 		void draw()
 		{
 			fl_color(FL_BLACK);
 			fl_rectf(0, 0, w(), h());
-			Presenter::drawScene();
+			Presenter::DrawScene();
 		}
 		Event lastEvent = ev_ctrlUp;
 	public:
@@ -100,13 +102,6 @@ private:
 	};
 
 	//callbacks
-	static void cl_buttonClear(Fl_Widget* o, void*)
-	{
-		// Presenter::clearScene();
-		((Fl_Round_Button*)o)->deactivate();
-		((Fl_Round_Button*)o)->activate();
-	}
-	
 	/*static void cl_clickOnScene(Fl_Widget* o, void*)
 	{
 		Presenter::clickOnScene(Fl::event_x(), Fl::event_y());
@@ -134,11 +129,27 @@ private:
 		((Fl_Round_Button*)o)->activate();
 		((Fl_Round_Button*)o)->clear();
 	}
+
+	static void CL_Redaction(Fl_Widget* o, void*)
+	{
+		Array<double> params(0);
+		if (((Fl_Button*)o)->label() == "delete")
+		{
+			Presenter::Set_event(ev_del, params);
+		}
+		if (((Fl_Button*)o)->label() == "Clear scene")
+		{
+			Presenter::CleareScene();
+		}
+	
+		((Fl_Button*)o)->deactivate();
+		((Fl_Button*)o)->activate();
+		((Fl_Button*)o)->clear();
+	}
 	//..
 
 	Fl_Window* mainWindow;
 	SecondWindow* drawWindow;
-	Fl_Button* buttonClear;
 public:
 	ViewFLTK()
 	{
@@ -150,37 +161,60 @@ public:
 		drawWindow = new SecondWindow(10, 10, 400, 400, "Draw Window");
 		drawWindow->end();
 
-		buttonClear = new Fl_Button(420, 10, 100, 30, "Clear scene");
-		buttonClear->callback(cl_buttonClear);
+
 
 		// buttonOk = new Fl_Button(640, 180, 50, 30, "Ok");
-		{Fl_Group* StatusCreate = new Fl_Group(540, 30, 140, 170, "Status Create");
-		StatusCreate->box(FL_THIN_UP_FRAME);
-		{status1 = new Fl_Round_Button(StatusCreate->x(), StatusCreate->y() + 10, 100, 30, "Create point");
-		status1->tooltip("1 click");
-		status1->type(text_type);
-		status1->down_box(FL_ROUND_DOWN_BOX);
-		status1->callback(cl_changeStatusCreate);
+		{
+			Fl_Group* StatusCreate = new Fl_Group(420, 30, 140, 170, "Status Create");
+			StatusCreate->box(FL_THIN_UP_FRAME);
+			{
+				createPoint_But = new Fl_Round_Button(StatusCreate->x(), StatusCreate->y() + 10, 100, 30, "Create point");
+				createPoint_But->tooltip("1 click");
+				createPoint_But->type(text_type);
+				createPoint_But->down_box(FL_ROUND_DOWN_BOX);
+				createPoint_But->callback(cl_changeStatusCreate);
+			}
+			{
+				createSegment_But = new Fl_Round_Button(StatusCreate->x(), StatusCreate->y() + 50, 100, 30, "Create segment");
+				createSegment_But->tooltip("2 click");
+				createSegment_But->type(text_type);
+				createSegment_But->down_box(FL_ROUND_DOWN_BOX);
+				createSegment_But->callback(cl_changeStatusCreate);
+			}
+			{
+				createArc_But = new Fl_Round_Button(StatusCreate->x(), StatusCreate->y() + 90, 100, 30, "Create arc");
+				createArc_But->tooltip("3 click");
+				createArc_But->type(text_type);
+				createArc_But->down_box(FL_ROUND_DOWN_BOX);
+				createArc_But->callback(cl_changeStatusCreate);
+			}
+			{
+				createCircle_But = new Fl_Round_Button(StatusCreate->x(), StatusCreate->y() + 130, 100, 30, "Create circle");
+				createCircle_But->tooltip("2 click");
+				createCircle_But->type(text_type);
+				createCircle_But->down_box(FL_ROUND_DOWN_BOX);
+				createCircle_But->callback(cl_changeStatusCreate);
+			}
+			StatusCreate->end();
 		}
-		{status2 = new Fl_Round_Button(StatusCreate->x(), StatusCreate->y() + 50, 100, 30, "Create segment");
-		status2->tooltip("2 click");
-		status2->type(text_type);
-		status2->down_box(FL_ROUND_DOWN_BOX);
-		status2->callback(cl_changeStatusCreate);
-		}
-		{status3 = new Fl_Round_Button(StatusCreate->x(), StatusCreate->y() + 90, 100, 30, "Create arc");
-		status3->tooltip("3 click");
-		status3->type(text_type);
-		status3->down_box(FL_ROUND_DOWN_BOX);
-		status3->callback(cl_changeStatusCreate);
-		}
-		{status4 = new Fl_Round_Button(StatusCreate->x(), StatusCreate->y() + 130, 100, 30, "Create circle");
-		status4->tooltip("2 click");
-		status4->type(text_type);
-		status4->down_box(FL_ROUND_DOWN_BOX);
-		status4->callback(cl_changeStatusCreate);
-		}
-		StatusCreate->end();
+
+		{
+			Fl_Group* Redaction = new Fl_Group(570, 30, 120, 170, "Redaction");
+			Redaction->box(FL_THIN_UP_FRAME);
+
+			{
+				deleteBut = new Fl_Button(Redaction->x(), Redaction->y() + 10, 100, 30, "delete");
+				deleteBut->tooltip("delete selection");
+				deleteBut->type(text_type);
+				deleteBut->callback(CL_Redaction);
+			}
+			{
+				buttonClear = new Fl_Button(Redaction->x(), Redaction->y() + 50, 100, 30, "Clear scene");
+				buttonClear->tooltip("delete ALL");
+				buttonClear->type(text_type);
+				buttonClear->callback(CL_Redaction);
+			}
+			Redaction->end();
 		}
 
 		mainWindow->end();
@@ -209,8 +243,7 @@ public:
 		default:
 			fl_line(start.x, start.y, end.x, end.y);
 			break;
-		}
-	}
+		}	}
 
 	void DrawCircle(const Vector2& center, const Vector2& pointForCircle, typeDrawing type)
 	{
@@ -317,6 +350,4 @@ public:
 		drawWindow->redraw();
 	}
 };
-
-int ViewFLTK::test = 0;
 #endif // !__VIEW_FLTK

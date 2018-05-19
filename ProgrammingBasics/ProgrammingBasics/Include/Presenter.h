@@ -16,7 +16,7 @@ private:
 	static IView* view;
 public:
 	static IView* GetView();
-	static void drawScene();
+	static void DrawScene();
 
 	//static void DrawObject(const ID&, color);
 
@@ -42,6 +42,8 @@ public:
 	static void DeletePrimitives(const Array<ID>&);
 
 	static void DeleteRequirement(const ID&);
+
+	static void CleareScene();
 
 	static void ChangeParamRequirement(const ID&, const double);
 

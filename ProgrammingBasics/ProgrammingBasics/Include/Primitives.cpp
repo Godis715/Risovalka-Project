@@ -45,6 +45,18 @@ void Point::SetPosition(double x, double y) {
 	position.x = x;
 	position.y = y;
 }
+Primitive* Point::GetParent() {
+	return parent;
+}
+void Point::DeleteParent() {
+	parent = nullptr;
+}
+bool Point::SetParent(Primitive* _parent) {
+	if (parent != nullptr || _parent == nullptr) {
+		return false;
+	}
+	parent = _parent;
+}
 
 
 Segment::Segment(Point* _p1, Point* _p2) :
@@ -230,13 +242,3 @@ void Circle::SetRadius(double _radius)
 	radius = _radius;
 }
 
-Primitive* Point::GetParent() {
-	return parent;
-}
-
-bool Point::SetParent(Primitive* _parent) {
-	if (parent != nullptr || _parent == nullptr) {
-		return false;
-	}
-	parent = _parent;
-}

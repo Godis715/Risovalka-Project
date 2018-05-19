@@ -100,11 +100,13 @@ public:
 
 	bool DeleteRequirement(const ID&);
 
+	void Clear();
+
 	bool GetObject(double, double, Array<ID>&, Array<object_type>&, Array<double>&);
 
 	bool GetObjType(const ID&, object_type&);
 
-	bool ImposeRequirement(object_type, const Array<ID>&);
+	// bool ImposeRequirement(object_type, const Array<ID>&);
 
 	bool GetObjParam(const ID&, Array<double>&);
 	

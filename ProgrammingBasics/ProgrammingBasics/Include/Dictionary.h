@@ -693,6 +693,7 @@ public:
 			delete temp;
 		}
 		size = 0;
+		head = nullptr;
 	}
 };
 

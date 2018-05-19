@@ -266,6 +266,13 @@ bool Model::DeletePrimitive(const ID& prim_id) {
 		return true;
 	}
 
+	if (prim->GetType() == point_t) {
+		Point* point = cast<Point*>(prim);
+		if (point->GetParent() != nullptr) {
+			return DeletePrimitive(point->GetParent()->GetID());
+		}
+	}
+
 	auto list = dataLinkMarker.GetValue();
 
 	while (list->GetSize() != 0) {
@@ -277,18 +284,61 @@ bool Model::DeletePrimitive(const ID& prim_id) {
 	dataPrimMarker.DeleteCurrent();
 	dataLinkMarker.DeleteCurrent();
 
-	if (prim->GetType() == point_t) {
-		Point* point = cast<Point*>(prim);
-		if (point->GetParent() != nullptr) {
-			bool result = DeletePrimitive(point->GetParent()->GetID());
-			delete prim;
-			return result;
-		}
+	switch (prim->GetType())
+	{
+	case segment_t: {
+		Segment* segment = cast<Segment*>(prim);
+		segment->point1->DeleteParent();
+		segment->point2->DeleteParent();
+		bool result = DeletePrimitive(segment->GetPoint1_ID());
+		result &= DeletePrimitive(segment->GetPoint2_ID());
+		delete prim;
+		return result;
 	}
-	delete prim;
-	return DeletePrimitive(true);
+	case arc_t: {
+		Arc* arc = cast<Arc*>(prim);
+		arc->point1->DeleteParent();
+		arc->point2->DeleteParent();
+		bool result = DeletePrimitive(arc->GetPoint1_ID());
+		result &= DeletePrimitive(arc->GetPoint2_ID());
+		delete prim;
+		return result;
+	}
+	case circle_t: {
+		Circle* circle = cast<Circle*>(prim);
+		circle->center->DeleteParent();
+		bool result = DeletePrimitive(circle->GetCenter_ID());
+		delete prim;
+		return result;
+	}
+	default:
+		delete prim;
+		return true;
+	}
+	// return DeletePrimitive(true); ??
+
 }
 
+void Model::Clear() {
+	if (dataPrim.GetSize() != 0) {
+		for (auto i = dataPrim.GetMarker(); i.IsValid(); ++i) {
+			delete i.GetValue();
+		}
+		dataPrim.DeleteDict();
+	}
+	if (dataReq.GetSize() != 0) {
+		for (auto i = dataReq.GetMarker(); i.IsValid(); ++i) {
+			delete i.GetValue();
+		}
+		dataReq.DeleteDict();
+	}
+	if (dataLink.GetSize() != 0) {
+		for (auto i = dataLink.GetMarker(); i.IsValid(); ++i) {
+			delete i.GetValue();
+		}
+		dataLink.DeleteDict();
+	}
+}
 
 bool Model::CreateRequirementByID(const object_type type, const Array<ID>& id_arr, const Array<double>& params, ID& req_id) {
 	Array<Primitive*> primitives;

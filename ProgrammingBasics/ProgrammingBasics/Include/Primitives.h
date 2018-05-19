@@ -34,6 +34,7 @@ public:
 	void SetPosition(double, double);
 
 	Primitive* GetParent();
+	void DeleteParent();
 	bool SetParent(Primitive*);
 	//
 };

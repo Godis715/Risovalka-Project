@@ -252,25 +252,33 @@ Mode* Selection::HandleEvent(const Event e, Array<double>& params) {
 			return nullptr;
 		}
 	}
-	if (e == ev_ctrlDown) {
+	switch (e)
+	{
+	case ev_ctrlDown: {
 		state = poly_selection;
 		return nullptr;
 	}
-	if (e == ev_ctrlUp) {
+	case ev_ctrlUp: {
 		state = single_selection;
 		return nullptr;
 	}
-	if (e == ev_escape) {
+	case ev_escape: {
 		selectedObject.Clear();
 		return nullptr;
 	}
-	if (e == ev_transform) {
+	case ev_transform: {
 		if (selectedObject.GetSize() == 0) {
 			return nullptr;
 		}
 		return new Redaction(selectedObject);
 	}
-	return UnexpectedEvent(e);
+	case ev_del: {
+		Presenter::DeletePrimitives(selectedObject);
+		return nullptr;
+	}
+	default:
+		return UnexpectedEvent(e);
+	}
 }
 
 void Selection::DrawMode()

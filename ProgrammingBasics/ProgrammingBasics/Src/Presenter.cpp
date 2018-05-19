@@ -59,6 +59,13 @@ void Presenter::DeleteRequirement(const ID& id) {
 	
 }
 
+void Presenter::CleareScene() {
+	Array<double> temp(0);
+	mode->HandleEvent(ev_escape, temp);
+	model->Clear();
+	view->Update();
+}
+
 void Presenter::ChangeParamRequirement(const ID& id, const double param) {
 	model->ChangeRequirement(id, param);
 }
@@ -123,7 +130,7 @@ bool Presenter::GetObject(double x, double y, ID& obj_id) {
 	}
 }
 
-void Presenter::drawScene()
+void Presenter::DrawScene()
 {
 	Array<Model::infoObject> scene;
 	if (model->DischargeInfoObjects(scene)) {
