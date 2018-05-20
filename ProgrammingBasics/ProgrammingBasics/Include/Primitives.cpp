@@ -147,7 +147,12 @@ Arc::Arc(Point* _p1, Point* _p2, double _angle) :
 double Arc::GetDistance(const Vector2& _point) const {
 	return 0.0;
 }
+
 Vector2 Arc::GetCenter() const {
+	return center;
+}
+
+void Arc::RestoreCenter() {
 	
 	Vector2 point1Pos = point1->GetPosition();
 	Vector2 point2Pos = point2->GetPosition();
@@ -160,18 +165,16 @@ Vector2 Arc::GetCenter() const {
 	Vector2 ortH(-base.y / baseLength, base.x / baseLength);
 	Vector2 midBase = (point1Pos + point2Pos) / 2.0;
 
-	Vector2 center = midBase + (ortH * H);
+	center = midBase + (ortH * H);
 
 	point1Pos = point1Pos - center;
 	point2Pos = point2Pos - center;
 
-	if (abs(Vector2::Angle(point1Pos, point2Pos) - angle) < 0.001) {
-		return center;
-	}
-	else {
-		return midBase - (ortH * H);
+	if (Vector2::Cross(point1Pos, point2Pos) * (angle - PI) > 0) {
+		center = midBase - (ortH * H);
 	}
 }
+
 ID Arc::GetPoint1_ID() const {
 	return point1->GetID();
 }

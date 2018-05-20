@@ -168,13 +168,14 @@ bool Model::CreateObject(const object_type type, const Array<double>& params, ID
 		Vector2 vector1 = Vector2(params[2], params[3]) - Vector2(params[0], params[1]);
 		Vector2 vector2 = Vector2(params[4], params[5]) - Vector2(params[0], params[1]);
 
-		double angle = acos(Vector2::Dot(vector1, vector2)/(vector1.GetLength() * vector2.GetLength()));
+		double angle = Vector2::Angle(vector1, vector2);
 		std::cout << "angle " << (angle * 180) / PI << std::endl;
 
 		Point* p1 = new Point(params[2], params[3]);
 		Point* p2 = new Point(params[4], params[5]);
 
 		Arc* _arc = new Arc(p1, p2, angle);
+		_arc->RestoreCenter();
 
 		// points belong to arc
 		p1->SetParent(_arc);
@@ -728,7 +729,6 @@ bool Model::OptimizeRequirements(const Array<Requirement*>& requirments) {
 		}
 	}
 
-
 	return true;
 }
 
@@ -745,7 +745,19 @@ bool Model::OptimizeByID(const ID& id) {
 	/*if (!GetRequirementsFromComponent(component, reqs)) {
 		return;
 	}*/
-	return OptimizeRequirements(reqs);
+	bool result =  OptimizeRequirements(reqs);
+
+	Array<Primitive*> prims;
+	GetPrimitives(primID, prims);
+
+	// restore arcs' centers
+	for (int i = 0; i < prims.GetSize(); ++i) {
+		if (prims[i]->GetType() == arc_t) {
+			cast<Arc*>(prims[i])->RestoreCenter();
+		}
+	}
+
+	return result;
 }
 
 void Model::OptitmizeNewton(const ID& id) {

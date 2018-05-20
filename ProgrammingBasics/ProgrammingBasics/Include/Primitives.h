@@ -82,6 +82,8 @@ public:
 
 class Arc : public Primitive {
 private:
+	Vector2 center;
+	
 public:
 	Point* point1;
 	Point* point2;
@@ -91,6 +93,7 @@ public:
 	Arc(Point*, Point*, double);
 
 	double GetDistance(const Vector2&) const;
+	void RestoreCenter();
 	Vector2 GetCenter() const;
 
 	// temp functions
