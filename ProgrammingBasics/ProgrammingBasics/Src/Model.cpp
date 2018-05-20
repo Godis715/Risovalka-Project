@@ -171,8 +171,10 @@ bool Model::CreateObject(const object_type type, const Array<double>& params, ID
 		double angle = Vector2::Angle(vector1, vector2);
 		std::cout << "angle " << (angle * 180) / PI << std::endl;
 
-		Point* p1 = new Point(params[2], params[3]);
-		Point* p2 = new Point(params[4], params[5]);
+		vector2 = vector2 * (vector1.GetLength() / vector2.GetLength());
+
+		Point* p1 = new Point(vector1.x + params[0], vector1.y + params[1]);
+		Point* p2 = new Point(vector2.x + params[0], vector2.y + params[1]);
 
 		Arc* _arc = new Arc(p1, p2, angle);
 		_arc->RestoreCenter();
@@ -1010,7 +1012,7 @@ bool Model::Scale(const Array<ID>& idPrim, const double koef) {
 	Array<Primitive*> primitives;
 	if (!GetPrimitives(idPrim, primitives)) {
 		// in presenter invalid ID
-		// LOG
+		LOG(string("could not find primitives by id"), primitives.GetSize(), LEVEL_2);
 		return false;
 	}
 
@@ -1054,7 +1056,7 @@ bool Model::Scale(const Array<ID>& idPrim, const double koef) {
 bool Model::Move(const Array<ID>& idPrim, const Vector2& shift) {
 	Array<Primitive*> primitives;
 	if (!GetPrimitives(idPrim, primitives)) {
-		// LOG
+		LOG(string("could not find primitives by id"), primitives.GetSize(), LEVEL_2);
 		return false;
 	}
 	BinSearchTree<ID, Point*> points;

@@ -38,6 +38,11 @@ IDGenerator* IDGenerator::getInstance() {
 	return _instance;
 }
 
+std::ostream& operator<<(std::ostream& out, const ID& id) {
+	out << "#" << id.GetHash();
+	return out;
+}
+
 
 // IDGENERATOR'S STATIC MEMBERS INITIALIZING
 

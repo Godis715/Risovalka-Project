@@ -1,0 +1,9 @@
+Initializing presenter
+Presenter::Creating object
+Presenter::Created object #1
+Presenter::Creating object
+Presenter::Created object #4
+Presenter::Creating object
+Presenter::Created object #8
+Presenter::Creating object
+Presenter::Created object #12

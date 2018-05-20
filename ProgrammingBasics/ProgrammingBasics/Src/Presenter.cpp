@@ -13,6 +13,7 @@ IView* Presenter::GetView()
 
 void Presenter::Initializer(IView* _view)
 {
+	LOG(string("Initializing presenter"), LEVEL_3);
 	view = _view;
 	model = new Model();
 	mode = new Selection();
@@ -20,37 +21,31 @@ void Presenter::Initializer(IView* _view)
 
 ID Presenter::CreateObject(object_type type, const Array<double>& params) {
 	ID id;
+	LOG(string("Presenter::Creating object"), LEVEL_1);
 	bool result = model->CreateObject(type, params, id);
 	if (!result) {
+		LOG(string("Presenter::Could not create object"), LEVEL_3);
 		throw std::exception("could not create object");
 	}
-	//
-	// possible clear selected Objects
-	//
+	LOG(string("Presenter::Created object"), id, LEVEL_1);
 	return id;
-	// _selObj.PushBack(id);
 }
 
 bool Presenter::CreateRequirement(object_type type, const Array<ID>& objects, const Array<double>& params) {
 	ID id;
+	LOG(string("Presenter::Creating requirement"), LEVEL_1);
 	bool result = model->CreateRequirementByID(type, objects, params, id);
+	if (!result) {
+		LOG(string("Presenter::Could not create requirement"), LEVEL_3);
+	}
 
 	return result;
 }
 
-//bool Presenter::CreateRequirement(object_type type, const Array<double>& params) {
-//	ID id;
-//	bool result = model->CreateRequirementByID(type, _selObj, params, id);
-//	if (result) {
-//	_selReq.PushBack(id);
-//	}
-//	return result;
-//}
-
 void Presenter::DeletePrimitives(const Array<ID>& primitiveID) {
 	for (int i = 0; i < primitiveID.GetSize(); ++i) {
 		if (!model->DeletePrimitive(primitiveID[i])) {
-			// LOG
+			LOG(string("could not delete prim"), primitiveID[i], LEVEL_3);
 		}
 	}
 }
@@ -72,19 +67,19 @@ void Presenter::ChangeParamRequirement(const ID& id, const double param) {
 
 void Presenter::ScaleObjects(const Array<ID>& primitiveID, const double koef) {
 	if (!model->Scale(primitiveID, koef)) {
-		// LOG
+		LOG(string("could not Scale prim"), LEVEL_3);
 	}
 }
 
 void Presenter::MoveObject(const Array<ID>& primitiveID,const Vector2& vector) {
 	if (!model->Move(primitiveID, vector)) {
-		// LOG
+		LOG(string("could not move prim"), LEVEL_3);
 	}
 }
 
 void Presenter::GetComponent(const ID& id, Array<ID>& primID, Array<ID>& reqID) {
 	if (!model->NewComponent(id, primID, reqID)) {
-		// LOG
+		LOG(string("could not get new component"), LEVEL_3);
 	}
 }
 
@@ -95,7 +90,7 @@ bool Presenter::GetObject(double x, double y, ID& obj_id) {
 	bool isFound = model->GetObject(x, y, ids, types, distances);
 	if (isFound) {
 		if (ids.GetSize() == 0) {
-			//LOG!!
+			LOG(string("could not find primitives by point"), LEVEL_1);
 			return false;
 		}
 		bool foundPoint = (types[0] == point_t);

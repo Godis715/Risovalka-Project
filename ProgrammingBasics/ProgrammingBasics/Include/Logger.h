@@ -2,6 +2,7 @@
 #define __LOGGER
 
 #include "Requirement.h"
+#include <fstream>
 
 using std::string;
 
@@ -38,9 +39,18 @@ public:
 		minLevel = _level;
 	}
 
-	template <typename T> static void Log(std::string message, int priority) {
+	template <typename T> static void Log(std::string message, const T& value, int priority) {
 		if (priority >= minLevel) {
-			(*output) << message << std::endl;
+			(*output) << message << " " << value << std::endl;
+		}
+		else {
+			return;
+		}
+	}
+
+	template <class T1, class T2> static void Log(std::string message, const T1& val1, const T2& val2, int priority) {
+		if (priority >= minLevel) {
+			(*output) << message << " " << val1 << ' ' << val2 << std::endl;
 		}
 		else {
 			return;
