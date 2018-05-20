@@ -72,11 +72,16 @@ private:
 				//std::cout << "Leave!";
 				//fl_color(FL_BLACK); fl_rectf(0, 0, w(), h());
 				break;
+
 			case FL_KEYDOWN:
 				if (Fl::event_key() == FL_Control_L && lastEvent != ev_ctrlDown)
 				{
 					Presenter::Set_event(ev_ctrlDown, params);
 					lastEvent = ev_ctrlDown;
+				}
+				if (Fl::event_key() == FL_Escape)
+				{
+					Presenter::Set_event(ev_escape, params);
 				}
 				break;
 			case FL_KEYUP:
