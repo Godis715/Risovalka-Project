@@ -879,6 +879,83 @@ bool Model::GetObject(double x, double y, Array<ID>& obj_id, Array<object_type>&
 	}
 	return isFound;
 }
+bool Model::pointInArea(double point_x, double point_y, double x1, double y1, double x2, double y2)
+{
+	if ((point_y >= y1 && point_x >= x1 && point_y <= y2 && point_x <= x2) ||
+		(point_y >= y1 && point_x <= x1 && point_y <= y2 && point_x >= x2) ||
+		(point_y <= y1 && point_x >= x1 && point_y >= y2 && point_x <= x2) ||
+		(point_y <= y1 && point_x <= x1 && point_y >= y2 && point_x >= x2))
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
+bool Model::GetObjectsOnArea(double x1, double y1, double x2, double y2, Array<ID>& obj_id, Array<object_type>& types)
+{
+	bool isFound = false;
+	Primitive* obj = nullptr;
+	for (auto i = dataPrim.GetMarker(); i.IsValid(); ++i) {
+		obj = i.GetValue();
+		switch (i.GetValue()->GetType())
+		{
+		case point_t: {
+			Point* point = cast<Point*>(obj);
+			if (pointInArea(point->position.x, point->position.y, x1, y1, x2, y2))
+			{
+				obj_id.PushBack(point->GetID());
+				types.PushBack(point->GetType());
+				isFound = true;
+			}
+			break;
+		}
+		case segment_t: {
+			Segment* segment = cast<Segment*>(obj);
+			if (pointInArea(segment->point1->position.x, segment->point1->position.y, x1, y1, x2, y2) &&
+				pointInArea(segment->point2->position.x, segment->point2->position.y, x1, y1, x2, y2)
+				)
+			{
+				obj_id.PushBack(segment->GetID());
+				types.PushBack(segment->GetType());
+				isFound = true;
+			}
+			break;
+		}
+		case arc_t: {
+			Arc* arc = cast<Arc*>(obj);
+			if (pointInArea(arc->point1->position.x, arc->point1->position.y, x1, y1, x2, y2) &&
+				pointInArea(arc->point2->position.x, arc->point2->position.y, x1, y1, x2, y2)
+				)
+			{
+				obj_id.PushBack(arc->GetID());
+				types.PushBack(arc->GetType());
+				isFound = true;
+			}
+			break;
+		}
+		case circle_t: {
+			Circle* circle = cast<Circle*>(obj);
+			if (pointInArea(circle->GetCenter().x - circle->radius, circle->GetCenter().y, x1, y1, x2, y2) &&
+				pointInArea(circle->GetCenter().x + circle->radius, circle->GetCenter().y, x1, y1, x2, y2) &&
+				pointInArea(circle->GetCenter().x, circle->GetCenter().y - circle->radius, x1, y1, x2, y2) &&
+				pointInArea(circle->GetCenter().x, circle->GetCenter().y + circle->radius, x1, y1, x2, y2))
+			{
+				obj_id.PushBack(circle->GetID());
+				types.PushBack(circle->GetType());
+				isFound = true;
+			}
+			break;
+		}
+		default: {
+			return false;
+		}
+		}
+	}
+	return isFound;
+}
 
 
 void Model::ChangeRequirement(const ID& id, const double param) {

@@ -18,6 +18,8 @@ Mode* Mode::UnexpectedEvent(const Event e) {
 	}
 	case ev_mouseMove:
 		return nullptr;
+	case ev_leftMouseUp:
+		return nullptr;
 	case ev_ctrlDown:
 		return nullptr;
 	case ev_ctrlUp:
@@ -323,6 +325,12 @@ Mode* Selection::HandleEvent(const Event e, Array<double>& params) {
 		if (params.GetSize() != 2) {
 			throw std::exception("Bad number of parameters");
 		}
+
+		//for area selection
+		lastEvent = e;
+		infoArea1.x = params[0];
+		infoArea1.y = params[1];
+
 		ID obj;
 		bool isFound = Presenter::GetObject(params[0], params[1], obj);
 		if (isFound) {
@@ -344,6 +352,21 @@ Mode* Selection::HandleEvent(const Event e, Array<double>& params) {
 			}
 			return nullptr;
 		}
+	}
+	if (e == ev_leftMouseUp)
+	{
+		lastEvent = e;
+		state = single_selection;
+		return nullptr;
+	}
+	if (e == ev_mouseMove && lastEvent == ev_leftMouseDown)
+	{
+		state = area_selection;
+		infoArea2.x = params[0];
+		infoArea2.y = params[1];
+		selectedObject.Clear();
+		Presenter::GetObjectsOnArea(infoArea1.x, infoArea1.y, infoArea2.x, infoArea2.y, selectedObject);
+		return nullptr;
 	}
 	switch (e)
 	{
@@ -407,6 +430,18 @@ void Selection::DrawMode()
 				Vector2(params[0] + params[2], params[1]), line);
 			break;
 		}
+	}
+
+	if (state == area_selection)
+	{
+		Vector2 point1(infoArea2.x, infoArea1.y);
+		Vector2 point2(infoArea1.x, infoArea2.y);
+
+		Presenter::GetView()->SetColor(blue);
+		Presenter::GetView()->DrawLine(infoArea1, point1, points);
+		Presenter::GetView()->DrawLine(infoArea1, point2, points);
+		Presenter::GetView()->DrawLine(infoArea2, point1, points);
+		Presenter::GetView()->DrawLine(infoArea2, point2, points);
 	}
 }
 

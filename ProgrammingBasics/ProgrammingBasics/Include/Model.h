@@ -67,6 +67,8 @@ private:
 	void GetDifferential(const Array<Requirement*>&, Array<double*>&, Array<double>&);
 
 	void GetPointsFromPrimitives(Array<Primitive*>&, BinSearchTree<ID, Point*>&);
+
+	bool pointInArea(double, double, double, double, double, double);
 public:
 	class infoObject
 	{
@@ -103,6 +105,9 @@ public:
 	void Clear();
 
 	bool GetObject(double, double, Array<ID>&, Array<object_type>&, Array<double>&);
+
+	//test
+	bool GetObjectsOnArea(double, double, double, double, Array<ID>&, Array<object_type>&);
 
 	bool GetObjType(const ID&, object_type&);
 

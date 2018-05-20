@@ -39,6 +39,8 @@ public:
 
 	static bool GetObject(double, double, ID&);
 
+	static bool GetObjectsOnArea(double, double, double, double, Array<ID>&);
+
 	static void DeletePrimitives(const Array<ID>&);
 
 	static void DeleteRequirement(const ID&);

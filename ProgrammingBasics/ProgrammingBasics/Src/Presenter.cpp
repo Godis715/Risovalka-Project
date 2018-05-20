@@ -130,6 +130,12 @@ bool Presenter::GetObject(double x, double y, ID& obj_id) {
 	}
 }
 
+bool Presenter::GetObjectsOnArea(double x1, double y1, double x2, double y2, Array<ID>& obj_id)
+{
+	Array<object_type> types;
+	return model->GetObjectsOnArea(x1, y1, x2, y2, obj_id, types);
+}
+
 void Presenter::DrawScene()
 {
 	Array<Model::infoObject> scene;

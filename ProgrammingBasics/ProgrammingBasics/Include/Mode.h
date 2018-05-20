@@ -57,8 +57,13 @@ public:
 class Selection : public Mode {
 private:
 	Array<ID> selectedObject;
-	enum State { single_selection, poly_selection };
+	enum State { single_selection, poly_selection, area_selection};
 	State state;
+
+	//for area selection
+	Event lastEvent;
+	Vector2 infoArea1;
+	Vector2 infoArea2;
 
 	void AddObject(const ID& obj);
 public:

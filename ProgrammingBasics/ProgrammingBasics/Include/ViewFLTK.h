@@ -58,9 +58,9 @@ private:
 				break;
 			}
 			case FL_RELEASE:
-				//params.PushBack(Fl::event_x());
-				//params.PushBack(Fl::event_y());
-				//Presenter::Set_event(ev_leftMouseUp, params);
+				params.PushBack(Fl::event_x());
+				params.PushBack(Fl::event_y());
+				Presenter::Set_event(ev_leftMouseUp, params);
 				break;
 
 			case FL_ENTER:
@@ -94,7 +94,7 @@ private:
 			case FL_DRAG:
 				params.PushBack(Fl::event_x());
 				params.PushBack(Fl::event_y());
-				//Presenter::Set_event(ev_mouseMove, params);
+				Presenter::Set_event(ev_mouseMove, params);
 				break;
 			}
 			return e;
@@ -345,6 +345,9 @@ public:
 				break;
 			case yellow:
 				fl_color(FL_YELLOW);
+				break;
+			case blue:
+				fl_color(FL_BLUE);
 				break;
 		}
 	}
