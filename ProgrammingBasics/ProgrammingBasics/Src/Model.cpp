@@ -529,7 +529,7 @@ bool Model::CreateRequirement(object_type type, Array<Primitive*>& primitives, c
 
 	CreateLink(req_id, primitives);
 
-	return true;
+	return this->OptimizeByID(req_id);
 }
 
 void Model::CreateLink(const ID& IDreq, const Array<Primitive*>& primitives) {
@@ -879,6 +879,7 @@ bool Model::GetObject(double x, double y, Array<ID>& obj_id, Array<object_type>&
 	}
 	return isFound;
 }
+
 bool Model::pointInArea(double point_x, double point_y, double x1, double y1, double x2, double y2)
 {
 	if ((point_y >= y1 && point_x >= x1 && point_y <= y2 && point_x <= x2) ||

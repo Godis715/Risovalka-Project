@@ -27,6 +27,8 @@ private:
 
 	Fl_Button* deleteBut;
 	Fl_Button* buttonClear;
+	Fl_Button* But_Cr_Req_D_Point;
+	Fl_Button* But_Cr_Req_Eq_Segment;
 	class SecondWindow : public Fl_Double_Window
 	{
 		void draw()
@@ -142,6 +144,21 @@ private:
 		}
 		((Fl_Button*)o)->clear();
 	}
+	static void cl_Requirement(Fl_Widget* o, void*)
+	{
+		Array<double> params(0);
+	
+		
+		if (((Fl_Button*)o)->label() == "dist points")
+		{
+			Presenter::Set_event(ev_req_D_point, params);
+		}
+		if (((Fl_Button*)o)->label() == "equal segment")
+		{
+			Presenter::Set_event(ev_req_Eq_Segment, params);
+		}
+		((Fl_Button*)o)->clear();
+	}
 	//..
 
 	Fl_Window* mainWindow;
@@ -151,19 +168,19 @@ public:
 	{
 		Presenter::Initializer(this);
 
-		mainWindow = new Fl_Window(820, 420, "Main Window");
+		mainWindow = new Fl_Window(1300, 620, "Main Window");
 		mainWindow->color(FL_WHITE);
 
-		drawWindow = new SecondWindow(10, 10, 400, 400, "Draw Window");
+		drawWindow = new SecondWindow(10, 10, 1000, 600, "Draw Window");
 		drawWindow->end();
 
 		{
-			Fl_Tabs* modes = new Fl_Tabs(420, 10, 200, 190);
+			Fl_Tabs* modes = new Fl_Tabs(1020, 10, 300, 190);
+			modes->box(FL_THIN_UP_FRAME);
+			modes->color(FL_WHITE);
+			modes->clear_visible_focus();
 			{
-				modes->box(FL_THIN_UP_FRAME);
-				modes->color(FL_WHITE);
-				modes->clear_visible_focus();
-				Fl_Group* StatusCreate = new Fl_Group(430, 30, 140, 170, "Status Create");
+				Fl_Group* StatusCreate = new Fl_Group(1020, 30, 140, 170, "Status Create");
 				{
 					createPoint_But = new Fl_Round_Button(StatusCreate->x(), StatusCreate->y() + 10, 100, 30, "Create point");
 					createPoint_But->clear_visible_focus();
@@ -200,7 +217,7 @@ public:
 			}
 
 			{
-				Fl_Group* Redaction = new Fl_Group(430, 30, 120, 170, "Redaction");
+				Fl_Group* Redaction = new Fl_Group(1020, 30, 120, 170, "Redaction");
 				{
 					deleteBut = new Fl_Button(Redaction->x(), Redaction->y() + 10, 100, 30, "delete");
 					deleteBut->color(FL_WHITE);
@@ -218,6 +235,27 @@ public:
 					buttonClear->callback(cl_Redaction);
 				}
 				Redaction->end();
+			}
+			{
+				Fl_Group* Requirement = new Fl_Group(1020, 30, 120, 170, "Redaction");
+				{
+					But_Cr_Req_D_Point = new Fl_Button(Requirement->x(), Requirement->y() + 10, 100, 30, "dist points");
+					But_Cr_Req_D_Point->color(FL_WHITE);
+					But_Cr_Req_D_Point->clear_visible_focus();
+					But_Cr_Req_D_Point->tooltip("dist points");
+					But_Cr_Req_D_Point->type(text_type);
+					But_Cr_Req_D_Point->callback(cl_Requirement);
+				}
+				
+				{
+					But_Cr_Req_Eq_Segment = new Fl_Button(Requirement->x(), Requirement->y() + 50, 100, 30, "equal segment");
+					But_Cr_Req_Eq_Segment->color(FL_WHITE);
+					But_Cr_Req_Eq_Segment->clear_visible_focus();
+					But_Cr_Req_Eq_Segment->tooltip("equal segment");
+					But_Cr_Req_Eq_Segment->type(text_type);
+					But_Cr_Req_Eq_Segment->callback(cl_Requirement);
+				}
+				Requirement->end();
 			}
 		}
 		mainWindow->end();

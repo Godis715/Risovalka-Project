@@ -399,6 +399,18 @@ Mode* Selection::HandleEvent(const Event e, Array<double>& params) {
 		Presenter::DeletePrimitives(selectedObject);
 		return nullptr;
 	}
+	case ev_req_D_point: {
+		Array<double>param(1);
+		param[0] = 0;
+		Presenter::CreateRequirement(distBetPoints_t, selectedObject, param);
+		return nullptr;
+	}
+	case ev_req_Eq_Segment: {
+		Array<double>param(0);
+
+		Presenter::CreateRequirement(equalSegmentLen_t, selectedObject, param);
+		return nullptr;
+	}
 	default:
 		return UnexpectedEvent(e);
 	}

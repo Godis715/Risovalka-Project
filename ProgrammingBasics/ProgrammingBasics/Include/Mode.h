@@ -28,6 +28,8 @@ enum Event
 	ev_ctrlUp,
 	ev_escape,
 	ev_clockOnReq,
+	ev_req_D_point,
+	ev_req_Eq_Segment,
 	//end new events
 
 	ev_save
