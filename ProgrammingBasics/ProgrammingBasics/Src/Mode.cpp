@@ -353,21 +353,28 @@ Mode* Selection::HandleEvent(const Event e, Array<double>& params) {
 			return nullptr;
 		}
 	}
-	if (e == ev_leftMouseUp)
-	{
-		lastEvent = e;
-		state = single_selection;
-		return nullptr;
-	}
-	if (e == ev_mouseMove && lastEvent == ev_leftMouseDown)
+
+	//for area selection
+	if (e == ev_mouseMove && (lastEvent == ev_leftMouseDown || lastEvent == ev_mouseMove) && state != poly_selection)
 	{
 		state = area_selection;
 		infoArea2.x = params[0];
 		infoArea2.y = params[1];
 		selectedObject.Clear();
+		lastEvent = e;
 		Presenter::GetObjectsOnArea(infoArea1.x, infoArea1.y, infoArea2.x, infoArea2.y, selectedObject);
 		return nullptr;
 	}
+	if (e == ev_leftMouseUp)
+	{
+		if (lastEvent == ev_mouseMove)
+		{
+			state = single_selection;
+		}
+		lastEvent = e;
+		return nullptr;
+	}
+	
 	switch (e)
 	{
 	case ev_ctrlDown: {
