@@ -148,23 +148,29 @@ double Arc::GetDistance(const Vector2& _point) const {
 	return 0.0;
 }
 Vector2 Arc::GetCenter() const {
+	
 	Vector2 point1Pos = point1->GetPosition();
 	Vector2 point2Pos = point2->GetPosition();
 
 	Vector2 base = point2Pos - point1Pos;
-	Vector2 halfBase = base * 0.5;
-	double tempValue = sqrt(base.x * base.x - base.y * base.y);
-	Vector2 N(-base.y, base.x);
-	double H = halfBase.GetLength() / tan(angle / 2.0);
-	N = N * (1.0 / tempValue * H);
+	double baseLength = base.GetLength();
 
-	Vector2 H1 = point1->GetPosition() + halfBase + N;
-	Vector2 H2 = point1->GetPosition() + halfBase + N;
+	double H = (baseLength / 2.0) / tan(angle / 2.0);
 
-	Vector2 H1toPoint1 = point1->GetPosition() - H1;
-	Vector2 H1toPoint2 = point2->GetPosition() - H1;
+	Vector2 ortH(-base.y / baseLength, base.x / baseLength);
+	Vector2 midBase = (point1Pos + point2Pos) / 2.0;
 
-	return (Vector2::Cross(H1toPoint1, H1toPoint2) > 0) ? H1 : H2;
+	Vector2 center = midBase + (ortH * H);
+
+	point1Pos = point1Pos - center;
+	point2Pos = point2Pos - center;
+
+	if (abs(Vector2::Angle(point1Pos, point2Pos) - angle) < 0.001) {
+		return center;
+	}
+	else {
+		return midBase - (ortH * H);
+	}
 }
 ID Arc::GetPoint1_ID() const {
 	return point1->GetID();
