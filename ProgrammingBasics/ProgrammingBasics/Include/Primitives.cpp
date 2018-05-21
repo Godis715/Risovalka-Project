@@ -1,4 +1,5 @@
 #include "Primitives.h"
+#include <stdexcept>
 
 ID Primitive::GetID() const {
 	return id;
@@ -145,7 +146,29 @@ Arc::Arc(Point* _p1, Point* _p2, double _angle) :
 
 // write this function
 double Arc::GetDistance(const Vector2& _point) const {
-	return 0.0;
+	Vector2 r1 = point1->GetPosition() - center;
+	Vector2 r2 = point2->GetPosition() - center;
+	Vector2 vec = _point - center;
+
+	bool inSector = true;
+
+	double cross1 = Vector2::Cross(r1, vec);
+	double cross2 = Vector2::Cross(vec, r2);
+
+	if (angle < PI) {
+		inSector = (cross1 < 0 && cross2 < 0);
+	}
+	else {
+		inSector = (cross1 < 0 || cross2 < 0);
+	}
+	if (inSector) {
+		return abs(vec.GetLength() - r1.GetLength());
+	}
+	else {
+		double dist1 = (r1 - vec).GetLength();
+		double dist2 = (r2 - vec).GetLength();
+		return (dist1 > dist2) ? dist1 : dist2;
+	}
 }
 
 Vector2 Arc::GetCenter() const {
@@ -170,7 +193,7 @@ void Arc::RestoreCenter() {
 	point1Pos = point1Pos - center;
 	point2Pos = point2Pos - center;
 
-	if (Vector2::Cross(point1Pos, point2Pos) * (angle - PI) > 0) {
+	if (Vector2::Cross(point1Pos, point2Pos) * (angle - PI) < 0) {
 		center = midBase - (ortH * H);
 	}
 }
