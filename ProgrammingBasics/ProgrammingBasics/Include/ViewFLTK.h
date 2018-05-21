@@ -141,7 +141,6 @@ private:
 		}
 		if (((Fl_Menu_Button*)o)->mvalue()->label() == "Delete all scene")
 		{
-			std::cout << "push";
 			Presenter::CleareScene();
 		}
 	}

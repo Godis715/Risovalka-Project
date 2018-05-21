@@ -169,7 +169,6 @@ bool Model::CreateObject(const object_type type, const Array<double>& params, ID
 		Vector2 vector2 = Vector2(params[4], params[5]) - Vector2(params[0], params[1]);
 
 		double angle = Vector2::Angle(vector1, vector2);
-		std::cout << "angle " << (angle * 180) / PI << std::endl;
 
 		vector2 = vector2 * (vector1.GetLength() / vector2.GetLength());
 
