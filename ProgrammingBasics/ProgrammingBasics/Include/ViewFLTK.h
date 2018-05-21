@@ -165,7 +165,7 @@ private:
 		}
 		if (((Fl_Menu_Button*)o)->mvalue()->label() == "Equal segment")
 		{
-			log->value("Log::Create requirement: Dist segment");
+			log->value("Log::Create requirement: Equal segment");
 			Presenter::Set_event(ev_req_Eq_Segment, params);
 		}
 	}
