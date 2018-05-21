@@ -16,12 +16,15 @@
 #include <FL/Fl_Button.h>
 #include <FL/Fl_Menu_Button.H>
 #include <FL/Fl_Menu_Item.H>
+#include <FL/Fl_Output.H>
 #include <FL/Fl_Input.H>
 #include <FL/math.h>
 
 class ViewFLTK : public IView
 {
 private:
+	static Fl_Output* log;
+
 	Fl_Menu_Item* objects;
 	Fl_Menu_Button* createObject_b;
 
@@ -116,18 +119,22 @@ private:
 		Array<double> params(0);
 		if (((Fl_Menu_Button*)o)->mvalue()->label() == "Point")
 		{
+			log->value("Log::Create point");
 			Presenter::Set_event(ev_createPoint, params);
 		}
 		if (((Fl_Menu_Button*)o)->mvalue()->label() == "Segment")
 		{
+			log->value("Log::Create segment");
 			Presenter::Set_event(ev_createSegment, params);
 		}
 		if (((Fl_Menu_Button*)o)->mvalue()->label() == "Arc")
 		{
+			log->value("Log::Create arc");
 			Presenter::Set_event(ev_createArc, params);
 		}
 		if (((Fl_Menu_Button*)o)->mvalue()->label() == "Circle")
 		{
+			log->value("Log::Create circle");
 			Presenter::Set_event(ev_createCircle, params);
 		}
 	}
@@ -137,10 +144,12 @@ private:
 		Array<double> params(0);
 		if (((Fl_Menu_Button*)o)->mvalue()->label() == "Delete selection")
 		{
+			log->value("Log::Delete selection");
 			Presenter::Set_event(ev_del, params);
 		}
 		if (((Fl_Menu_Button*)o)->mvalue()->label() == "Delete all scene")
 		{
+			log->value("Log::Delete all scene");
 			Presenter::CleareScene();
 		}
 	}
@@ -151,10 +160,12 @@ private:
 	
 		if (((Fl_Menu_Button*)o)->mvalue()->label() == "Dist points")
 		{
+			log->value("Log::Create requirement: Dist points");
 			Presenter::Set_event(ev_req_D_point, params);
 		}
 		if (((Fl_Menu_Button*)o)->mvalue()->label() == "Equal segment")
 		{
+			log->value("Log::Create requirement: Dist segment");
 			Presenter::Set_event(ev_req_Eq_Segment, params);
 		}
 	}
@@ -173,6 +184,8 @@ public:
 
 		drawWindow = new SecondWindow(10, 30, 1000, 600, "Draw Window");
 		drawWindow->end();
+
+		log = new Fl_Output(1010, 0, 300, 30);
 
 		{
 			objects = new Fl_Menu_Item[5];
@@ -344,4 +357,6 @@ public:
 		drawWindow->redraw();
 	}
 };
+
+Fl_Output* ViewFLTK::log = nullptr;
 #endif // !__VIEW_FLTK
