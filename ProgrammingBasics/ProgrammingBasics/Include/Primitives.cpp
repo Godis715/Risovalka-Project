@@ -156,10 +156,10 @@ double Arc::GetDistance(const Vector2& _point) const {
 	double cross2 = Vector2::Cross(vec, r2);
 
 	if (angle < PI) {
-		inSector = (cross1 < 0 && cross2 < 0);
+		inSector = (cross1 > 0 && cross2 > 0);
 	}
 	else {
-		inSector = (cross1 < 0 || cross2 < 0);
+		inSector = (cross1 > 0 || cross2 > 0);
 	}
 	if (inSector) {
 		return abs(vec.GetLength() - r1.GetLength());
@@ -193,7 +193,7 @@ void Arc::RestoreCenter() {
 	point1Pos = point1Pos - center;
 	point2Pos = point2Pos - center;
 
-	if (Vector2::Cross(point1Pos, point2Pos) * (angle - PI) < 0) {
+	if (Vector2::Cross(point1Pos, point2Pos) * (angle - PI) > 0) {
 		center = midBase - (ortH * H);
 	}
 }
