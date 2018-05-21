@@ -14,21 +14,23 @@
 #include <FL/Fl_Tabs.H>
 #include <FL/Fl_Group.H>
 #include <FL/Fl_Button.h>
-#include <FL/Fl_Round_Button.H>
+#include <FL/Fl_Menu_Button.H>
+#include <FL/Fl_Menu_Item.H>
+#include <FL/Fl_Input.H>
 #include <FL/math.h>
 
 class ViewFLTK : public IView
 {
 private:
-	Fl_Round_Button* createPoint_But;
-	Fl_Round_Button* createSegment_But;
-	Fl_Round_Button* createArc_But;
-	Fl_Round_Button* createCircle_But;
+	Fl_Menu_Item* objects;
+	Fl_Menu_Button* createObject_b;
 
-	Fl_Button* deleteBut;
-	Fl_Button* buttonClear;
-	Fl_Button* But_Cr_Req_D_Point;
-	Fl_Button* But_Cr_Req_Eq_Segment;
+	Fl_Menu_Item* toolingRed;
+	Fl_Menu_Button* redaction_b;
+
+	Fl_Menu_Item* requirements;
+	Fl_Menu_Button* createRequirement_b;
+
 	class SecondWindow : public Fl_Double_Window
 	{
 		void draw()
@@ -112,53 +114,52 @@ private:
 	static void cl_ChangeStatusCreate(Fl_Widget* o, void*)
 	{
 		Array<double> params(0);
-		if (((Fl_Round_Button*)o)->label() == "Create point")
+		if (((Fl_Menu_Button*)o)->mvalue()->label() == "Point")
 		{
 			Presenter::Set_event(ev_createPoint, params);
 		}
-		if (((Fl_Round_Button*)o)->label() == "Create segment")
+		if (((Fl_Menu_Button*)o)->mvalue()->label() == "Segment")
 		{
 			Presenter::Set_event(ev_createSegment, params);
 		}
-		if (((Fl_Round_Button*)o)->label() == "Create arc")
+		if (((Fl_Menu_Button*)o)->mvalue()->label() == "Arc")
 		{
 			Presenter::Set_event(ev_createArc, params);
 		}
-		if (((Fl_Round_Button*)o)->label() == "Create circle")
+		if (((Fl_Menu_Button*)o)->mvalue()->label() == "Circle")
 		{
 			Presenter::Set_event(ev_createCircle, params);
 		}
-		((Fl_Round_Button*)o)->clear();
 	}
 
 	static void cl_Redaction(Fl_Widget* o, void*)
 	{
 		Array<double> params(0);
-		if (((Fl_Button*)o)->label() == "delete")
+		if (((Fl_Menu_Button*)o)->mvalue()->label() == "Delete selection")
 		{
 			Presenter::Set_event(ev_del, params);
 		}
-		if (((Fl_Button*)o)->label() == "Clear scene")
+		if (((Fl_Menu_Button*)o)->mvalue()->label() == "Delete all scene")
 		{
+			std::cout << "push";
 			Presenter::CleareScene();
 		}
-		((Fl_Button*)o)->clear();
 	}
+	
 	static void cl_Requirement(Fl_Widget* o, void*)
 	{
 		Array<double> params(0);
 	
-		
-		if (((Fl_Button*)o)->label() == "dist points")
+		if (((Fl_Menu_Button*)o)->mvalue()->label() == "Dist points")
 		{
 			Presenter::Set_event(ev_req_D_point, params);
 		}
-		if (((Fl_Button*)o)->label() == "equal segment")
+		if (((Fl_Menu_Button*)o)->mvalue()->label() == "Equal segment")
 		{
 			Presenter::Set_event(ev_req_Eq_Segment, params);
 		}
-		((Fl_Button*)o)->clear();
 	}
+
 	//..
 
 	Fl_Window* mainWindow;
@@ -171,93 +172,47 @@ public:
 		mainWindow = new Fl_Window(1300, 620, "Main Window");
 		mainWindow->color(FL_WHITE);
 
-		drawWindow = new SecondWindow(10, 10, 1000, 600, "Draw Window");
+		drawWindow = new SecondWindow(10, 30, 1000, 600, "Draw Window");
 		drawWindow->end();
 
 		{
-			Fl_Tabs* modes = new Fl_Tabs(1020, 10, 300, 190);
-			modes->box(FL_THIN_UP_FRAME);
-			modes->color(FL_WHITE);
-			modes->clear_visible_focus();
-			{
-				Fl_Group* StatusCreate = new Fl_Group(1020, 30, 140, 170, "Status Create");
-				{
-					createPoint_But = new Fl_Round_Button(StatusCreate->x(), StatusCreate->y() + 10, 100, 30, "Create point");
-					createPoint_But->clear_visible_focus();
-					createPoint_But->tooltip("1 click");
-					createPoint_But->type(text_type);
-					createPoint_But->down_box(FL_ROUND_DOWN_BOX);
-					createPoint_But->callback(cl_ChangeStatusCreate);
-				}
-				{
-					createSegment_But = new Fl_Round_Button(StatusCreate->x(), StatusCreate->y() + 50, 100, 30, "Create segment");
-					createSegment_But->clear_visible_focus();
-					createSegment_But->tooltip("2 click");
-					createSegment_But->type(text_type);
-					createSegment_But->down_box(FL_ROUND_DOWN_BOX);
-					createSegment_But->callback(cl_ChangeStatusCreate);
-				}
-				{
-					createArc_But = new Fl_Round_Button(StatusCreate->x(), StatusCreate->y() + 90, 100, 30, "Create arc");
-					createArc_But->clear_visible_focus();
-					createArc_But->tooltip("3 click");
-					createArc_But->type(text_type);
-					createArc_But->down_box(FL_ROUND_DOWN_BOX);
-					createArc_But->callback(cl_ChangeStatusCreate);
-				}
-				{
-					createCircle_But = new Fl_Round_Button(StatusCreate->x(), StatusCreate->y() + 130, 100, 30, "Create circle");
-					createCircle_But->clear_visible_focus();
-					createCircle_But->tooltip("2 click");
-					createCircle_But->type(text_type);
-					createCircle_But->down_box(FL_ROUND_DOWN_BOX);
-					createCircle_But->callback(cl_ChangeStatusCreate);
-				}
-				StatusCreate->end();
-			}
-
-			{
-				Fl_Group* Redaction = new Fl_Group(1020, 30, 120, 170, "Redaction");
-				{
-					deleteBut = new Fl_Button(Redaction->x(), Redaction->y() + 10, 100, 30, "delete");
-					deleteBut->color(FL_WHITE);
-					deleteBut->clear_visible_focus();
-					deleteBut->tooltip("delete selection");
-					deleteBut->type(text_type);
-					deleteBut->callback(cl_Redaction);
-				}
-				{
-					buttonClear = new Fl_Button(Redaction->x(), Redaction->y() + 50, 100, 30, "Clear scene");
-					buttonClear->color(FL_WHITE);
-					buttonClear->clear_visible_focus();
-					buttonClear->tooltip("delete ALL");
-					buttonClear->type(text_type);
-					buttonClear->callback(cl_Redaction);
-				}
-				Redaction->end();
-			}
-			{
-				Fl_Group* Requirement = new Fl_Group(1020, 30, 120, 170, "Redaction");
-				{
-					But_Cr_Req_D_Point = new Fl_Button(Requirement->x(), Requirement->y() + 10, 100, 30, "dist points");
-					But_Cr_Req_D_Point->color(FL_WHITE);
-					But_Cr_Req_D_Point->clear_visible_focus();
-					But_Cr_Req_D_Point->tooltip("dist points");
-					But_Cr_Req_D_Point->type(text_type);
-					But_Cr_Req_D_Point->callback(cl_Requirement);
-				}
-				
-				{
-					But_Cr_Req_Eq_Segment = new Fl_Button(Requirement->x(), Requirement->y() + 50, 100, 30, "equal segment");
-					But_Cr_Req_Eq_Segment->color(FL_WHITE);
-					But_Cr_Req_Eq_Segment->clear_visible_focus();
-					But_Cr_Req_Eq_Segment->tooltip("equal segment");
-					But_Cr_Req_Eq_Segment->type(text_type);
-					But_Cr_Req_Eq_Segment->callback(cl_Requirement);
-				}
-				Requirement->end();
-			}
+			objects = new Fl_Menu_Item[5];
+			objects[0] = { "Point", FL_ALT + 'z'};
+			objects[1] = { "Segment", FL_ALT + 'x' };
+			objects[2] = { "Arc", FL_ALT + 'c' };
+			objects[3] = { "Circle", FL_ALT + 'v' };
+			objects[4] = { 0 };
+			createObject_b = new  Fl_Menu_Button(10, 0, 150, 30, "Status object");
+			createObject_b->menu(objects);
+			createObject_b->callback(cl_ChangeStatusCreate);
+			createObject_b->clear_visible_focus();
+			createObject_b->color(FL_WHITE);
 		}
+
+		{
+			toolingRed = new Fl_Menu_Item[3];
+			toolingRed[0] = { "Delete selection"};
+			toolingRed[1] = { "Delete all scene"};
+			toolingRed[2] = { 0 };
+			redaction_b = new  Fl_Menu_Button(160, 0, 150, 30, "Redaction scene");
+			redaction_b->menu(toolingRed);
+			redaction_b->callback(cl_Redaction);
+			redaction_b->clear_visible_focus();
+			redaction_b->color(FL_WHITE);
+		}
+
+		{
+			requirements = new Fl_Menu_Item[3];
+			requirements[0] = { "Dist points"};
+			requirements[1] = { "Equal segment" };
+			requirements[2] = { 0 };
+			redaction_b = new  Fl_Menu_Button(310, 0, 150, 30, "Create requirement");
+			redaction_b->menu(requirements);
+			redaction_b->callback(cl_Requirement);
+			redaction_b->clear_visible_focus();
+			redaction_b->color(FL_WHITE);
+		}
+
 		mainWindow->end();
 		
 		mainWindow->show();
