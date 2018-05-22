@@ -1,6 +1,6 @@
 #include "Logger.h"
 
-int Logger::minLevel = LEVEL_1;
+int Logger::minLevel = LEVEL_3;
 std::ostream* Logger::output = nullptr;
 
 string operator + (int num, string str) {

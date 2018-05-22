@@ -58,18 +58,19 @@ private:
 			switch (e)
 			{
 			case FL_PUSH:
-			{
 				params.PushBack(Fl::event_x());
 				params.PushBack(Fl::event_y());
 				Presenter::Set_event(ev_leftMouseDown, params);
 				break;
-			}
 			case FL_RELEASE:
 				params.PushBack(Fl::event_x());
 				params.PushBack(Fl::event_y());
 				Presenter::Set_event(ev_leftMouseUp, params);
 				break;
-
+			case FL_MOUSEWHEEL:
+				params.PushBack(Fl::event_dy());
+				Presenter::Set_event(ev_scroll, params);
+				break;
 			case FL_ENTER:
 				//std::cout << "Enter!";
 				//fl_color(FL_CYAN); fl_rectf(0, 0, w(), h());
@@ -88,8 +89,10 @@ private:
 				}
 				if (Fl::event_key() == FL_Escape)
 				{
+					fl_cursor(Fl_Cursor::FL_CURSOR_DEFAULT);
 					Presenter::Set_event(ev_escape, params);
 				}
+				
 				break;
 			case FL_KEYUP:
 				if (Fl::event_key() == FL_Control_L)
@@ -142,11 +145,27 @@ private:
 	static void cl_Redaction(Fl_Widget* o, void*)
 	{
 		Array<double> params(0);
+		
+		if (((Fl_Menu_Button*)o)->mvalue()->label() == "Move selection")
+		{
+			log->value("Log::Move selection");
+			fl_cursor(Fl_Cursor::FL_CURSOR_MOVE);
+			Presenter::Set_event(ev_moveObjects, params);
+		}
+
+		if (((Fl_Menu_Button*)o)->mvalue()->label() == "Scale selection")
+		{
+			log->value("Log::Scale selection");
+			//fl_cursor(Fl_Cursor::FL_CURSOR_MOVE);
+			Presenter::Set_event(ev_scaleObjects, params);
+		}
+
 		if (((Fl_Menu_Button*)o)->mvalue()->label() == "Delete selection")
 		{
 			log->value("Log::Delete selection");
 			Presenter::Set_event(ev_del, params);
 		}
+
 		if (((Fl_Menu_Button*)o)->mvalue()->label() == "Delete all scene")
 		{
 			log->value("Log::Delete all scene");
@@ -194,7 +213,7 @@ public:
 			objects[2] = { "Arc", FL_ALT + 'c' };
 			objects[3] = { "Circle", FL_ALT + 'v' };
 			objects[4] = { 0 };
-			createObject_b = new  Fl_Menu_Button(10, 0, 150, 30, "Status object");
+			createObject_b = new  Fl_Menu_Button(10, 0, 150, 30, "Create object");
 			createObject_b->menu(objects);
 			createObject_b->callback(cl_ChangeStatusCreate);
 			createObject_b->clear_visible_focus();
@@ -202,10 +221,12 @@ public:
 		}
 
 		{
-			toolingRed = new Fl_Menu_Item[3];
-			toolingRed[0] = { "Delete selection"};
-			toolingRed[1] = { "Delete all scene"};
-			toolingRed[2] = { 0 };
+			toolingRed = new Fl_Menu_Item[5];
+			toolingRed[0] = { "Move selection" };
+			toolingRed[1] = { "Scale selection" };
+			toolingRed[2] = { "Delete selection"};
+			toolingRed[3] = { "Delete all scene"};
+			toolingRed[4] = { 0 };
 			redaction_b = new  Fl_Menu_Button(160, 0, 150, 30, "Redaction scene");
 			redaction_b->menu(toolingRed);
 			redaction_b->callback(cl_Redaction);

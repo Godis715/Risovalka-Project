@@ -295,29 +295,29 @@ CreatingArc::~CreatingArc() {
 
 // SELECTION
 
-Selection::Selection(Array<ID> _selObjects) : Mode(), selectedObject(_selObjects) {
-	if (selectedObject.GetSize() == 0) {
-		selectedObject = Array<ID>(1);
+Selection::Selection(Array<ID> _selObjects) : Mode(), selectedObjects(_selObjects) {
+	if (selectedObjects.GetSize() == 0) {
+		selectedObjects = Array<ID>(1);
 	}
 	state = single_selection;
 }
 
-Selection::Selection() : Mode(), selectedObject(1) {
+Selection::Selection() : Mode(), selectedObjects(1) {
 	state = single_selection;
 }
 
 Selection::~Selection() {
-	selectedObject.Clear();
+	selectedObjects.Clear();
 }
 
 void Selection::AddObject(const ID& obj) {
-	for (int i = 0; i < selectedObject.GetSize(); ++i) {
-		if (selectedObject[i] == obj) {
-			selectedObject.EraseO_1_(i);
+	for (int i = 0; i < selectedObjects.GetSize(); ++i) {
+		if (selectedObjects[i] == obj) {
+			selectedObjects.EraseO_1_(i);
 			return;
 		}
 	}
-	selectedObject.PushBack(obj);
+	selectedObjects.PushBack(obj);
 }
 
 Mode* Selection::HandleEvent(const Event e, Array<double>& params) {
@@ -335,8 +335,8 @@ Mode* Selection::HandleEvent(const Event e, Array<double>& params) {
 		bool isFound = Presenter::GetObject(params[0], params[1], obj);
 		if (isFound) {
 			if (state == single_selection) {
-				selectedObject.Clear();
-				selectedObject.PushBack(obj);
+				selectedObjects.Clear();
+				selectedObjects.PushBack(obj);
 				return nullptr;
 			}
 
@@ -348,7 +348,7 @@ Mode* Selection::HandleEvent(const Event e, Array<double>& params) {
 		else {
 			if (state != poly_selection)
 			{
-				selectedObject.Clear();
+				selectedObjects.Clear();
 			}
 			return nullptr;
 		}
@@ -360,9 +360,9 @@ Mode* Selection::HandleEvent(const Event e, Array<double>& params) {
 		state = area_selection;
 		infoArea2.x = params[0];
 		infoArea2.y = params[1];
-		selectedObject.Clear();
+		selectedObjects.Clear();
 		lastEvent = e;
-		Presenter::GetObjectsOnArea(infoArea1.x, infoArea1.y, infoArea2.x, infoArea2.y, selectedObject);
+		Presenter::GetObjectsOnArea(infoArea1.x, infoArea1.y, infoArea2.x, infoArea2.y, selectedObjects);
 		return nullptr;
 	}
 	if (e == ev_leftMouseUp)
@@ -386,29 +386,35 @@ Mode* Selection::HandleEvent(const Event e, Array<double>& params) {
 		return nullptr;
 	}
 	case ev_escape: {
-		selectedObject.Clear();
+		selectedObjects.Clear();
 		return nullptr;
 	}
-	case ev_transform: {
-		if (selectedObject.GetSize() == 0) {
+	case ev_moveObjects: {
+		if (selectedObjects.GetSize() == 0) {
 			return nullptr;
 		}
-		return new Redaction(selectedObject);
+		return new Redaction(selectedObjects, ev_moveObjects);
+	}
+	case ev_scaleObjects: {
+		if (selectedObjects.GetSize() == 0) {
+			return nullptr;
+		}
+		return new Redaction(selectedObjects, ev_scaleObjects);
 	}
 	case ev_del: {
-		Presenter::DeletePrimitives(selectedObject);
+		Presenter::DeletePrimitives(selectedObjects);
 		return nullptr;
 	}
 	case ev_req_D_point: {
 		Array<double>param(1);
 		param[0] = 0;
-		Presenter::CreateRequirement(distBetPoints_t, selectedObject, param);
+		Presenter::CreateRequirement(distBetPoints_t, selectedObjects, param);
 		return nullptr;
 	}
 	case ev_req_Eq_Segment: {
 		Array<double>param(0);
 
-		Presenter::CreateRequirement(equalSegmentLen_t, selectedObject, param);
+		Presenter::CreateRequirement(equalSegmentLen_t, selectedObjects, param);
 		return nullptr;
 	}
 	default:
@@ -418,38 +424,7 @@ Mode* Selection::HandleEvent(const Event e, Array<double>& params) {
 
 void Selection::DrawMode()
 {
-	for (int i = 0; i < selectedObject.GetSize(); i++)
-	{
-		Array<double> params;
-		object_type type;
-
-		Presenter::GetObjParam(selectedObject[i], params);
-		Presenter::GetObjType(selectedObject[i], type);
-
-		switch (type)
-		{
-		case point_t:
-			Presenter::GetView()->SetColor(green);
-			Presenter::GetView()->DrawPoint(Vector2(params[0], params[1]));
-			break;
-		case segment_t:
-			Presenter::GetView()->SetColor(green);
-			Presenter::GetView()->DrawLine(Vector2(params[0], params[1]),
-				Vector2(params[2], params[3]), line);
-			break;
-		case arc_t:
-			Presenter::GetView()->SetColor(green);
-			Presenter::GetView()->DrawArc(Vector2(params[0], params[1]),
-				Vector2(params[2], params[3]),
-				Vector2(params[4], params[5]), line);
-			break;
-		case circle_t:
-			Presenter::GetView()->SetColor(green);
-			Presenter::GetView()->DrawCircle(Vector2(params[0], params[1]),
-				Vector2(params[0] + params[2], params[1]), line);
-			break;
-		}
-	}
+	Presenter::DrawSelectedObjects(selectedObjects);
 
 	if (state == area_selection)
 	{
@@ -466,17 +441,85 @@ void Selection::DrawMode()
 
 // REDACTION
 
-Redaction::Redaction(Array<ID> _selecObj) : selectedObjects(_selecObj)
-{}
+Redaction::Redaction(Array<ID> _selecObj, Event _ev) : selectedObjects(_selecObj){
+	state = noClick;
+	switch (_ev)
+	{
+	case ev_moveObjects:
+		status = move;
+		break;
+	case ev_scaleObjects:
+		status = scale;
+		break;
+	default:
+		std::exception("Redaction : not valid status");
+		break;
+	}
+}
 
 Redaction::~Redaction() {
 	selectedObjects.Clear();
 }
 
-Mode* Redaction::HandleEvent(const Event, Array<double>&) { return nullptr; }
+Mode* Redaction::HandleEvent(const Event e, Array<double>& params)
+{
+	if (status == move)
+	{
+		if (e == ev_leftMouseDown) {
+			if (params.GetSize() != 2) {
+				throw std::exception("Bad number of parameters");
+			}
+			posStart.x = params[0];
+			posStart.y = params[1];
+			state = click;
+			posEnd = posStart;
+			return nullptr;
+		}
+		if (e == ev_mouseMove && state == click)
+		{
+			if (params.GetSize() != 2) {
+				throw std::exception("Bad number of parameters");
+			}
+			posEnd.x = params[0];
+			posEnd.y = params[1];
+			Presenter::MoveObject(selectedObjects, posEnd - posStart);
+			posStart = posEnd;
+			return nullptr;
+		}
+		if (e == ev_leftMouseUp) {
+			state = noClick;
+			return nullptr;
+		}
+	}
+	if (status == scale)
+	{
+		if (e == ev_scroll)
+		{
+			if (params.GetSize() != 1) {
+				throw std::exception("Bad number of parameters");
+			}
+			double koef;
+			if (params[0] > 0 )
+			{
+				koef = 0.9;
+			}
+			if (params[0] < 0)
+			{
+				koef = 1.1;
+			}
+			Presenter::ScaleObjects(selectedObjects, koef);
+			return nullptr;
+		}
+	}
+	if (e == ev_escape)
+	{
+		return new Selection(selectedObjects);
+	}
+	return UnexpectedEvent(e);
+}
 
 void Redaction::DrawMode() {
-
+	Presenter::DrawSelectedObjects(selectedObjects);
 }
 
 // REDACTION_REQ

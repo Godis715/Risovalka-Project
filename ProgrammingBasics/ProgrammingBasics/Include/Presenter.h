@@ -17,6 +17,7 @@ private:
 public:
 	static IView* GetView();
 	static void DrawScene();
+	static void DrawSelectedObjects(const Array<ID>&);
 
 	//static void DrawObject(const ID&, color);
 

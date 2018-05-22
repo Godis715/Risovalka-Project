@@ -10,7 +10,8 @@ enum Event
 	ev_createArc,
 	ev_createCircle,
 	// 4
-	ev_transform,
+	ev_moveObjects,
+	ev_scaleObjects,
 	// 9
 	ev_del,
 	ev_delReq,
@@ -24,6 +25,7 @@ enum Event
 	ev_leftMouseUp,
 	ev_rightMouseUp,
 	ev_mouseMove,
+	ev_scroll,
 	ev_ctrlDown,
 	ev_ctrlUp,
 	ev_escape,
@@ -58,7 +60,7 @@ public:
 
 class Selection : public Mode {
 private:
-	Array<ID> selectedObject;
+	Array<ID> selectedObjects;
 	enum State { single_selection, poly_selection, area_selection};
 	State state;
 
@@ -147,10 +149,16 @@ public:
 
 class Redaction : public Mode {
 private:
+	enum State{noClick, click};
+	enum StatusRedaction{move, scale};
 	Array<ID> selectedObjects;
+	Vector2 posStart;
+	Vector2 posEnd;
+	State state;
+	StatusRedaction status;
 public:
 	// must take containers in constructor
-	Redaction(Array<ID>);
+	Redaction(Array<ID>, Event);
 	~Redaction();
 
 	Mode* HandleEvent(const Event, Array<double>&);

@@ -1014,7 +1014,6 @@ bool Model::Scale(const Array<ID>& idPrim, const double koef) {
 		LOG(string("could not find primitives by id"), primitives.GetSize(), LEVEL_2);
 		return false;
 	}
-
 	BinSearchTree<ID, Point*> points;
 	GetPointsFromPrimitives(primitives, points);
 	// geting center
@@ -1121,6 +1120,14 @@ void Model::GetPointsFromPrimitives(Array<Primitive*>& primitives, BinSearchTree
 			}
 			if (!pointTree.Find(arc->GetPoint2_ID()).IsValid()) {
 				Point* point = arc->point2;
+				pointTree.Add(point->GetID(), point);
+			}
+			break;
+		}
+		case circle_t: {
+			Circle* circle = cast<Circle*>(primitives[i]);
+			if (!pointTree.Find(circle->GetCenter_ID()).IsValid()) {
+				Point* point = circle->center;
 				pointTree.Add(point->GetID(), point);
 			}
 			break;
