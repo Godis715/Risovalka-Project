@@ -186,14 +186,14 @@ public:
 
 //CREATE REQUIRMENT
 
-class CreateRequirement : public Mode {
+class CreateRequirementWithParam : public Mode {
 private:
 	Array<ID> selectedPrim;
 	object_type typeRequirement;
 public:
-	CreateRequirement(Array<ID>, Event);
-	CreateRequirement();
-	~CreateRequirement();
+	CreateRequirementWithParam(Array<ID>, Event);
+	CreateRequirementWithParam();
+	~CreateRequirementWithParam();
 
 	Mode* HandleEvent(const Event, Array<double>&);
 

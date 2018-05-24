@@ -185,12 +185,10 @@ private:
 	static void cl_Requirement(Fl_Widget* o, void*)
 	{
 		Array<double> params(0);
-		if (currentWindget == nullptr)
+		if (currentWindget != nullptr)
 		{
 			currentWindget->deactivate();
 		}
-
-
 		if (((Fl_Menu_Button*)o)->mvalue()->label() == "Dist points")
 		{
 			log->value("Log::Create requirement: Dist points");
@@ -208,10 +206,12 @@ private:
 	static void cl_Input(Fl_Widget* o, void*) {
 		Array<double> params(1);
 		string numbers = ((Fl_Float_Input*)o)->value();
-	
-		params[0] = Parse(numbers);
+		((Fl_Float_Input*)o)->value("");
+		params[0] = 0;
+		//params[0] = Parse(numbers);
 		Presenter::Set_event(ev_input, params);
 		o->deactivate();
+
 		currentWindget = nullptr;
 	}
 
@@ -233,6 +233,9 @@ public:
 		log = new Fl_Output(1010, 0, 300, 30);
 
 		textBuffer = new Fl_Float_Input(1010, 50, 100, 30);
+		textBuffer->deactivate();
+		textBuffer->when(FL_WHEN_ENTER_KEY);
+		textBuffer->callback(cl_Input);
 
 		{
 			objects = new Fl_Menu_Item[5];

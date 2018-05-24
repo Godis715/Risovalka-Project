@@ -406,10 +406,7 @@ Mode* Selection::HandleEvent(const Event e, Array<double>& params) {
 		return nullptr;
 	}
 	case ev_req_D_point: {
-		Array<double>param(1);
-		param[0] = 0;
-		Presenter::CreateRequirement(distBetPoints_t, selectedObjects, param);
-		return nullptr;
+		return new CreateRequirementWithParam(selectedObjects, ev_req_D_point);
 	}
 	case ev_req_Eq_Segment: {
 		Array<double>param(0);
@@ -546,27 +543,41 @@ void RedactionReq::DrawMode() {
 
 
 //CREATE REQUIRMENT
-CreateRequirement::CreateRequirement(Array<ID> _selecObj, Event _ev) : selectedPrim(_selecObj) {
+CreateRequirementWithParam::CreateRequirementWithParam(Array<ID> _selecObj, Event _ev) : selectedPrim(_selecObj) {
 	switch (_ev)
 	{
 	case ev_req_D_point:
 		typeRequirement = distBetPoints_t;
+		break;
 	default:
 		std::exception("CreateRequirement : not valid status");
 		break;
 	}
 }
 
-CreateRequirement::CreateRequirement() { }
+CreateRequirementWithParam::CreateRequirementWithParam() { }
 
-CreateRequirement::~CreateRequirement() {
+CreateRequirementWithParam::~CreateRequirementWithParam() {
 	
 }
 
-Mode* CreateRequirement::HandleEvent(const Event ev, Array<double>& param) {
-	return nullptr;
+Mode* CreateRequirementWithParam::HandleEvent(const Event ev, Array<double>& params) {
+	if (ev == ev_input)
+	{
+		if (params.GetSize() != 1) {
+			throw std::exception("Bad number of parameters");
+		}
+		switch (typeRequirement)
+		{
+		case distBetPoints_t:
+			Presenter::CreateRequirement(distBetPoints_t, selectedPrim, params);
+			return new Selection(selectedPrim);
+			break;
+		}
+	}
+	return UnexpectedEvent(ev);
 }
 
-void CreateRequirement::DrawMode() {
-
+void CreateRequirementWithParam::DrawMode() {
+	Presenter::DrawSelectedObjects(selectedPrim);
 }
