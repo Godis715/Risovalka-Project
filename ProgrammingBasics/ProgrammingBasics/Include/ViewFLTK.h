@@ -217,6 +217,12 @@ private:
 			log->value("Log::Create requirement: Equal segment");
 			Presenter::Set_event(ev_req_Eq_Segment, params);
 		}
+		if (((Fl_Menu_Button*)o)->mvalue()->label() == "points on one hand")
+		{
+			log->value("Log::Create requirement: points on one hand");
+			Presenter::Set_event(ev_req_on_one_hand, params);
+		}
+
 	}
 
 	static void cl_Input(Fl_Widget* o, void*) {
@@ -267,7 +273,7 @@ public:
 		}
 
 		{
-			toolingRed = new Fl_Menu_Item[5];
+			toolingRed = new Fl_Menu_Item[6];
 			toolingRed[0] = { "Move selection" };
 			toolingRed[1] = { "Scale selection" };
 			toolingRed[2] = { "Delete selection"};
@@ -281,10 +287,11 @@ public:
 		}
 
 		{
-			requirements = new Fl_Menu_Item[3];
+			requirements = new Fl_Menu_Item[4];
 			requirements[0] = { "Dist points"};
 			requirements[1] = { "Equal segment" };
-			requirements[2] = { 0 };
+			requirements[2] = { "points on one hand" };
+			requirements[3] = { 0 };
 			redaction_b = new  Fl_Menu_Button(310, 0, 150, 30, "Create requirement");
 			redaction_b->menu(requirements);
 			redaction_b->callback(cl_Requirement);

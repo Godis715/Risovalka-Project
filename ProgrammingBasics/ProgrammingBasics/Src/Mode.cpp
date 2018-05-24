@@ -414,6 +414,12 @@ Mode* Selection::HandleEvent(const Event e, Array<double>& params) {
 		Presenter::CreateRequirement(equalSegmentLen_t, selectedObjects, param);
 		return nullptr;
 	}
+	case ev_req_on_one_hand: {
+		Array<double>param(0);
+
+		Presenter::CreateRequirement(pointsOnTheOneHand, selectedObjects, param);
+		return nullptr;
+	}
 	default:
 		return UnexpectedEvent(e);
 	}
