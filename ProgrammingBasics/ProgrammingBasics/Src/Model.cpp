@@ -997,14 +997,15 @@ bool Model::OptimizeGroup(Array<Primitive*>& group) {
 }
 
 void Model::LockPoint(Point* _point, ID& id) {
+	Requirement* requirement = new PointPosReq(_point, _point->position.x, _point->position.y);
+
+	id = requirement->GetID();
+
+	dataReq.Add(id, requirement);
 
 	Array<Primitive*> point(1);
 	point[0] = _point;
-	Array<double> params(2);
-	params[0] = _point->position.x;
-	params[1] = _point->position.y;
-
-	CreateRequirement(pointPosReq_t, point, params, id);
+	CreateLink(id, point);
 }
 
 bool Model::Scale(const Array<ID>& idPrim, const double koef) {

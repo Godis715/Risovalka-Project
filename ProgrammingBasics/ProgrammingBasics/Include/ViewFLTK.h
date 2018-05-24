@@ -92,6 +92,11 @@ private:
 					fl_cursor(Fl_Cursor::FL_CURSOR_DEFAULT);
 					Presenter::Set_event(ev_escape, params);
 				}
+				if (Fl::event_key() == FL_Delete)
+				{
+					ViewFLTK::log->value("Log::Delete selection");
+					Presenter::Set_event(ev_del, params);
+				}
 				
 				break;
 			case FL_KEYUP:
