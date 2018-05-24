@@ -128,13 +128,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\Include\Primitives.cpp" />
     <ClCompile Include="..\Src\ID.cpp" />
     <ClCompile Include="..\Src\Logger.cpp" />
     <ClCompile Include="..\Src\main.cpp" />
     <ClCompile Include="..\Src\Mode.cpp" />
     <ClCompile Include="..\Src\Model.cpp" />
     <ClCompile Include="..\Src\Presenter.cpp" />
+    <ClCompile Include="..\Src\Primitives.cpp" />
     <ClCompile Include="..\Src\Requirement.cpp" />
     <ClCompile Include="..\Src\Vector2.cpp" />
   </ItemGroup>

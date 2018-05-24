@@ -543,3 +543,30 @@ Mode* RedactionReq::HandleEvent(const Event ev, Array<double>& param) {
 void RedactionReq::DrawMode() {
 
 }
+
+
+//CREATE REQUIRMENT
+CreateRequirement::CreateRequirement(Array<ID> _selecObj, Event _ev) : selectedPrim(_selecObj) {
+	switch (_ev)
+	{
+	case ev_req_D_point:
+		typeRequirement = distBetPoints_t;
+	default:
+		std::exception("CreateRequirement : not valid status");
+		break;
+	}
+}
+
+CreateRequirement::CreateRequirement() { }
+
+CreateRequirement::~CreateRequirement() {
+	
+}
+
+Mode* CreateRequirement::HandleEvent(const Event ev, Array<double>& param) {
+	return nullptr;
+}
+
+void CreateRequirement::DrawMode() {
+
+}

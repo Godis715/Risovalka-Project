@@ -36,10 +36,10 @@
     <ClCompile Include="..\Src\Presenter.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="..\Include\Primitives.cpp">
-      <Filter>Файлы заголовков</Filter>
-    </ClCompile>
     <ClCompile Include="..\Src\Mode.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Src\Primitives.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
   </ItemGroup>

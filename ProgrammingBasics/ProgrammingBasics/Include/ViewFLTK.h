@@ -17,13 +17,17 @@
 #include <FL/Fl_Menu_Button.H>
 #include <FL/Fl_Menu_Item.H>
 #include <FL/Fl_Output.H>
-#include <FL/Fl_Input.H>
+#include <FL/Fl_Float_Input.H>
 #include <FL/math.h>
 
 class ViewFLTK : public IView
 {
 private:
 	static Fl_Output* log;
+
+	static Fl_Widget* currentWindget;
+
+	static Fl_Float_Input* textBuffer;
 
 	Fl_Menu_Item* objects;
 	Fl_Menu_Button* createObject_b;
@@ -97,7 +101,7 @@ private:
 					ViewFLTK::log->value("Log::Delete selection");
 					Presenter::Set_event(ev_del, params);
 				}
-				
+
 				break;
 			case FL_KEYUP:
 				if (Fl::event_key() == FL_Control_L)
@@ -150,7 +154,7 @@ private:
 	static void cl_Redaction(Fl_Widget* o, void*)
 	{
 		Array<double> params(0);
-		
+
 		if (((Fl_Menu_Button*)o)->mvalue()->label() == "Move selection")
 		{
 			log->value("Log::Move selection");
@@ -177,14 +181,21 @@ private:
 			Presenter::CleareScene();
 		}
 	}
-	
+
 	static void cl_Requirement(Fl_Widget* o, void*)
 	{
 		Array<double> params(0);
-	
+		if (currentWindget == nullptr)
+		{
+			currentWindget->deactivate();
+		}
+
+
 		if (((Fl_Menu_Button*)o)->mvalue()->label() == "Dist points")
 		{
 			log->value("Log::Create requirement: Dist points");
+			currentWindget = textBuffer;
+			currentWindget->activate();
 			Presenter::Set_event(ev_req_D_point, params);
 		}
 		if (((Fl_Menu_Button*)o)->mvalue()->label() == "Equal segment")
@@ -192,6 +203,16 @@ private:
 			log->value("Log::Create requirement: Equal segment");
 			Presenter::Set_event(ev_req_Eq_Segment, params);
 		}
+	}
+
+	static void cl_Input(Fl_Widget* o, void*) {
+		Array<double> params(1);
+		string numbers = ((Fl_Float_Input*)o)->value();
+	
+		params[0] = Parse(numbers);
+		Presenter::Set_event(ev_input, params);
+		o->deactivate();
+		currentWindget = nullptr;
 	}
 
 	//..
@@ -210,6 +231,8 @@ public:
 		drawWindow->end();
 
 		log = new Fl_Output(1010, 0, 300, 30);
+
+		textBuffer = new Fl_Float_Input(1010, 50, 100, 30);
 
 		{
 			objects = new Fl_Menu_Item[5];
@@ -385,4 +408,9 @@ public:
 };
 
 Fl_Output* ViewFLTK::log = nullptr;
+
+Fl_Float_Input* ViewFLTK::textBuffer = nullptr;
+
+Fl_Widget* ViewFLTK::currentWindget = nullptr;
+
 #endif // !__VIEW_FLTK

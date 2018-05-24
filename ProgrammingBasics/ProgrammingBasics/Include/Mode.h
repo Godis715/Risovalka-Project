@@ -32,6 +32,7 @@ enum Event
 	ev_clockOnReq,
 	ev_req_D_point,
 	ev_req_Eq_Segment,
+	ev_input,
 	//end new events
 
 	ev_save
@@ -182,4 +183,21 @@ public:
 
 	void DrawMode();
 };
+
+//CREATE REQUIRMENT
+
+class CreateRequirement : public Mode {
+private:
+	Array<ID> selectedPrim;
+	object_type typeRequirement;
+public:
+	CreateRequirement(Array<ID>, Event);
+	CreateRequirement();
+	~CreateRequirement();
+
+	Mode* HandleEvent(const Event, Array<double>&);
+
+	void DrawMode();
+};
+
 #endif // !__MODE
