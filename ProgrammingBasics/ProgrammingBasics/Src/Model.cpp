@@ -362,6 +362,7 @@ bool Model::CreateRequirement(object_type type, Array<Primitive*>& primitives, c
 		// verification parameters
 		if ((primitives.GetSize() != 2)
 			|| (params.GetSize() != 1)
+			|| (params[0] < 0)
 			|| (primitives[0]->GetType() != point_t)
 			|| (primitives[1]->GetType() != point_t)) {
 			return false;
@@ -405,6 +406,7 @@ bool Model::CreateRequirement(object_type type, Array<Primitive*>& primitives, c
 		// verification parameters
 		if ((primitives.GetSize() != 2)
 			|| (params.GetSize() != 1)
+			|| (params[0] < 0)
 			|| (primitives[0]->GetType() != segment_t)
 			|| (primitives[1]->GetType() != point_t))
 		{
@@ -442,9 +444,9 @@ bool Model::CreateRequirement(object_type type, Array<Primitive*>& primitives, c
 	case distBetPointArc: {
 		// verification parameters
 		if ((primitives.GetSize() != 2)
-			&& (params.GetSize() != 1)
-			&& (primitives[0]->GetType() != arc_t)
-			&& (primitives[1]->GetType() != point_t))
+			|| (params.GetSize() != 1)
+			|| (primitives[0]->GetType() != arc_t)
+			|| (primitives[1]->GetType() != point_t))
 		{
 			return false;
 		}
@@ -457,9 +459,9 @@ bool Model::CreateRequirement(object_type type, Array<Primitive*>& primitives, c
 	case pointInArc: {
 		// verification parameters
 		if ((primitives.GetSize() != 2)
-			&& (params.GetSize() != 0)
-			&& (primitives[0]->GetType() != arc_t)
-			&& (primitives[1]->GetType() != point_t))
+			|| (params.GetSize() != 0)
+			|| (primitives[0]->GetType() != arc_t)
+			|| (primitives[1]->GetType() != point_t))
 		{
 			return false;
 		}

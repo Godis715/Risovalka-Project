@@ -213,10 +213,12 @@ public:
 			Fx2 = abs(Fx2);
 
 			if (Fx1 > Fx2) {
-				return Fx2;
+				double distance = segment->GetDistance(point2->position);
+				return distance * distance;
 			}
 			else{
-				return Fx1;
+				double distance = segment->GetDistance(point1->position);
+				return distance * distance;
 			}
 		}
 		return 0;

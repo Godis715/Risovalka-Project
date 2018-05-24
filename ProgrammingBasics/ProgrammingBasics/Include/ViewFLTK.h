@@ -20,6 +20,22 @@
 #include <FL/Fl_Float_Input.H>
 #include <FL/math.h>
 
+double Parse(string number) {
+	int countPoint = 0;
+	for (int i = 0; i < number.length(); ++i) {
+		if ((number[i] == 'e') || (number[i] == '.')) {
+			return -1;
+		}
+		if (number[i] == '.') {
+			++countPoint;
+			if (countPoint > 1) {
+				return -1;
+			}
+		}
+	}
+	return stod(number);
+}
+
 class ViewFLTK : public IView
 {
 private:
