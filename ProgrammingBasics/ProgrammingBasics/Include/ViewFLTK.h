@@ -223,8 +223,7 @@ private:
 		Array<double> params(1);
 		string numbers = ((Fl_Float_Input*)o)->value();
 		((Fl_Float_Input*)o)->value("");
-		params[0] = 0;
-		//params[0] = Parse(numbers);
+		params[0] = Parse(numbers);
 		Presenter::Set_event(ev_input, params);
 		o->deactivate();
 
