@@ -45,6 +45,8 @@ private:
 
 	static Fl_Float_Input* textBuffer;
 
+	static Fl_Cursor* cursor;
+
 	Fl_Menu_Item* objects;
 	Fl_Menu_Button* createObject_b;
 
@@ -83,6 +85,7 @@ private:
 				Presenter::Set_event(ev_leftMouseDown, params);
 				break;
 			case FL_RELEASE:
+				fl_cursor(FL_CURSOR_DEFAULT);
 				params.PushBack(Fl::event_x());
 				params.PushBack(Fl::event_y());
 				Presenter::Set_event(ev_leftMouseUp, params);
@@ -92,13 +95,14 @@ private:
 				Presenter::Set_event(ev_scroll, params);
 				break;
 			case FL_ENTER:
-				//std::cout << "Enter!";
-				//fl_color(FL_CYAN); fl_rectf(0, 0, w(), h());
+				if (ViewFLTK::cursor != nullptr)
+				{
+					fl_cursor(*ViewFLTK::cursor);
+				}
 				break;
 
 			case FL_LEAVE:
-				//std::cout << "Leave!";
-				//fl_color(FL_BLACK); fl_rectf(0, 0, w(), h());
+				fl_cursor(FL_CURSOR_DEFAULT);
 				break;
 
 			case FL_KEYDOWN:
@@ -109,7 +113,8 @@ private:
 				}
 				if (Fl::event_key() == FL_Escape)
 				{
-					fl_cursor(Fl_Cursor::FL_CURSOR_DEFAULT);
+					fl_cursor(FL_CURSOR_DEFAULT);
+					ViewFLTK::cursor = nullptr;
 					Presenter::Set_event(ev_escape, params);
 				}
 				if (Fl::event_key() == FL_Delete)
@@ -132,6 +137,7 @@ private:
 				Presenter::Set_event(ev_mouseMove, params);
 				break;
 			case FL_DRAG:
+				fl_cursor(FL_CURSOR_CROSS);
 				params.PushBack(Fl::event_x());
 				params.PushBack(Fl::event_y());
 				Presenter::Set_event(ev_mouseMove, params);
@@ -174,7 +180,8 @@ private:
 		if (((Fl_Menu_Button*)o)->mvalue()->label() == "Move selection")
 		{
 			log->value("Log::Move selection");
-			fl_cursor(Fl_Cursor::FL_CURSOR_MOVE);
+			fl_cursor(FL_CURSOR_MOVE);
+			cursor = new Fl_Cursor(FL_CURSOR_MOVE);
 			Presenter::Set_event(ev_moveObjects, params);
 		}
 
@@ -217,9 +224,9 @@ private:
 			log->value("Log::Create requirement: Equal segment");
 			Presenter::Set_event(ev_req_Eq_Segment, params);
 		}
-		if (((Fl_Menu_Button*)o)->mvalue()->label() == "points on one hand")
+		if (((Fl_Menu_Button*)o)->mvalue()->label() == "Points on one hand")
 		{
-			log->value("Log::Create requirement: points on one hand");
+			log->value("Log::Create requirement: Points on one hand");
 			Presenter::Set_event(ev_req_on_one_hand, params);
 		}
 
@@ -230,9 +237,9 @@ private:
 		string numbers = ((Fl_Float_Input*)o)->value();
 		((Fl_Float_Input*)o)->value("");
 		params[0] = Parse(numbers);
-		Presenter::Set_event(ev_input, params);
 		o->deactivate();
-
+		fl_cursor(FL_CURSOR_DEFAULT);
+		Presenter::Set_event(ev_input, params);
 		currentWindget = nullptr;
 	}
 
@@ -257,6 +264,7 @@ public:
 		textBuffer->deactivate();
 		textBuffer->when(FL_WHEN_ENTER_KEY);
 		textBuffer->callback(cl_Input);
+
 
 		{
 			objects = new Fl_Menu_Item[5];
@@ -290,7 +298,7 @@ public:
 			requirements = new Fl_Menu_Item[4];
 			requirements[0] = { "Dist points"};
 			requirements[1] = { "Equal segment" };
-			requirements[2] = { "points on one hand" };
+			requirements[2] = { "Points on one hand" };
 			requirements[3] = { 0 };
 			redaction_b = new  Fl_Menu_Button(310, 0, 150, 30, "Create requirement");
 			redaction_b->menu(requirements);
@@ -437,5 +445,7 @@ Fl_Output* ViewFLTK::log = nullptr;
 Fl_Float_Input* ViewFLTK::textBuffer = nullptr;
 
 Fl_Widget* ViewFLTK::currentWindget = nullptr;
+
+Fl_Cursor* ViewFLTK::cursor = nullptr;
 
 #endif // !__VIEW_FLTK
