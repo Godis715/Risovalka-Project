@@ -274,15 +274,15 @@ private:
 	}
 
 	static void cl_Input(Fl_Widget* o, void*) {
+		fl_cursor(FL_CURSOR_DEFAULT);
+		o->deactivate();
+		currentWindget = nullptr;
 
 		Array<double> params(1);
 		string numbers = ((Fl_Float_Input*)o)->value();
 		((Fl_Float_Input*)o)->value("");
 		params[0] = Parse(numbers);
-		fl_cursor(FL_CURSOR_DEFAULT);
-		o->deactivate();
 		Presenter::Set_event(ev_input, params);
-		currentWindget = nullptr;
 	}
 
 	//..
@@ -345,7 +345,6 @@ public:
 			requirements[4] = { "Dist point arc" };
 			requirements[5] = { "Angle between segment" };
 			requirements[6] = { 0 };
-
 			createRequirement_b = new  Fl_Menu_Button(310, 0, 150, 30, "Create requirement");
 			createRequirement_b->menu(requirements);
 			createRequirement_b->callback(cl_Requirement);
