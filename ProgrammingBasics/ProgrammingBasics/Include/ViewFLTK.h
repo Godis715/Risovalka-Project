@@ -11,8 +11,6 @@
 #include <FL/Fl_Window.H>
 #include <FL/Fl_Box.H>
 #include <FL/fl_draw.H>
-#include <FL/Fl_Tabs.H>
-#include <FL/Fl_Group.H>
 #include <FL/Fl_Button.h>
 #include <FL/Fl_Menu_Button.H>
 #include <FL/Fl_Menu_Item.H>
@@ -112,6 +110,10 @@ private:
 				}
 				if (Fl::event_key() == FL_Escape)
 				{
+					if (currentWindget != nullptr)
+					{
+						ViewFLTK::currentWindget->deactivate();
+					}
 					delete ViewFLTK::lastCursor;
 					ViewFLTK::lastCursor = new Fl_Cursor(FL_CURSOR_DEFAULT);
 					ViewFLTK::lastEvent = ev_ctrlUp;
@@ -142,10 +144,10 @@ private:
 				Presenter::Set_event(ev_mouseMove, params);
 				break;
 			case FL_DRAG:
-				if (*ViewFLTK::lastCursor == FL_CURSOR_DEFAULT)
+				/*if (*ViewFLTK::lastCursor == FL_CURSOR_DEFAULT)
 				{
 					fl_cursor(FL_CURSOR_CROSS);
-				}
+				}*/
 				params.PushBack(Fl::event_x());
 				params.PushBack(Fl::event_y());
 				Presenter::Set_event(ev_mouseMove, params);
