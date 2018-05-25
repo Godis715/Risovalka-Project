@@ -81,6 +81,7 @@ private:
 			switch (e)
 			{
 			case FL_PUSH:
+				fl_cursor(*ViewFLTK::lastCursor);
 				params.PushBack(Fl::event_x());
 				params.PushBack(Fl::event_y());
 				Presenter::Set_event(ev_leftMouseDown, params);
@@ -96,10 +97,7 @@ private:
 				Presenter::Set_event(ev_scroll, params);
 				break;
 			case FL_ENTER:
-				if (ViewFLTK::lastCursor != nullptr)
-				{
-					fl_cursor(*ViewFLTK::lastCursor);
-				}
+				fl_cursor(*ViewFLTK::lastCursor);
 				break;
 
 			case FL_LEAVE:
@@ -114,8 +112,8 @@ private:
 				}
 				if (Fl::event_key() == FL_Escape)
 				{
-					fl_cursor(FL_CURSOR_DEFAULT);
-					ViewFLTK::lastCursor = nullptr;
+					delete ViewFLTK::lastCursor;
+					ViewFLTK::lastCursor = new Fl_Cursor(FL_CURSOR_DEFAULT);
 					ViewFLTK::lastEvent = ev_ctrlUp;
 					Presenter::Set_event(ev_escape, params);
 				}
@@ -138,12 +136,16 @@ private:
 				}
 				break;
 			case FL_MOVE:
+				fl_cursor(*ViewFLTK::lastCursor);
 				params.PushBack(Fl::event_x());
 				params.PushBack(Fl::event_y());
 				Presenter::Set_event(ev_mouseMove, params);
 				break;
 			case FL_DRAG:
-				fl_cursor(FL_CURSOR_CROSS);
+				if (*ViewFLTK::lastCursor == FL_CURSOR_DEFAULT)
+				{
+					fl_cursor(FL_CURSOR_CROSS);
+				}
 				params.PushBack(Fl::event_x());
 				params.PushBack(Fl::event_y());
 				Presenter::Set_event(ev_mouseMove, params);
@@ -156,6 +158,9 @@ private:
 	//callbacks
 	static void cl_Create(Fl_Widget* o, void*)
 	{
+		delete lastCursor;
+		lastCursor = new Fl_Cursor(FL_CURSOR_DEFAULT);
+
 		Array<double> params(0);
 		if (((Fl_Menu_Button*)o)->mvalue()->label() == "Point")
 		{
@@ -185,12 +190,14 @@ private:
 
 	static void cl_Redaction(Fl_Widget* o, void*)
 	{
+		delete lastCursor;
+		lastCursor = new Fl_Cursor(FL_CURSOR_DEFAULT);
 		Array<double> params(0);
 
 		if (((Fl_Menu_Button*)o)->mvalue()->label() == "Move selection")
 		{
 			log->value("Log::Move selection");
-			fl_cursor(FL_CURSOR_MOVE);
+			delete lastCursor;
 			lastCursor = new Fl_Cursor(FL_CURSOR_MOVE);
 			Presenter::Set_event(ev_moveObjects, params);
 		}
@@ -198,7 +205,6 @@ private:
 		if (((Fl_Menu_Button*)o)->mvalue()->label() == "Scale selection")
 		{
 			log->value("Log::Scale selection");
-			//fl_cursor(Fl_Cursor::FL_CURSOR_MOVE);
 			Presenter::Set_event(ev_scaleObjects, params);
 		}
 
@@ -217,6 +223,8 @@ private:
 
 	static void cl_Requirement(Fl_Widget* o, void*)
 	{
+		delete lastCursor;
+		lastCursor = new Fl_Cursor(FL_CURSOR_DEFAULT);
 		Array<double> params(0);
 		if (currentWindget != nullptr)
 		{
@@ -264,12 +272,13 @@ private:
 	}
 
 	static void cl_Input(Fl_Widget* o, void*) {
+
 		Array<double> params(1);
 		string numbers = ((Fl_Float_Input*)o)->value();
 		((Fl_Float_Input*)o)->value("");
 		params[0] = Parse(numbers);
-		o->deactivate();
 		fl_cursor(FL_CURSOR_DEFAULT);
+		o->deactivate();
 		Presenter::Set_event(ev_input, params);
 		currentWindget = nullptr;
 	}
@@ -481,7 +490,7 @@ Fl_Float_Input* ViewFLTK::textBuffer = nullptr;
 
 Fl_Widget* ViewFLTK::currentWindget = nullptr;
 
-Fl_Cursor* ViewFLTK::lastCursor = nullptr;
+Fl_Cursor* ViewFLTK::lastCursor = new Fl_Cursor(FL_CURSOR_DEFAULT);
 
 Event ViewFLTK::lastEvent = ev_ctrlUp;
 
