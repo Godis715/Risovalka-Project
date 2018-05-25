@@ -65,7 +65,7 @@ Mode* CreatingSegment::HandleEvent(const Event ev, Array<double>& params) {
 			segmentParameters[3] = params[1];
 
 			ID id;
-			id = Presenter::CreateObject(segment_t, segmentParameters);
+			id = Presenter::CreateObject(ot_segment, segmentParameters);
 
 			Array<ID> selectedObjects(1);
 			selectedObjects[0] = id;
@@ -114,7 +114,7 @@ Mode* CreatingPoint::HandleEvent(const Event ev, Array<double>& params) {
 			throw std::exception("Bad number of parameters");
 		}
 
-		ID id = Presenter::CreateObject(point_t, params);
+		ID id = Presenter::CreateObject(ot_point, params);
 		Array<ID> selectedObjects(1);
 		selectedObjects[0] = id;
 		return new Selection(selectedObjects);
@@ -155,7 +155,7 @@ Mode* CreatingCircle::HandleEvent(const Event ev, Array<double>& params) {
 		// with selected circle
 		if (state == oneClick) {
 			CircleParameters[2] = (Vector2(params[0], params[1]) - Vector2(CircleParameters[0], CircleParameters[1])).GetLength();
-			ID id = Presenter::CreateObject(circle_t, CircleParameters);
+			ID id = Presenter::CreateObject(ot_circle, CircleParameters);
 
 			Array<ID> selectedObjects(1);
 			selectedObjects[0] = id;
@@ -239,7 +239,7 @@ Mode* CreatingArc::HandleEvent(const Event ev, Array<double>& params) {
 			arcParameters[4] = params[0];
 			arcParameters[5] = params[1];
 
-			ID id = Presenter::CreateObject(arc_t, arcParameters);
+			ID id = Presenter::CreateObject(ot_arc, arcParameters);
 
 			Array<ID> selectedObjects(1);
 			selectedObjects[0] = id;
@@ -406,18 +406,27 @@ Mode* Selection::HandleEvent(const Event e, Array<double>& params) {
 		return nullptr;
 	}
 	case ev_req_D_point: {
-		return new CreateRequirementWithParam(selectedObjects, ev_req_D_point);
+		return new CreateRequirementWithParam(selectedObjects, e);
+	}
+	case ev_req_D_point_segment: {
+		return new CreateRequirementWithParam(selectedObjects, e);
+	}
+	case ev_req_D_point_arc: {
+		return new CreateRequirementWithParam(selectedObjects, e);
+	}
+	case ev_req_angle_segment: {
+		return new CreateRequirementWithParam(selectedObjects, e);
 	}
 	case ev_req_Eq_Segment: {
 		Array<double>param(0);
 
-		Presenter::CreateRequirement(equalSegmentLen_t, selectedObjects, param);
+		Presenter::CreateRequirement(ot_equalSegmentLen, selectedObjects, param);
 		return nullptr;
 	}
 	case ev_req_on_one_hand: {
 		Array<double>param(0);
 
-		Presenter::CreateRequirement(pointsOnTheOneHand, selectedObjects, param);
+		Presenter::CreateRequirement(ot_pointsOnTheOneHand, selectedObjects, param);
 		return nullptr;
 	}
 	default:
@@ -552,9 +561,22 @@ void RedactionReq::DrawMode() {
 CreateRequirementWithParam::CreateRequirementWithParam(Array<ID> _selecObj, Event _ev) : selectedPrim(_selecObj) {
 	switch (_ev)
 	{
-	case ev_req_D_point:
-		typeRequirement = distBetPoints_t;
+	case ev_req_D_point: {
+		typeRequirement = ot_distBetPoints;
 		break;
+	}
+	case ev_req_D_point_segment: {
+		typeRequirement = ot_distBetPointSeg;
+		break;
+	}
+	case ev_req_D_point_arc: {
+		typeRequirement = ot_distBetPointArc;
+		break;
+	}
+	case ev_req_angle_segment: {
+		typeRequirement = ot_angleBetSeg;
+		break;
+	}
 	default:
 		std::exception("CreateRequirement : not valid status");
 		break;
@@ -573,13 +595,10 @@ Mode* CreateRequirementWithParam::HandleEvent(const Event ev, Array<double>& par
 		if (params.GetSize() != 1) {
 			throw std::exception("Bad number of parameters");
 		}
-		switch (typeRequirement)
-		{
-		case distBetPoints_t:
-			Presenter::CreateRequirement(distBetPoints_t, selectedPrim, params);
-			return new Selection(selectedPrim);
-			break;
-		}
+
+		Presenter::CreateRequirement(typeRequirement, selectedPrim, params);
+		return new Selection(selectedPrim);
+
 	}
 	return UnexpectedEvent(ev);
 }

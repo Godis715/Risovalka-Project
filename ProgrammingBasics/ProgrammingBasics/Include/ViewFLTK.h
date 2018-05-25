@@ -44,6 +44,7 @@ private:
 	static Fl_Widget* currentWindget;
 
 	static Fl_Float_Input* textBuffer;
+	static Event lastEvent;
 
 	Fl_Menu_Item* objects;
 	Fl_Menu_Button* createObject_b;
@@ -62,7 +63,7 @@ private:
 			fl_rectf(0, 0, w(), h());
 			Presenter::DrawScene();
 		}
-		Event lastEvent = ev_ctrlUp;
+		
 	public:
 		SecondWindow(int x, int y, int w, int h, const char *l)
 			: Fl_Double_Window(x, y, w, h, l)
@@ -110,7 +111,12 @@ private:
 				if (Fl::event_key() == FL_Escape)
 				{
 					fl_cursor(Fl_Cursor::FL_CURSOR_DEFAULT);
+					lastEvent = ev_ctrlUp;
 					Presenter::Set_event(ev_escape, params);
+				}
+				if (Fl::event_key() == FL_Shift_L && lastEvent != ev_ctrlDown)
+				{
+					Presenter::Set_event(lastEvent, params);
 				}
 				if (Fl::event_key() == FL_Delete)
 				{
@@ -142,28 +148,32 @@ private:
 	};
 
 	//callbacks
-	static void cl_ChangeStatusCreate(Fl_Widget* o, void*)
+	static void cl_Create(Fl_Widget* o, void*)
 	{
 		Array<double> params(0);
 		if (((Fl_Menu_Button*)o)->mvalue()->label() == "Point")
 		{
 			log->value("Log::Create point");
 			Presenter::Set_event(ev_createPoint, params);
+			lastEvent = ev_createPoint;
 		}
 		if (((Fl_Menu_Button*)o)->mvalue()->label() == "Segment")
 		{
 			log->value("Log::Create segment");
 			Presenter::Set_event(ev_createSegment, params);
+			lastEvent = ev_createSegment;
 		}
 		if (((Fl_Menu_Button*)o)->mvalue()->label() == "Arc")
 		{
 			log->value("Log::Create arc");
 			Presenter::Set_event(ev_createArc, params);
+			lastEvent = ev_createArc;
 		}
 		if (((Fl_Menu_Button*)o)->mvalue()->label() == "Circle")
 		{
 			log->value("Log::Create circle");
 			Presenter::Set_event(ev_createCircle, params);
+			lastEvent = ev_createCircle;
 		}
 	}
 
@@ -222,6 +232,27 @@ private:
 			log->value("Log::Create requirement: points on one hand");
 			Presenter::Set_event(ev_req_on_one_hand, params);
 		}
+		if (((Fl_Menu_Button*)o)->mvalue()->label() == "Dist point segment")
+		{
+			log->value("Log::Create requirement: Dist point segment");
+			currentWindget = textBuffer;
+			currentWindget->activate();
+			Presenter::Set_event(ev_req_D_point_segment, params);
+		}
+		if (((Fl_Menu_Button*)o)->mvalue()->label() == "Dist point arc")
+		{
+			log->value("Log::Create requirement: Dist point arc");
+			currentWindget = textBuffer;
+			currentWindget->activate();
+			Presenter::Set_event(ev_req_D_point_arc, params);
+		}
+		if (((Fl_Menu_Button*)o)->mvalue()->label() == "angle between segment")
+		{
+			log->value("Log::Create requirement: angle between segment");
+			currentWindget = textBuffer;
+			currentWindget->activate();
+			Presenter::Set_event(ev_req_angle_segment, params);
+		}
 
 	}
 
@@ -267,7 +298,7 @@ public:
 			objects[4] = { 0 };
 			createObject_b = new  Fl_Menu_Button(10, 0, 150, 30, "Create object");
 			createObject_b->menu(objects);
-			createObject_b->callback(cl_ChangeStatusCreate);
+			createObject_b->callback(cl_Create);
 			createObject_b->clear_visible_focus();
 			createObject_b->color(FL_WHITE);
 		}
@@ -287,11 +318,15 @@ public:
 		}
 
 		{
-			requirements = new Fl_Menu_Item[4];
+			requirements = new Fl_Menu_Item[7];
 			requirements[0] = { "Dist points"};
 			requirements[1] = { "Equal segment" };
 			requirements[2] = { "points on one hand" };
-			requirements[3] = { 0 };
+			requirements[3] = { "Dist point segment" };
+			requirements[4] = { "Dist point arc" };
+			requirements[5] = { "angle between segment" };
+			requirements[6] = { 0 };
+
 			redaction_b = new  Fl_Menu_Button(310, 0, 150, 30, "Create requirement");
 			redaction_b->menu(requirements);
 			redaction_b->callback(cl_Requirement);
@@ -437,5 +472,7 @@ Fl_Output* ViewFLTK::log = nullptr;
 Fl_Float_Input* ViewFLTK::textBuffer = nullptr;
 
 Fl_Widget* ViewFLTK::currentWindget = nullptr;
+
+ Event ViewFLTK::lastEvent = ev_ctrlUp;
 
 #endif // !__VIEW_FLTK

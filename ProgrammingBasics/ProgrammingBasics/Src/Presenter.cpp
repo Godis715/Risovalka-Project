@@ -93,11 +93,11 @@ bool Presenter::GetObject(double x, double y, ID& obj_id) {
 			LOG(string("could not find primitives by point"), LEVEL_1);
 			return false;
 		}
-		bool foundPoint = (types[0] == point_t);
+		bool foundPoint = (types[0] == ot_point);
 		double minDist = distances[0];
 		obj_id = ids[0];
 		for (int i = 1; i < distances.GetSize(); ++i) {
-			if (types[i] == point_t) {
+			if (types[i] == ot_point) {
 				if (foundPoint) {
 					if (minDist > distances[i]) {
 						obj_id = ids[i];
@@ -143,22 +143,22 @@ void Presenter::DrawSelectedObjects(const Array<ID>& selectedObjects)
 
 		switch (type)
 		{
-		case point_t:
+		case ot_point:
 			GetView()->SetColor(green);
 			GetView()->DrawPoint(Vector2(params[0], params[1]));
 			break;
-		case segment_t:
+		case ot_segment:
 			GetView()->SetColor(green);
 			GetView()->DrawLine(Vector2(params[0], params[1]),
 				Vector2(params[2], params[3]), line);
 			break;
-		case arc_t:
+		case ot_arc:
 			GetView()->SetColor(green);
 			GetView()->DrawArc(Vector2(params[0], params[1]),
 				Vector2(params[2], params[3]),
 				Vector2(params[4], params[5]), line);
 			break;
-		case circle_t:
+		case ot_circle:
 			GetView()->SetColor(green);
 			GetView()->DrawCircle(Vector2(params[0], params[1]),
 				Vector2(params[0] + params[2], params[1]), line);
@@ -172,22 +172,22 @@ void Presenter::DrawScene()
 	Array<Model::infoObject> scene;
 	if (model->DischargeInfoObjects(scene)) {
 		for (int i = 0; i < scene.GetSize(); ++i) {
-			if (scene[i].type == point_t) {
+			if (scene[i].type == ot_point) {
 				view->SetColor(red);
 				view->DrawPoint(Vector2(scene[i].params[0], scene[i].params[1]));
 			}
-			if (scene[i].type == segment_t) {
+			if (scene[i].type == ot_segment) {
 				view->SetColor(white);
 				view->DrawLine(Vector2(scene[i].params[0], scene[i].params[1]),
 					Vector2(scene[i].params[2], scene[i].params[3]), line);
 			}
-			if (scene[i].type == arc_t) {
+			if (scene[i].type == ot_arc) {
 				view->SetColor(white);
 				view->DrawArc(Vector2(scene[i].params[0], scene[i].params[1]),
 					Vector2(scene[i].params[2], scene[i].params[3]),
 					Vector2(scene[i].params[4], scene[i].params[5]), line);
 			}
-			if (scene[i].type == circle_t) {
+			if (scene[i].type == ot_circle) {
 				view->SetColor(white);
 				view->DrawCircle(Vector2(scene[i].params[0], scene[i].params[1]),
 					Vector2(scene[i].params[0] + scene[i].params[2], scene[i].params[1]), line);

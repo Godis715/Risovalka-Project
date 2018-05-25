@@ -33,6 +33,9 @@ enum Event
 	ev_req_D_point,
 	ev_req_Eq_Segment,
 	ev_req_on_one_hand,
+	ev_req_D_point_segment,
+	ev_req_D_point_arc,
+	ev_req_angle_segment,
 	ev_input,
 	//end new events
 
