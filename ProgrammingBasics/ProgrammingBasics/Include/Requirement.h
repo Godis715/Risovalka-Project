@@ -97,6 +97,8 @@ public:
 	DistBetPointsReq(Point* _point1, Point* _point2, double _distance) :
 		Requirement(IDGenerator::getInstance()->generateID(), ot_distBetPoints)
 	{
+		arguments = Array<double*>(4);
+		params = Array<double>(1);
 		Vector2* pos1 = &_point1->position;
 		Vector2* pos2 = &_point2->position;
 		
@@ -122,6 +124,8 @@ public:
 	EqualSegmentLenReq(Segment* _seg1, Segment* _seg2) :
 		Requirement(IDGenerator::getInstance()->generateID(), ot_equalSegmentLen)
 	{
+		arguments = Array<double*>(8);
+		params = Array<double>(0);
 		arguments[0] = (&_seg1->point1->position.x);
 		arguments[1] = (&_seg1->point1->position.y);
 		arguments[2] = (&_seg1->point2->position.x);
@@ -150,7 +154,10 @@ private:
 public:
 	ConnectionReq() :
 		Requirement(IDGenerator::getInstance()->generateID(), ot_connection)
-	{}
+	{
+		arguments = Array<double*>(0);
+		params = Array<double>(0);
+	}
 	~ConnectionReq() { }
 	double error() {
 		return 0;
@@ -256,8 +263,6 @@ private:
 	Point* point;
 };
 
-// needed to fix
-
 class AngleBetweenSegments : public Requirement
 {
 public:
@@ -275,7 +280,7 @@ public:
 		arguments[6] = &_segment2->point2->position.x;
 		arguments[7] = &_segment2->point2->position.y;
 
-		params[0] = cos((_andle / 180) * PI);
+		params[0] = abs(cos((_andle / 180) * PI));
 		sinus = sin((_andle / 180) * PI);
 	}
 	~AngleBetweenSegments() {}
@@ -302,7 +307,7 @@ public:
 		if (newParams.GetSize() != 1) {
 			throw std::exception("Invalid new param argement");
 		}
-		params[0] = cos((newParams[0] / 180) * PI);
+		params[0] = abs(cos((newParams[0] / 180) * PI));
 		sinus = sin((newParams[0] / 180) * PI);
 	}
 private:
@@ -339,6 +344,31 @@ private:
 	Arc* arc;
 	Point* point;
 }; 
+
+class SegmentTouchCircle : public Requirement {
+public:
+	SegmentTouchCircle(Circle* _circle, Segment* _segment) :
+		circle(_circle),
+		segment(_segment),
+		Requirement(IDGenerator::getInstance()->generateID(), ot_distBetPointArc)
+	{
+		arguments[0] = &_circle->center->position.x;
+		arguments[1] = &_circle->center->position.y;
+		arguments[2] = &_circle->radius;
+		arguments[3] = &_segment->point1->position.x;
+		arguments[4] = &_segment->point1->position.y;
+		arguments[5] = &_segment->point2->position.x;
+		arguments[6] = &_segment->point2->position.y;
+
+		params = Array<double>(0);
+	}
+
+private:
+	Circle * circle;
+	Segment* segment;
+};
+
+// needed to fix
 
 class PointInArc : public Requirement
 {
