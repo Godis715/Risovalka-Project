@@ -170,6 +170,8 @@ private:
 public:
 	PointPosReq(Point* _point, double _x, double _y) :
 		Requirement(IDGenerator::getInstance()->generateID(), ot_pointPosReq) {
+		arguments = Array<double*>(2);
+		params = Array<double>(2);
 		arguments[0] = &_point->position.x;
 		arguments[1] = &_point->position.y;
 
@@ -200,6 +202,9 @@ public:
 		point2(_point2),
 		Requirement(IDGenerator::getInstance()->generateID(), ot_pointsOnTheOneHand)
 	{
+		arguments = Array<double*>(8);
+		params = Array<double>(0);
+
 		arguments[0] = &_segment->point1->position.x;
 		arguments[1] = &_segment->point1->position.y;
 		arguments[2] = &_segment->point2->position.x;
@@ -242,6 +247,9 @@ public:
 		point(_point),
 		Requirement(IDGenerator::getInstance()->generateID(), ot_distBetPointSeg)
 	{
+		arguments = Array<double*>(6);
+		params = Array<double>(1);
+
 		arguments[0] = &_segment->point1->position.x;
 		arguments[1] = &_segment->point1->position.y;
 		arguments[2] = &_segment->point2->position.x;
@@ -271,6 +279,9 @@ public:
 		segment2(_segment2),
 		Requirement(IDGenerator::getInstance()->generateID(), ot_angleBetSeg)
 	{
+		arguments = Array<double*>(8);
+		params = Array<double>(1);
+
 		arguments[0] = &_segment1->point1->position.x;
 		arguments[1] = &_segment1->point1->position.y;
 		arguments[2] = &_segment1->point2->position.x;
@@ -324,6 +335,9 @@ public:
 		point(_point),
 		Requirement(IDGenerator::getInstance()->generateID(), ot_distBetPointArc)
 	{
+		arguments = Array<double*>(7);
+		params = Array<double>(1);
+
 		arguments[0] = &_arc->point1->position.x;
 		arguments[1] = &_arc->point1->position.y;
 		arguments[2] = &_arc->point2->position.x;
@@ -345,28 +359,34 @@ private:
 	Point* point;
 }; 
 
-class SegmentTouchCircle : public Requirement {
-public:
-	SegmentTouchCircle(Circle* _circle, Segment* _segment) :
-		circle(_circle),
-		segment(_segment),
-		Requirement(IDGenerator::getInstance()->generateID(), ot_distBetPointArc)
-	{
-		arguments[0] = &_circle->center->position.x;
-		arguments[1] = &_circle->center->position.y;
-		arguments[2] = &_circle->radius;
-		arguments[3] = &_segment->point1->position.x;
-		arguments[4] = &_segment->point1->position.y;
-		arguments[5] = &_segment->point2->position.x;
-		arguments[6] = &_segment->point2->position.y;
-
-		params = Array<double>(0);
-	}
-
-private:
-	Circle * circle;
-	Segment* segment;
-};
+//class SegmentTouchCircle : public Requirement {
+//public:
+//	SegmentTouchCircle(Circle* _circle, Segment* _segment) :
+//		circle(_circle),
+//		segment(_segment),
+//		Requirement(IDGenerator::getInstance()->generateID(), ot_distBetPointArc)
+//	{
+//		arguments = Array<double*>(7);
+//		params = Array<double>(0);
+//
+//		arguments[0] = &_circle->center->position.x;
+//		arguments[1] = &_circle->center->position.y;
+//		arguments[2] = &_circle->radius;
+//		arguments[3] = &_segment->point1->position.x;
+//		arguments[4] = &_segment->point1->position.y;
+//		arguments[5] = &_segment->point2->position.x;
+//		arguments[6] = &_segment->point2->position.y;
+//	}
+//	~SegmentTouchCircle() {}
+//
+//	double error() {
+//		
+//	}
+//
+//private:
+//	Circle * circle;
+//	Segment* segment;
+//};
 
 // needed to fix
 
