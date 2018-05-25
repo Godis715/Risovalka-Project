@@ -527,6 +527,19 @@ Mode* Redaction::HandleEvent(const Event e, Array<double>& params)
 	{
 		return new Selection(selectedObjects);
 	}
+	if (e == ev_scaleObjects)
+	{
+		return new Redaction(selectedObjects, ev_scaleObjects);
+	}
+	if (e == ev_moveObjects)
+	{
+		return new Redaction(selectedObjects, ev_moveObjects);
+	}
+	if (e == ev_del)
+	{
+		Presenter::DeletePrimitives(selectedObjects);
+		return new Selection();
+	}
 	return UnexpectedEvent(e);
 }
 
@@ -600,6 +613,11 @@ Mode* CreateRequirementWithParam::HandleEvent(const Event ev, Array<double>& par
 		return new Selection(selectedPrim);
 
 	}
+	if (ev == ev_escape)
+	{
+		return new Selection(selectedPrim);
+	}
+
 	return UnexpectedEvent(ev);
 }
 
