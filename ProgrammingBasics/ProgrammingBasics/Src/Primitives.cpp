@@ -15,19 +15,19 @@ object_type Primitive::GetType() {
 }
 
 Point::Point(const Vector2& pos) :
-	Primitive(IDGenerator::getInstance()->generateID(), point_t)
+	Primitive(IDGenerator::getInstance()->generateID(), ot_point)
 {
 	this->parent = nullptr;
 	this->position = pos;
 }
 Point::Point(double _x, double _y) :
-	Primitive(IDGenerator::getInstance()->generateID(), point_t)
+	Primitive(IDGenerator::getInstance()->generateID(), ot_point)
 {
 	this->parent = nullptr;
 	this->position = Vector2(_x, _y);
 }
 Point::Point(const Point& _p) :
-	Primitive(IDGenerator::getInstance()->generateID(), point_t)
+	Primitive(IDGenerator::getInstance()->generateID(), ot_point)
 {
 	this->parent = nullptr;
 	this->position = _p.position;
@@ -61,7 +61,7 @@ bool Point::SetParent(Primitive* _parent) {
 
 
 Segment::Segment(Point* _p1, Point* _p2) :
-	Primitive(IDGenerator::getInstance()->generateID(), segment_t)
+	Primitive(IDGenerator::getInstance()->generateID(), ot_segment)
 {
 	if (_p1 == nullptr || _p2 == nullptr) {
 		throw std::invalid_argument("Segment::Segment::parameters was nullptr");
@@ -129,7 +129,7 @@ double Segment::GetDistance(const Vector2& point) const {
 }
 
 Arc::Arc(Point* _p1, Point* _p2, double _angle) :
-	Primitive(IDGenerator::getInstance()->generateID(), arc_t)
+	Primitive(IDGenerator::getInstance()->generateID(), ot_arc)
 {
 	if (_p1 == nullptr || _p2 == nullptr) {
 		throw std::invalid_argument("Arc::Arc::parameters was nullptr");
@@ -232,7 +232,7 @@ void Arc::SetAngle(double newAngle) {
 }
 
 Circle::Circle(Point* _center,  double _radius) :
-	Primitive(IDGenerator::getInstance()->generateID(), circle_t)
+	Primitive(IDGenerator::getInstance()->generateID(), ot_circle)
 {
 	if (_center == nullptr) {
 		throw std::invalid_argument("Circle::Circle::_center was nullptr");

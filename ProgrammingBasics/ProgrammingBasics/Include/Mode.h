@@ -33,6 +33,9 @@ enum Event
 	ev_req_D_point,
 	ev_req_Eq_Segment,
 	ev_req_on_one_hand,
+	ev_req_D_point_segment,
+	ev_req_D_point_arc,
+	ev_req_angle_segment,
 	ev_input,
 	//end new events
 
@@ -63,7 +66,7 @@ public:
 class Selection : public Mode {
 private:
 	Array<ID> selectedObjects;
-	enum State { single_selection, poly_selection, area_selection};
+	enum State { single_selection, poly_selection, area_selection };
 	State state;
 
 	//for area selection
@@ -151,8 +154,8 @@ public:
 
 class Redaction : public Mode {
 private:
-	enum State{noClick, click};
-	enum StatusRedaction{move, scale};
+	enum State { noClick, click };
+	enum StatusRedaction { move, scale };
 	Array<ID> selectedObjects;
 	Vector2 posStart;
 	Vector2 posEnd;

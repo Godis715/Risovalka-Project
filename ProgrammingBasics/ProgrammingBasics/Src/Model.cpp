@@ -125,7 +125,7 @@ void Model::ConnectPrimitives(const Array<Primitive*>& prims) {
 bool Model::CreateObject(const object_type type, const Array<double>& params, ID& obj_id) {
 	switch (type)
 	{
-	case point_t: {
+	case ot_point: {
 		if (params.GetSize() != 2) {
 			return false;
 		}
@@ -135,7 +135,7 @@ bool Model::CreateObject(const object_type type, const Array<double>& params, ID
 		obj_id = _point->GetID();
 		return true;
 	}
-	case segment_t: {
+	case ot_segment: {
 		if (params.GetSize() != 4) {
 			return false;
 		}
@@ -161,7 +161,7 @@ bool Model::CreateObject(const object_type type, const Array<double>& params, ID
 		obj_id = _seg->GetID();
 		return true;
 	}
-	case arc_t: {
+	case ot_arc: {
 		if (params.GetSize() != 6) {
 			return false;
 		}
@@ -195,7 +195,7 @@ bool Model::CreateObject(const object_type type, const Array<double>& params, ID
 		obj_id = _arc->GetID();
 		return true;
 	}
-	case circle_t: {
+	case ot_circle: {
 		if (params.GetSize() != 3) {
 			return false;
 		}
@@ -268,7 +268,7 @@ bool Model::DeletePrimitive(const ID& prim_id) {
 		return true;
 	}
 
-	if (prim->GetType() == point_t) {
+	if (prim->GetType() == ot_point) {
 		Point* point = cast<Point*>(prim);
 		if (point->GetParent() != nullptr) {
 			return DeletePrimitive(point->GetParent()->GetID());
@@ -288,7 +288,7 @@ bool Model::DeletePrimitive(const ID& prim_id) {
 
 	switch (prim->GetType())
 	{
-	case segment_t: {
+	case ot_segment: {
 		Segment* segment = cast<Segment*>(prim);
 		segment->point1->DeleteParent();
 		segment->point2->DeleteParent();
@@ -297,7 +297,7 @@ bool Model::DeletePrimitive(const ID& prim_id) {
 		delete prim;
 		return result;
 	}
-	case arc_t: {
+	case ot_arc: {
 		Arc* arc = cast<Arc*>(prim);
 		arc->point1->DeleteParent();
 		arc->point2->DeleteParent();
@@ -306,7 +306,7 @@ bool Model::DeletePrimitive(const ID& prim_id) {
 		delete prim;
 		return result;
 	}
-	case circle_t: {
+	case ot_circle: {
 		Circle* circle = cast<Circle*>(prim);
 		circle->center->DeleteParent();
 		bool result = DeletePrimitive(circle->GetCenter_ID());
@@ -344,12 +344,57 @@ void Model::Clear() {
 
 bool Model::CreateRequirementByID(const object_type type, const Array<ID>& id_arr, const Array<double>& params, ID& req_id) {
 	Array<Primitive*> primitives;
+	Queue<Primitive*> arc;
+	Queue<Primitive*> circle;
+	Queue<Primitive*> segment;
+	Queue<Primitive*> point;
 	for (int i = 0; i < id_arr.GetSize(); ++i) {
 		auto marker = dataPrim.Find(id_arr[i]);
 		if (!marker.IsValid()) {
 			return false;
 		}
-		primitives.PushBack(marker.GetValue());
+		switch (marker.GetValue()->GetType())
+		{
+		case ot_point: {
+			point.push(marker.GetValue());
+			break;
+		}
+		case ot_segment: {
+			segment.push(marker.GetValue());
+			break;
+		}
+		case ot_circle: {
+			circle.push(marker.GetValue());
+			break;
+		}
+		case ot_arc: {
+			arc.push(marker.GetValue());
+			break;
+		}
+		default:
+			break;
+		}
+	
+	}
+	// arc
+	while (!arc.isEmpty())
+	{
+		primitives.PushBack(arc.pop());
+	}
+	// cicrle
+	while (!circle.isEmpty())
+	{
+		primitives.PushBack(circle.pop());
+	}
+	// segment
+	while (!segment.isEmpty())
+	{
+		primitives.PushBack(segment.pop());
+	}
+	// point
+	while (!point.isEmpty())
+	{
+		primitives.PushBack(point.pop());
 	}
 	return CreateRequirement(type, primitives, params, req_id);
 }
@@ -358,13 +403,13 @@ bool Model::CreateRequirement(object_type type, Array<Primitive*>& primitives, c
 	Requirement* requirement;
 	switch (type)
 	{
-	case distBetPoints_t: {
+	case ot_distBetPoints: {
 		// verification parameters
 		if ((primitives.GetSize() != 2)
 			|| (params.GetSize() != 1)
 			|| (params[0] < 0)
-			|| (primitives[0]->GetType() != point_t)
-			|| (primitives[1]->GetType() != point_t)) {
+			|| (primitives[0]->GetType() != ot_point)
+			|| (primitives[1]->GetType() != ot_point)) {
 			return false;
 		}
 		// creating
@@ -373,12 +418,12 @@ bool Model::CreateRequirement(object_type type, Array<Primitive*>& primitives, c
 			params[0]);
 		break;
 	}
-	case equalSegmentLen_t: {
+	case ot_equalSegmentLen: {
 		// verification parameters
 		if ((primitives.GetSize() != 2)
 			|| (params.GetSize() != 0)
-			|| (primitives[0]->GetType() != segment_t)
-			|| (primitives[1]->GetType() != segment_t)) {
+			|| (primitives[0]->GetType() != ot_segment)
+			|| (primitives[1]->GetType() != ot_segment)) {
 			return false;
 		}
 		// creating
@@ -386,13 +431,13 @@ bool Model::CreateRequirement(object_type type, Array<Primitive*>& primitives, c
 			cast<Segment*>(primitives[1]));
 		break;
 	}
-	case pointsOnTheOneHand: {
+	case ot_pointsOnTheOneHand: {
 		// verification parameters
 		if ((primitives.GetSize() != 3)
 			|| (params.GetSize() != 0)
-			|| (primitives[0]->GetType() != segment_t)
-			|| (primitives[1]->GetType() != point_t)
-			|| (primitives[2]->GetType() != point_t))
+			|| (primitives[0]->GetType() != ot_segment)
+			|| (primitives[1]->GetType() != ot_point)
+			|| (primitives[2]->GetType() != ot_point))
 		{
 			return false;
 		}
@@ -402,13 +447,13 @@ bool Model::CreateRequirement(object_type type, Array<Primitive*>& primitives, c
 			cast<Point*>(primitives[2]));
 		break;
 	}
-	case distBetPointSeg: {
+	case ot_distBetPointSeg: {
 		// verification parameters
 		if ((primitives.GetSize() != 2)
 			|| (params.GetSize() != 1)
 			|| (params[0] < 0)
-			|| (primitives[0]->GetType() != segment_t)
-			|| (primitives[1]->GetType() != point_t))
+			|| (primitives[0]->GetType() != ot_segment)
+			|| (primitives[1]->GetType() != ot_point))
 		{
 			return false;
 		}
@@ -418,20 +463,20 @@ bool Model::CreateRequirement(object_type type, Array<Primitive*>& primitives, c
 			params[0]);
 		break;
 	}
-	case pointPosReq_t: {
+	case ot_pointPosReq: {
 		if (primitives.GetSize() != 1
 			|| params.GetSize() != 2
-			|| primitives[0]->GetType() != point_t) {
+			|| primitives[0]->GetType() != ot_point) {
 		}
 		requirement = new PointPosReq(cast<Point*>(primitives[0]), params[0], params[1]);
 		break;
 	}
-	case angleBetSeg: {
+	case ot_angleBetSeg: {
 		// verification parameters
 		if ((primitives.GetSize() != 2)
 			|| (params.GetSize() != 1)
-			|| (primitives[0]->GetType() != segment_t)
-			|| (primitives[1]->GetType() != segment_t))
+			|| (primitives[0]->GetType() != ot_segment)
+			|| (primitives[1]->GetType() != ot_segment))
 		{
 			return false;
 		}
@@ -441,12 +486,12 @@ bool Model::CreateRequirement(object_type type, Array<Primitive*>& primitives, c
 			params[0]);
 		break;
 	}
-	case distBetPointArc: {
+	case ot_distBetPointArc: {
 		// verification parameters
 		if ((primitives.GetSize() != 2)
 			|| (params.GetSize() != 1)
-			|| (primitives[0]->GetType() != arc_t)
-			|| (primitives[1]->GetType() != point_t))
+			|| (primitives[0]->GetType() != ot_arc)
+			|| (primitives[1]->GetType() != ot_point))
 		{
 			return false;
 		}
@@ -456,12 +501,12 @@ bool Model::CreateRequirement(object_type type, Array<Primitive*>& primitives, c
 			params[0]);
 		break;
 	}
-	case pointInArc: {
+	case ot_pointInArc: {
 		// verification parameters
 		if ((primitives.GetSize() != 2)
 			|| (params.GetSize() != 0)
-			|| (primitives[0]->GetType() != arc_t)
-			|| (primitives[1]->GetType() != point_t))
+			|| (primitives[0]->GetType() != ot_arc)
+			|| (primitives[1]->GetType() != ot_point))
 		{
 			return false;
 		}
@@ -755,7 +800,7 @@ bool Model::OptimizeByID(const ID& id) {
 
 	// restore arcs' centers
 	for (int i = 0; i < prims.GetSize(); ++i) {
-		if (prims[i]->GetType() == arc_t) {
+		if (prims[i]->GetType() == ot_arc) {
 			cast<Arc*>(prims[i])->RestoreCenter();
 		}
 	}
@@ -781,12 +826,12 @@ void Model::OptitmizeNewton(const ID& id) {
 
 void Model::GetDoublesForOptimize(Array<Primitive*>& prims, Array<double*>& params) {
 	for (int i = 0; i < prims.GetSize(); ++i) {
-		if (prims[i]->GetType() == point_t) {
+		if (prims[i]->GetType() == ot_point) {
 			Point* point = cast<Point*>(prims[i]);
 			params.PushBack(&point->position.x);
 			params.PushBack(&point->position.y);
 		}
-		if (prims[i]->GetType() == arc_t) {
+		if (prims[i]->GetType() == ot_arc) {
 			Arc* arc = cast<Arc*>(prims[i]);
 			params.PushBack(&arc->angle);
 		}
@@ -824,7 +869,7 @@ bool Model::GetObjParam(const ID& obj_id, Array<double>& result) {
 	if (dataPrimMarker.IsValid()) {
 		obj = dataPrimMarker.GetValue();
 		switch (obj->GetType()) {
-		case point_t: {
+		case ot_point: {
 			Point* point = cast<Point*>(obj);
 			result.Clear();
 			Vector2 pos = point->GetPosition();
@@ -833,7 +878,7 @@ bool Model::GetObjParam(const ID& obj_id, Array<double>& result) {
 			return true;
 			break;
 		}
-		case segment_t: {
+		case ot_segment: {
 			Segment* segment = cast<Segment*>(obj);
 			result.Clear();
 			Vector2 pos1 = segment->GetPoint1_pos();
@@ -845,7 +890,7 @@ bool Model::GetObjParam(const ID& obj_id, Array<double>& result) {
 			return true;
 			break;
 		}
-		case arc_t: {
+		case ot_arc: {
 			Arc* arc = cast<Arc*>(obj);
 			result.Clear();
 			Vector2 pos1 = arc->GetPoint1_pos();
@@ -860,7 +905,7 @@ bool Model::GetObjParam(const ID& obj_id, Array<double>& result) {
 			return true;
 			break;
 		}
-		case circle_t: {
+		case ot_circle: {
 			Circle* circle = dynamic_cast<Circle*>(obj);
 			result.Clear();
 			Vector2 center = circle->GetCenter();
@@ -918,7 +963,7 @@ bool Model::GetObjectsOnArea(double x1, double y1, double x2, double y2, Array<I
 		obj = i.GetValue();
 		switch (i.GetValue()->GetType())
 		{
-		case point_t: {
+		case ot_point: {
 			Point* point = cast<Point*>(obj);
 			if (pointInArea(point->position.x, point->position.y, x1, y1, x2, y2))
 			{
@@ -928,7 +973,7 @@ bool Model::GetObjectsOnArea(double x1, double y1, double x2, double y2, Array<I
 			}
 			break;
 		}
-		case segment_t: {
+		case ot_segment: {
 			Segment* segment = cast<Segment*>(obj);
 			if (pointInArea(segment->point1->position.x, segment->point1->position.y, x1, y1, x2, y2) &&
 				pointInArea(segment->point2->position.x, segment->point2->position.y, x1, y1, x2, y2)
@@ -940,7 +985,7 @@ bool Model::GetObjectsOnArea(double x1, double y1, double x2, double y2, Array<I
 			}
 			break;
 		}
-		case arc_t: {
+		case ot_arc: {
 			Arc* arc = cast<Arc*>(obj);
 			if (pointInArea(arc->point1->position.x, arc->point1->position.y, x1, y1, x2, y2) &&
 				pointInArea(arc->point2->position.x, arc->point2->position.y, x1, y1, x2, y2)
@@ -952,7 +997,7 @@ bool Model::GetObjectsOnArea(double x1, double y1, double x2, double y2, Array<I
 			}
 			break;
 		}
-		case circle_t: {
+		case ot_circle: {
 			Circle* circle = cast<Circle*>(obj);
 			if (pointInArea(circle->GetCenter().x - circle->radius, circle->GetCenter().y, x1, y1, x2, y2) &&
 				pointInArea(circle->GetCenter().x + circle->radius, circle->GetCenter().y, x1, y1, x2, y2) &&
@@ -1096,14 +1141,14 @@ void Model::GetPointsFromPrimitives(Array<Primitive*>& primitives, BinSearchTree
 	for (int i = 0; i < primitives.GetSize(); ++i) {
 		switch (primitives[i]->GetType())
 		{
-		case point_t: {
+		case ot_point: {
 			if (!pointTree.Find(primitives[i]->GetID()).IsValid()) {
 				Point* point = cast<Point*>(primitives[i]);
 				pointTree.Add(point->GetID(), point);
 			}
 			break;
 		}
-		case segment_t: {
+		case ot_segment: {
 			Segment* segment = cast<Segment*>(primitives[i]);
 			if (!pointTree.Find(segment->GetPoint1_ID()).IsValid()) {
 				Point* point = segment->point1;
@@ -1115,7 +1160,7 @@ void Model::GetPointsFromPrimitives(Array<Primitive*>& primitives, BinSearchTree
 			}
 			break;
 		}
-		case arc_t: {
+		case ot_arc: {
 			Arc* arc = cast<Arc*>(primitives[i]);
 			if (!pointTree.Find(arc->GetPoint1_ID()).IsValid()) {
 				Point* point = arc->point1;
@@ -1127,7 +1172,7 @@ void Model::GetPointsFromPrimitives(Array<Primitive*>& primitives, BinSearchTree
 			}
 			break;
 		}
-		case circle_t: {
+		case ot_circle: {
 			Circle* circle = cast<Circle*>(primitives[i]);
 			if (!pointTree.Find(circle->GetCenter_ID()).IsValid()) {
 				Point* point = circle->center;

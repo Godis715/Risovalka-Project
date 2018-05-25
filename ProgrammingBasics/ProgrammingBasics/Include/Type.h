@@ -4,25 +4,25 @@
 #include "Dictionary.h"
 
 enum object_type {
-	point_t,
-	segment_t,
-	arc_t,
-	circle_t,
+	ot_point,
+	ot_segment,
+	ot_arc,
+	ot_circle,
 
-	connection_t,
-	distBetPoints_t,
-	equalSegmentLen_t,
-	pointPosReq_t,
+	ot_connection,
+	ot_distBetPoints,
+	ot_equalSegmentLen,
+	ot_pointPosReq,
+	ot_pointsOnTheOneHand,
+	ot_distBetPointSeg,
+	ot_distBetPointArc,
 
-	pointsOnTheOneHand,
-	distBetPointSeg,
-	angleBetSeg,
-	distBetPointArc,
-	pointInArc,
-	triangle,
-	correctTriangle,
-	nsAngle,
-	correctNsAngle
+	ot_angleBetSeg,
+	ot_pointInArc,
+	ot_triangle,
+	ot_correctTriangle,
+	ot_nsAngle,
+	ot_correctNsAngle
 };
 
 #endif
