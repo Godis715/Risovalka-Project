@@ -66,7 +66,7 @@ public:
 class Selection : public Mode {
 private:
 	Array<ID> selectedObjects;
-	enum State { single_selection, poly_selection, area_selection};
+	enum State { single_selection, poly_selection, area_selection };
 	State state;
 
 	//for area selection
@@ -154,8 +154,8 @@ public:
 
 class Redaction : public Mode {
 private:
-	enum State{noClick, click};
-	enum StatusRedaction{move, scale};
+	enum State { noClick, click };
+	enum StatusRedaction { move, scale };
 	Array<ID> selectedObjects;
 	Vector2 posStart;
 	Vector2 posEnd;

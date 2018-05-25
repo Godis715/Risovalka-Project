@@ -46,6 +46,8 @@ private:
 	static Fl_Float_Input* textBuffer;
 	static Event lastEvent;
 
+	static Fl_Cursor* lastCursor;
+
 	Fl_Menu_Item* objects;
 	Fl_Menu_Button* createObject_b;
 
@@ -84,6 +86,7 @@ private:
 				Presenter::Set_event(ev_leftMouseDown, params);
 				break;
 			case FL_RELEASE:
+				fl_cursor(FL_CURSOR_DEFAULT);
 				params.PushBack(Fl::event_x());
 				params.PushBack(Fl::event_y());
 				Presenter::Set_event(ev_leftMouseUp, params);
@@ -93,13 +96,14 @@ private:
 				Presenter::Set_event(ev_scroll, params);
 				break;
 			case FL_ENTER:
-				//std::cout << "Enter!";
-				//fl_color(FL_CYAN); fl_rectf(0, 0, w(), h());
+				if (ViewFLTK::lastCursor != nullptr)
+				{
+					fl_cursor(*ViewFLTK::lastCursor);
+				}
 				break;
 
 			case FL_LEAVE:
-				//std::cout << "Leave!";
-				//fl_color(FL_BLACK); fl_rectf(0, 0, w(), h());
+				fl_cursor(FL_CURSOR_DEFAULT);
 				break;
 
 			case FL_KEYDOWN:
@@ -110,8 +114,9 @@ private:
 				}
 				if (Fl::event_key() == FL_Escape)
 				{
-					fl_cursor(Fl_Cursor::FL_CURSOR_DEFAULT);
-					lastEvent = ev_ctrlUp;
+					fl_cursor(FL_CURSOR_DEFAULT);
+					ViewFLTK::lastCursor = nullptr;
+					ViewFLTK::lastEvent = ev_ctrlUp;
 					Presenter::Set_event(ev_escape, params);
 				}
 				if (Fl::event_key() == FL_Shift_L && lastEvent != ev_ctrlDown)
@@ -138,6 +143,7 @@ private:
 				Presenter::Set_event(ev_mouseMove, params);
 				break;
 			case FL_DRAG:
+				fl_cursor(FL_CURSOR_CROSS);
 				params.PushBack(Fl::event_x());
 				params.PushBack(Fl::event_y());
 				Presenter::Set_event(ev_mouseMove, params);
@@ -184,7 +190,8 @@ private:
 		if (((Fl_Menu_Button*)o)->mvalue()->label() == "Move selection")
 		{
 			log->value("Log::Move selection");
-			fl_cursor(Fl_Cursor::FL_CURSOR_MOVE);
+			fl_cursor(FL_CURSOR_MOVE);
+			lastCursor = new Fl_Cursor(FL_CURSOR_MOVE);
 			Presenter::Set_event(ev_moveObjects, params);
 		}
 
@@ -227,9 +234,9 @@ private:
 			log->value("Log::Create requirement: Equal segment");
 			Presenter::Set_event(ev_req_Eq_Segment, params);
 		}
-		if (((Fl_Menu_Button*)o)->mvalue()->label() == "points on one hand")
+		if (((Fl_Menu_Button*)o)->mvalue()->label() == "Points on one hand")
 		{
-			log->value("Log::Create requirement: points on one hand");
+			log->value("Log::Create requirement: Points on one hand");
 			Presenter::Set_event(ev_req_on_one_hand, params);
 		}
 		if (((Fl_Menu_Button*)o)->mvalue()->label() == "Dist point segment")
@@ -246,9 +253,9 @@ private:
 			currentWindget->activate();
 			Presenter::Set_event(ev_req_D_point_arc, params);
 		}
-		if (((Fl_Menu_Button*)o)->mvalue()->label() == "angle between segment")
+		if (((Fl_Menu_Button*)o)->mvalue()->label() == "Angle between segment")
 		{
-			log->value("Log::Create requirement: angle between segment");
+			log->value("Log::Create requirement: Angle between segment");
 			currentWindget = textBuffer;
 			currentWindget->activate();
 			Presenter::Set_event(ev_req_angle_segment, params);
@@ -261,9 +268,9 @@ private:
 		string numbers = ((Fl_Float_Input*)o)->value();
 		((Fl_Float_Input*)o)->value("");
 		params[0] = Parse(numbers);
-		Presenter::Set_event(ev_input, params);
 		o->deactivate();
-
+		fl_cursor(FL_CURSOR_DEFAULT);
+		Presenter::Set_event(ev_input, params);
 		currentWindget = nullptr;
 	}
 
@@ -288,6 +295,7 @@ public:
 		textBuffer->deactivate();
 		textBuffer->when(FL_WHEN_ENTER_KEY);
 		textBuffer->callback(cl_Input);
+
 
 		{
 			objects = new Fl_Menu_Item[5];
@@ -321,17 +329,17 @@ public:
 			requirements = new Fl_Menu_Item[7];
 			requirements[0] = { "Dist points"};
 			requirements[1] = { "Equal segment" };
-			requirements[2] = { "points on one hand" };
+			requirements[2] = { "Points on one hand" };
 			requirements[3] = { "Dist point segment" };
 			requirements[4] = { "Dist point arc" };
-			requirements[5] = { "angle between segment" };
+			requirements[5] = { "Angle between segment" };
 			requirements[6] = { 0 };
 
-			redaction_b = new  Fl_Menu_Button(310, 0, 150, 30, "Create requirement");
-			redaction_b->menu(requirements);
-			redaction_b->callback(cl_Requirement);
-			redaction_b->clear_visible_focus();
-			redaction_b->color(FL_WHITE);
+			createRequirement_b = new  Fl_Menu_Button(310, 0, 150, 30, "Create requirement");
+			createRequirement_b->menu(requirements);
+			createRequirement_b->callback(cl_Requirement);
+			createRequirement_b->clear_visible_focus();
+			createRequirement_b->color(FL_WHITE);
 		}
 
 		mainWindow->end();
@@ -473,6 +481,8 @@ Fl_Float_Input* ViewFLTK::textBuffer = nullptr;
 
 Fl_Widget* ViewFLTK::currentWindget = nullptr;
 
- Event ViewFLTK::lastEvent = ev_ctrlUp;
+Fl_Cursor* ViewFLTK::lastCursor = nullptr;
+
+Event ViewFLTK::lastEvent = ev_ctrlUp;
 
 #endif // !__VIEW_FLTK
