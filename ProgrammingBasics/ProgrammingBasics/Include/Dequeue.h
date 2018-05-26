@@ -7,7 +7,7 @@ private:
 	class Element
 	{
 	public:
-		Element * next = nullptr;
+		Element* next = nullptr;
 		Element* prev = nullptr;
 		Type value;
 	};
@@ -67,6 +67,7 @@ public:
 		head = head->next;
 		--size;
 		delete temp;
+		head->prev = nullptr;
 		return value;
 	}
 
@@ -79,6 +80,7 @@ public:
 		tail = tail->prev;
 		--size;
 		delete temp;
+		tail->next = nullptr;
 		return value;
 	}
 
@@ -91,6 +93,6 @@ public:
 	}
 
 	bool IsEmpty() {
-		return (size == 0) && (head == nullptr) && (tail == nullptr);
+		return (size == 0);
 	}
 };

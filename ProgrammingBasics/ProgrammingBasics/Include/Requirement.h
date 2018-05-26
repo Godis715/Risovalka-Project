@@ -3,8 +3,8 @@
 #include "Primitives.h"
 
 // find exact values and place in project
-#define OPTIM_EPS 1e-3
-#define OPTIM_GRAD_EPS 1e-3
+#define OPTIM_EPS 1e-1
+#define OPTIM_GRAD_EPS 1e-6
 #define DELTA_X 1e-6
 
 class Requirement {

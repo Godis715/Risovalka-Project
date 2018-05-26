@@ -2,7 +2,6 @@
 #include <functional>
 #define cast dynamic_cast
 
-
 bool Model::NewComponent(const ID& id, Array<ID>& Prims, Array<ID>& Reqs)
 {
 	delete currentComponent;
@@ -93,7 +92,6 @@ bool Model::GetPrimitives(const Array<ID>& ids, Array<Primitive*>& prim) {
 	return (prim.GetSize() == ids.GetSize());
 }
 
-
 bool Model::GetRequirementsFromComponent(BinSearchTree<ID, ID>& component, Array<Requirement*>& reqs) {
 	for (auto i = component.GetMarker(); i.IsValid(); ++i) {
 		auto reqsMarker = dataReq.Find(i.GetValue());
@@ -113,7 +111,6 @@ bool Model::GetPrimitivesFromComponent(BinSearchTree<ID, ID>& component, Array<P
 	}
 	return (prims.GetSize() != 0);
 }
-
 
 void Model::ConnectPrimitives(const Array<Primitive*>& prims) {
 	Requirement* _connection = new ConnectionReq;
@@ -602,8 +599,6 @@ void Model::CreateLink(const ID& IDreq, const Array<Primitive*>& primitives) {
 	dataLink.Add(IDreq, list);
 }
 
-
-
 bool Model::DischargeInfoObjects(Array<infoObject>& dataPrimInfoObjects)
 {
 	if (dataPrim.GetSize() == 0) {
@@ -1018,7 +1013,6 @@ bool Model::GetObjectsOnArea(double x1, double y1, double x2, double y2, Array<I
 	return isFound;
 }
 
-
 void Model::ChangeRequirement(const ID& id, const double param) {
 	auto marker = dataReq.Find(id);
 	if (marker.IsValid()) {
@@ -1134,8 +1128,6 @@ bool Model::Move(const Array<ID>& idPrim, const Vector2& shift) {
 	}
 	return true;
 }
-
-
 
 void Model::GetPointsFromPrimitives(Array<Primitive*>& primitives, BinSearchTree<ID, Point*>& pointTree ) {
 	for (int i = 0; i < primitives.GetSize(); ++i) {

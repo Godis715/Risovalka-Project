@@ -681,7 +681,7 @@ public:
 		Node<TKey, TVal>* temp = head;
 		Deck<Node<TKey, TVal>*> deck;
 		deck.PushBack(temp);
-		while (deck.GetSize() > 0)
+		while (!deck.IsEmpty())
 		{
 			temp = deck.PopBack();
 			if (temp->left != nullptr) {
