@@ -631,6 +631,7 @@ void CreateRequirementWithParam::DrawMode() {
 //NAVIGATION ON SCENE
 NavigationOnScene::NavigationOnScene(Array<ID> _selecObj) : selectedPrim(_selecObj) { 
 	stateMove =  noClick;
+	speedMove = 10;
 }
 
 NavigationOnScene::NavigationOnScene() { }
@@ -662,6 +663,27 @@ Mode* NavigationOnScene::HandleEvent(const Event ev, Array<double>& params) {
 	}
 	if (ev == ev_leftMouseUp) {
 		stateMove = noClick;
+		return nullptr;
+	}
+
+	if (ev == ev_arrowUp)
+	{
+		Presenter::GetView()->TranslateScene(Vector2(0, -speedMove));
+		return nullptr;
+	}
+	if (ev == ev_arrowDown)
+	{
+		Presenter::GetView()->TranslateScene(Vector2(0, speedMove));
+		return nullptr;
+	}
+	if (ev == ev_arrowLeft)
+	{
+		Presenter::GetView()->TranslateScene(Vector2(-speedMove, 0));
+		return nullptr;
+	}
+	if (ev == ev_arrowRight)
+	{
+		Presenter::GetView()->TranslateScene(Vector2(speedMove, 0));
 		return nullptr;
 	}
 	

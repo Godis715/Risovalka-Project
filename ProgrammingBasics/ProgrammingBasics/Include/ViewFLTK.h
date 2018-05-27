@@ -112,6 +112,22 @@ private:
 				break;
 
 			case FL_KEYDOWN:
+				if (Fl::event_key() == FL_Down)
+				{
+					Presenter::Set_event(ev_arrowDown, params);
+				}
+				if (Fl::event_key() == FL_Up)
+				{
+					Presenter::Set_event(ev_arrowUp, params);
+				}
+				if (Fl::event_key() == FL_Left)
+				{
+					Presenter::Set_event(ev_arrowLeft, params);
+				}
+				if (Fl::event_key() == FL_Right)
+				{
+					Presenter::Set_event(ev_arrowRight, params);
+				}
 				if (Fl::event_key() == FL_Control_L && lastEvent != ev_ctrlDown)
 				{
 					Presenter::Set_event(ev_ctrlDown, params);
@@ -543,7 +559,7 @@ public:
 		drawWindow->redraw();
 	}
 
-	//new func
+	//for navigation on scene
 	void TranslateScene(const Vector2& deltaCor)
 	{
 		*translateScene += deltaCor;

@@ -31,6 +31,10 @@ enum Event
 	ev_ctrlUp,
 	ev_altDown,
 	ev_altUp,
+	ev_arrowUp,
+	ev_arrowDown,
+	ev_arrowLeft,
+	ev_arrowRight,
 	ev_escape,
 	//??
 	ev_clockOnReq,
@@ -217,6 +221,7 @@ private:
 	Array<ID> selectedPrim;
 	Vector2 posStart;
 	Vector2 posEnd;
+	double speedMove;
 	State stateMove;
 public:
 	NavigationOnScene(Array<ID>);
