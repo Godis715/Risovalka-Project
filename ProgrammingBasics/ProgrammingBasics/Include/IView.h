@@ -18,6 +18,9 @@ public:
 	virtual void SetColor(color) = 0;
 	virtual int Run() = 0;
 	virtual void Update() = 0;
+	virtual void TranslateScene(const Vector2&) = 0;
+	virtual void ScaleScene(const double&) = 0;
+	virtual void RotateScene(const double&) = 0;
 
 };
 

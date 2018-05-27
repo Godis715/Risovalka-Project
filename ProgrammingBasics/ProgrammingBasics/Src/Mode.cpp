@@ -385,6 +385,9 @@ Mode* Selection::HandleEvent(const Event e, Array<double>& params) {
 		state = single_selection;
 		return nullptr;
 	}
+	case ev_altDown: {
+		return new NavigationOnScene(selectedObjects);
+	}
 	case ev_escape: {
 		selectedObjects.Clear();
 		return nullptr;
@@ -510,16 +513,16 @@ Mode* Redaction::HandleEvent(const Event e, Array<double>& params)
 			if (params.GetSize() != 1) {
 				throw std::exception("Bad number of parameters");
 			}
-			double koef;
+			double coef;
 			if (params[0] > 0 )
 			{
-				koef = 0.9;
+				coef = 0.9;
 			}
 			if (params[0] < 0)
 			{
-				koef = 1.1;
+				coef = 1.1;
 			}
-			Presenter::ScaleObjects(selectedObjects, koef);
+			Presenter::ScaleObjects(selectedObjects, coef);
 			return nullptr;
 		}
 	}
@@ -622,5 +625,77 @@ Mode* CreateRequirementWithParam::HandleEvent(const Event ev, Array<double>& par
 }
 
 void CreateRequirementWithParam::DrawMode() {
+	Presenter::DrawSelectedObjects(selectedPrim);
+}
+
+//NAVIGATION ON SCENE
+NavigationOnScene::NavigationOnScene(Array<ID> _selecObj) : selectedPrim(_selecObj) { 
+	stateMove =  noClick;
+}
+
+NavigationOnScene::NavigationOnScene() { }
+
+NavigationOnScene::~NavigationOnScene() { }
+
+Mode* NavigationOnScene::HandleEvent(const Event ev, Array<double>& params) {
+	//for translate 
+	if (ev == ev_leftMouseDown) {
+		if (params.GetSize() != 2) {
+			throw std::exception("Bad number of parameters");
+		}
+		posStart.x = params[0];
+		posStart.y = params[1];
+		stateMove = click;
+		posEnd = posStart;
+		return nullptr;
+	}
+	if (ev == ev_mouseMove && stateMove == click)
+	{
+		if (params.GetSize() != 2) {
+			throw std::exception("Bad number of parameters");
+		}
+		posEnd.x = params[0];
+		posEnd.y = params[1];
+		Presenter::GetView()->TranslateScene(posEnd - posStart);
+		posStart = posEnd;
+		return nullptr;
+	}
+	if (ev == ev_leftMouseUp) {
+		stateMove = noClick;
+		return nullptr;
+	}
+	
+	//for scale
+	if (ev == ev_scroll)
+	{
+		if (params.GetSize() != 1) {
+			throw std::exception("Bad number of parameters");
+		}
+		double deltaCoef;
+		if (params[0] > 0)
+		{
+			deltaCoef = -0.1;
+		}
+		if (params[0] < 0)
+		{
+			deltaCoef = 0.1;
+		}
+		Presenter::GetView()->ScaleScene(deltaCoef);
+		return nullptr;
+	}
+
+	//for rotate
+	//..
+
+	//exit
+	if (ev == ev_altUp)
+	{
+		return new Selection(selectedPrim);
+	}
+
+	return UnexpectedEvent(ev);
+}
+
+void NavigationOnScene::DrawMode() {
 	Presenter::DrawSelectedObjects(selectedPrim);
 }

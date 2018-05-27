@@ -15,21 +15,26 @@ enum Event
 	// 9
 	ev_del,
 	ev_delReq,
-	// 11
+	// 11 not using
 	ev_leftMouseClick,
 	ev_rightMouseClick,
 
-	// new events
+	// mouseEvent
 	ev_leftMouseDown,
 	ev_rightMouseDown,
 	ev_leftMouseUp,
 	ev_rightMouseUp,
 	ev_mouseMove,
 	ev_scroll,
+	// keybourdEvent
 	ev_ctrlDown,
 	ev_ctrlUp,
+	ev_altDown,
+	ev_altUp,
 	ev_escape,
+	//??
 	ev_clockOnReq,
+	//create requirements
 	ev_req_D_point,
 	ev_req_Eq_Segment,
 	ev_req_on_one_hand,
@@ -198,6 +203,25 @@ public:
 	CreateRequirementWithParam(Array<ID>, Event);
 	CreateRequirementWithParam();
 	~CreateRequirementWithParam();
+
+	Mode* HandleEvent(const Event, Array<double>&);
+
+	void DrawMode();
+};
+
+//NAVIGATION ON SCENE
+
+class NavigationOnScene : public Mode {
+private:
+	enum State	{noClick, click};
+	Array<ID> selectedPrim;
+	Vector2 posStart;
+	Vector2 posEnd;
+	State stateMove;
+public:
+	NavigationOnScene(Array<ID>);
+	NavigationOnScene();
+	~NavigationOnScene();
 
 	Mode* HandleEvent(const Event, Array<double>&);
 

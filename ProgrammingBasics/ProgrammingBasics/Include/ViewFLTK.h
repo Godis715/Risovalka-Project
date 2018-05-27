@@ -42,9 +42,18 @@ private:
 	static Fl_Widget* currentWindget;
 
 	static Fl_Float_Input* textBuffer;
+
 	static Event lastEvent;
 
 	static Fl_Cursor* lastCursor;
+
+	//..
+	static Vector2* translateScene;
+
+	static double scaleScene;
+
+	static double rotateScene;
+	//..
 
 	Fl_Menu_Item* objects;
 	Fl_Menu_Button* createObject_b;
@@ -80,14 +89,14 @@ private:
 			{
 			case FL_PUSH:
 				fl_cursor(*ViewFLTK::lastCursor);
-				params.PushBack(Fl::event_x());
-				params.PushBack(Fl::event_y());
+				params.PushBack((Fl::event_x() - ViewFLTK::translateScene->x) / scaleScene);
+				params.PushBack((Fl::event_y() - ViewFLTK::translateScene->y) / scaleScene);
 				Presenter::Set_event(ev_leftMouseDown, params);
 				break;
 			case FL_RELEASE:
 				fl_cursor(FL_CURSOR_DEFAULT);
-				params.PushBack(Fl::event_x());
-				params.PushBack(Fl::event_y());
+				params.PushBack((Fl::event_x() - ViewFLTK::translateScene->x) / scaleScene);
+				params.PushBack((Fl::event_y() - ViewFLTK::translateScene->y) / scaleScene);
 				Presenter::Set_event(ev_leftMouseUp, params);
 				break;
 			case FL_MOUSEWHEEL:
@@ -107,6 +116,11 @@ private:
 				{
 					Presenter::Set_event(ev_ctrlDown, params);
 					lastEvent = ev_ctrlDown;
+				}
+				if (Fl::event_key() == FL_Alt_L && lastEvent != ev_altDown)
+				{
+					Presenter::Set_event(ev_altDown, params);
+					lastEvent = ev_altDown;
 				}
 				if (Fl::event_key() == FL_Escape)
 				{
@@ -136,11 +150,16 @@ private:
 					Presenter::Set_event(ev_ctrlUp, params);
 					lastEvent = ev_ctrlUp;
 				}
+				if (Fl::event_key() == FL_Alt_L)
+				{
+					Presenter::Set_event(ev_altUp, params);
+					lastEvent = ev_altUp;
+				}
 				break;
 			case FL_MOVE:
 				fl_cursor(*ViewFLTK::lastCursor);
-				params.PushBack(Fl::event_x());
-				params.PushBack(Fl::event_y());
+				params.PushBack((Fl::event_x() - ViewFLTK::translateScene->x) / scaleScene);
+				params.PushBack((Fl::event_y() - ViewFLTK::translateScene->y) / scaleScene);
 				Presenter::Set_event(ev_mouseMove, params);
 				break;
 			case FL_DRAG:
@@ -148,8 +167,8 @@ private:
 				{
 					fl_cursor(FL_CURSOR_CROSS);
 				}*/
-				params.PushBack(Fl::event_x());
-				params.PushBack(Fl::event_y());
+				params.PushBack((Fl::event_x() - ViewFLTK::translateScene->x) / scaleScene);
+				params.PushBack((Fl::event_y() - ViewFLTK::translateScene->y) / scaleScene);
 				Presenter::Set_event(ev_mouseMove, params);
 				break;
 			}
@@ -363,24 +382,43 @@ public:
 
 	void DrawLine(const Vector2& start, const Vector2& end, typeDrawing type)
 	{
+		fl_push_matrix();
+		fl_translate(translateScene->x, translateScene->y);
+		fl_scale(scaleScene);
+		fl_rotate(rotateScene);
 		switch (type)
 		{
 		case points:
 			fl_line_style(FL_DOT, 2);
-			fl_line(start.x, start.y, end.x, end.y);
+			fl_begin_line();
+			fl_vertex(start.x, start.y);
+			fl_vertex(end.x, end.y);
+			fl_end_line();
 			break;
 		case line:
-			fl_line(start.x, start.y, end.x, end.y);
+			fl_begin_line();
+			fl_vertex(start.x, start.y);
+			fl_vertex(end.x, end.y);
+			fl_end_line();
 			break;
 		default:
-			fl_line(start.x, start.y, end.x, end.y);
+			fl_begin_line();
+			fl_vertex(start.x, start.y);
+			fl_vertex(end.x, end.y);
+			fl_end_line();
 			break;
-		}	}
+		}	
+		fl_pop_matrix();
+	}
 
 	void DrawCircle(const Vector2& center, const Vector2& pointForCircle, typeDrawing type)
 	{
-		double r = (pointForCircle - center).GetLength();
+		fl_push_matrix();
+		fl_translate(translateScene->x, translateScene->y);
+		fl_scale(scaleScene);
+		fl_rotate(rotateScene);
 
+		double r = (pointForCircle - center).GetLength();
 		switch (type)
 		{
 		case points:
@@ -399,6 +437,7 @@ public:
 			fl_end_polygon();
 			break;
 		}
+		fl_pop_matrix();
 	}
 
 	void _DrawArc(const Vector2& center, double R, double angleStart, double angleEnd) {
@@ -414,6 +453,11 @@ public:
 
 	void DrawArc(const Vector2& center, const Vector2& start, const Vector2& end, typeDrawing type)
 	{
+		fl_push_matrix();
+		fl_translate(translateScene->x, translateScene->y);
+		fl_scale(scaleScene);
+		fl_rotate(rotateScene);
+
 		double EPS = 5.0;
 		double r1 = (center - start).GetLength();
 		double angleStart = (abs(r1) < EPS) ? 0.0 : acos((start.x - center.x) / r1) * (180 / PI);
@@ -445,13 +489,28 @@ public:
 			fl_end_polygon();
 			break;
 		}
+		fl_pop_matrix();
 	}
 
 	void DrawPoint(const Vector2& pos)
 	{
+		fl_push_matrix();
+		fl_translate(translateScene->x, translateScene->y);
+		fl_scale(scaleScene);
+		fl_rotate(rotateScene);
+
 		int size = 2;
-		fl_line(pos.x - size, pos.y - size, pos.x + size, pos.y + size);
-		fl_line(pos.x + size, pos.y - size, pos.x - size, pos.y + size);
+		fl_begin_line();
+		fl_vertex(pos.x - size, pos.y - size);
+		fl_vertex(pos.x + size, pos.y + size);
+		fl_end_line();
+
+		fl_begin_line();
+		fl_vertex(pos.x + size, pos.y - size);
+		fl_vertex(pos.x - size, pos.y + size);
+		fl_end_line();
+
+		fl_pop_matrix();
 	}
 	
 	void SetColor(color col)
@@ -483,6 +542,22 @@ public:
 	{
 		drawWindow->redraw();
 	}
+
+	//new func
+	void TranslateScene(const Vector2& deltaCor)
+	{
+		*translateScene += deltaCor;
+	}
+
+	void ScaleScene(const double& deltaCoef)
+	{
+		scaleScene += deltaCoef;
+	}
+
+	void RotateScene(const double& deltaAngle)
+	{
+		rotateScene += deltaAngle;
+	}
 };
 
 Fl_Output* ViewFLTK::log = nullptr;
@@ -494,5 +569,11 @@ Fl_Widget* ViewFLTK::currentWindget = nullptr;
 Fl_Cursor* ViewFLTK::lastCursor = new Fl_Cursor(FL_CURSOR_DEFAULT);
 
 Event ViewFLTK::lastEvent = ev_ctrlUp;
+
+Vector2* ViewFLTK::translateScene = new Vector2(0.0, 0.0);
+
+double ViewFLTK::scaleScene = 1.0;
+
+double ViewFLTK::rotateScene = 0.0;
 
 #endif // !__VIEW_FLTK
