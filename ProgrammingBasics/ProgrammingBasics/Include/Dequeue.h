@@ -60,27 +60,31 @@ public:
 
 	Type PopBegin() {
 		if (size == 0) {
-			return 0;
+			throw std::exception("deck is Empty");
 		}
 		Type value = head->value;
 		Element* temp = head;
 		head = head->next;
 		--size;
 		delete temp;
-		head->prev = nullptr;
+		if (head != nullptr) {
+			head->prev = nullptr;
+		}
 		return value;
 	}
 
 	Type PopBack() {
 		if (size == 0) {
-			return 0;
+			throw std::exception("deck is Empty");
 		}
 		Type value = tail->value;
 		Element* temp = tail;
 		tail = tail->prev;
 		--size;
 		delete temp;
-		tail->next = nullptr;
+		if (tail != nullptr) {
+			tail->next = nullptr;
+		}
 		return value;
 	}
 
