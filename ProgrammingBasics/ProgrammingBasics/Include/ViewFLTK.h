@@ -20,8 +20,12 @@
 
 double Parse(string number) {
 	int countPoint = 0;
-	for (size_t i = 0; i < number.length(); ++i) {
-		if (number[i] == 'e') {
+	if (number[0] == 'e' || number[0] == '.') {
+		return -1;
+	}
+
+	for (size_t i = 1; i < number.length(); ++i) {
+		if (number[i] == 'e' || number[i] == '-') {
 			return -1;
 		}
 		if (number[i] == '.') {
@@ -70,6 +74,7 @@ private:
 		{
 			fl_color(FL_BLACK);
 			fl_rectf(0, 0, w(), h());
+
 			fl_push_matrix();
 			fl_translate(ViewFLTK::translateScene->x, ViewFLTK::translateScene->y);
 			fl_scale(ViewFLTK::scaleScene);
@@ -549,7 +554,10 @@ public:
 
 	void ScaleScene(const double& deltaCoef)
 	{
-		scaleScene += deltaCoef;
+		if ((scaleScene + deltaCoef > 0.1) && (scaleScene + deltaCoef < 10))
+		{
+			scaleScene += deltaCoef;
+		}
 	}
 
 	void RotateScene(const double& deltaAngle)
