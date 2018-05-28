@@ -152,7 +152,8 @@ private:
 				{
 					if (currentWindget != nullptr)
 					{
-						ViewFLTK::currentWindget->deactivate();
+						delete ViewFLTK::currentWindget;
+						ViewFLTK::mainWindow->redraw();
 					}
 					delete ViewFLTK::lastCursor;
 					ViewFLTK::lastCursor = new Fl_Cursor(FL_CURSOR_DEFAULT);
@@ -201,6 +202,23 @@ private:
 			return e;
 		}
 	};
+
+	/*class testClass
+	{
+	private:
+		Fl_Float_Input * textBuffer;
+	public:
+		testClass()
+		{
+			textBuffer = new Fl_Float_Input(1010, 50, 100, 30);
+			textBuffer->when(FL_WHEN_ENTER_KEY);
+			textBuffer->callback(cl_Input);
+		}
+
+
+	};
+
+	static testClass* t;*/
 
 	//callbacks
 	static void cl_Create(Fl_Widget* o, void*)
@@ -273,15 +291,16 @@ private:
 		delete lastCursor;
 		lastCursor = new Fl_Cursor(FL_CURSOR_DEFAULT);
 		Array<double> params(0);
-		if (currentWindget != nullptr)
-		{
-			currentWindget->deactivate();
-		}
 		if (((Fl_Menu_Button*)o)->mvalue()->label() == "Dist points")
 		{
 			log->value("Log::Create requirement: Dist points");
+			mainWindow->begin();
+			textBuffer = new Fl_Float_Input(1010, 50, 100, 30);
+			textBuffer->when(FL_WHEN_ENTER_KEY);
+			textBuffer->callback(cl_Input);
+			mainWindow->end();
+			mainWindow->redraw();
 			currentWindget = textBuffer;
-			currentWindget->activate();
 			Presenter::Set_event(ev_req_D_point, params);
 		}
 		if (((Fl_Menu_Button*)o)->mvalue()->label() == "Equal segment")
@@ -297,22 +316,37 @@ private:
 		if (((Fl_Menu_Button*)o)->mvalue()->label() == "Dist point segment")
 		{
 			log->value("Log::Create requirement: Dist point segment");
+			mainWindow->begin();
+			textBuffer = new Fl_Float_Input(1010, 50, 100, 30);
+			textBuffer->when(FL_WHEN_ENTER_KEY);
+			textBuffer->callback(cl_Input);
+			mainWindow->end();
+			mainWindow->redraw();
 			currentWindget = textBuffer;
-			currentWindget->activate();
 			Presenter::Set_event(ev_req_D_point_segment, params);
 		}
 		if (((Fl_Menu_Button*)o)->mvalue()->label() == "Dist point arc")
 		{
 			log->value("Log::Create requirement: Dist point arc");
+			mainWindow->begin();
+			textBuffer = new Fl_Float_Input(1010, 50, 100, 30);
+			textBuffer->when(FL_WHEN_ENTER_KEY);
+			textBuffer->callback(cl_Input);
+			mainWindow->end();
+			mainWindow->redraw();
 			currentWindget = textBuffer;
-			currentWindget->activate();
 			Presenter::Set_event(ev_req_D_point_arc, params);
 		}
 		if (((Fl_Menu_Button*)o)->mvalue()->label() == "Angle between segment")
 		{
 			log->value("Log::Create requirement: Angle between segment");
+			mainWindow->begin();
+			textBuffer = new Fl_Float_Input(1010, 50, 100, 30);
+			textBuffer->when(FL_WHEN_ENTER_KEY);
+			textBuffer->callback(cl_Input);
+			mainWindow->end();
+			mainWindow->redraw();
 			currentWindget = textBuffer;
-			currentWindget->activate();
 			Presenter::Set_event(ev_req_angle_segment, params);
 		}
 
@@ -320,19 +354,21 @@ private:
 
 	static void cl_Input(Fl_Widget* o, void*) {
 		fl_cursor(FL_CURSOR_DEFAULT);
-		o->deactivate();
-		currentWindget = nullptr;
 
 		Array<double> params(1);
 		string numbers = ((Fl_Float_Input*)o)->value();
 		((Fl_Float_Input*)o)->value("");
 		params[0] = Parse(numbers);
 		Presenter::Set_event(ev_input, params);
+
+		delete currentWindget;
+		currentWindget = nullptr;
+		mainWindow->redraw();
 	}
 
 	//..
 
-	Fl_Window* mainWindow;
+	static Fl_Window* mainWindow;
 	SecondWindow* drawWindow;
 public:
 	ViewFLTK()
@@ -346,12 +382,6 @@ public:
 		drawWindow->end();
 
 		log = new Fl_Output(1010, 0, 300, 30);
-
-		textBuffer = new Fl_Float_Input(1010, 50, 100, 30);
-		textBuffer->deactivate();
-		textBuffer->when(FL_WHEN_ENTER_KEY);
-		textBuffer->callback(cl_Input);
-
 
 		{
 			objects = new Fl_Menu_Item[5];
@@ -398,6 +428,7 @@ public:
 		}
 
 		mainWindow->end();
+
 		
 		mainWindow->show();
 		drawWindow->show();
@@ -565,6 +596,7 @@ public:
 		rotateScene += deltaAngle;
 	}
 };
+Fl_Window* ViewFLTK::mainWindow;
 
 Fl_Output* ViewFLTK::log = nullptr;
 
@@ -581,5 +613,7 @@ Vector2* ViewFLTK::translateScene = new Vector2(0.0, 0.0);
 double ViewFLTK::scaleScene = 1.0;
 
 double ViewFLTK::rotateScene = 0.0;
+
+//ViewFLTK::testClass* ViewFLTK::t = nullptr;
 
 #endif // !__VIEW_FLTK
