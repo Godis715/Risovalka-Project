@@ -21,7 +21,7 @@
 double Parse(string number) {
 	int countPoint = 0;
 	for (size_t i = 0; i < number.length(); ++i) {
-		if ((number[i] == 'e') || (number[i] == '.')) {
+		if (number[i] == 'e') {
 			return -1;
 		}
 		if (number[i] == '.') {
