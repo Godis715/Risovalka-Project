@@ -13,7 +13,7 @@ using std::string;
 
 #define LOG Logger::Log
 
-static class Logger {
+class Logger {
 private:
 
 	static int minLevel;

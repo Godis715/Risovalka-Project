@@ -20,7 +20,7 @@
 
 double Parse(string number) {
 	int countPoint = 0;
-	for (int i = 0; i < number.length(); ++i) {
+	for (size_t i = 0; i < number.length(); ++i) {
 		if ((number[i] == 'e') || (number[i] == '.')) {
 			return -1;
 		}
@@ -70,7 +70,12 @@ private:
 		{
 			fl_color(FL_BLACK);
 			fl_rectf(0, 0, w(), h());
+			fl_push_matrix();
+			fl_translate(ViewFLTK::translateScene->x, ViewFLTK::translateScene->y);
+			fl_scale(ViewFLTK::scaleScene);
+			fl_rotate(ViewFLTK::rotateScene);
 			Presenter::DrawScene();
+			fl_pop_matrix();
 		}
 		
 	public:
@@ -398,10 +403,6 @@ public:
 
 	void DrawLine(const Vector2& start, const Vector2& end, typeDrawing type)
 	{
-		fl_push_matrix();
-		fl_translate(translateScene->x, translateScene->y);
-		fl_scale(scaleScene);
-		fl_rotate(rotateScene);
 		switch (type)
 		{
 		case points:
@@ -424,17 +425,12 @@ public:
 			fl_end_line();
 			break;
 		}	
-		fl_pop_matrix();
 	}
 
 	void DrawCircle(const Vector2& center, const Vector2& pointForCircle, typeDrawing type)
 	{
-		fl_push_matrix();
-		fl_translate(translateScene->x, translateScene->y);
-		fl_scale(scaleScene);
-		fl_rotate(rotateScene);
-
 		double r = (pointForCircle - center).GetLength();
+
 		switch (type)
 		{
 		case points:
@@ -453,7 +449,6 @@ public:
 			fl_end_polygon();
 			break;
 		}
-		fl_pop_matrix();
 	}
 
 	void _DrawArc(const Vector2& center, double R, double angleStart, double angleEnd) {
@@ -469,11 +464,6 @@ public:
 
 	void DrawArc(const Vector2& center, const Vector2& start, const Vector2& end, typeDrawing type)
 	{
-		fl_push_matrix();
-		fl_translate(translateScene->x, translateScene->y);
-		fl_scale(scaleScene);
-		fl_rotate(rotateScene);
-
 		double EPS = 5.0;
 		double r1 = (center - start).GetLength();
 		double angleStart = (abs(r1) < EPS) ? 0.0 : acos((start.x - center.x) / r1) * (180 / PI);
@@ -505,16 +495,10 @@ public:
 			fl_end_polygon();
 			break;
 		}
-		fl_pop_matrix();
 	}
 
 	void DrawPoint(const Vector2& pos)
 	{
-		fl_push_matrix();
-		fl_translate(translateScene->x, translateScene->y);
-		fl_scale(scaleScene);
-		fl_rotate(rotateScene);
-
 		int size = 2;
 		fl_begin_line();
 		fl_vertex(pos.x - size, pos.y - size);
@@ -525,8 +509,6 @@ public:
 		fl_vertex(pos.x + size, pos.y - size);
 		fl_vertex(pos.x - size, pos.y + size);
 		fl_end_line();
-
-		fl_pop_matrix();
 	}
 	
 	void SetColor(color col)

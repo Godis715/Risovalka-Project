@@ -14,7 +14,7 @@ private:
 	void doubleCapacity()
 	{
 		auto newStorage = new T[2 * _capacity];
-		for (size_t i = 0; i < _capacity; i++)
+		for (int i = 0; i < _capacity; i++)
 		{
 			newStorage[i] = _storage[i];
 		}
@@ -82,11 +82,11 @@ public:
 
 	class ReadMarker {
 	private:
-		size_t index;
+		int index;
 		Array<T>* arr;
 	public:
 
-		ReadMarker(Array<T>* _arr, size_t _index) {
+		ReadMarker(Array<T>* _arr, int _index) {
 			arr = _arr;
 			if (index > arr->_size) {
 				index = arr->_size;
@@ -269,7 +269,7 @@ public:
 			_capacity = 2 * newSize;
 		}
 		auto newStorage = new T[_capacity];
-		for (size_t i = 0; i < newSize && i < _size; i++)
+		for (int i = 0; i < newSize && i < _size; i++)
 		{
 			newStorage[i] = _storage[i];
 		}
@@ -417,7 +417,7 @@ public:
 
 	bool find(T& value, bool(*cmp)())
 	{
-		for (size_t i = 0; i < _size; i++)
+		for (int i = 0; i < _size; i++)
 		{
 			if (value == _storage[i])
 			{
