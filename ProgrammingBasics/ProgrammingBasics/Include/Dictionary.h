@@ -28,7 +28,7 @@ public:
 };
 
 // class - parent of all dictionaries
-template <class TKey, class TVal> class BinSearchTree : public INumerable
+template <class TKey, class TVal> class BinSearchTree
 {
 private:
 	virtual Node<TKey, TVal>* CreateNode(const TKey& _key, const TVal& _val) {
@@ -216,7 +216,7 @@ private:
 protected:
 	int size;
 	Node<TKey, TVal>* head;
-	// Moving
+
 	void RestoreHigh(Node<TKey, TVal>* node) {
 		while (node != nullptr)
 		{
@@ -241,9 +241,6 @@ protected:
 		}
 	}
 
-	//Andrey sotka
-
-	// Moving
 	Node<TKey, TVal>* FindNode(const TKey& key) {
 		Node<TKey, TVal>* node = head;
 		while (node != nullptr)
@@ -277,7 +274,6 @@ protected:
 		return nullptr;
 	}
 
-	// Moving
 	void DeleteNode(Node<TKey, TVal>* node) {
 		--size;
 		if ((node->right == nullptr) && (node->left == nullptr)) {
@@ -478,12 +474,11 @@ public:
 		tree.size = 0;
 	}
 
-
 	~BinSearchTree() {
 		DeleteDict();
 	}
 
-	class Marker {
+	class bst_iterator {
 	protected:
 		Node<TKey, TVal>* current;
 
@@ -533,16 +528,16 @@ public:
 
 		
 	public:
-		Marker() { }
-		Marker(BinSearchTree<TKey, TVal>* _tree) : tree(_tree) {
+		bst_iterator() { }
+		bst_iterator(BinSearchTree<TKey, TVal>* _tree) : tree(_tree) {
 			if (tree == nullptr || tree->head == nullptr) {
 				isValid = false;
 				return;
 			}
 			isValid = true;
-			MoveBegin();
+			Begin();
 		}
-		Marker(BinSearchTree<TKey, TVal>* _tree, Node<TKey, TVal>* node) : tree(_tree) {
+		bst_iterator(BinSearchTree<TKey, TVal>* _tree, Node<TKey, TVal>* node) : tree(_tree) {
 			if (tree == nullptr || tree->head == nullptr || node == nullptr) {
 				isValid = false;
 				return;
@@ -550,7 +545,7 @@ public:
 			isValid = true;
 			current = node;
 		}
-		Marker(Marker&& marker) {
+		bst_iterator(bst_iterator&& marker) {
 			this->isValid = marker.isValid;
 			this->tree = marker.tree;
 			this->current = marker.current;
@@ -558,7 +553,7 @@ public:
 			marker.tree = nullptr;
 			marker.current = nullptr;
 		}
-		void operator=(Marker&& marker) {
+		void operator=(bst_iterator&& marker) {
 			this->isValid = marker.isValid;
 			this->tree = marker.tree;
 			this->current = marker.current;
@@ -566,7 +561,7 @@ public:
 			marker.tree = nullptr;
 			marker.current = nullptr;
 		}
-		void operator= (const Marker& marker) {
+		void operator= (const bst_iterator& marker) {
 			this->isValid = marker.isValid;
 			this->tree = marker.tree;
 			this->current = marker.current;
@@ -575,14 +570,14 @@ public:
 			return this->MoveNext();
 		}
 
-		TVal GetValue() const {
+		TVal operator*() const {
 			if (!isValid) {
 				throw std::exception("Marker was not valid");
 			}
 			return current->value;
 		}
 
-		bool MoveBegin() {
+		bool Begin() {
 			if (tree == nullptr || tree->head == nullptr) {
 				isValid = false;
 				return false;
@@ -596,7 +591,7 @@ public:
 			return true;
 		}
 
-		void DeleteCurrent() {
+		void Delete() {
 			if (!isValid) {
 				return;
 			}
@@ -664,14 +659,14 @@ public:
 		}
 	}
 
-	Marker Find(const TKey &key)
+	bst_iterator Find(const TKey &key)
 	{
 		Node<TKey, TVal>* node = FindNode(key);
-		return Marker(this, node);
+		return bst_iterator(this, node);
 	}
 
-	Marker GetMarker() {
-		return Marker(this);
+	bst_iterator GetMarker() {
+		return bst_iterator(this);
 	};
 
 	void DeleteDict() {
@@ -697,19 +692,5 @@ public:
 		head = nullptr;
 	}
 };
-
-//template <class TKey, class TVal> class Dict : public BinSearchTree<TKey, TVal> {
-//private:
-//	class DictNode : public Node<TKey, TVal> {
-//	public:
-//		DictNode(const TKey& _key, const TVal& _val) : Node<TKey, TVal>(_key, _val) { }
-//	};
-//	Node<TKey, TVal>* CreateNode(const TKey& _key, const TVal& _val)
-//	{
-//		return new DictNode(_key, _val);
-//	}
-//public:
-//
-//};
 
 #endif

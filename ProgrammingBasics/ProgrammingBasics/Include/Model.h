@@ -6,7 +6,6 @@
 // ID
 // IDGenerator
 // Library //
-// INumerable
 // Queue
 // Dequeue
 // List

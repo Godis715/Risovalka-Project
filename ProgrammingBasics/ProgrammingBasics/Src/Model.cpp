@@ -15,7 +15,7 @@ bool Model::NewComponent(const ID& id, Array<ID>& Prims, Array<ID>& Reqs)
 		// get ID Requirement
 		auto tempLinkMarker = dataLink.Find(id);
 		if(tempLinkMarker.IsValid()) {
-			currentID = dataLink.Find(id).GetValue()->GetMarker().GetValue();
+			currentID = (*dataLink.Find(id))->GetMarker().GetValue();
 		}
 		else {
 			currentComponent->Add(id, id);
@@ -33,37 +33,37 @@ bool Model::NewComponent(const ID& id, Array<ID>& Prims, Array<ID>& Reqs)
 		}
 	}
 
-	queueReq.push(currentID);
-	while (!queueReq.isEmpty())
+	queueReq.Push(currentID);
+	while (!queueReq.IsEmpty())
 	{
-		while (!queueReq.isEmpty())
+		while (!queueReq.IsEmpty())
 		{
-			currentID = queueReq.pop();
+			currentID = queueReq.Pop();
 			currentComponent->Add(currentID, currentID);
 			Reqs.PushBack(currentID);
 			
 			auto marker = dataLink.Find(currentID);
 			if (marker.IsValid()) {
-				for (auto l = marker.GetValue()->GetMarker(); l.IsValid(); ++l) {
+				for (auto l = (*marker)->GetMarker(); l.IsValid(); ++l) {
 					currentID = l.GetValue();
 					if (!currentComponent->Find(currentID).IsValid()) {
-						queuePrim.push(currentID);
+						queuePrim.Push(currentID);
 					}
 				}
 			}
 		}
-		while (!queuePrim.isEmpty())
+		while (!queuePrim.IsEmpty())
 		{
-			currentID = queuePrim.pop();
+			currentID = queuePrim.Pop();
 			currentComponent->Add(currentID, currentID);
 			Prims.PushBack(currentID);
 
 			auto marker = dataLink.Find(currentID);
 			if (marker.IsValid()) {
-				for (auto l = marker.GetValue()->GetMarker(); l.IsValid(); ++l) {
+				for (auto l = (*marker)->GetMarker(); l.IsValid(); ++l) {
 					currentID = l.GetValue();
 					if (!currentComponent->Find(currentID).IsValid()) {
-						queueReq.push(currentID);
+						queueReq.Push(currentID);
 					}
 				}
 			}
@@ -76,7 +76,7 @@ bool Model::GetRequirements(const Array<ID>& ids, Array<Requirement*>& req) {
 	for (int i = 0; i < ids.GetSize(); ++i) {
 		auto marker = dataReq.Find(ids[i]);
 		if (marker.IsValid()) {
-			req.PushBack(marker.GetValue());
+			req.PushBack(*marker);
 		}
 	}
 	return (req.GetSize() != ids.GetSize());
@@ -86,7 +86,7 @@ bool Model::GetPrimitives(const Array<ID>& ids, Array<Primitive*>& prim) {
 	for (int i = 0; i < ids.GetSize(); ++i) {
 		auto marker = dataPrim.Find(ids[i]);
 		if (marker.IsValid()) {
-			prim.PushBack(marker.GetValue());
+			prim.PushBack(*marker);
 		}
 	}
 	return (prim.GetSize() == ids.GetSize());
@@ -94,9 +94,9 @@ bool Model::GetPrimitives(const Array<ID>& ids, Array<Primitive*>& prim) {
 
 bool Model::GetRequirementsFromComponent(BinSearchTree<ID, ID>& component, Array<Requirement*>& reqs) {
 	for (auto i = component.GetMarker(); i.IsValid(); ++i) {
-		auto reqsMarker = dataReq.Find(i.GetValue());
+		auto reqsMarker = dataReq.Find(*i);
 		if (reqsMarker.IsValid()) {
-			reqs.PushBack(reqsMarker.GetValue());
+			reqs.PushBack(*reqsMarker);
 		}
 	}
 	return (reqs.GetSize() != 0);
@@ -104,9 +104,9 @@ bool Model::GetRequirementsFromComponent(BinSearchTree<ID, ID>& component, Array
 
 bool Model::GetPrimitivesFromComponent(BinSearchTree<ID, ID>& component, Array<Primitive*>& prims) {
 	for (auto i = component.GetMarker(); i.IsValid(); ++i) {
-		auto primsMarker = dataPrim.Find(i.GetValue());
+		auto primsMarker = dataPrim.Find(*i);
 		if (primsMarker.IsValid()) {
-			prims.PushBack(primsMarker.GetValue());
+			prims.PushBack(*primsMarker);
 		}
 	}
 	return (prims.GetSize() != 0);
@@ -230,20 +230,20 @@ bool Model::DeleteRequirement(const ID& req_id) {
 		throw std::exception("Invalid link requirement->primitive");
 	}
 
-	auto listPrim = dataLinkMarker.GetValue();
-	dataLinkMarker.DeleteCurrent();
+	auto listPrim = *dataLinkMarker;
+	dataLinkMarker.Delete();
 
 	for (auto i = listPrim->GetMarker(); i.IsValid(); ++i) {
 		dataLinkMarker = dataLink.Find(i.GetValue());
 		if (!dataLinkMarker.IsValid()) {
 			throw std::exception("Invalid link primitive->requirement");
 		}
-		auto listReq = dataLinkMarker.GetValue();
+		auto listReq = *dataLinkMarker;
 		listReq->Find(req_id).DeleteCurrent();
 	}
 
-	Requirement* req = dataReqMarker.GetValue();
-	dataReqMarker.DeleteCurrent();
+	Requirement* req = *dataReqMarker;
+	dataReqMarker.Delete();
 	delete req;
 	delete listPrim;
 
@@ -257,11 +257,11 @@ bool Model::DeletePrimitive(const ID& prim_id) {
 		return false;
 	}
 
-	Primitive* prim = dataPrimMarker.GetValue();
+	Primitive* prim = *dataPrimMarker;
 	auto dataLinkMarker = dataLink.Find(prim_id);
 	if (!dataLinkMarker.IsValid()) {
 		delete prim;
-		dataPrimMarker.DeleteCurrent();
+		dataPrimMarker.Delete();
 		return true;
 	}
 
@@ -272,7 +272,7 @@ bool Model::DeletePrimitive(const ID& prim_id) {
 		}
 	}
 
-	auto list = dataLinkMarker.GetValue();
+	auto list = *dataLinkMarker;
 
 	while (list->GetSize() != 0) {
 		DeleteRequirement(list->GetMarker().GetValue());
@@ -280,8 +280,8 @@ bool Model::DeletePrimitive(const ID& prim_id) {
 
 	delete list;
 
-	dataPrimMarker.DeleteCurrent();
-	dataLinkMarker.DeleteCurrent();
+	dataPrimMarker.Delete();
+	dataLinkMarker.Delete();
 
 	switch (prim->GetType())
 	{
@@ -321,19 +321,19 @@ bool Model::DeletePrimitive(const ID& prim_id) {
 void Model::Clear() {
 	if (dataPrim.GetSize() != 0) {
 		for (auto i = dataPrim.GetMarker(); i.IsValid(); ++i) {
-			delete i.GetValue();
+			delete *i;
 		}
 		dataPrim.DeleteDict();
 	}
 	if (dataReq.GetSize() != 0) {
 		for (auto i = dataReq.GetMarker(); i.IsValid(); ++i) {
-			delete i.GetValue();
+			delete *i;
 		}
 		dataReq.DeleteDict();
 	}
 	if (dataLink.GetSize() != 0) {
 		for (auto i = dataLink.GetMarker(); i.IsValid(); ++i) {
-			delete i.GetValue();
+			delete *i;
 		}
 		dataLink.DeleteDict();
 	}
@@ -350,22 +350,22 @@ bool Model::CreateRequirementByID(const object_type type, const Array<ID>& id_ar
 		if (!marker.IsValid()) {
 			return false;
 		}
-		switch (marker.GetValue()->GetType())
+		switch ((*marker)->GetType())
 		{
 		case ot_point: {
-			point.push(marker.GetValue());
+			point.Push(*marker);
 			break;
 		}
 		case ot_segment: {
-			segment.push(marker.GetValue());
+			segment.Push(*marker);
 			break;
 		}
 		case ot_circle: {
-			circle.push(marker.GetValue());
+			circle.Push(*marker);
 			break;
 		}
 		case ot_arc: {
-			arc.push(marker.GetValue());
+			arc.Push(*marker);
 			break;
 		}
 		default:
@@ -374,24 +374,24 @@ bool Model::CreateRequirementByID(const object_type type, const Array<ID>& id_ar
 	
 	}
 	// arc
-	while (!arc.isEmpty())
+	while (!arc.IsEmpty())
 	{
-		primitives.PushBack(arc.pop());
+		primitives.PushBack(arc.Pop());
 	}
 	// cicrle
-	while (!circle.isEmpty())
+	while (!circle.IsEmpty())
 	{
-		primitives.PushBack(circle.pop());
+		primitives.PushBack(circle.Pop());
 	}
 	// segment
-	while (!segment.isEmpty())
+	while (!segment.IsEmpty())
 	{
-		primitives.PushBack(segment.pop());
+		primitives.PushBack(segment.Pop());
 	}
 	// point
-	while (!point.isEmpty())
+	while (!point.IsEmpty())
 	{
-		primitives.PushBack(point.pop());
+		primitives.PushBack(point.Pop());
 	}
 	return CreateRequirement(type, primitives, params, req_id);
 }
@@ -583,7 +583,7 @@ void Model::CreateLink(const ID& IDreq, const Array<Primitive*>& primitives) {
 	for (int i = 0; i < primitives.GetSize(); ++i) {
 		auto markerLink = dataLink.Find(primitives[i]->GetID());
 		if (markerLink.IsValid()) {
-			markerLink.GetValue()->PushTail(IDreq);
+			(*markerLink)->PushTail(IDreq);
 		}
 		else {
 			auto newList = new List<ID>;
@@ -608,8 +608,8 @@ bool Model::DischargeInfoObjects(Array<infoObject>& dataPrimInfoObjects)
 	do
 	{
 		infoObject temp;
-		GetObjParam(dataPrimMarker.GetValue()->GetID(), temp.params);
-		GetObjType(dataPrimMarker.GetValue()->GetID(), temp.type);
+		GetObjParam((*dataPrimMarker)->GetID(), temp.params);
+		GetObjType((*dataPrimMarker)->GetID(), temp.type);
 		dataPrimInfoObjects.PushBack(temp);
 	} while (++dataPrimMarker);
 	return true;
@@ -726,7 +726,7 @@ bool Model::OptimizeRequirements(const Array<Requirement*>& requirments) {
 			bool notUniqueParam = setMarker.IsValid();
 
 			if (notUniqueParam) {
-				match_array[all_parameters_iterator] = setMarker.GetValue().unique_number;
+				match_array[all_parameters_iterator] = (*setMarker).unique_number;
 			}
 			else {
 				unique_param = UniqueParam{ currentParameter, uniq_numbers_iterator };
@@ -849,7 +849,7 @@ bool Model::GetObjType(const ID& obj_id, object_type& type) {
 	auto dataPrimMarker = dataPrim.Find(obj_id);
 
 	if (dataPrimMarker.IsValid()) {
-		obj = dataPrimMarker.GetValue();
+		obj = (*dataPrimMarker);
 		type = obj->GetType();
 		return true;
 	}
@@ -862,7 +862,7 @@ bool Model::GetObjParam(const ID& obj_id, Array<double>& result) {
 	Primitive* obj = nullptr;
 	auto dataPrimMarker = dataPrim.Find(obj_id);
 	if (dataPrimMarker.IsValid()) {
-		obj = dataPrimMarker.GetValue();
+		obj = *dataPrimMarker;
 		switch (obj->GetType()) {
 		case ot_point: {
 			Point* point = cast<Point*>(obj);
@@ -924,12 +924,12 @@ bool Model::GetObjParam(const ID& obj_id, Array<double>& result) {
 bool Model::GetObject(double x, double y, Array<ID>& obj_id, Array<object_type>& types, Array<double>& distances) {
 	bool isFound = false;
 	for (auto i = dataPrim.GetMarker(); i.IsValid(); ++i) {
-		double dist = i.GetValue()->GetDistance(Vector2(x, y));
+		double dist = (*i)->GetDistance(Vector2(x, y));
 		if (dist < SEARCH_AREA) {
 			isFound = true;
 			distances.PushBack(dist);
-			obj_id.PushBack(i.GetValue()->GetID());
-			types.PushBack(i.GetValue()->GetType());
+			obj_id.PushBack((*i)->GetID());
+			types.PushBack((*i)->GetType());
 		}
 	}
 	return isFound;
@@ -955,8 +955,8 @@ bool Model::GetObjectsOnArea(double x1, double y1, double x2, double y2, Array<I
 	bool isFound = false;
 	Primitive* obj = nullptr;
 	for (auto i = dataPrim.GetMarker(); i.IsValid(); ++i) {
-		obj = i.GetValue();
-		switch (i.GetValue()->GetType())
+		obj = *i;
+		switch ((*i)->GetType())
 		{
 		case ot_point: {
 			Point* point = cast<Point*>(obj);
@@ -1016,7 +1016,7 @@ bool Model::GetObjectsOnArea(double x1, double y1, double x2, double y2, Array<I
 void Model::ChangeRequirement(const ID& id, const double param) {
 	auto marker = dataReq.Find(id);
 	if (marker.IsValid()) {
-		marker.GetValue()->Change(param);
+		(*marker)->Change(param);
 		OptimizeByID(id);
 	}
 }
@@ -1061,19 +1061,19 @@ bool Model::Scale(const Array<ID>& idPrim, const double koef) {
 	// geting center
 	Vector2 center;
 	for (auto i = points.GetMarker(); i.IsValid(); ++i) {
-		center += i.GetValue()->position;
+		center += (*i)->position;
 	}
 	center /= points.GetSize();
 	Array<ID> reqs;
 	// Moving
 	for (auto i = points.GetMarker(); i.IsValid(); ++i) {
 
-		Vector2 newPos((i.GetValue()->position - center) * koef);
-		i.GetValue()->position = center + newPos;
+		Vector2 newPos(((*i)->position - center) * koef);
+		(*i)->position = center + newPos;
 
 		ID id;
 
-		LockPoint(i.GetValue(), id);
+		LockPoint(*i, id);
 
 		reqs.PushBack(id);
 	}
@@ -1105,11 +1105,11 @@ bool Model::Move(const Array<ID>& idPrim, const Vector2& shift) {
 	Array<ID> reqs;
 
 	for (auto i = points.GetMarker(); i.IsValid(); ++i) {
-		i.GetValue()->position += shift;
+		(*i)->position += shift;
 
 		ID id;
 
-		LockPoint(i.GetValue(), id);
+		LockPoint(*i, id);
 
 		reqs.PushBack(id);
 	}

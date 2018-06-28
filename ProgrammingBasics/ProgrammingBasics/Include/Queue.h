@@ -1,50 +1,141 @@
 #pragma once
-#include "INumerable.h"
+#include "IDGenerator.h"
+#include <stdexcept>
+#include <cmath>
+#include <iostream>
+#include <string>
 
-template <class T> class Queue
+
+template <class T> class Element
+{
+public:
+	Element(T val) {
+		value = val;
+		node = nullptr;
+	}
+	Element() {
+		node = nullptr;
+	}
+	Element(T val, Element* _node) {
+		value = val;
+		node = _node;
+	}
+	T value;
+	Element* node;
+};
+
+template <class Type> class Queue
 {
 private:
-	struct Node
-	{
-		T value;
-		Node* prev;
-		Node* next;
-	};
-	Node* head = nullptr;
-	Node* tail = nullptr;
-	int size = 0;
+
+	Element<Type>* head;
+	Element<Type>* tail;
+	int size;
 public:
-	T pop()
+	Queue() {
+		head = nullptr;
+		tail = nullptr;
+		size = 0;
+	}
+	~Queue() {
+		Delete();
+	}
+	Type Pop()
 	{
-		if (isEmpty())
+		if (IsEmpty())
 		{
 			throw new std::exception("Stack is empty!");
 		}
 		else
 		{
 			size--;
-			Node* temp = tail;
-			tail = temp->next;
-			T val = temp->value;
+			Element<Type>* temp = head;
+			head = temp->node;
+			Type val = temp->value;
 			delete temp;
 			return val;
 		}
 	}
-	void push(T val)
+	void Push(Type val)
 	{
-		if (isEmpty())
+		if (IsEmpty())
 		{
-			Node* newNode = new Node{ val, nullptr, nullptr };
-			head = tail = newNode;
+			Element<Type>* newNode = new Element<Type>(val);
+			head = newNode;
+			tail = newNode;
 		}
 		else
 		{
-			Node* newNode = new Node{ val, head, nullptr };
-			head->next = newNode;
-			head = newNode;
+			Element<Type>* newNode = new Element<Type>(val);
+			tail->node = newNode;
+			tail = newNode;
 		}
 		size++;
 	}
+	void Delete() {
+		while (!IsEmpty())
+		{
+			Pop();
+		}
+		return;
+	}
+	bool IsEmpty()
+	{
+		return size == 0;
+	}
+};
+
+
+template<class Type> class Stack
+{
+private:
+	Element<Type>* stack;
+	int size;
+public:
+	Stack() {
+		stack = nullptr;
+		size = 0;
+	}
+	~Stack() {
+		Delete();
+	}
+	int GetSize() {
+		return size;
+	}
+
+	void Push(Type newValue) {
+		if (isEmpty()) {
+			Element<Type>* newNode = new Element<Type>(val);
+		}
+		else
+		{
+			Element<Type>* newNode = new Element<Type>(val, stack);
+		}
+		stack = newNode;
+		++size;
+		return;
+	}
+
+	Type Pop() {
+		if (isEmpty()) {
+			throw std::exception("stack is Empty");
+		}
+		Type value = tail->value;
+		Element<Type>* temp = stack;
+		stack = stack->node;
+		--size;
+		delete temp;
+		return value;
+	}
+
+	void Delete() {
+		while (!isEmpty())
+		{
+			Pop();
+		}
+		return;
+	}
+
 	bool isEmpty()
 	{
 		return size == 0;

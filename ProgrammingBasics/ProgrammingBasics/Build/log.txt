@@ -9,6 +9,9 @@ Presenter::Creating requirement
 Presenter::Creating requirement
 Presenter::Creating requirement
 Presenter::Creating requirement
+Presenter::Could not create requirement
 Presenter::Creating requirement
 Presenter::Could not create requirement
+could not Scale prim
+could not Scale prim
 could not Scale prim
