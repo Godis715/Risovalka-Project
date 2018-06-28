@@ -675,16 +675,16 @@ public:
 		}
 		Node<TKey, TVal>* temp = head;
 		head = nullptr;
-		Deck<Node<TKey, TVal>*> deck;
-		deck.PushBack(temp);
-		while (!deck.IsEmpty())
+		Stack<Node<TKey, TVal>*> stack;
+		stack.Push(temp);
+		while (!stack.IsEmpty())
 		{
-			temp = deck.PopBack();
+			temp = stack.Pop();
 			if (temp->left != nullptr) {
-				deck.PushBack(temp->left);
+				stack.Push(temp->left);
 			}
 			if (temp->right != nullptr) {
-				deck.PushBack(temp->right);
+				stack.Push(temp->right);
 			}
 			delete temp;
 		}

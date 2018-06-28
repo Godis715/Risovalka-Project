@@ -5,13 +5,13 @@ Presenter::Creating object
 Presenter::Created object #7
 Presenter::Creating object
 Presenter::Created object #11
+Presenter::Creating object
+Presenter::Created object #15
 Presenter::Creating requirement
 Presenter::Creating requirement
 Presenter::Creating requirement
 Presenter::Creating requirement
-Presenter::Could not create requirement
 Presenter::Creating requirement
-Presenter::Could not create requirement
-could not Scale prim
-could not Scale prim
-could not Scale prim
+Presenter::Creating requirement
+Presenter::Creating requirement
+Presenter::Creating requirement

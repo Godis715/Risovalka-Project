@@ -103,13 +103,14 @@ public:
 		return size;
 	}
 
-	void Push(Type newValue) {
-		if (isEmpty()) {
-			Element<Type>* newNode = new Element<Type>(val);
+	void Push(Type val) {
+		Element<Type>* newNode;
+		if (IsEmpty()) {
+			newNode = new Element<Type>(val);
 		}
 		else
 		{
-			Element<Type>* newNode = new Element<Type>(val, stack);
+			newNode = new Element<Type>(val, stack);
 		}
 		stack = newNode;
 		++size;
@@ -117,10 +118,10 @@ public:
 	}
 
 	Type Pop() {
-		if (isEmpty()) {
+		if (IsEmpty()) {
 			throw std::exception("stack is Empty");
 		}
-		Type value = tail->value;
+		Type value = stack->value;
 		Element<Type>* temp = stack;
 		stack = stack->node;
 		--size;
@@ -129,14 +130,14 @@ public:
 	}
 
 	void Delete() {
-		while (!isEmpty())
+		while (!IsEmpty())
 		{
 			Pop();
 		}
 		return;
 	}
 
-	bool isEmpty()
+	bool IsEmpty()
 	{
 		return size == 0;
 	}
