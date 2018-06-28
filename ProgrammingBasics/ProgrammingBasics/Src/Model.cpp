@@ -767,7 +767,7 @@ bool Model::OptimizeRequirements(const Array<Requirement*>& requirments) {
 		
 		optimization_iter++;
 		// temp
-		if (optimization_iter >= 1000) {
+		if (optimization_iter >= 200) {
 			return (err < OPTIM_EPS * 10);
 		}
 	}

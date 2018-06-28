@@ -679,6 +679,7 @@ public:
 			return;
 		}
 		Node<TKey, TVal>* temp = head;
+		head = nullptr;
 		Deck<Node<TKey, TVal>*> deck;
 		deck.PushBack(temp);
 		while (!deck.IsEmpty())
