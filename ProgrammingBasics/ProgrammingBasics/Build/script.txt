@@ -1,24 +1,35 @@
-point = CreatePoint(d, d);
-segment = CreateSegment(d, d, d, d);
-circle = CreateCircle(d, d, d);
-arc = CreateArc(d, d, d, d, d);
+CreatePoint(d, d) -> Var point;
+Var segment = CreateSegment(d, d, d, d);
+Var circle = CreateCircle(d, d, d);
+Var arc = CreateArc(d, d, d, d, d);
 
 CreatePoint(d, d);
 CreateSegment(d, d, d, d);
 CreateCircle(d, d, d);
 CreateArc(d, d, d, d, d);
 
-Move(arc, d, d);
+Move(arc, segment, d, d);
 
 Scale(arc, d);
 
 Rotate(circle, d);
 
-t = FoundPoint(d, d);
-IF(t){
-s = FoundPoint(d, d, !t);
-}
-ReqName(a, b, c, d, d);
+Var t = FoundPoint(d, d);
 
-Delete(a);
-Delete(a, b);
+Var s = FoundPoint(d, d, !t);
+
+Var req = ReqName(arc, t, s, d, d);
+
+ReqName(arc, t, s, d, d);
+
+Change(req, d);
+
+Change(s, d, d);
+
+Delete(req);
+Delete(s);
+Delete(s, t);
+
+Var req = GetReqName(segment);
+
+Var req2 = GetReqName(segment, !req);
