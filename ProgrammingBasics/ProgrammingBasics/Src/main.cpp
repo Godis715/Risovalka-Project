@@ -156,10 +156,6 @@ void LoggerInit() {
 
 int main()
 {
-	std::vector<int> vec;
-	vec.push_back(1);
-	auto i = vec.begin();
-	int o = *i;
 	LoggerInit();
 	try {
 		IView* view = new ViewFLTK();
@@ -168,6 +164,4 @@ int main()
 	catch (...) {
 
 	}
-	// sdv
-	//
 }
