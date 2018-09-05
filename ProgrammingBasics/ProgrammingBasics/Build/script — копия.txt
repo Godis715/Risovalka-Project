@@ -1,0 +1,36 @@
+CreatePoint()(d, d)->point;
+CreateSegment()(d, d, d, d)->segment ;
+CreateCircle()(d, d, d)->circle;
+CreateArc()(d, d, d, d, d)->arc;
+
+CreatePoint()(d, d);
+CreateSegment()(d, d, d, d);
+CreateCircle()(d, d, d);
+CreateArc()(d, d, d, d, d);
+
+Move(arc, segment)(d, d);
+Scale(arc)(d);
+Rotate(circle, d);
+
+FoundPoint()(d, d)->t;
+FoundPoint(t)(d, d)->s;
+
+ReqName(arc, t, s)(d, d)->req;
+
+ReqName(arc, t, s)(d, d);
+
+Change(req)(d);
+
+Change(s)(d, d);
+
+Delete(req);
+Delete(s);
+Delete(s, t);
+
+GetReqName(segment)->req;
+
+GetReqName(segment, !req);
+
+
+Equal_segment(seg_q, seg_w)();
+Distance_bet_point_segment(seg_q, poi_q)(10);

@@ -18,6 +18,47 @@
 #include <FL/Fl_Float_Input.H>
 #include <FL/math.h>
 
+ID CreatePoint(const Array<ID>& obj, const Array<double>& params) {
+	return Presenter::CreateObject(ot_point, params);
+}
+ID CreateSegment(const Array<ID>& obj, const Array<double>& params) {
+	return Presenter::CreateObject(ot_segment, params);
+}
+ID CreateArc(const Array<ID>& obj, const Array<double>& params) {
+	return Presenter::CreateObject(ot_arc, params);
+}
+ID CreateCircle(const Array<ID>& obj, const Array<double>& params) {
+	return Presenter::CreateObject(ot_circle, params);
+}
+ID Move(const Array<ID>& obj, const Array<double>& params) {
+	if (params.GetSize() != 2) {
+		throw std::exception("invalid arguments");
+	}
+	Presenter::MoveObject(obj, Vector2(params[0], params[1]));
+	return ID();
+
+}
+ID Scale(const Array<ID>& obj, const Array<double>& params) {
+	if (params.GetSize() != 1) {
+		throw std::exception("invalid arguments");
+	}
+	Presenter::ScaleObjects(obj, params[0]);
+	return ID();
+}
+ID DistBetPoints(const Array<ID>& obj, const Array<double>& params) {
+	return Presenter::CreateRequirement(ot_distBetPoints, obj, params);
+}
+ID EqualSegment(const Array<ID>& obj, const Array<double>& params) {
+	return Presenter::CreateRequirement(ot_equalSegmentLen, obj, params);
+}
+ID DistanceBetPointSegment(const Array<ID>& obj, const Array<double>& params) {
+	return Presenter::CreateRequirement(ot_distBetPointSeg, obj, params);
+}
+ID Delete(const Array<ID>& obj, const Array<double>& params) {
+	Presenter::DeletePrimitives(obj);
+	return ID();
+}
+
 double Parse(string number) {
 	int countPoint = 0;
 	if (number[0] == 'e' || number[0] == '.') {
@@ -432,6 +473,24 @@ public:
 		
 		mainWindow->show();
 		drawWindow->show();
+
+		BinSearchTree<string, ID(*)(const Array<ID>&, const Array<double>&)> kek;
+		kek.Add("Create_point", CreatePoint);
+		kek.Add("Create_segment", CreateSegment);
+		kek.Add("Create_arc", CreateArc);
+		kek.Add("Create_circle", CreateCircle);
+		kek.Add("Move", Move);
+		kek.Add("Scale", Scale);
+		kek.Add("Dist_bet_points", DistBetPoints);
+		kek.Add("Equal_segment", EqualSegment);
+		kek.Add("Distance_bet_point_segment", DistanceBetPointSegment);
+		kek.Add("Delete", Delete);
+		Compiler compiler(kek);
+		std::ifstream file;
+		file.open("script.txt");
+		if (!file.eof()) {
+			compiler.Parse(file);
+		}
 	}
 	~ViewFLTK(){}
 

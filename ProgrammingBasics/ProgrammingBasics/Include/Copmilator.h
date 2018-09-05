@@ -12,14 +12,14 @@ class Compiler {
 public:
 	Compiler(kek _Tree) : Tree(_Tree) {}
 
-	void Parse(std::ostream& input) {
+	void Parse(std::istream& input) {
 		string str;
 		while (!input.eof()) {
 			str = "";
 			char symbol = 'a';
-			while ((!input.eof()) || (symbol != ';'))
+			while ((!input.eof()) && (symbol != ';'))
 			{
-				input << symbol;
+				input >> symbol;
 				str += symbol;
 			}
 			if (!IsRight(str)) {
@@ -36,10 +36,10 @@ private:
 		std::regex regul("[A-Z]"
 			"([a-z0-9_])*"
 			"\\("
-			"(([a-z0-9_])*, )*"
+			"(([a-z0-9_])*,)*"
 			"(([a-z0-9_])*\\))"
 			"\\("
-			"(([0-9.])*, )*"
+			"(([0-9.])*,)*"
 			"(([0-9.])*\\))"
 			";"
 		);
@@ -50,10 +50,10 @@ private:
 		std::regex regul2("[A-Z]"
 			"([a-z0-9_])*"
 			"\\("
-			"(([a-z0-9_])*, )*"
+			"(([a-z0-9_])*,)*"
 			"(([a-z0-9_])*\\))"
 			"\\("
-			"(([0-9.])*, )*"
+			"(([0-9.])*,)*"
 			"(([0-9.])*\\))"
 			"->"
 			"[a-z]"
@@ -71,8 +71,8 @@ private:
 	}
 
 	string GetNameFunction(string& input) {
-		string result = input.substr(input.find("(") - 1);
-		input = input.substr(input.find("(") - 1, input.length());
+		string result = input.substr(0, input.find("("));
+		input = input.substr(input.find("("), input.length());
 		return result;
 	}
 
@@ -97,51 +97,51 @@ private:
 		return true;
 	}
 
-	Array<string>& GetVaribles(string&  input) {
+	Array<string> GetVaribles(string&  input) {
 		Array<string> result;
 		int i = 0;
 		int j = 0;
 
 		while (input[i] != ')') {
 			++i;
-			while ((input[i] != ')') || (input[i] != ',') || (input[i] != ' '))
+			string temp;
+			while ((input[i] != ')') && (input[i] != ','))
 			{
-				result[j] += input[i];
+				temp += input[i];
 				++i;
 			}
-			if (input[i] == ',') {
-				++j;
+			if (temp != "") {
+				result.PushBack(temp);
 			}
 		}
-		input = input.substr(i, input.length());
+		input = input.substr(i + 1, input.length());
 		return result;
 	}
 
-	Array<double>& GetPararms(string& input, bool& flag) {
+	Array<double> GetPararms(string& input, bool& flag) {
 		Array<double> result;
 		int i = 0;
-		int j = 0;
 		string str;
 		while (input[i] != ')') {
 			++i;
-			while ((input[i] != ')') || (input[i] != ',') || (input[i] != ' '))
+			while ((input[i] != ')') && (input[i] != ','))
 			{
 				str += input[i];
 				++i;
 			}
-			if (input[i] == ',') {
-				
-				if (ParseNumber(str, result[j])) {
+			double temp;
+			if (str != "") {
+				if (ParseNumber(str, temp)) {
+					result.PushBack(temp);
 					str = "";
 				}
 				else {
 					flag = false;
 					return result;
 				}
-				++j;
 			}
 		}
-		input = input.substr(i, input.length());
+		input = input.substr(i + 1, input.length());
 		return result;
 	}
 
@@ -168,10 +168,8 @@ private:
 		bool flag = true;
 		string func = GetNameFunction(input);
 
-		int sizeVar = 0;
 		auto varibles = GetVaribles(input);
 		
-		int sizePar = 0;
 		auto params = GetPararms(input, flag);
 		if (!flag) {
 			return flag;
@@ -183,7 +181,8 @@ private:
 		}
 
 		if (input[0] == '-') {
-			input = input.substr(2, input.length() - 1);
+			int x = input.length() - 3;
+			input = input.substr(2, input.length() - 3);
 			auto marker = varible.Find(input);
 			if (marker.IsValid()) {
 				marker.Delete();

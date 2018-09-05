@@ -31,7 +31,7 @@ ID Presenter::CreateObject(object_type type, const Array<double>& params) {
 	return id;
 }
 
-bool Presenter::CreateRequirement(object_type type, const Array<ID>& objects, const Array<double>& params) {
+ID Presenter::CreateRequirement(object_type type, const Array<ID>& objects, const Array<double>& params) {
 	ID id;
 	LOG(string("Presenter::Creating requirement"), LEVEL_1);
 	bool result = model->CreateRequirementByID(type, objects, params, id);
@@ -39,7 +39,7 @@ bool Presenter::CreateRequirement(object_type type, const Array<ID>& objects, co
 		LOG(string("Presenter::Could not create requirement"), LEVEL_3);
 	}
 
-	return result;
+	return id;
 }
 
 void Presenter::DeletePrimitives(const Array<ID>& primitiveID) {
@@ -217,4 +217,3 @@ bool Presenter::GetObjParam(const ID& id, Array<double>& params)
 {
 	return model->GetObjParam(id, params);
 }
-
