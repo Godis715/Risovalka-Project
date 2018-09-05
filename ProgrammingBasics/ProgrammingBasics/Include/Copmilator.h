@@ -2,112 +2,195 @@
 #define __PARSE
 
 #include "Logger.h"
+#include <regex>
 
 typedef BinSearchTree<string, ID(*)(const Array<ID>&, const Array<double>&)>& kek;
 typedef void(*kik)(const Array<ID>&, const Array<double>&);
 
-bool IsSymbol(char s) {
-	return (s == 46) || ((s >= 48) && (s <= 57)) || ((s >= 65) && (s <= 90)) || (s >= 97) && (s <= 122) || (s == 95);
-}
-
-string& GetNextWord(std::ostream& input) {
-	char symbol;
-	string str;
-	do {
-		input << symbol;
-	} while (!input.eof() && (symbol == ' ') && (symbol == '/n'));
-
-	if ((symbol == ';')) {
-		str += symbol;
-		return str;
-	}
-	if ((symbol == '-')) {
-		str += symbol;
-		input << symbol; 
-		if ((symbol == '>')) {
-			str += symbol;
-		}
-		return str;
-	}
-	while (IsSymbol(symbol))
-	{
-		str += symbol;
-		input << symbol;
-	}
-	return str;
-}
-
-bool ParseNumber(string& const number, double& num) {
-	int countPoint = 0;
-	if ((number[0] < 48) && (number[0] > 57)) {
-		return false;
-	}
-
-	for (size_t i = 1; i < number.length(); ++i) {
-		if (((number[0] < 48) && (number[0] > 57)) && (number[i] != '.')) {
-			return false;
-		}
-		if (number[i] == '.') {
-			++countPoint;
-			if (countPoint > 1) {
-				return false;
-			}
-		}
-	}
-	num = stod(number);
-	return true;
-}
 
 class Compiler {
 public:
-	
 	Compiler(kek _Tree) : Tree(_Tree) {}
 
 	void Parse(std::ostream& input) {
-		while (!input.eof() && Command(input)) {}
-
+		string str;
+		while (!input.eof()) {
+			str = "";
+			char symbol = 'a';
+			while ((!input.eof()) || (symbol != ';'))
+			{
+				input << symbol;
+				str += symbol;
+			}
+			if (!IsRight(str)) {
+				return;
+			}
+			if (!Command(str)) {
+				return;
+			}
+		}
 	}
 private:
-	string* GetParams(std::ostream& input, int& size){}
+	bool IsRight(string& const str) {
+		std::cmatch result;
+		std::regex regul("[A-Z]"
+			"([a-z0-9_])*"
+			"\\("
+			"(([a-z0-9_])*, )*"
+			"(([a-z0-9_])*\\))"
+			"\\("
+			"(([0-9.])*, )*"
+			"(([0-9.])*\\))"
+			";"
+		);
+		if (regex_match(str.c_str(), result, regul)) {
+			return true;
+		}
 
-	ID Complete(string& const func, string* const arrStr, int& size, bool& flag) {
-
+		std::regex regul2("[A-Z]"
+			"([a-z0-9_])*"
+			"\\("
+			"(([a-z0-9_])*, )*"
+			"(([a-z0-9_])*\\))"
+			"\\("
+			"(([0-9.])*, )*"
+			"(([0-9.])*\\))"
+			"->"
+			"[a-z]"
+			"([a-z0-9_])*"
+			";"
+		);
+		if (regex_match(str.c_str(), result, regul2)) {
+			return true;
+		}
+		return false;
 	}
 
-	bool Command(std::ostream& input) {
-		bool flag = true;
-		string func = GetNextWord(input);
-		if ((func[0] >= 65) && (func[0] <= 90))
-		{
-			int size = 0;
-			string* arrStr = GetParams(input, size);
-			if (size == -1) {
-				return false;
-			}
-			ID id = Complete(func, arrStr, size, flag);
-			string word = GetNextWord(input);
+	bool IsSymbol(char s) {
+		return (s != 47) || ((s >= 45) && (s <= 57)) || ((s >= 65) && (s <= 90)) || (s >= 97) && (s <= 122) || (s == 95);
+	}
 
-			if (word[0] == ';') {
-				return flag;
-			}
+	string GetNameFunction(string& input) {
+		string result = input.substr(input.find("(") - 1);
+		input = input.substr(input.find("(") - 1, input.length());
+		return result;
+	}
 
-			if ((word != "->") || (flag == false)) {
-				flag = false;
-				return flag;
-			}
-			
-
-			
-			word = GetNextWord(input);
-			if (word == "Var") {
-				word = GetNextWord(input);
-
-			}
-
-		}
-		else {
+	bool ParseNumber(string& const number, double& num) {
+		int countPoint = 0;
+		if ((number[0] < 48) && (number[0] > 57)) {
 			return false;
 		}
+
+		for (size_t i = 1; i < number.length(); ++i) {
+			if (((number[0] < 48) && (number[0] > 57)) && (number[i] != '.')) {
+				return false;
+			}
+			if (number[i] == '.') {
+				++countPoint;
+				if (countPoint > 1) {
+					return false;
+				}
+			}
+		}
+		num = stod(number);
+		return true;
+	}
+
+	Array<string>& GetVaribles(string&  input) {
+		Array<string> result;
+		int i = 0;
+		int j = 0;
+
+		while (input[i] != ')') {
+			++i;
+			while ((input[i] != ')') || (input[i] != ',') || (input[i] != ' '))
+			{
+				result[j] += input[i];
+				++i;
+			}
+			if (input[i] == ',') {
+				++j;
+			}
+		}
+		input = input.substr(i, input.length());
+		return result;
+	}
+
+	Array<double>& GetPararms(string& input, bool& flag) {
+		Array<double> result;
+		int i = 0;
+		int j = 0;
+		string str;
+		while (input[i] != ')') {
+			++i;
+			while ((input[i] != ')') || (input[i] != ',') || (input[i] != ' '))
+			{
+				str += input[i];
+				++i;
+			}
+			if (input[i] == ',') {
+				
+				if (ParseNumber(str, result[j])) {
+					str = "";
+				}
+				else {
+					flag = false;
+					return result;
+				}
+				++j;
+			}
+		}
+		input = input.substr(i, input.length());
+		return result;
+	}
+
+	ID Complete(string& const func, const Array<string>& variables, const Array<double>& params, bool& flag) {
+		ID id;
+		double param;
+
+		Array<ID> ids(variables.GetSize());
+		for (int j = 0; j < variables.GetSize(); ++j) {
+			auto marker = varible.Find(variables[j]);
+			if (marker.IsValid()) {
+				ids[j] = *marker;
+			}
+			else {
+				flag = false;
+				return id;
+			}
+		}
+
+		return Tree.Find(func).operator*()(ids, params);
+	}
+
+	bool Command(string& input) {
+		bool flag = true;
+		string func = GetNameFunction(input);
+
+		int sizeVar = 0;
+		auto varibles = GetVaribles(input);
+		
+		int sizePar = 0;
+		auto params = GetPararms(input, flag);
+		if (!flag) {
+			return flag;
+		}
+		ID id = Complete(func, varibles, params, flag);
+
+		if (!flag) {
+			return flag;
+		}
+
+		if (input[0] == '-') {
+			input = input.substr(2, input.length() - 1);
+			auto marker = varible.Find(input);
+			if (marker.IsValid()) {
+				marker.Delete();
+			}
+			varible.Add(input, id);
+		}
+		return flag;
 	}
 
 	kek Tree;

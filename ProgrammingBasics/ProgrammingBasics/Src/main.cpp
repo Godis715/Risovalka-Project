@@ -1,6 +1,7 @@
 #include <ctime>
 #include "ViewFLTK.h"
 #include <vector>
+#include <regex>
 
 //Model model;
 //
@@ -156,12 +157,54 @@ void LoggerInit() {
 
 int main()
 {
+	/*string str("Comp(hhuhf, fwf, s)(..., 5.0);");
+
+	std::cmatch result;
+	std::regex regul("[A-Z]"
+		"([a-z0-9_])*"
+		"\\("
+		"(([a-z0-9_])*, )*"
+		"(([a-z0-9_])*\\))"
+		"\\("
+		"(([0-9.])*, )*"
+		"(([0-9.])*\\))"
+		";"
+	);
+	if (regex_match(str.c_str(), result, regul))
+ 		for (int i = 0;i < result.size();i++)
+			std::cout << result[i] << std::endl;
+
+	string str2("Comp(da, d, fsfes)(2)->udd;");
+	std::regex regul2("[A-Z]"
+		"([a-z0-9_])*"
+		"\\("
+		"(([a-z0-9_])*, )*"
+		"(([a-z0-9_])*\\))"
+		"\\("
+		"(([0-9.])*, )*"
+		"(([0-9.])*\\))"
+		"->"
+		"[a-z]"
+		"([a-z0-9_])*"
+		";"
+	);
+	if (regex_match(str2.c_str(), result, regul2))
+		for (int i = 0;i < result.size();i++)
+			std::cout << result[i] << std::endl;
+
+*/
 	LoggerInit();
-	try {
+	/*try {
 		IView* view = new ViewFLTK();
 		return view->Run();
 	}
 	catch (...) {
-
-	}
+	std::regex regul1("[A-Z]"
+	"([a-zA-Z0-9_])*"
+	"\\("
+	"(([a-zA-Z0-9_])*, )*"
+	"(([a-zA-Z0-9_ ])*\\))"
+	";"
+	);
+	}*/
 }
