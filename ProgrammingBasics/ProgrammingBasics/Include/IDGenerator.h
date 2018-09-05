@@ -5,11 +5,10 @@
 
 class IDGenerator
 {
-	public:
-	static IDGenerator * getInstance();
-
+public:
+	static IDGenerator* getInstance();
 		ID generateID();
-	private:
+private:
 		IDGenerator() { }
 		static IDGenerator* _instance;
 

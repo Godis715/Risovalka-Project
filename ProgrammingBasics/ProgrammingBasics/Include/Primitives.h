@@ -4,11 +4,11 @@
 
 #include "Vector2.h"
 
-
 class Primitive {
 private:
 	const ID id;
 	const object_type type;
+
 public:
 	Primitive(ID, object_type);
 	virtual double GetDistance(const Vector2&) const = 0;
@@ -28,7 +28,8 @@ public:
 
 	double GetDistance(const Vector2&) const;
 
-	// do we need this functions?
+	// do we need this function
+
 	Vector2 GetPosition() const;
 	void SetPosition(const Vector2&);
 	void SetPosition(double, double);
@@ -83,7 +84,6 @@ public:
 class Arc : public Primitive {
 private:
 	Vector2 center;
-	
 public:
 	Point* point1;
 	Point* point2;
