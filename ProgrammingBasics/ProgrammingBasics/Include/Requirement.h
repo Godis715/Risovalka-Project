@@ -99,8 +99,8 @@ public:
 	{
 		arguments = Array<double*>(4);
 		params = Array<double>(1);
-		Vector2* pos1 = &_point1->position;
-		Vector2* pos2 = &_point2->position;
+		Vector2* pos1 = &_point1->pos;
+		Vector2* pos2 = &_point2->pos;
 		
 		arguments[0] = &pos1->x;
 		arguments[1] = &pos1->y;
@@ -126,14 +126,14 @@ public:
 	{
 		arguments = Array<double*>(8);
 		params = Array<double>(0);
-		arguments[0] = (&_seg1->point1->position.x);
-		arguments[1] = (&_seg1->point1->position.y);
-		arguments[2] = (&_seg1->point2->position.x);
-		arguments[3] = (&_seg1->point2->position.y);
-		arguments[4] = (&_seg2->point1->position.x);
-		arguments[5] = (&_seg2->point1->position.y);
-		arguments[6] = (&_seg2->point2->position.x);
-		arguments[7] = (&_seg2->point2->position.y);
+		arguments[0] = (&_seg1->point1->pos.x);
+		arguments[1] = (&_seg1->point1->pos.y);
+		arguments[2] = (&_seg1->point2->pos.x);
+		arguments[3] = (&_seg1->point2->pos.y);
+		arguments[4] = (&_seg2->point1->pos.x);
+		arguments[5] = (&_seg2->point1->pos.y);
+		arguments[6] = (&_seg2->point2->pos.x);
+		arguments[7] = (&_seg2->point2->pos.y);
 	}
 	~EqualSegmentLenReq() { }
 	double error() {
@@ -172,16 +172,16 @@ public:
 		Requirement(IDGenerator::getInstance()->generateID(), ot_pointPosReq) {
 		arguments = Array<double*>(2);
 		params = Array<double>(2);
-		arguments[0] = &_point->position.x;
-		arguments[1] = &_point->position.y;
+		arguments[0] = &_point->pos.x;
+		arguments[1] = &_point->pos.y;
 
 		params[0] = _x;
 		params[1] = _y;
 	}
 	PointPosReq(Point* _point, const Vector2& _vec) :
 		Requirement(IDGenerator::getInstance()->generateID(), ot_pointPosReq) {
-		arguments[0] = &_point->position.x;
-		arguments[1] = &_point->position.y;
+		arguments[0] = &_point->pos.x;
+		arguments[1] = &_point->pos.y;
 
 		params[0] = _vec.x;
 		params[1] = _vec.y;
@@ -205,14 +205,14 @@ public:
 		arguments = Array<double*>(8);
 		params = Array<double>(0);
 
-		arguments[0] = &_segment->point1->position.x;
-		arguments[1] = &_segment->point1->position.y;
-		arguments[2] = &_segment->point2->position.x;
-		arguments[3] = &_segment->point2->position.y;
-		arguments[4] = &_point1->position.x;
-		arguments[5] = &_point1->position.y;
-		arguments[6] = &_point2->position.x;
-		arguments[7] = &_point2->position.y;
+		arguments[0] = &_segment->point1->pos.x;
+		arguments[1] = &_segment->point1->pos.y;
+		arguments[2] = &_segment->point2->pos.x;
+		arguments[3] = &_segment->point2->pos.y;
+		arguments[4] = &_point1->pos.x;
+		arguments[5] = &_point1->pos.y;
+		arguments[6] = &_point2->pos.x;
+		arguments[7] = &_point2->pos.y;
 	}
 	~PointsOnTheOneHand() {}
 	double error() {
@@ -223,11 +223,11 @@ public:
 			Fx2 = abs(Fx2);
 
 			if (Fx1 > Fx2) {
-				double distance = segment->GetDistance(point2->position);
+				double distance = segment->GetDist(point2->pos);
 				return distance * distance;
 			}
 			else{
-				double distance = segment->GetDistance(point1->position);
+				double distance = segment->GetDist(point1->pos);
 				return distance * distance;
 			}
 		}
@@ -250,18 +250,18 @@ public:
 		arguments = Array<double*>(6);
 		params = Array<double>(1);
 
-		arguments[0] = &_segment->point1->position.x;
-		arguments[1] = &_segment->point1->position.y;
-		arguments[2] = &_segment->point2->position.x;
-		arguments[3] = &_segment->point2->position.y;
-		arguments[4] = &_point->position.x;
-		arguments[5] = &_point->position.y;
+		arguments[0] = &_segment->point1->pos.x;
+		arguments[1] = &_segment->point1->pos.y;
+		arguments[2] = &_segment->point2->pos.x;
+		arguments[3] = &_segment->point2->pos.y;
+		arguments[4] = &_point->pos.x;
+		arguments[5] = &_point->pos.y;
 
 		params[0] = _distance;
 	}
 	~DistanceBetweenPointSegment() {}
 	double error() {
-		double distance = segment->GetDistance(point->GetPosition()) - params[0];
+		double distance = segment->GetDist(point->GetPosition()) - params[0];
 		return distance * distance;
 	}
 
@@ -282,14 +282,14 @@ public:
 		arguments = Array<double*>(8);
 		params = Array<double>(1);
 
-		arguments[0] = &_segment1->point1->position.x;
-		arguments[1] = &_segment1->point1->position.y;
-		arguments[2] = &_segment1->point2->position.x;
-		arguments[3] = &_segment1->point2->position.y;
-		arguments[4] = &_segment2->point1->position.x;
-		arguments[5] = &_segment2->point1->position.y;
-		arguments[6] = &_segment2->point2->position.x;
-		arguments[7] = &_segment2->point2->position.y;
+		arguments[0] = &_segment1->point1->pos.x;
+		arguments[1] = &_segment1->point1->pos.y;
+		arguments[2] = &_segment1->point2->pos.x;
+		arguments[3] = &_segment1->point2->pos.y;
+		arguments[4] = &_segment2->point1->pos.x;
+		arguments[5] = &_segment2->point1->pos.y;
+		arguments[6] = &_segment2->point2->pos.x;
+		arguments[7] = &_segment2->point2->pos.y;
 
 		params[0] = abs(cos((_andle / 180) * PI));
 		sinus = sin((_andle / 180) * PI);
@@ -338,19 +338,19 @@ public:
 		arguments = Array<double*>(7);
 		params = Array<double>(1);
 
-		arguments[0] = &_arc->point1->position.x;
-		arguments[1] = &_arc->point1->position.y;
-		arguments[2] = &_arc->point2->position.x;
-		arguments[3] = &_arc->point2->position.y;
+		arguments[0] = &_arc->point1->pos.x;
+		arguments[1] = &_arc->point1->pos.y;
+		arguments[2] = &_arc->point2->pos.x;
+		arguments[3] = &_arc->point2->pos.y;
 		arguments[4] = &_arc->angle;
-		arguments[5] = &_point->position.x;
-		arguments[6] = &_point->position.y;
+		arguments[5] = &_point->pos.x;
+		arguments[6] = &_point->pos.y;
 
 		params[0] = _distance;
 	}
 	~DistanceBetweenPointArc() {}
 	double error() {
-		Vector2 vector(point->position - arc->GetCenter());
+		Vector2 vector(point->pos - arc->GetCenter());
 		double modVector_inSquare = Vector2::Dot(vector, vector);
 		return modVector_inSquare - params[0] * (2 * sqrt(modVector_inSquare) - params[0]);
 	}
@@ -398,19 +398,19 @@ public:
 		point(_point),
 		Requirement(IDGenerator::getInstance()->generateID(), ot_pointInArc)
 	{
-		arguments[0] = &_arc->point1->position.x;
-		arguments[1] = &_arc->point1->position.y;
-		arguments[2] = &_arc->point2->position.x;
-		arguments[3] = &_arc->point2->position.y;
+		arguments[0] = &_arc->point1->pos.x;
+		arguments[1] = &_arc->point1->pos.y;
+		arguments[2] = &_arc->point2->pos.x;
+		arguments[3] = &_arc->point2->pos.y;
 		arguments[4] = &_arc->angle;
-		arguments[5] = &_point->position.x;
-		arguments[6] = &_point->position.y;
+		arguments[5] = &_point->pos.x;
+		arguments[6] = &_point->pos.y;
 	}
 	~PointInArc() {}
 	// return distance to arc and angle
 	double error() {
 		Vector2 center = arc->GetCenter();
-		Vector2 vec1 = arc->GetPoint1_pos() - center;
+		Vector2 vec1 = arc->GetPointPos1() - center;
 		Vector2 vecPoint = point->GetPosition() - center;
 		double angle = Vector2::Angle(vec1, vecPoint);
 		double angleArc = arc->GetAngle();
@@ -419,18 +419,18 @@ public:
 		}
 		if (angle <= PI + angleArc / 2) {
 			if (angle < angleArc + PI / 2) {
-				return point->GetDistance(center) * sin(angle - angleArc);
+				return point->GetDist(center) * sin(angle - angleArc);
 			}
 			else {
-				return point->GetDistance(center) + angle;
+				return point->GetDist(center) + angle;
 			}
 		}
 		else {
 			if (angle < PI / 2) {
-				return point->GetDistance(center) * sin(angle);
+				return point->GetDist(center) * sin(angle);
 			}
 			else {
-				return point->GetDistance(center);
+				return point->GetDist(center);
 			}
 		}
 	}

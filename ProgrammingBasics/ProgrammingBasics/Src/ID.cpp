@@ -7,6 +7,7 @@ ID::ID(unsigned long long h) {
 }
 ID::ID() {
 	hash = 0;
+	object = nullptr;
 }
 void ID::operator= (const ID& item) {
 	hash = item.hash;
@@ -27,8 +28,8 @@ unsigned long long ID::GetHash() const {
 
 // IDGENERATOR FUNCTIONS
 
-ID IDGenerator::generateID() {
-	return ID(++_lastGivenHash);
+ID* IDGenerator::generateID() {
+	return new ID(++_lastGivenHash);
 }
 
 IDGenerator* IDGenerator::getInstance() {
@@ -48,3 +49,22 @@ std::ostream& operator<<(std::ostream& out, const ID& id) {
 
 unsigned long long IDGenerator::_lastGivenHash = 0;
 IDGenerator* IDGenerator::_instance = nullptr;
+
+// 
+
+void PrimitivesController::ChangeParams(ID& id, const Array<double>&) const {
+	
+}
+
+Object::Object(object_type _type) : type(_type) {
+	id = IDGenerator::getInstance()->generateID();
+}
+Object::~Object() {
+	delete id;
+}
+object_type Object::GetType() const {
+	return type;
+}
+ID Object::GetID() const {
+	return *id;
+}

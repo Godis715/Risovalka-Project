@@ -289,8 +289,8 @@ bool Model::DeletePrimitive(const ID& prim_id) {
 		Segment* segment = cast<Segment*>(prim);
 		segment->point1->DeleteParent();
 		segment->point2->DeleteParent();
-		bool result = DeletePrimitive(segment->GetPoint1_ID());
-		result &= DeletePrimitive(segment->GetPoint2_ID());
+		bool result = DeletePrimitive(segment->GetPointID1());
+		result &= DeletePrimitive(segment->GetPointID2());
 		delete prim;
 		return result;
 	}
@@ -298,15 +298,15 @@ bool Model::DeletePrimitive(const ID& prim_id) {
 		Arc* arc = cast<Arc*>(prim);
 		arc->point1->DeleteParent();
 		arc->point2->DeleteParent();
-		bool result = DeletePrimitive(arc->GetPoint1_ID());
-		result &= DeletePrimitive(arc->GetPoint2_ID());
+		bool result = DeletePrimitive(arc->GetPointID1());
+		result &= DeletePrimitive(arc->GetPointID2());
 		delete prim;
 		return result;
 	}
 	case ot_circle: {
 		Circle* circle = cast<Circle*>(prim);
 		circle->center->DeleteParent();
-		bool result = DeletePrimitive(circle->GetCenter_ID());
+		bool result = DeletePrimitive(circle->GetCenterID());
 		delete prim;
 		return result;
 	}
@@ -823,8 +823,8 @@ void Model::GetDoublesForOptimize(Array<Primitive*>& prims, Array<double*>& para
 	for (int i = 0; i < prims.GetSize(); ++i) {
 		if (prims[i]->GetType() == ot_point) {
 			Point* point = cast<Point*>(prims[i]);
-			params.PushBack(&point->position.x);
-			params.PushBack(&point->position.y);
+			params.PushBack(&point->pos.x);
+			params.PushBack(&point->pos.y);
 		}
 		if (prims[i]->GetType() == ot_arc) {
 			Arc* arc = cast<Arc*>(prims[i]);
@@ -867,7 +867,7 @@ bool Model::GetObjParam(const ID& obj_id, Array<double>& result) {
 		case ot_point: {
 			Point* point = cast<Point*>(obj);
 			result.Clear();
-			Vector2 pos = point->GetPosition();
+			Vector2 pos = point->GetPos();
 			result.PushBack(pos.x);
 			result.PushBack(pos.y);
 			return true;
@@ -876,8 +876,8 @@ bool Model::GetObjParam(const ID& obj_id, Array<double>& result) {
 		case ot_segment: {
 			Segment* segment = cast<Segment*>(obj);
 			result.Clear();
-			Vector2 pos1 = segment->GetPoint1_pos();
-			Vector2 pos2 = segment->GetPoint2_pos();
+			Vector2 pos1 = segment->GetPointPos1();
+			Vector2 pos2 = segment->GetPointPos2();
 			result.PushBack(pos1.x);
 			result.PushBack(pos1.y);
 			result.PushBack(pos2.x);
@@ -888,8 +888,8 @@ bool Model::GetObjParam(const ID& obj_id, Array<double>& result) {
 		case ot_arc: {
 			Arc* arc = cast<Arc*>(obj);
 			result.Clear();
-			Vector2 pos1 = arc->GetPoint1_pos();
-			Vector2 pos2 = arc->GetPoint2_pos();
+			Vector2 pos1 = arc->GetPointPos1();
+			Vector2 pos2 = arc->GetPointPos2();
 			double angle = arc->GetAngle();
 			result.PushBack(arc->GetCenter().x);
 			result.PushBack(arc->GetCenter().y);
@@ -924,7 +924,7 @@ bool Model::GetObjParam(const ID& obj_id, Array<double>& result) {
 bool Model::GetObject(double x, double y, Array<ID>& obj_id, Array<object_type>& types, Array<double>& distances) {
 	bool isFound = false;
 	for (auto i = dataPrim.GetMarker(); i.IsValid(); ++i) {
-		double dist = (*i)->GetDistance(Vector2(x, y));
+		double dist = (*i)->GetDist(Vector2(x, y));
 		if (dist < SEARCH_AREA) {
 			isFound = true;
 			distances.PushBack(dist);
@@ -960,7 +960,7 @@ bool Model::GetObjectsOnArea(double x1, double y1, double x2, double y2, Array<I
 		{
 		case ot_point: {
 			Point* point = cast<Point*>(obj);
-			if (pointInArea(point->position.x, point->position.y, x1, y1, x2, y2))
+			if (pointInArea(point->GetPos().x, point->GetPos().y, x1, y1, x2, y2))
 			{
 				obj_id.PushBack(point->GetID());
 				types.PushBack(point->GetType());
@@ -970,8 +970,8 @@ bool Model::GetObjectsOnArea(double x1, double y1, double x2, double y2, Array<I
 		}
 		case ot_segment: {
 			Segment* segment = cast<Segment*>(obj);
-			if (pointInArea(segment->point1->position.x, segment->point1->position.y, x1, y1, x2, y2) &&
-				pointInArea(segment->point2->position.x, segment->point2->position.y, x1, y1, x2, y2)
+			if (pointInArea(segment->GetPointPos1().x, segment->GetPointPos1().y, x1, y1, x2, y2) &&
+				pointInArea(segment->GetPointPos2().x, segment->GetPointPos2().y, x1, y1, x2, y2)
 				)
 			{
 				obj_id.PushBack(segment->GetID());
@@ -982,8 +982,8 @@ bool Model::GetObjectsOnArea(double x1, double y1, double x2, double y2, Array<I
 		}
 		case ot_arc: {
 			Arc* arc = cast<Arc*>(obj);
-			if (pointInArea(arc->point1->position.x, arc->point1->position.y, x1, y1, x2, y2) &&
-				pointInArea(arc->point2->position.x, arc->point2->position.y, x1, y1, x2, y2)
+			if (pointInArea(arc->GetPointPos1().x, arc->GetPointPos1().y, x1, y1, x2, y2) &&
+				pointInArea(arc->GetPointPos2().x, arc->GetPointPos2().y, x1, y1, x2, y2)
 				)
 			{
 				obj_id.PushBack(arc->GetID());
@@ -994,10 +994,10 @@ bool Model::GetObjectsOnArea(double x1, double y1, double x2, double y2, Array<I
 		}
 		case ot_circle: {
 			Circle* circle = cast<Circle*>(obj);
-			if (pointInArea(circle->GetCenter().x - circle->radius, circle->GetCenter().y, x1, y1, x2, y2) &&
-				pointInArea(circle->GetCenter().x + circle->radius, circle->GetCenter().y, x1, y1, x2, y2) &&
-				pointInArea(circle->GetCenter().x, circle->GetCenter().y - circle->radius, x1, y1, x2, y2) &&
-				pointInArea(circle->GetCenter().x, circle->GetCenter().y + circle->radius, x1, y1, x2, y2))
+			if (pointInArea(circle->GetCenter().x - circle->GetRadius(), circle->GetCenter().y, x1, y1, x2, y2) &&
+				pointInArea(circle->GetCenter().x + circle->GetRadius(), circle->GetCenter().y, x1, y1, x2, y2) &&
+				pointInArea(circle->GetCenter().x, circle->GetCenter().y - circle->GetRadius(), x1, y1, x2, y2) &&
+				pointInArea(circle->GetCenter().x, circle->GetCenter().y + circle->GetRadius(), x1, y1, x2, y2))
 			{
 				obj_id.PushBack(circle->GetID());
 				types.PushBack(circle->GetType());
@@ -1038,7 +1038,7 @@ bool Model::OptimizeGroup(Array<Primitive*>& group) {
 }
 
 void Model::LockPoint(Point* _point, ID& id) {
-	Requirement* requirement = new PointPosReq(_point, _point->position.x, _point->position.y);
+	Requirement* requirement = new PointPosReq(_point, _point->pos.x, _point->pos.y);
 
 	id = requirement->GetID();
 
@@ -1061,15 +1061,15 @@ bool Model::Scale(const Array<ID>& idPrim, const double koef) {
 	// geting center
 	Vector2 center;
 	for (auto i = points.GetMarker(); i.IsValid(); ++i) {
-		center += (*i)->position;
+		center += (*i)->GetPos();
 	}
 	center /= points.GetSize();
 	Array<ID> reqs;
 	// Moving
 	for (auto i = points.GetMarker(); i.IsValid(); ++i) {
 
-		Vector2 newPos(((*i)->position - center) * koef);
-		(*i)->position = center + newPos;
+		Vector2 newPos(((*i)->GetPos() - center) * koef);
+		(*i)->SetPos(center + newPos);
 
 		ID id;
 
@@ -1105,7 +1105,8 @@ bool Model::Move(const Array<ID>& idPrim, const Vector2& shift) {
 	Array<ID> reqs;
 
 	for (auto i = points.GetMarker(); i.IsValid(); ++i) {
-		(*i)->position += shift;
+		Vector2 newPos = (*i)->GetPos() + shift;
+		(*i)->SetPos(newPos);
 
 		ID id;
 
@@ -1142,11 +1143,11 @@ void Model::GetPointsFromPrimitives(Array<Primitive*>& primitives, BinSearchTree
 		}
 		case ot_segment: {
 			Segment* segment = cast<Segment*>(primitives[i]);
-			if (!pointTree.Find(segment->GetPoint1_ID()).IsValid()) {
+			if (!pointTree.Find(segment->GetPointID1()).IsValid()) {
 				Point* point = segment->point1;
 				pointTree.Add(point->GetID(), point);
 			}
-			if (!pointTree.Find(segment->GetPoint2_ID()).IsValid()) {
+			if (!pointTree.Find(segment->GetPointID2()).IsValid()) {
 				Point* point = segment->point2;
 				pointTree.Add(point->GetID(), point);
 			}
@@ -1154,11 +1155,11 @@ void Model::GetPointsFromPrimitives(Array<Primitive*>& primitives, BinSearchTree
 		}
 		case ot_arc: {
 			Arc* arc = cast<Arc*>(primitives[i]);
-			if (!pointTree.Find(arc->GetPoint1_ID()).IsValid()) {
+			if (!pointTree.Find(arc->GetPointID1()).IsValid()) {
 				Point* point = arc->point1;
 				pointTree.Add(point->GetID(), point);
 			}
-			if (!pointTree.Find(arc->GetPoint2_ID()).IsValid()) {
+			if (!pointTree.Find(arc->GetPointID2()).IsValid()) {
 				Point* point = arc->point2;
 				pointTree.Add(point->GetID(), point);
 			}
@@ -1166,7 +1167,7 @@ void Model::GetPointsFromPrimitives(Array<Primitive*>& primitives, BinSearchTree
 		}
 		case ot_circle: {
 			Circle* circle = cast<Circle*>(primitives[i]);
-			if (!pointTree.Find(circle->GetCenter_ID()).IsValid()) {
+			if (!pointTree.Find(circle->GetCenterID()).IsValid()) {
 				Point* point = circle->center;
 				pointTree.Add(point->GetID(), point);
 			}

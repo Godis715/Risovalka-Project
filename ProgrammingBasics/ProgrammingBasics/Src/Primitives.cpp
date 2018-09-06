@@ -1,50 +1,42 @@
 #include "Primitives.h"
 #include <stdexcept>
 
-ID Primitive::GetID() const {
-	return id;
-}
-Primitive::Primitive(ID _id, object_type _type) :
-	id(_id),
-	type(_type)
+Primitive::Primitive(object_type _type) : Object(_type)
 {
 
-}
-object_type Primitive::GetType() {
-	return type;
 }
 
 Point::Point(const Vector2& pos) :
-	Primitive(IDGenerator::getInstance()->generateID(), ot_point)
+	Primitive(ot_point)
 {
 	this->parent = nullptr;
-	this->position = pos;
+	this->pos = pos;
 }
 Point::Point(double _x, double _y) :
-	Primitive(IDGenerator::getInstance()->generateID(), ot_point)
+	Primitive(ot_point)
 {
 	this->parent = nullptr;
-	this->position = Vector2(_x, _y);
+	this->pos = Vector2(_x, _y);
 }
 Point::Point(const Point& _p) :
-	Primitive(IDGenerator::getInstance()->generateID(), ot_point)
+	Primitive(ot_point)
 {
 	this->parent = nullptr;
-	this->position = _p.position;
+	this->pos = _p.pos;
 }
-double Point::GetDistance(const Vector2& point) const {
-	return sqrt((position.x - point.x)*(position.x - point.x) +
-		(position.y - point.y)*(position.y - point.y));
+double Point::GetDist(const Vector2& point) const {
+	return sqrt((pos.x - point.x)*(pos.x - point.x) +
+		(pos.y - point.y)*(pos.y - point.y));
 }
-Vector2 Point::GetPosition() const {
-	return position;
+Vector2 Point::GetPos() const {
+	return pos;
 }
-void Point::SetPosition(const Vector2& _pos) {
-	position = _pos;
+void Point::SetPos(const Vector2& _pos) {
+	pos = _pos;
 }
-void Point::SetPosition(double x, double y) {
-	position.x = x;
-	position.y = y;
+void Point::SetPos(double x, double y) {
+	pos.x = x;
+	pos.y = y;
 }
 Primitive* Point::GetParent() {
 	return parent;
@@ -61,7 +53,7 @@ bool Point::SetParent(Primitive* _parent) {
 
 
 Segment::Segment(Point* _p1, Point* _p2) :
-	Primitive(IDGenerator::getInstance()->generateID(), ot_segment)
+	Primitive(ot_segment)
 {
 	if (_p1 == nullptr || _p2 == nullptr) {
 		throw std::invalid_argument("Segment::Segment::parameters was nullptr");
@@ -75,24 +67,24 @@ Segment::Segment(Point* _p1, Point* _p2) :
 
 }
 double Segment::GetLength() const {
-	return (point1->GetPosition() - point2->GetPosition()).GetLength();
+	return (point1->GetPos() - point2->GetPos()).GetLength();
 }
-Vector2 Segment::GetPoint1_pos() const {
-	return point1->GetPosition();
+Vector2 Segment::GetPointPos1() const {
+	return point1->GetPos();
 }
-Vector2 Segment::GetPoint2_pos() const {
-	return point2->GetPosition();
+Vector2 Segment::GetPointPos2() const {
+	return point2->GetPos();
 }
-void Segment::SetPoint1_pos(Vector2 _pos) {
-	point1->SetPosition(_pos);
+void Segment::SetPointPos1(Vector2 _pos) {
+	point1->SetPos(_pos);
 }
-void Segment::SetPoint2_pos(Vector2 _pos) {
-	point2->SetPosition(_pos);
+void Segment::SetPointPos2(Vector2 _pos) {
+	point2->SetPos(_pos);
 }
-ID Segment::GetPoint1_ID() const {
+ID Segment::GetPointID1() const {
 	return point1->GetID();
 }
-ID Segment::GetPoint2_ID() const {
+ID Segment::GetPointID2() const {
 	return point2->GetID();
 }
 double Segment::Inequality(Vector2 vector) {
@@ -101,11 +93,11 @@ double Segment::Inequality(Vector2 vector) {
 	delete equation;
 	return answer;
 }
-double Segment::GetDistance(const Vector2& point) const {
+double Segment::GetDist(const Vector2& point) const {
 	double dotProduct1 = 0.0;
 	double dotProduct2 = 0.0;
-	Vector2 point1 = this->point1->GetPosition();
-	Vector2 point2 = this->point2->GetPosition();
+	Vector2 point1 = this->point1->GetPos();
+	Vector2 point2 = this->point2->GetPos();
 
 	Vector2 pointTo1 = point - point1;
 	Vector2 pointTo2 = point - point2;
@@ -129,7 +121,7 @@ double Segment::GetDistance(const Vector2& point) const {
 }
 
 Arc::Arc(Point* _p1, Point* _p2, double _angle) :
-	Primitive(IDGenerator::getInstance()->generateID(), ot_arc)
+	Primitive(ot_arc)
 {
 	if (_p1 == nullptr || _p2 == nullptr) {
 		throw std::invalid_argument("Arc::Arc::parameters was nullptr");
@@ -145,9 +137,9 @@ Arc::Arc(Point* _p1, Point* _p2, double _angle) :
 }
 
 // write this function
-double Arc::GetDistance(const Vector2& _point) const {
-	Vector2 r1 = point1->GetPosition() - center;
-	Vector2 r2 = point2->GetPosition() - center;
+double Arc::GetDist(const Vector2& _point) const {
+	Vector2 r1 = point1->GetPos() - center;
+	Vector2 r2 = point2->GetPos() - center;
 	Vector2 vec = _point - center;
 
 	bool inSector = true;
@@ -177,8 +169,8 @@ Vector2 Arc::GetCenter() const {
 
 void Arc::RestoreCenter() {
 	
-	Vector2 point1Pos = point1->GetPosition();
-	Vector2 point2Pos = point2->GetPosition();
+	Vector2 point1Pos = point1->GetPos();
+	Vector2 point2Pos = point2->GetPos();
 
 	Vector2 base = point2Pos - point1Pos;
 	double baseLength = base.GetLength();
@@ -198,23 +190,23 @@ void Arc::RestoreCenter() {
 	}
 }
 
-ID Arc::GetPoint1_ID() const {
+ID Arc::GetPointID1() const {
 	return point1->GetID();
 }
-ID Arc::GetPoint2_ID() const {
+ID Arc::GetPointID2() const {
 	return point2->GetID();
 }
-Vector2 Arc::GetPoint1_pos() const {
-	return point1->GetPosition();
+Vector2 Arc::GetPointPos1() const {
+	return point1->GetPos();
 }
-Vector2 Arc::GetPoint2_pos() const {
-	return point2->GetPosition();
+Vector2 Arc::GetPointPos2() const {
+	return point2->GetPos();
 }
-void Arc::SetPoint1_pos(Vector2 _pos) {
-	point1->SetPosition(_pos);
+void Arc::SetPointPos1(Vector2 _pos) {
+	point1->SetPos(_pos);
 }
-void Arc::SetPoint2_pos(Vector2 _pos) {
-	point2->SetPosition(_pos);
+void Arc::SetPointPos2(Vector2 _pos) {
+	point2->SetPos(_pos);
 }
 double Arc::GetAngle() const {
 	return angle;
@@ -232,7 +224,7 @@ void Arc::SetAngle(double newAngle) {
 }
 
 Circle::Circle(Point* _center,  double _radius) :
-	Primitive(IDGenerator::getInstance()->generateID(), ot_circle)
+	Primitive(ot_circle)
 {
 	if (_center == nullptr) {
 		throw std::invalid_argument("Circle::Circle::_center was nullptr");
@@ -249,20 +241,20 @@ Circle::Circle(Point* _center,  double _radius) :
 }
 
 // write this function
-double Circle::GetDistance(const Vector2& _point) const {
-	return abs(radius - (_point - Vector2(center->position.x, center->position.y)).GetLength());
+double Circle::GetDist(const Vector2& _point) const {
+	return abs(radius - (_point - Vector2(center->GetPos().x, center->GetPos().y)).GetLength());
 }
 
 Vector2 Circle::GetCenter() const {
-	return center->GetPosition();
+	return center->GetPos();
 }
 
-ID Circle::GetCenter_ID() const {
+ID Circle::GetCenterID() const {
 	return center->GetID();
 }
 
-void Circle::SetCenter_pos(Vector2 _pos) {
-	center->SetPosition(_pos);
+void Circle::SetCenterPos(Vector2 _pos) {
+	center->SetPos(_pos);
 }
 
 double Circle::GetRadius() const {

@@ -4,35 +4,40 @@
 
 #include "Vector2.h"
 
-class Primitive {
+class Primitive : public Object{
 private:
-	const ID id;
-	const object_type type;
-
 public:
-	Primitive(ID, object_type);
-	virtual double GetDistance(const Vector2&) const = 0;
+	Primitive(object_type);
+	virtual double GetDist(const Vector2&) const = 0;
 	ID GetID() const;
-	object_type GetType();
+};
+
+
+class Arc;
+class Point;
+class Segment;
+
+class Optimizer {
+public:
+private:
 };
 
 class Point : public Primitive {
 private:
 	Primitive* parent;
-public:
-	Vector2 position;
+	Vector2 pos;
 
+	friend class Optimizer;
+public:
 	Point(const Vector2&);
 	Point(double, double);
 	Point(const Point&);
 
-	double GetDistance(const Vector2&) const;
+	double GetDist(const Vector2&) const;
 
-	// do we need this function
-
-	Vector2 GetPosition() const;
-	void SetPosition(const Vector2&);
-	void SetPosition(double, double);
+	Vector2 GetPos() const;
+	void SetPos(const Vector2&);
+	void SetPos(double, double);
 
 	Primitive* GetParent();
 	void DeleteParent();
@@ -49,32 +54,32 @@ private:
 		double b;
 		double c;
 	};
-	Equation* CreateEquation() {
+	Equation* CreateEquation() const {
 		Equation* NewEquation = new Equation;
-		Vector2 vector1 = point1->GetPosition();
-		Vector2 vector2 = point2->GetPosition();
+		Vector2 vector1 = point1->GetPos();
+		Vector2 vector2 = point2->GetPos();
 		NewEquation->a = vector1.y - vector2.y;
 		NewEquation->b = vector2.x - vector1.x;
 		NewEquation->c = vector1.x * vector2.y - vector2.x  * vector1.y;
 		return NewEquation;
 	}
 	//
-
+	friend class Optimizer;
 public:
 	Point* point1;
 	Point* point2;
 
 	Segment(Point*, Point*);
-	double GetDistance(const Vector2&) const;
+	double GetDist(const Vector2&) const;
 	double GetLength() const;
 
 	// temp functions
-	ID GetPoint1_ID() const;
-	ID GetPoint2_ID() const;
-	Vector2 GetPoint1_pos() const;
-	Vector2 GetPoint2_pos() const;
-	void SetPoint1_pos(Vector2);
-	void SetPoint2_pos(Vector2);
+	ID GetPointID1() const;
+	ID GetPointID2() const;
+	Vector2 GetPointPos1() const;
+	Vector2 GetPointPos2() const;
+	void SetPointPos1(Vector2);
+	void SetPointPos2(Vector2);
 	//
 
 	// move to requirement!!!
@@ -84,25 +89,26 @@ public:
 class Arc : public Primitive {
 private:
 	Vector2 center;
-public:
-	Point* point1;
-	Point* point2;
-	// from 0 to 2pi
 	double angle;
 
+	Point* point1;
+	Point* point2;
+
+	friend class Optimizer;
+public:
 	Arc(Point*, Point*, double);
 
-	double GetDistance(const Vector2&) const;
+	double GetDist(const Vector2&) const;
 	void RestoreCenter();
 	Vector2 GetCenter() const;
 
 	// temp functions
-	ID GetPoint1_ID() const;
-	ID GetPoint2_ID() const;
-	Vector2 GetPoint1_pos() const;
-	Vector2 GetPoint2_pos() const;
-	void SetPoint1_pos(Vector2);
-	void SetPoint2_pos(Vector2);
+	ID GetPointID1() const;
+	ID GetPointID2() const;
+	Vector2 GetPointPos1() const;
+	Vector2 GetPointPos2() const;
+	void SetPointPos1(Vector2);
+	void SetPointPos2(Vector2);
 	double GetAngle() const;
 	void SetAngle(double);
 	//
@@ -110,18 +116,19 @@ public:
 
 class Circle : public Primitive {
 private:
-public:
 	double radius;
 	Point* center;
 
+	friend class Optimizer;
+public:
 	Circle(Point*, double);
 
-	double GetDistance(const Vector2&) const;
+	double GetDist(const Vector2&) const;
 	Vector2 GetCenter() const;
 
 	// temp functions
-	ID GetCenter_ID() const;
-	void SetCenter_pos(Vector2);
+	ID GetCenterID() const;
+	void SetCenterPos(Vector2);
 	double GetRadius() const;
 	void SetRadius(double);
 	//

@@ -26,12 +26,51 @@ enum object_type {
 	ot_correctNsAngle
 };
 
+// because ID contains pointers to objects
+
+class IDGenerator
+{
+public:
+	static IDGenerator* getInstance();
+	ID generateID();
+private:
+	IDGenerator() { }
+	static IDGenerator* _instance;
+
+	static unsigned long long _lastGivenHash;
+};
+
+// base class of primitive and requirement
+// initializies ID of the object
+class Object {
+protected:
+	static IDGenerator* idGen;
+	ID* objectID;
+	object_type type;
+public:
+	Object();
+	~Object();
+	ID GetID() const {
+		return *objectID;
+	}
+};
+
+class Model {
+private:
+	void ChangeParam(ID&);
+};
+
 class ID {
 private:
+	friend void ChangeParam(ID&);
 	unsigned long long hash;
+	Object* object;
+
+	friend
 public:
 	ID(unsigned long long);
 	ID();
+	~ID();
 	void operator=(const ID&);
 	bool operator== (const ID&) const;
 	bool operator< (const ID&) const;
@@ -41,7 +80,18 @@ public:
 
 std::ostream& operator<<(std::ostream&, const ID&);
 
-class Requirement {
+class Primitive : public Object {
+private:
+	const object_type type;
+
+public:
+	Primitive(ID, object_type);
+	virtual double GetDistance(const Vector2&) const = 0;
+	ID GetID() const;
+	object_type GetType();
+};
+
+class Requirement : public Object {
 private:
 	const ID id;
 	const object_type type;
