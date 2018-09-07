@@ -9,7 +9,6 @@ private:
 public:
 	Primitive(object_type);
 	virtual double GetDist(const Vector2&) const = 0;
-	ID GetID() const;
 };
 
 
@@ -17,17 +16,33 @@ class Arc;
 class Point;
 class Segment;
 
-class Optimizer {
-public:
+class PrimController{
 private:
+	PrimController();
+	static PrimController* instance;
+
+	ObjectController* objCtrl;
+
+	Primitive* GetPrimitive(const ID&);
+	Primitive* ConvertToPrimitive(Object*);
+	bool IsPrimitive(object_type);
+public:
+	PrimController* GetInstance();
+
+	Array<double*> GetPrimitiveParamsAsPointers(const ID&);
+	void SetPrimitiveParams(const ID&, const Array<double>&);
+
+	ID CreatePrimitive(object_type, const Array<double>&);
 };
 
 class Point : public Primitive {
 private:
 	Primitive* parent;
-	Vector2 pos;
 
-	friend class Optimizer;
+	double x;
+	double y;
+
+	friend class PrimController;
 public:
 	Point(const Vector2&);
 	Point(double, double);
@@ -64,7 +79,7 @@ private:
 		return NewEquation;
 	}
 	//
-	friend class Optimizer;
+	friend class PrimController;
 public:
 	Point* point1;
 	Point* point2;
@@ -88,13 +103,14 @@ public:
 
 class Arc : public Primitive {
 private:
-	Vector2 center;
+	double cx;
+	double cy;
 	double angle;
 
 	Point* point1;
 	Point* point2;
 
-	friend class Optimizer;
+	friend class PrimController;
 public:
 	Arc(Point*, Point*, double);
 
@@ -119,7 +135,7 @@ private:
 	double radius;
 	Point* center;
 
-	friend class Optimizer;
+	friend class PrimController;
 public:
 	Circle(Point*, double);
 
@@ -133,5 +149,27 @@ public:
 	void SetRadius(double);
 	//
 };
+
+class Requirement : public Object {
+private:
+protected:
+	Array<double*> args;
+	Array<double> params;
+public:
+	// checking type - it must by requirement type
+	Requirement(object_type, const Array<double*>&);
+	
+	virtual double error() = 0;
+	virtual void Change(const double);
+	virtual void ChangeParams(const Array<double>& newParams) {
+		if (newParams.GetSize() != params.GetSize()) {
+			throw std::exception("Invalid requirement parameters!");
+		}
+		params = newParams;
+	}
+	Array<double> Gradient();
+	Array<double*> GetArgs();
+};
+
 
 #endif

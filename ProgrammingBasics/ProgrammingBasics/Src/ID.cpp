@@ -52,10 +52,6 @@ IDGenerator* IDGenerator::_instance = nullptr;
 
 // 
 
-void PrimitivesController::ChangeParams(ID& id, const Array<double>&) const {
-	
-}
-
 Object::Object(object_type _type) : type(_type) {
 	id = IDGenerator::getInstance()->generateID();
 }

@@ -687,7 +687,7 @@ bool Model::OptimizeRequirements(const Array<Requirement*>& requirments) {
 	// get parameters number
 	int params_number = 0;
 	for (int i = 0; i < requirments.GetSize(); ++i) {
-		Array<double*> params = requirments[i]->GetParams();
+		Array<double*> params = requirments[i]->GetArgs();
 		params_number += params.GetSize();
 	}
 
@@ -714,7 +714,7 @@ bool Model::OptimizeRequirements(const Array<Requirement*>& requirments) {
 	// filling match_array
 	for (int i = 0; i < requirments.GetSize(); ++i) {
 
-		Array<double*> currentRequirmentParams = requirments[i]->GetParams();
+		Array<double*> currentRequirmentParams = requirments[i]->GetArgs();
 
 		for (int j = 0; j < currentRequirmentParams.GetSize(); ++j) {
 

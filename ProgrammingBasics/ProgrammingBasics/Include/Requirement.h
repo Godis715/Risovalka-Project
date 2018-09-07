@@ -7,73 +7,15 @@
 #define OPTIM_GRAD_EPS 1e-6
 #define DELTA_X 1e-6
 
-class Requirement {
+class Requirement : public Object {
 private:
-	const ID id;
-	const object_type type;
 protected:
-	Array<double*> arguments;
+	Array<double*> args;
 	Array<double> params;
 public:
-	Requirement(const ID _id, object_type _type) : id(_id), type(_type) {
-
-		int argNum;
-		int paramNum;
-
-		switch (type) {
-		case ot_distBetPoints: {
-			argNum = 4;
-			paramNum = 1;
-			break;
-		}
-		case ot_equalSegmentLen: {
-			argNum = 8;
-			paramNum = 0;
-			break;
-		}
-		case ot_connection: {
-			argNum = 0;
-			paramNum = 0;
-			break;
-		}
-		case ot_pointPosReq: {
-			argNum = 2;
-			paramNum = 2;
-			break;
-		}
-		case ot_pointsOnTheOneHand: {
-			argNum = 8;
-			paramNum = 0;
-			break;
-		}
-		case ot_distBetPointSeg: {
-			argNum = 6;
-			paramNum = 1;
-			break;
-		}
-		case ot_angleBetSeg: {
-			argNum = 8;
-			paramNum = 1;
-			break;
-		}
-		case ot_distBetPointArc: {
-			argNum = 7;
-			paramNum = 1;
-			break;
-		}
-		case ot_pointInArc: {
-			argNum = 7;
-			paramNum = 0;
-			break;
-		}
-		default: {
-			throw std::exception("Couldn't create requirement. Invalid requirement type");
-		}
-		}
-
-		arguments = Array<double*>(argNum);
-		params = Array<double>(paramNum);
-	}
+	// checking type - it must by requirement type
+	Requirement(object_type);
+	
 	virtual double error() = 0;
 	virtual void Change(const double);
 	virtual void ChangeParams(const Array<double>& newParams) {
@@ -83,9 +25,28 @@ public:
 		params = newParams;
 	}
 	Array<double> Gradient();
-	ID GetID() const;
-	Array<double*> GetParams();
-	object_type GetType() const;
+	Array<double*> GetArgs();
+};
+
+class ReqController {
+private:
+	ReqController();
+	static ReqController* instance;
+
+	ObjectController* objCtrl;
+
+	Requirement* GetReq(const ID&) const;
+	Requirement* ConvertToReq(Object*) const;
+	bool IsReq(Object*);
+public:
+	static ReqController* GetInstance();
+
+	Array<double> GetReqParamsAsValues(const ID&);
+	Array<double*> GetReqArgsAsPointers(const ID&);
+
+	void SetReqParams(const ID&, const Array<double>&);
+
+	ID CreateReq(object_type, const Array<ID>&, const Array<double>&);
 };
 
 class DistBetPointsReq : public Requirement
@@ -95,24 +56,24 @@ private:
 	Point* point2;
 public:
 	DistBetPointsReq(Point* _point1, Point* _point2, double _distance) :
-		Requirement(IDGenerator::getInstance()->generateID(), ot_distBetPoints)
+		Requirement(ot_distBetPoints)
 	{
-		arguments = Array<double*>(4);
+		args = Array<double*>(4);
 		params = Array<double>(1);
 		Vector2* pos1 = &_point1->pos;
 		Vector2* pos2 = &_point2->pos;
 		
-		arguments[0] = &pos1->x;
-		arguments[1] = &pos1->y;
-		arguments[2] = &pos2->x;
-		arguments[3] = &pos2->y;
+		args[0] = &pos1->x;
+		args[1] = &pos1->y;
+		args[2] = &pos2->x;
+		args[3] = &pos2->y;
 
 		params[0] = _distance;
 	}
 	~DistBetPointsReq() { }
 
 	double error() {
-		Vector2 vectorAB(*(arguments[2]) - *(arguments[0]), *(arguments[3]) - *(arguments[1]));
+		Vector2 vectorAB(*(args[2]) - *(args[0]), *(args[3]) - *(args[1]));
 		double modAB_inSquare = Vector2::Dot(vectorAB, vectorAB);
 		return modAB_inSquare - params[0] * (2 * sqrt(modAB_inSquare) - params[0]);
 	}
@@ -124,21 +85,21 @@ public:
 	EqualSegmentLenReq(Segment* _seg1, Segment* _seg2) :
 		Requirement(IDGenerator::getInstance()->generateID(), ot_equalSegmentLen)
 	{
-		arguments = Array<double*>(8);
+		args = Array<double*>(8);
 		params = Array<double>(0);
-		arguments[0] = (&_seg1->point1->pos.x);
-		arguments[1] = (&_seg1->point1->pos.y);
-		arguments[2] = (&_seg1->point2->pos.x);
-		arguments[3] = (&_seg1->point2->pos.y);
-		arguments[4] = (&_seg2->point1->pos.x);
-		arguments[5] = (&_seg2->point1->pos.y);
-		arguments[6] = (&_seg2->point2->pos.x);
-		arguments[7] = (&_seg2->point2->pos.y);
+		args[0] = (&_seg1->point1->pos.x);
+		args[1] = (&_seg1->point1->pos.y);
+		args[2] = (&_seg1->point2->pos.x);
+		args[3] = (&_seg1->point2->pos.y);
+		args[4] = (&_seg2->point1->pos.x);
+		args[5] = (&_seg2->point1->pos.y);
+		args[6] = (&_seg2->point2->pos.x);
+		args[7] = (&_seg2->point2->pos.y);
 	}
 	~EqualSegmentLenReq() { }
 	double error() {
-		Vector2 vec1(*(arguments[3]) - *(arguments[1]), *(arguments[2]) - *(arguments[0]));
-		Vector2 vec2(*(arguments[7]) - *(arguments[5]), *(arguments[6]) - *(arguments[4]));
+		Vector2 vec1(*(args[3]) - *(args[1]), *(args[2]) - *(args[0]));
+		Vector2 vec2(*(args[7]) - *(args[5]), *(args[6]) - *(args[4]));
 
 		double divergence = vec2.GetLength() - vec1.GetLength();
 		return divergence * divergence;
@@ -155,7 +116,7 @@ public:
 	ConnectionReq() :
 		Requirement(IDGenerator::getInstance()->generateID(), ot_connection)
 	{
-		arguments = Array<double*>(0);
+		args = Array<double*>(0);
 		params = Array<double>(0);
 	}
 	~ConnectionReq() { }
@@ -170,25 +131,25 @@ private:
 public:
 	PointPosReq(Point* _point, double _x, double _y) :
 		Requirement(IDGenerator::getInstance()->generateID(), ot_pointPosReq) {
-		arguments = Array<double*>(2);
+		args = Array<double*>(2);
 		params = Array<double>(2);
-		arguments[0] = &_point->pos.x;
-		arguments[1] = &_point->pos.y;
+		args[0] = &_point->pos.x;
+		args[1] = &_point->pos.y;
 
 		params[0] = _x;
 		params[1] = _y;
 	}
 	PointPosReq(Point* _point, const Vector2& _vec) :
 		Requirement(IDGenerator::getInstance()->generateID(), ot_pointPosReq) {
-		arguments[0] = &_point->pos.x;
-		arguments[1] = &_point->pos.y;
+		args[0] = &_point->pos.x;
+		args[1] = &_point->pos.y;
 
 		params[0] = _vec.x;
 		params[1] = _vec.y;
 	}
 
 	double error() {
-		Vector2 vector(*arguments[0] - params[0], *arguments[1] - params[1]);
+		Vector2 vector(*args[0] - params[0], *args[1] - params[1]);
 		return Vector2::Dot(vector, vector);
 	}
 };
@@ -202,17 +163,17 @@ public:
 		point2(_point2),
 		Requirement(IDGenerator::getInstance()->generateID(), ot_pointsOnTheOneHand)
 	{
-		arguments = Array<double*>(8);
+		args = Array<double*>(8);
 		params = Array<double>(0);
 
-		arguments[0] = &_segment->point1->pos.x;
-		arguments[1] = &_segment->point1->pos.y;
-		arguments[2] = &_segment->point2->pos.x;
-		arguments[3] = &_segment->point2->pos.y;
-		arguments[4] = &_point1->pos.x;
-		arguments[5] = &_point1->pos.y;
-		arguments[6] = &_point2->pos.x;
-		arguments[7] = &_point2->pos.y;
+		args[0] = &_segment->point1->pos.x;
+		args[1] = &_segment->point1->pos.y;
+		args[2] = &_segment->point2->pos.x;
+		args[3] = &_segment->point2->pos.y;
+		args[4] = &_point1->pos.x;
+		args[5] = &_point1->pos.y;
+		args[6] = &_point2->pos.x;
+		args[7] = &_point2->pos.y;
 	}
 	~PointsOnTheOneHand() {}
 	double error() {
@@ -247,15 +208,15 @@ public:
 		point(_point),
 		Requirement(IDGenerator::getInstance()->generateID(), ot_distBetPointSeg)
 	{
-		arguments = Array<double*>(6);
+		args = Array<double*>(6);
 		params = Array<double>(1);
 
-		arguments[0] = &_segment->point1->pos.x;
-		arguments[1] = &_segment->point1->pos.y;
-		arguments[2] = &_segment->point2->pos.x;
-		arguments[3] = &_segment->point2->pos.y;
-		arguments[4] = &_point->pos.x;
-		arguments[5] = &_point->pos.y;
+		args[0] = &_segment->point1->pos.x;
+		args[1] = &_segment->point1->pos.y;
+		args[2] = &_segment->point2->pos.x;
+		args[3] = &_segment->point2->pos.y;
+		args[4] = &_point->pos.x;
+		args[5] = &_point->pos.y;
 
 		params[0] = _distance;
 	}
@@ -279,25 +240,25 @@ public:
 		segment2(_segment2),
 		Requirement(IDGenerator::getInstance()->generateID(), ot_angleBetSeg)
 	{
-		arguments = Array<double*>(8);
+		args = Array<double*>(8);
 		params = Array<double>(1);
 
-		arguments[0] = &_segment1->point1->pos.x;
-		arguments[1] = &_segment1->point1->pos.y;
-		arguments[2] = &_segment1->point2->pos.x;
-		arguments[3] = &_segment1->point2->pos.y;
-		arguments[4] = &_segment2->point1->pos.x;
-		arguments[5] = &_segment2->point1->pos.y;
-		arguments[6] = &_segment2->point2->pos.x;
-		arguments[7] = &_segment2->point2->pos.y;
+		args[0] = &_segment1->point1->pos.x;
+		args[1] = &_segment1->point1->pos.y;
+		args[2] = &_segment1->point2->pos.x;
+		args[3] = &_segment1->point2->pos.y;
+		args[4] = &_segment2->point1->pos.x;
+		args[5] = &_segment2->point1->pos.y;
+		args[6] = &_segment2->point2->pos.x;
+		args[7] = &_segment2->point2->pos.y;
 
 		params[0] = abs(cos((_andle / 180) * PI));
 		sinus = sin((_andle / 180) * PI);
 	}
 	~AngleBetweenSegments() {}
 	double error() {
-		Vector2 vec1(*arguments[2] - *arguments[0], *arguments[3] - *arguments[1]);
-		Vector2 vec2(*arguments[6] - *arguments[4], *arguments[7] - *arguments[5]);
+		Vector2 vec1(*args[2] - *args[0], *args[3] - *args[1]);
+		Vector2 vec2(*args[6] - *args[4], *args[7] - *args[5]);
 		
 		double length1 = vec1.GetLength();
 		double length2 = vec2.GetLength();
@@ -335,16 +296,16 @@ public:
 		point(_point),
 		Requirement(IDGenerator::getInstance()->generateID(), ot_distBetPointArc)
 	{
-		arguments = Array<double*>(7);
+		args = Array<double*>(7);
 		params = Array<double>(1);
 
-		arguments[0] = &_arc->point1->pos.x;
-		arguments[1] = &_arc->point1->pos.y;
-		arguments[2] = &_arc->point2->pos.x;
-		arguments[3] = &_arc->point2->pos.y;
-		arguments[4] = &_arc->angle;
-		arguments[5] = &_point->pos.x;
-		arguments[6] = &_point->pos.y;
+		args[0] = &_arc->point1->pos.x;
+		args[1] = &_arc->point1->pos.y;
+		args[2] = &_arc->point2->pos.x;
+		args[3] = &_arc->point2->pos.y;
+		args[4] = &_arc->angle;
+		args[5] = &_point->pos.x;
+		args[6] = &_point->pos.y;
 
 		params[0] = _distance;
 	}
@@ -398,13 +359,13 @@ public:
 		point(_point),
 		Requirement(IDGenerator::getInstance()->generateID(), ot_pointInArc)
 	{
-		arguments[0] = &_arc->point1->pos.x;
-		arguments[1] = &_arc->point1->pos.y;
-		arguments[2] = &_arc->point2->pos.x;
-		arguments[3] = &_arc->point2->pos.y;
-		arguments[4] = &_arc->angle;
-		arguments[5] = &_point->pos.x;
-		arguments[6] = &_point->pos.y;
+		args[0] = &_arc->point1->pos.x;
+		args[1] = &_arc->point1->pos.y;
+		args[2] = &_arc->point2->pos.x;
+		args[3] = &_arc->point2->pos.y;
+		args[4] = &_arc->angle;
+		args[5] = &_point->pos.x;
+		args[6] = &_point->pos.y;
 	}
 	~PointInArc() {}
 	// return distance to arc and angle

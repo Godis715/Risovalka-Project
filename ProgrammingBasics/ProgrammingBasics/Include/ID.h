@@ -51,9 +51,14 @@ public:
 	ID GetID() const;
 };
 
-class PrimitivesController {
+class ObjectController {
+private:
+	ObjectController();
+	static ObjectController* instance;
 public:
-	void ChangeParams(ID&, const Array<double>&) const;
+	static ObjectController* GetInstance();
+
+	Object* GetObject(const ID&) const;
 	object_type GetType(const ID&) const;
 };
 
@@ -62,7 +67,7 @@ private:
 	unsigned long long hash;
 	Object* object;
 
-	friend class PrimitivesController;
+	friend class ObjectController;
 public:
 	ID(unsigned long long);
 	ID(const ID&);
