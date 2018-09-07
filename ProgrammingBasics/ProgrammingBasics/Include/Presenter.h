@@ -36,7 +36,7 @@ public:
 	/* trying to impose requirements
 	on selected object */
 
-	static bool CreateRequirement(object_type, const Array<ID>&, const Array<double>&);
+	static ID CreateRequirement(object_type, const Array<ID>&, const Array<double>&);
 
 	static bool GetObject(double, double, ID&);
 
