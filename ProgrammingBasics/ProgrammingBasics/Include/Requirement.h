@@ -84,7 +84,8 @@ public:
 	}
 	Array<double> Gradient();
 	ID GetID() const;
-	Array<double*> GetParams();
+	Array<double*> GetArguments();
+	Array<double> GetParams();
 	object_type GetType() const;
 };
 

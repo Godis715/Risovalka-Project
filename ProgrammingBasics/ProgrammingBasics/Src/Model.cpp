@@ -687,7 +687,7 @@ bool Model::OptimizeRequirements(const Array<Requirement*>& requirments) {
 	// get parameters number
 	int params_number = 0;
 	for (int i = 0; i < requirments.GetSize(); ++i) {
-		Array<double*> params = requirments[i]->GetParams();
+		Array<double*> params = requirments[i]->GetArguments();
 		params_number += params.GetSize();
 	}
 
@@ -714,7 +714,7 @@ bool Model::OptimizeRequirements(const Array<Requirement*>& requirments) {
 	// filling match_array
 	for (int i = 0; i < requirments.GetSize(); ++i) {
 
-		Array<double*> currentRequirmentParams = requirments[i]->GetParams();
+		Array<double*> currentRequirmentParams = requirments[i]->GetArguments();
 
 		for (int j = 0; j < currentRequirmentParams.GetSize(); ++j) {
 
@@ -1176,4 +1176,130 @@ void Model::GetPointsFromPrimitives(Array<Primitive*>& primitives, BinSearchTree
 			break;
 		}
 	}
+}
+
+bool Model::SaveProject(const std::string way)
+{
+	std::ofstream saveFile("project.svg");
+	//<?xml version="1.0" encoding="UTF-8"?>
+	saveFile << "<?xml version=" << char(34) << "1.0" << char(34) << " encoding=" << char(34) << "UTF-8" << char(34) << "?>";
+	saveFile << "\n<!-- DrawProject -->";
+	saveFile << "\n<svg";
+	saveFile << " width=" << char(34) << "500" << char(34);
+	saveFile << " height=" << char(34) << "500" << char(34) << ">";
+	if (dataPrim.GetSize() == 0) {
+		saveFile << "\n</svg>";
+		saveFile.close();
+		return false;
+	}
+	auto dataPrimMarker = dataPrim.GetMarker();
+	do
+	{
+		object_type tempType;
+		Array<double> tempParams;
+		ID tempID = (*dataPrimMarker)->GetID();
+		GetObjParam(tempID, tempParams);
+		GetObjType(tempID, tempType);
+		if (tempType == ot_point) {
+			saveFile << "\n<point";
+			saveFile << " px=" << char(34) << tempParams[0] << char(34);
+			saveFile << " py=" << char(34) << tempParams[1] << char(34);
+			saveFile << " id=" << char(34) << tempID.GetHash() << char(34);
+			saveFile << " />";
+		}
+		if (tempType == ot_segment) {
+			saveFile << "\n<line";
+			saveFile << " x1=" << char(34) << tempParams[0] << char(34);
+			saveFile << " y1=" << char(34) << tempParams[1] << char(34);
+			saveFile << " x2=" << char(34) << tempParams[2] << char(34);
+			saveFile << " y2=" << char(34) << tempParams[3] << char(34);
+			saveFile << " stroke=" << char(34) << "red" << char(34);
+			saveFile << " stroke-width=" << char(34) << 5 << char(34);
+			saveFile << " id=" << char(34) << tempID.GetHash() << char(34);
+			saveFile << " />";
+		}
+		if (tempType == ot_arc) {
+			//not now
+		}
+		if (tempType == ot_circle) {
+			saveFile << "\n<circle";
+			saveFile << " cx=" << char(34) << tempParams[0] << char(34);
+			saveFile << " cy=" << char(34) << tempParams[1] << char(34);
+			saveFile << " r=" << char(34) << tempParams[2] << char(34);
+			saveFile << " stroke=" << char(34) << "red" << char(34);
+			saveFile << " stroke-width=" << char(34) << 5 << char(34);
+			saveFile << " fill=" << char(34) << "white" << char(34);
+			saveFile << " id=" << char(34) << tempID.GetHash() << char(34);
+			saveFile << " />";
+		}
+	} while (++dataPrimMarker);
+
+	saveFile << "\n<req>\n";
+	auto dataReqMarker = dataReq.GetMarker();
+	do
+	{
+		ID tempID = (*dataReqMarker)->GetID();
+		object_type tempType = (*dataReqMarker)->GetType();
+		Array<double> tempParams = (*dataReqMarker)->GetParams();
+		List<ID>* tempIDs = (*dataLink.Find(tempID));
+		switch (tempType) {
+			case ot_distBetPoints: {
+				saveFile << "<distBetPoints";
+				break;
+			}
+			case ot_equalSegmentLen: {
+				saveFile << "<equalSegmentLen";
+				break;
+			}
+			case ot_connection: {
+				saveFile << "<connection";
+				break;
+			}
+			case ot_pointPosReq: {
+				saveFile << "<pointPosReq";
+				break;
+			}
+			case ot_pointsOnTheOneHand: {
+				saveFile << "<pointsOnTheOneHand";
+				break;
+			}
+			case ot_distBetPointSeg: {
+				saveFile << "<distBetPointSeg";
+				break;
+			}
+			case ot_angleBetSeg: {
+				saveFile << "<angleBetSeg";
+				break;
+			}
+			case ot_distBetPointArc: {
+				saveFile << "<distBetPointArc";
+				break;
+			}
+			case ot_pointInArc: {
+				saveFile << "<pointInArc";
+				break;
+			}
+		}
+		auto tempMarker = tempIDs->GetMarker();
+		int i = 1;
+		do
+		{
+			saveFile << " id" << i << "=" << char(34) << tempMarker.GetValue().GetHash() << char(34);
+			i++;
+		} while (++tempMarker);
+		for (int i = 0; i < tempParams.GetSize(); i++)
+		{
+			if (i == 0) saveFile << " params=" << char(34);
+			saveFile << tempParams[i];
+			if (i == tempParams.GetSize() - 1)
+			{
+				saveFile << char(34);
+			} else saveFile << " ";
+		}
+		saveFile << " />\n";
+	} while (++dataReqMarker);
+	saveFile << "</req>";
+	saveFile << "\n</svg>";
+	saveFile.close();
+	return true;
 }

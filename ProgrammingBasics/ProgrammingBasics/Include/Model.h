@@ -124,5 +124,7 @@ public:
 	bool Scale(const Array<ID>&, const double);
 
 	bool Move(const Array<ID>&, const Vector2&);
+
+	bool SaveProject(const std::string);
 };
 #endif

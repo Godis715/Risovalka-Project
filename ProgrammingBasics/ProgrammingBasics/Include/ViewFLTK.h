@@ -17,6 +17,7 @@
 #include <FL/Fl_Output.H>
 #include <FL/Fl_Float_Input.H>
 #include <FL/math.h>
+//#include <FL/Fl_File_Chooser.H>
 
 double Parse(string number) {
 	int countPoint = 0;
@@ -67,6 +68,8 @@ private:
 
 	Fl_Menu_Item* requirements;
 	Fl_Menu_Button* createRequirement_b;
+
+	Fl_Button* save_b;
 
 	class SecondWindow : public Fl_Double_Window
 	{
@@ -366,6 +369,16 @@ private:
 		mainWindow->redraw();
 	}
 
+	static void cl_SaveProject(Fl_Widget* o, void*)
+	{
+		//char *newfile;
+		
+		//newfile = fl_file_chooser("Save File As?", "*", "title");
+		Presenter::SaveProject("way");
+		
+	}
+
+
 	//..
 
 	static Fl_Window* mainWindow;
@@ -380,6 +393,10 @@ public:
 
 		drawWindow = new SecondWindow(10, 30, 1000, 600, "Draw Window");
 		drawWindow->end();
+
+		save_b = new Fl_Button(1010, 80, 50, 30, "Save");
+		save_b->callback(cl_SaveProject);
+		save_b->color(FL_WHITE);
 
 		log = new Fl_Output(1010, 0, 300, 30);
 

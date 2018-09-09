@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="500" height="500">
+<!-- DrawProject -->
+<point px="385" py="160" id="1" />
+<point px="252" py="324" id="2" />
+<line x1="385" y1="160" x2="252" y2="324" stroke="red" stroke-width="5" id="3" />
+<req>
+<connection id1="1" id2="2" id3="3" />
+</req>
+</svg>
