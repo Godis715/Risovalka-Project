@@ -1219,7 +1219,19 @@ bool Model::SaveProject(const std::string way)
 			saveFile << " />";
 		}
 		if (tempType == ot_arc) {
-			//not now
+			saveFile << "\n<path";
+			saveFile << " d=" << char(34); 
+			saveFile << "M" << tempParams[2] << "," << tempParams[3] << " ";
+			double r = std::sqrt((tempParams[0] - tempParams[2])*(tempParams[0] - tempParams[2]) +
+										(tempParams[1] - tempParams[3])*(tempParams[1] - tempParams[3]));
+			saveFile << "A" << r << "," << r << " ";
+			saveFile << "0 " << 1 << "," << 0 << " ";
+			saveFile << tempParams[4] << "," << tempParams[5] << char(34);
+			saveFile << " stroke=" << char(34) << "red" << char(34);
+			saveFile << " stroke-width=" << char(34) << 5 << char(34);
+			saveFile << " fill=" << char(34) << "none" << char(34);
+			saveFile << " id=" << char(34) << tempID.GetHash() << char(34);
+			saveFile << " />";
 		}
 		if (tempType == ot_circle) {
 			saveFile << "\n<circle";
@@ -1228,7 +1240,7 @@ bool Model::SaveProject(const std::string way)
 			saveFile << " r=" << char(34) << tempParams[2] << char(34);
 			saveFile << " stroke=" << char(34) << "red" << char(34);
 			saveFile << " stroke-width=" << char(34) << 5 << char(34);
-			saveFile << " fill=" << char(34) << "white" << char(34);
+			saveFile << " fill=" << char(34) << "none" << char(34);
 			saveFile << " id=" << char(34) << tempID.GetHash() << char(34);
 			saveFile << " />";
 		}

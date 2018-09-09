@@ -1,10 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg width="500" height="500">
 <!-- DrawProject -->
-<point px="385" py="160" id="1" />
-<point px="252" py="324" id="2" />
-<line x1="385" y1="160" x2="252" y2="324" stroke="red" stroke-width="5" id="3" />
+<svg width="500" height="500">
+<point px="141" py="256" id="1" />
+<point px="193.032" py="207.773" id="2" />
+<path d="M141,256 A53.2353,53.2353 0 1,0 193.032,207.773" stroke="red" stroke-width="5" fill="none" id="3" />
+<point px="476" py="351" id="5" />
+<point px="429.781" py="378.223" id="6" />
+<path d="M476,351 A96.2081,96.2081 0 1,0 429.781,378.223" stroke="red" stroke-width="5" fill="none" id="7" />
 <req>
 <connection id1="1" id2="2" id3="3" />
+<connection id1="5" id2="6" id3="7" />
 </req>
 </svg>
