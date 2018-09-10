@@ -70,6 +70,7 @@ private:
 	Fl_Menu_Button* createRequirement_b;
 
 	Fl_Button* save_b;
+	Fl_Button* downland_b;
 
 	class SecondWindow : public Fl_Double_Window
 	{
@@ -378,6 +379,11 @@ private:
 		
 	}
 
+	static void cl_DownloadFile(Fl_Widget* o, void*)
+	{
+		Presenter::DownloadFile("nameFile");
+	}
+
 
 	//..
 
@@ -397,6 +403,10 @@ public:
 		save_b = new Fl_Button(1010, 80, 50, 30, "Save");
 		save_b->callback(cl_SaveProject);
 		save_b->color(FL_WHITE);
+
+		downland_b = new Fl_Button(1010, 140, 100, 30, "Downland");
+		downland_b->callback(cl_DownloadFile);
+		downland_b->color(FL_WHITE);
 
 		log = new Fl_Output(1010, 0, 300, 30);
 

@@ -24,6 +24,7 @@ public:
 
 	Point(const Vector2&);
 	Point(double, double);
+	Point(ID, double, double);
 	Point(const Point&);
 
 	double GetDistance(const Vector2&) const;
@@ -64,6 +65,7 @@ public:
 	Point* point2;
 
 	Segment(Point*, Point*);
+	Segment(ID, Point*, Point*);
 	double GetDistance(const Vector2&) const;
 	double GetLength() const;
 

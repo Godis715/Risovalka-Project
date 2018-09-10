@@ -26,6 +26,13 @@ Point::Point(double _x, double _y) :
 	this->parent = nullptr;
 	this->position = Vector2(_x, _y);
 }
+
+Point::Point(ID id, double _x, double _y) :
+	Primitive(id, ot_point)
+{
+	this->parent = nullptr;
+	this->position = Vector2(_x, _y);
+}
 Point::Point(const Point& _p) :
 	Primitive(IDGenerator::getInstance()->generateID(), ot_point)
 {
@@ -62,6 +69,21 @@ bool Point::SetParent(Primitive* _parent) {
 
 Segment::Segment(Point* _p1, Point* _p2) :
 	Primitive(IDGenerator::getInstance()->generateID(), ot_segment)
+{
+	if (_p1 == nullptr || _p2 == nullptr) {
+		throw std::invalid_argument("Segment::Segment::parameters was nullptr");
+	}
+
+	point1 = _p1;
+	point2 = _p2;
+
+	_p1->SetParent(this);
+	_p1->SetParent(this);
+
+}
+
+Segment::Segment(ID id, Point* _p1, Point* _p2) :
+	Primitive(id, ot_segment)
 {
 	if (_p1 == nullptr || _p2 == nullptr) {
 		throw std::invalid_argument("Segment::Segment::parameters was nullptr");
