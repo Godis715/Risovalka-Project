@@ -117,6 +117,7 @@ public:
 	Point* center;
 
 	Circle(Point*, double);
+	Circle(ID, Point*, double);
 
 	double GetDistance(const Vector2&) const;
 	Vector2 GetCenter() const;

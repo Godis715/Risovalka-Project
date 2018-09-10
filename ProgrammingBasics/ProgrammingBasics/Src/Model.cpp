@@ -1253,15 +1253,16 @@ bool Model::SaveProject(const std::string way)
 			saveFile << " />";
 		}
 	} while (++dataPrimMarker);
-	saveFile << "\n<req>\n";
-	auto dataReqMarker = dataReq.GetMarker();
-	do
-	{
-		ID tempID = (*dataReqMarker)->GetID();
-		object_type tempType = (*dataReqMarker)->GetType();
-		Array<double> tempParams = (*dataReqMarker)->GetParams();
-		List<ID>* tempIDs = (*dataLink.Find(tempID));
-		switch (tempType) {
+	if (dataReq.GetSize() != 0) {
+		saveFile << "\n<req>\n";
+		auto dataReqMarker = dataReq.GetMarker();
+		do
+		{
+			ID tempID = (*dataReqMarker)->GetID();
+			object_type tempType = (*dataReqMarker)->GetType();
+			Array<double> tempParams = (*dataReqMarker)->GetParams();
+			List<ID>* tempIDs = (*dataLink.Find(tempID));
+			switch (tempType) {
 			case ot_distBetPoints: {
 				saveFile << "<distBetPoints";
 				break;
@@ -1297,26 +1298,28 @@ bool Model::SaveProject(const std::string way)
 				saveFile << "<pointInArc";
 				break;
 			}
-		}
-		auto tempMarker = tempIDs->GetMarker();
-		int i = 1;
-		do
-		{
-			saveFile << " id" << i << "=" << char(34) << tempMarker.GetValue().GetHash() << char(34);
-			i++;
-		} while (++tempMarker);
-		for (int i = 0; i < tempParams.GetSize(); i++)
-		{
-			if (i == 0) saveFile << " params=" << char(34);
-			saveFile << tempParams[i];
-			if (i == tempParams.GetSize() - 1)
+			}
+			auto tempMarker = tempIDs->GetMarker();
+			int i = 1;
+			do
 			{
-				saveFile << char(34);
-			} else saveFile << " ";
-		}
-		saveFile << " />\n";
-	} while (++dataReqMarker);
-	saveFile << "</req>";
+				saveFile << " id" << i << "=" << char(34) << tempMarker.GetValue().GetHash() << char(34);
+				i++;
+			} while (++tempMarker);
+			for (int i = 0; i < tempParams.GetSize(); i++)
+			{
+				if (i == 0) saveFile << " params=" << char(34);
+				saveFile << tempParams[i];
+				if (i == tempParams.GetSize() - 1)
+				{
+					saveFile << char(34);
+				}
+				else saveFile << " ";
+			}
+			saveFile << " />\n";
+		} while (++dataReqMarker);
+		saveFile << "</req>";
+	}
 	saveFile << "\n</svg>";
 	saveFile.close();
 	return true;
@@ -1354,6 +1357,10 @@ bool Model::CreateObjByID(object_type type, Array<ID>& IDs, Array<double>& param
 		}
 		case ot_circle:
 		{
+			if (IDs.GetSize() != 2 || params.GetSize() != 1) return false; //исключение
+			Point* center = dynamic_cast<Point*>(*dataPrim.Find(IDs[1]));
+			Circle* circle = new Circle(IDs[0], center, params[0]);
+			dataPrim.Add(IDs[0], circle);
 			break; 
 		}
 	
@@ -1406,7 +1413,8 @@ Array<double> Model::Download::ScanParams(std::ifstream& file)
 				{
 					params.PushBack(std::stod(dig));
 					dig.clear();
-				}else if (tempSymbol >= 49 && tempSymbol <= 57) dig += tempSymbol;
+				}else if ((tempSymbol >= 48 && tempSymbol <= 57) 
+					|| tempSymbol == '.') dig += tempSymbol;
 			} while (tempSymbol != '"');
 		}
 	} while (tempSymbol != '"');
@@ -1475,6 +1483,48 @@ bool Model::Download::ParseSegmentTag(std::ifstream& file)
 	model->CreateObjByID(ot_segment, IDs, params);
 }
 
+bool Model::Download::ParseCircleTag(std::ifstream& file)
+{
+	Array<ID> IDs;
+	Array <double> params;
+	char tempSymbol = file.get();
+	while (tempSymbol != '>')
+	{
+		if (tempSymbol == '=')
+		{
+			std::string attribute = ScanAttribute(file);
+			Array<double> _params = ScanParams(file);
+			if (attribute == "id")
+			{
+				if (_params.GetSize() == 1)
+				{
+					IDs.PushBack(ID(int(_params[0])));
+				}
+				else return false; //бросить исключение
+			}
+			if (attribute == "childIds")
+			{
+				if (_params.GetSize() == 1)
+				{
+					IDs.PushBack(ID(int(_params[0])));
+				}
+				else return false; //бросить исключение
+			}
+			if (attribute == "r")
+			{
+				if (_params.GetSize() == 1)
+				{
+					params.PushBack(_params[0]);
+				}
+				else return false; //бросить исключение
+			}
+		}
+		tempSymbol = file.get();
+	}
+	model->CreateObjByID(ot_circle, IDs, params);
+	return true;
+}
+
 bool Model::Download::SetFile(const std::string nameFile)
 {
 	std::ifstream file("project.svg");
@@ -1491,7 +1541,10 @@ bool Model::Download::SetFile(const std::string nameFile)
 			file >> tag;
 			if (tag == "point")ParsePointTag(file);
 			if (tag == "line")ParseSegmentTag(file);
+			if (tag == "circle")ParseCircleTag(file);
 		}
 	}
+	file.close();
+	return true;
 }
 

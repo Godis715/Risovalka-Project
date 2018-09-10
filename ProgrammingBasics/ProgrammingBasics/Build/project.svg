@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- DrawProject -->
 <svg width="1000" height="1000">
-<point px="198" py="278" id="1" />
-<point px="329" py="137" id="2" />
-<line x1="198" y1="278" x2="329" y2="137" id="3" childIds="1 2" stroke="red" stroke-width="5" />
-<point px="419" py="97" id="5" />
-<point px="395" py="290" id="6" />
-<line x1="419" y1="97" x2="395" y2="290" id="7" childIds="5 6" stroke="red" stroke-width="5" />
+<point px="307" py="122" id="1" />
+<point px="131" py="291" id="2" />
+<line x1="307" y1="122" x2="131" y2="291" id="3" childIds="1 2" stroke="red" stroke-width="5" />
+<point px="401" py="117" id="5" />
+<point px="401" py="215" id="6" />
+<line x1="401" y1="117" x2="401" y2="215" id="7" childIds="5 6" stroke="red" stroke-width="5" />
+<point px="258" py="337" id="9" />
+<circle cx="258" cy="337" r="57.7235" id="10" childIds="9" stroke="red" stroke-width="5" fill="none" />
 <req>
 </req>
 </svg>

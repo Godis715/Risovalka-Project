@@ -270,6 +270,23 @@ Circle::Circle(Point* _center,  double _radius) :
 	_center->SetParent(this);
 }
 
+Circle::Circle(ID id, Point* _center, double _radius) :
+	Primitive(id, ot_circle)
+{
+	if (_center == nullptr) {
+		throw std::invalid_argument("Circle::Circle::_center was nullptr");
+	}
+	if (_radius < 0) {
+		throw std::invalid_argument("Circle::Circle::_radius was negative");
+	}
+
+	center = _center;
+
+	radius = _radius;
+
+	_center->SetParent(this);
+}
+
 // write this function
 double Circle::GetDistance(const Vector2& _point) const {
 	return abs(radius - (_point - Vector2(center->position.x, center->position.y)).GetLength());

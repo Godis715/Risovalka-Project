@@ -78,6 +78,7 @@ private:
 		Array<double> ScanParams(std::ifstream&);
 		bool ParsePointTag(std::ifstream&);
 		bool ParseSegmentTag(std::ifstream&);
+		bool ParseCircleTag(std::ifstream&);
 	public:
 		Download();
 		Download(Model*);
