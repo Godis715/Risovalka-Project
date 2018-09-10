@@ -27,6 +27,11 @@ unsigned long long ID::GetHash() const {
 
 // IDGENERATOR FUNCTIONS
 
+void IDGenerator::isLastHash(unsigned long long hash)
+{
+	if (_lastGivenHash < hash) _lastGivenHash = hash;
+}
+
 ID IDGenerator::generateID() {
 	return ID(++_lastGivenHash);
 }

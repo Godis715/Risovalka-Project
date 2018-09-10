@@ -30,6 +30,7 @@ Point::Point(double _x, double _y) :
 Point::Point(ID id, double _x, double _y) :
 	Primitive(id, ot_point)
 {
+	IDGenerator::isLastHash(id.GetHash());
 	this->parent = nullptr;
 	this->position = Vector2(_x, _y);
 }
@@ -85,6 +86,7 @@ Segment::Segment(Point* _p1, Point* _p2) :
 Segment::Segment(ID id, Point* _p1, Point* _p2) :
 	Primitive(id, ot_segment)
 {
+	IDGenerator::isLastHash(id.GetHash());
 	if (_p1 == nullptr || _p2 == nullptr) {
 		throw std::invalid_argument("Segment::Segment::parameters was nullptr");
 	}
@@ -273,6 +275,7 @@ Circle::Circle(Point* _center,  double _radius) :
 Circle::Circle(ID id, Point* _center, double _radius) :
 	Primitive(id, ot_circle)
 {
+	IDGenerator::isLastHash(id.GetHash());
 	if (_center == nullptr) {
 		throw std::invalid_argument("Circle::Circle::_center was nullptr");
 	}
