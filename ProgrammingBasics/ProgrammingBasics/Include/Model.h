@@ -2,6 +2,7 @@
 #define __MODEL
 
 #include "Logger.h"
+#include <math.h>
 
 // ID
 // IDGenerator
@@ -79,6 +80,7 @@ private:
 		bool ParsePointTag(std::ifstream&);
 		bool ParseSegmentTag(std::ifstream&);
 		bool ParseCircleTag(std::ifstream&);
+		bool ParseRequirementTag(std::ifstream&, object_type);
 	public:
 		Download();
 		Download(Model*);

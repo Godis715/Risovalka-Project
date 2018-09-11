@@ -376,12 +376,15 @@ private:
 		
 		//newfile = fl_file_chooser("Save File As?", "*", "title");
 		Presenter::SaveProject("way");
-		
+		((Fl_Button*)o)->deactivate();
+		((Fl_Button*)o)->activate();
 	}
 
 	static void cl_DownloadFile(Fl_Widget* o, void*)
 	{
 		Presenter::DownloadFile("nameFile");
+		((Fl_Button*)o)->deactivate();
+		((Fl_Button*)o)->activate();
 	}
 
 

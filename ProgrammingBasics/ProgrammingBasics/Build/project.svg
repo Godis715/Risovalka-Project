@@ -1,14 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- DrawProject -->
 <svg width="1000" height="1000">
-<point px="307" py="122" id="1" />
-<point px="131" py="291" id="2" />
-<line x1="307" y1="122" x2="131" y2="291" id="3" childIds="1 2" stroke="red" stroke-width="5" />
-<point px="258" py="337" id="9" />
-<circle cx="258" cy="337" r="57.7235" id="10" childIds="9" stroke="red" stroke-width="5" fill="none" />
-<point px="572" py="139" id="11" />
-<point px="585" py="329" id="12" />
-<line x1="572" y1="139" x2="585" y2="329" id="13" childIds="11 12" stroke="red" stroke-width="5" />
+<point px="403.778" py="146.45" id="1" />
+<point px="276.222" py="197.55" id="2" />
+<line x1="403.778" y1="146.45" x2="276.222" y2="197.55" id="3" childIds="1 2" stroke="red" stroke-width="5" />
+<point px="486.03" py="165.826" id="5" />
+<point px="525.97" py="267.174" id="6" />
+<line x1="486.03" y1="165.826" x2="525.97" y2="267.174" id="7" childIds="5 6" stroke="red" stroke-width="5" />
 <req>
+<angleBetSeg id="9" IDs="3 7" params="6.12323e-17" />
 </req>
 </svg>

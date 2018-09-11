@@ -1299,13 +1299,20 @@ bool Model::SaveProject(const std::string way)
 				break;
 			}
 			}
-			auto tempMarker = tempIDs->GetMarker();
-			int i = 1;
-			do
+			saveFile << " id=" << char(34) << tempID.GetHash() << char(34);
+			if (tempIDs->GetSize() != 0)
 			{
-				saveFile << " id" << i << "=" << char(34) << tempMarker.GetValue().GetHash() << char(34);
-				i++;
-			} while (++tempMarker);
+				saveFile << " IDs=" << char(34);
+				auto tempMarker = tempIDs->GetMarker();
+				int i = 0;
+				do
+				{
+					saveFile << tempMarker.GetValue().GetHash();
+					if (i != tempIDs->GetSize() - 1) saveFile << " ";
+					i++;
+				} while (++tempMarker);
+				saveFile << char(34);
+			}
 			for (int i = 0; i < tempParams.GetSize(); i++)
 			{
 				if (i == 0) saveFile << " params=" << char(34);
@@ -1349,10 +1356,18 @@ bool Model::CreateObjByID(object_type type, Array<ID>& IDs, Array<double>& param
 			Point* p2 = dynamic_cast<Point*>(*dataPrim.Find(IDs[2]));
 			Segment* seg = new Segment(IDs[0], p1, p2);
 			dataPrim.Add(IDs[0], seg);
+			Array<Primitive*> primitives;
+			primitives.PushBack(p1);
+			primitives.PushBack(p2);
+			primitives.PushBack(seg);
+			ConnectionReq* _connection = new ConnectionReq;
+			dataReq.Add(_connection->GetID(), _connection);
+			CreateLink(_connection->GetID(), primitives);
 			break; 
 		}
 		case ot_arc:
 		{
+			// написать
 			break; 
 		}
 		case ot_circle:
@@ -1361,14 +1376,110 @@ bool Model::CreateObjByID(object_type type, Array<ID>& IDs, Array<double>& param
 			Point* center = dynamic_cast<Point*>(*dataPrim.Find(IDs[1]));
 			Circle* circle = new Circle(IDs[0], center, params[0]);
 			dataPrim.Add(IDs[0], circle);
+			Array<Primitive*> primitives;
+			primitives.PushBack(center);
+			primitives.PushBack(circle);
+			ConnectionReq* _connection = new ConnectionReq;
+			dataReq.Add(_connection->GetID(), _connection);
+			CreateLink(_connection->GetID(), primitives);
 			break; 
 		}
-	
+		case ot_distBetPoints:
+		{
+			if (IDs.GetSize() != 3 || params.GetSize() != 1) return false;
+			Point* p1 = dynamic_cast<Point*>(*dataPrim.Find(IDs[1]));
+			Point* p2 = dynamic_cast<Point*>(*dataPrim.Find(IDs[2]));
+			DistBetPointsReq* req = new DistBetPointsReq(IDs[0], p1, p2, params[0]);
+			dataReq.Add(IDs[0], req);
+			Array<Primitive*> primitives;
+			primitives.PushBack(p1);
+			primitives.PushBack(p2);
+			CreateLink(IDs[0], primitives);
+			break;
+		}	
+		case ot_equalSegmentLen:
+		{
+			if (IDs.GetSize() != 3 || params.GetSize() != 0) return false;
+			Segment* seg1 = dynamic_cast<Segment*>(*dataPrim.Find(IDs[1]));
+			Segment* seg2 = dynamic_cast<Segment*>(*dataPrim.Find(IDs[2]));
+			EqualSegmentLenReq* req = new EqualSegmentLenReq(IDs[0], seg1, seg2);
+			dataReq.Add(IDs[0], req);
+			Array<Primitive*> primitives;
+			primitives.PushBack(seg1);
+			primitives.PushBack(seg1);
+			CreateLink(IDs[0], primitives);
+			break;
+		}	
+		case ot_pointPosReq:
+		{
+			if (IDs.GetSize() != 2 || params.GetSize() != 2) return false;
+			Point* p = dynamic_cast<Point*>(*dataPrim.Find(IDs[1]));
+			PointPosReq* req = new PointPosReq(IDs[0], p, params[0], params[1]);
+			dataReq.Add(IDs[0], req);
+			Array<Primitive*> primitives;
+			primitives.PushBack(p);
+			CreateLink(IDs[0], primitives);
+			break;
+		}	
+		case ot_pointsOnTheOneHand:
+		{
+			if (IDs.GetSize() != 4 || params.GetSize() != 0) return false;
+			Segment* seg = dynamic_cast<Segment*>(*dataPrim.Find(IDs[1]));
+			Point* p1 = dynamic_cast<Point*>(*dataPrim.Find(IDs[2]));
+			Point* p2 = dynamic_cast<Point*>(*dataPrim.Find(IDs[3]));
+			PointsOnTheOneHand* req = new PointsOnTheOneHand(IDs[0], seg, p1, p2);
+			dataReq.Add(IDs[0], req);
+			Array<Primitive*> primitives;
+			primitives.PushBack(seg);
+			primitives.PushBack(p1);
+			primitives.PushBack(p2);
+			CreateLink(IDs[0], primitives);
+			break;
+		}	
+		case ot_distBetPointSeg:
+		{
+			if (IDs.GetSize() != 3 || params.GetSize() != 1) return false;
+			Segment* seg = dynamic_cast<Segment*>(*dataPrim.Find(IDs[1]));
+			Point* p = dynamic_cast<Point*>(*dataPrim.Find(IDs[2]));
+			DistanceBetweenPointSegment* req = new DistanceBetweenPointSegment(IDs[0], seg, p, params[0]);
+			dataReq.Add(IDs[0], req);
+			Array<Primitive*> primitives;
+			primitives.PushBack(seg);
+			primitives.PushBack(p);
+			CreateLink(IDs[0], primitives);
+			break;
+		}	
+		case ot_distBetPointArc:
+		{
+			// дописать
+			break;
+		}	
+		case ot_angleBetSeg:
+		{
+			//разобраться с углом
+			if (IDs.GetSize() != 3 || params.GetSize() != 1) return false;
+			Segment* seg1 = dynamic_cast<Segment*>(*dataPrim.Find(IDs[1]));
+			Segment* seg2 = dynamic_cast<Segment*>(*dataPrim.Find(IDs[2]));
+			double angle = (acos(params[0]) * 180) / PI;
+			AngleBetweenSegments* req = new AngleBetweenSegments(IDs[0], seg1, seg2, 90);
+			dataReq.Add(IDs[0], req);
+			Array<Primitive*> primitives;
+			primitives.PushBack(seg1);
+			primitives.PushBack(seg1);
+			CreateLink(IDs[0], primitives);
+			break;
+		}	
+		case ot_pointInArc:
+		{
+			// дописать
+			break;
+		}
 		default:
 		{
 			return false; 
 		}
 	}
+	
 	return true;
 }
 
@@ -1525,6 +1636,46 @@ bool Model::Download::ParseCircleTag(std::ifstream& file)
 	return true;
 }
 
+bool Model::Download::ParseRequirementTag(std::ifstream& file, object_type typeReq)
+{
+	Array<ID> IDs;
+	Array <double> params;
+	char tempSymbol = file.get();
+	while (tempSymbol != '>')
+	{
+		if (tempSymbol == '=')
+		{
+			std::string attribute = ScanAttribute(file);
+			Array<double> _params = ScanParams(file);
+			if (attribute == "id")
+			{
+				if (_params.GetSize() == 1)
+				{
+					IDs.PushBack(ID(int(_params[0])));
+				}
+				else return false; //бросить исключение
+			}
+			if (attribute == "IDs")
+			{
+				for (int i = 0; i < _params.GetSize(); i++)
+				{
+					IDs.PushBack(ID(int(_params[i])));
+				}
+			}
+			if (attribute == "params")
+			{
+				for (int i = 0; i < _params.GetSize(); i++)
+				{
+					params.PushBack(_params[i]);
+				}
+			}
+		}
+		tempSymbol = file.get();
+	}
+	model->CreateObjByID(typeReq, IDs, params);
+	return true;
+}
+
 bool Model::Download::SetFile(const std::string nameFile)
 {
 	std::ifstream file("project.svg");
@@ -1542,9 +1693,29 @@ bool Model::Download::SetFile(const std::string nameFile)
 			if (tag == "point")ParsePointTag(file);
 			if (tag == "line")ParseSegmentTag(file);
 			if (tag == "circle")ParseCircleTag(file);
+			if (tag == "req>")
+			{
+				bool isEnd = false;
+				while (!isEnd)
+				{
+					tempSymbol = file.get();
+					if (tempSymbol == '<')
+					{
+						file >> tag;
+						if (tag == "distBetPoints")ParseRequirementTag(file, ot_distBetPoints);
+						if (tag == "equalSegmentLen")ParseRequirementTag(file, ot_equalSegmentLen);
+						if (tag == "pointPosReq")ParseRequirementTag(file, ot_pointPosReq);
+						if (tag == "pointsOnTheOneHand")ParseRequirementTag(file, ot_pointsOnTheOneHand);
+						if (tag == "distBetPointSeg")ParseRequirementTag(file, ot_distBetPointSeg);
+						if (tag == "distBetPointArc")ParseRequirementTag(file, ot_distBetPointArc);
+						if (tag == "angleBetSeg")ParseRequirementTag(file, ot_angleBetSeg);
+						if (tag == "pointInArc")ParseRequirementTag(file, ot_pointInArc);
+						if (tag == "/req>")isEnd = true;
+					}
+				}
+			}
 		}
 	}
 	file.close();
 	return true;
 }
-
