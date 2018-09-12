@@ -1182,11 +1182,11 @@ bool Model::SaveProject(const std::string way)
 {
 	std::ofstream saveFile("project.svg");
 	//<?xml version="1.0" encoding="UTF-8"?>
-	saveFile << "<?xml version=" << char(34) << "1.0" << char(34) << " encoding=" << char(34) << "UTF-8" << char(34) << "?>";
+	saveFile << "<?xml version=" << '"' << "1.0" << '"' << " encoding=" << '"' << "UTF-8" << '"' << "?>";
 	saveFile << "\n<!-- DrawProject -->";
 	saveFile << "\n<svg";
-	saveFile << " width=" << char(34) << "1000" << char(34);
-	saveFile << " height=" << char(34) << "1000" << char(34) << ">";
+	saveFile << " width=" << '"' << "1000" << '"';
+	saveFile << " height=" << '"' << "1000" << '"' << ">";
 	if (dataPrim.GetSize() == 0) {
 		saveFile << "\n</svg>";
 		saveFile.close();
@@ -1202,29 +1202,29 @@ bool Model::SaveProject(const std::string way)
 		GetObjType(tempID, tempType);
 		if (tempType == ot_point) {
 			saveFile << "\n	<drawProject:point";
-			saveFile << "\n		px=" << char(34) << tempParams[0] << char(34);
-			saveFile << "\n		py=" << char(34) << tempParams[1] << char(34);
-			saveFile << "\n		id=" << char(34) << tempID.GetHash() << char(34);
+			saveFile << "\n		px=" << '"' << tempParams[0] << '"';
+			saveFile << "\n		py=" << '"' << tempParams[1] << '"';
+			saveFile << "\n		id=" << '"' << tempID.GetHash() << '"';
 			saveFile << "\n	/>";
 		}
 		if (tempType == ot_segment) {
 			Segment* tepmSeg = dynamic_cast<Segment*>((*dataPrimMarker));
 			saveFile << "\n	<line";
-			saveFile << "\n		x1=" << char(34) << tempParams[0] << char(34);
-			saveFile << "\n		y1=" << char(34) << tempParams[1] << char(34);
-			saveFile << "\n		x2=" << char(34) << tempParams[2] << char(34);
-			saveFile << "\n		y2=" << char(34) << tempParams[3] << char(34);
-			saveFile << "\n		id=" << char(34) << tempID.GetHash() << char(34);
-			saveFile << "\n		childIds=" << char(34) << tepmSeg->point1->GetID().GetHash() << " "
-														<< tepmSeg->point2->GetID().GetHash() << char(34);
-			saveFile << "\n		stroke=" << char(34) << "red" << char(34);
-			saveFile << "\n		stroke-width=" << char(34) << 5 << char(34);
+			saveFile << "\n		x1=" << '"' << tempParams[0] << '"';
+			saveFile << "\n		y1=" << '"' << tempParams[1] << '"';
+			saveFile << "\n		x2=" << '"' << tempParams[2] << '"';
+			saveFile << "\n		y2=" << '"' << tempParams[3] << '"';
+			saveFile << "\n		id=" << '"' << tempID.GetHash() << '"';
+			saveFile << "\n		childIds=" << '"' << tepmSeg->point1->GetID().GetHash() << " "
+														<< tepmSeg->point2->GetID().GetHash() << '"';
+			saveFile << "\n		stroke=" << '"' << "red" << '"';
+			saveFile << "\n		stroke-width=" << '"' << 5 << '"';
 			saveFile << "\n	/>";
 		}
 		if (tempType == ot_arc) {
 			Arc* tempArc = dynamic_cast<Arc*>((*dataPrimMarker));
 			saveFile << "\n	<path";
-			saveFile << "\n		d=" << char(34); 
+			saveFile << "\n		d=" << '"'; 
 			saveFile << "M" << tempParams[2] << "," << tempParams[3] << " ";
 			double r = std::sqrt((tempParams[0] - tempParams[2])*(tempParams[0] - tempParams[2]) +
 										(tempParams[1] - tempParams[3])*(tempParams[1] - tempParams[3]));
@@ -1234,37 +1234,37 @@ bool Model::SaveProject(const std::string way)
 				saveFile << "0 " << 0 << "," << 0 << " ";
 			}
 			else saveFile << "0 " << 1 << "," << 0 << " ";
-			saveFile << tempParams[4] << "," << tempParams[5] << char(34);
-			saveFile << "\n		id=" << char(34) << tempID.GetHash() << char(34);
-			saveFile << "\n		childIds=" << char(34) << tempArc->point1->GetID().GetHash() << " "
-													<< tempArc->point2->GetID().GetHash() << char(34);
-			saveFile << "\n		stroke=" << char(34) << "red" << char(34);
-			saveFile << "\n		stroke-width=" << char(34) << 5 << char(34);
-			saveFile << "\n		fill=" << char(34) << "none" << char(34);
+			saveFile << tempParams[4] << "," << tempParams[5] << '"';
+			saveFile << "\n		id=" << '"' << tempID.GetHash() << '"';
+			saveFile << "\n		childIds=" << '"' << tempArc->point1->GetID().GetHash() << " "
+													<< tempArc->point2->GetID().GetHash() << '"';
+			saveFile << "\n		stroke=" << '"' << "red" << '"';
+			saveFile << "\n		stroke-width=" << '"' << 5 << '"';
+			saveFile << "\n		fill=" << '"' << "none" << '"';
 			saveFile << "\n	/>";
 
 			saveFile << "\n	<drawProject:arc";
-			saveFile << "\n		x1=" << char(34) << tempParams[2] << char(34);
-			saveFile << "\n		y1=" << char(34) << tempParams[3] << char(34);
-			saveFile << "\n		x2=" << char(34) << tempParams[4] << char(34);
-			saveFile << "\n		y2=" << char(34) << tempParams[5] << char(34);
-			saveFile << "\n		angle=" << char(34) << tempArc->GetAngle() << char(34);
-			saveFile << "\n		id=" << char(34) << tempID.GetHash() << char(34);
-			saveFile << "\n		childIds=" << char(34) << tempArc->point1->GetID().GetHash() << " "
-				<< tempArc->point2->GetID().GetHash() << char(34);
+			saveFile << "\n		x1=" << '"' << tempParams[2] << '"';
+			saveFile << "\n		y1=" << '"' << tempParams[3] << '"';
+			saveFile << "\n		x2=" << '"' << tempParams[4] << '"';
+			saveFile << "\n		y2=" << '"' << tempParams[5] << '"';
+			saveFile << "\n		angle=" << '"' << tempArc->GetAngle() << '"';
+			saveFile << "\n		id=" << '"' << tempID.GetHash() << '"';
+			saveFile << "\n		childIds=" << '"' << tempArc->point1->GetID().GetHash() << " "
+				<< tempArc->point2->GetID().GetHash() << '"';
 			saveFile << "\n	/>";
 		}
 		if (tempType == ot_circle) {
 			Circle* tepmCircle = dynamic_cast<Circle*>((*dataPrimMarker));
 			saveFile << "\n	<circle";
-			saveFile << "\n		cx=" << char(34) << tempParams[0] << char(34);
-			saveFile << "\n		cy=" << char(34) << tempParams[1] << char(34);
-			saveFile << "\n		r=" << char(34) << tempParams[2] << char(34);
-			saveFile << "\n		id=" << char(34) << tempID.GetHash() << char(34);
-			saveFile << "\n		childIds=" << char(34) << tepmCircle->center->GetID().GetHash() << char(34);
-			saveFile << "\n		stroke=" << char(34) << "red" << char(34);
-			saveFile << "\n		stroke-width=" << char(34) << 5 << char(34);
-			saveFile << "\n		fill=" << char(34) << "none" << char(34);
+			saveFile << "\n		cx=" << '"' << tempParams[0] << '"';
+			saveFile << "\n		cy=" << '"' << tempParams[1] << '"';
+			saveFile << "\n		r=" << '"' << tempParams[2] << '"';
+			saveFile << "\n		id=" << '"' << tempID.GetHash() << '"';
+			saveFile << "\n		childIds=" << '"' << tepmCircle->center->GetID().GetHash() << '"';
+			saveFile << "\n		stroke=" << '"' << "red" << '"';
+			saveFile << "\n		stroke-width=" << '"' << 5 << '"';
+			saveFile << "\n		fill=" << '"' << "none" << '"';
 			saveFile << "\n	/>";
 		}
 	} while (++dataPrimMarker);
@@ -1314,10 +1314,10 @@ bool Model::SaveProject(const std::string way)
 				break;
 			}
 			}
-			saveFile << "\n			id=" << char(34) << tempID.GetHash() << char(34);
+			saveFile << "\n			id=" << '"' << tempID.GetHash() << '"';
 			if (tempIDs->GetSize() != 0)
 			{
-				saveFile << "\n			IDs=" << char(34);
+				saveFile << "\n			IDs=" << '"';
 				auto tempMarker = tempIDs->GetMarker();
 				int i = 0;
 				do
@@ -1326,15 +1326,15 @@ bool Model::SaveProject(const std::string way)
 					if (i != tempIDs->GetSize() - 1) saveFile << " ";
 					i++;
 				} while (++tempMarker);
-				saveFile << char(34);
+				saveFile << '"';
 			}
 			for (int i = 0; i < tempParams.GetSize(); i++)
 			{
-				if (i == 0) saveFile << "\n			params=" << char(34);
+				if (i == 0) saveFile << "\n			params=" << '"';
 				saveFile << tempParams[i];
 				if (i == tempParams.GetSize() - 1)
 				{
-					saveFile << char(34);
+					saveFile << '"';
 				}
 				else saveFile << " ";
 			}
@@ -1349,8 +1349,13 @@ bool Model::SaveProject(const std::string way)
 
 bool Model::DownloadFile(const std::string nameFile)
 {
+	dataPrim.DeleteDict();
+	dataReq.DeleteDict();
+	dataLink.DeleteDict();
 	download = new Download(this);
-	return download->SetFile(nameFile);
+	bool isNotError = download->SetFile(nameFile);
+	delete download;
+	return isNotError;
 }
 
 bool Model::CreateObjByID(object_type type, Array<ID>& IDs, Array<double>& params)

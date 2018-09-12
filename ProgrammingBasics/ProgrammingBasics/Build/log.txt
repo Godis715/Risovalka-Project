@@ -1,1 +1,3 @@
 Initializing presenter
+Presenter::Creating object
+Presenter::Created object #3
