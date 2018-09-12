@@ -1201,60 +1201,75 @@ bool Model::SaveProject(const std::string way)
 		GetObjParam(tempID, tempParams);
 		GetObjType(tempID, tempType);
 		if (tempType == ot_point) {
-			saveFile << "\n<point";
-			saveFile << " px=" << char(34) << tempParams[0] << char(34);
-			saveFile << " py=" << char(34) << tempParams[1] << char(34);
-			saveFile << " id=" << char(34) << tempID.GetHash() << char(34);
-			saveFile << " />";
+			saveFile << "\n	<drawProject:point";
+			saveFile << "\n		px=" << char(34) << tempParams[0] << char(34);
+			saveFile << "\n		py=" << char(34) << tempParams[1] << char(34);
+			saveFile << "\n		id=" << char(34) << tempID.GetHash() << char(34);
+			saveFile << "\n	/>";
 		}
 		if (tempType == ot_segment) {
 			Segment* tepmSeg = dynamic_cast<Segment*>((*dataPrimMarker));
-			saveFile << "\n<line";
-			saveFile << " x1=" << char(34) << tempParams[0] << char(34);
-			saveFile << " y1=" << char(34) << tempParams[1] << char(34);
-			saveFile << " x2=" << char(34) << tempParams[2] << char(34);
-			saveFile << " y2=" << char(34) << tempParams[3] << char(34);
-			saveFile << " id=" << char(34) << tempID.GetHash() << char(34);
-			saveFile << " childIds=" << char(34) << tepmSeg->point1->GetID().GetHash() << " "
+			saveFile << "\n	<line";
+			saveFile << "\n		x1=" << char(34) << tempParams[0] << char(34);
+			saveFile << "\n		y1=" << char(34) << tempParams[1] << char(34);
+			saveFile << "\n		x2=" << char(34) << tempParams[2] << char(34);
+			saveFile << "\n		y2=" << char(34) << tempParams[3] << char(34);
+			saveFile << "\n		id=" << char(34) << tempID.GetHash() << char(34);
+			saveFile << "\n		childIds=" << char(34) << tepmSeg->point1->GetID().GetHash() << " "
 														<< tepmSeg->point2->GetID().GetHash() << char(34);
-			saveFile << " stroke=" << char(34) << "red" << char(34);
-			saveFile << " stroke-width=" << char(34) << 5 << char(34);
-			saveFile << " />";
+			saveFile << "\n		stroke=" << char(34) << "red" << char(34);
+			saveFile << "\n		stroke-width=" << char(34) << 5 << char(34);
+			saveFile << "\n	/>";
 		}
 		if (tempType == ot_arc) {
-			Arc* tepmArc = dynamic_cast<Arc*>((*dataPrimMarker));
-			saveFile << "\n<path";
-			saveFile << " d=" << char(34); 
+			Arc* tempArc = dynamic_cast<Arc*>((*dataPrimMarker));
+			saveFile << "\n	<path";
+			saveFile << "\n		d=" << char(34); 
 			saveFile << "M" << tempParams[2] << "," << tempParams[3] << " ";
 			double r = std::sqrt((tempParams[0] - tempParams[2])*(tempParams[0] - tempParams[2]) +
 										(tempParams[1] - tempParams[3])*(tempParams[1] - tempParams[3]));
 			saveFile << "A" << r << "," << r << " ";
-			saveFile << "0 " << 1 << "," << 0 << " ";
+			if (tempArc->GetAngle() <= PI)
+			{
+				saveFile << "0 " << 0 << "," << 0 << " ";
+			}
+			else saveFile << "0 " << 1 << "," << 0 << " ";
 			saveFile << tempParams[4] << "," << tempParams[5] << char(34);
-			saveFile << " id=" << char(34) << tempID.GetHash() << char(34);
-			saveFile << " childIds=" << char(34) << tepmArc->point1->GetID().GetHash() << " "
-													<< tepmArc->point2->GetID().GetHash() << char(34);
-			saveFile << " stroke=" << char(34) << "red" << char(34);
-			saveFile << " stroke-width=" << char(34) << 5 << char(34);
-			saveFile << " fill=" << char(34) << "none" << char(34);
-			saveFile << " />";
+			saveFile << "\n		id=" << char(34) << tempID.GetHash() << char(34);
+			saveFile << "\n		childIds=" << char(34) << tempArc->point1->GetID().GetHash() << " "
+													<< tempArc->point2->GetID().GetHash() << char(34);
+			saveFile << "\n		stroke=" << char(34) << "red" << char(34);
+			saveFile << "\n		stroke-width=" << char(34) << 5 << char(34);
+			saveFile << "\n		fill=" << char(34) << "none" << char(34);
+			saveFile << "\n	/>";
+
+			saveFile << "\n	<drawProject:arc";
+			saveFile << "\n		x1=" << char(34) << tempParams[2] << char(34);
+			saveFile << "\n		y1=" << char(34) << tempParams[3] << char(34);
+			saveFile << "\n		x2=" << char(34) << tempParams[4] << char(34);
+			saveFile << "\n		y2=" << char(34) << tempParams[5] << char(34);
+			saveFile << "\n		angle=" << char(34) << tempArc->GetAngle() << char(34);
+			saveFile << "\n		id=" << char(34) << tempID.GetHash() << char(34);
+			saveFile << "\n		childIds=" << char(34) << tempArc->point1->GetID().GetHash() << " "
+				<< tempArc->point2->GetID().GetHash() << char(34);
+			saveFile << "\n	/>";
 		}
 		if (tempType == ot_circle) {
 			Circle* tepmCircle = dynamic_cast<Circle*>((*dataPrimMarker));
-			saveFile << "\n<circle";
-			saveFile << " cx=" << char(34) << tempParams[0] << char(34);
-			saveFile << " cy=" << char(34) << tempParams[1] << char(34);
-			saveFile << " r=" << char(34) << tempParams[2] << char(34);
-			saveFile << " id=" << char(34) << tempID.GetHash() << char(34);
-			saveFile << " childIds=" << char(34) << tepmCircle->center->GetID().GetHash() << char(34);
-			saveFile << " stroke=" << char(34) << "red" << char(34);
-			saveFile << " stroke-width=" << char(34) << 5 << char(34);
-			saveFile << " fill=" << char(34) << "none" << char(34);
-			saveFile << " />";
+			saveFile << "\n	<circle";
+			saveFile << "\n		cx=" << char(34) << tempParams[0] << char(34);
+			saveFile << "\n		cy=" << char(34) << tempParams[1] << char(34);
+			saveFile << "\n		r=" << char(34) << tempParams[2] << char(34);
+			saveFile << "\n		id=" << char(34) << tempID.GetHash() << char(34);
+			saveFile << "\n		childIds=" << char(34) << tepmCircle->center->GetID().GetHash() << char(34);
+			saveFile << "\n		stroke=" << char(34) << "red" << char(34);
+			saveFile << "\n		stroke-width=" << char(34) << 5 << char(34);
+			saveFile << "\n		fill=" << char(34) << "none" << char(34);
+			saveFile << "\n	/>";
 		}
 	} while (++dataPrimMarker);
 	if (dataReq.GetSize() != 0) {
-		saveFile << "\n<req>\n";
+		saveFile << "\n	<drawProject:req>\n";
 		auto dataReqMarker = dataReq.GetMarker();
 		do
 		{
@@ -1264,45 +1279,45 @@ bool Model::SaveProject(const std::string way)
 			List<ID>* tempIDs = (*dataLink.Find(tempID));
 			switch (tempType) {
 			case ot_distBetPoints: {
-				saveFile << "<distBetPoints";
+				saveFile << "		<distBetPoints";
 				break;
 			}
 			case ot_equalSegmentLen: {
-				saveFile << "<equalSegmentLen";
+				saveFile << "		<equalSegmentLen";
 				break;
 			}
 			case ot_connection: {
 				continue;
 			}
 			case ot_pointPosReq: {
-				saveFile << "<pointPosReq";
+				saveFile << "		<pointPosReq";
 				break;
 			}
 			case ot_pointsOnTheOneHand: {
-				saveFile << "<pointsOnTheOneHand";
+				saveFile << "		<pointsOnTheOneHand";
 				break;
 			}
 			case ot_distBetPointSeg: {
-				saveFile << "<distBetPointSeg";
+				saveFile << "		<distBetPointSeg";
 				break;
 			}
 			case ot_angleBetSeg: {
-				saveFile << "<angleBetSeg";
+				saveFile << "		<angleBetSeg";
 				break;
 			}
 			case ot_distBetPointArc: {
-				saveFile << "<distBetPointArc";
+				saveFile << "		<distBetPointArc";
 				break;
 			}
 			case ot_pointInArc: {
-				saveFile << "<pointInArc";
+				saveFile << "		<pointInArc";
 				break;
 			}
 			}
-			saveFile << " id=" << char(34) << tempID.GetHash() << char(34);
+			saveFile << "\n			id=" << char(34) << tempID.GetHash() << char(34);
 			if (tempIDs->GetSize() != 0)
 			{
-				saveFile << " IDs=" << char(34);
+				saveFile << "\n			IDs=" << char(34);
 				auto tempMarker = tempIDs->GetMarker();
 				int i = 0;
 				do
@@ -1315,7 +1330,7 @@ bool Model::SaveProject(const std::string way)
 			}
 			for (int i = 0; i < tempParams.GetSize(); i++)
 			{
-				if (i == 0) saveFile << " params=" << char(34);
+				if (i == 0) saveFile << "\n			params=" << char(34);
 				saveFile << tempParams[i];
 				if (i == tempParams.GetSize() - 1)
 				{
@@ -1323,9 +1338,9 @@ bool Model::SaveProject(const std::string way)
 				}
 				else saveFile << " ";
 			}
-			saveFile << " />\n";
+			saveFile << "	/>\n";
 		} while (++dataReqMarker);
-		saveFile << "</req>";
+		saveFile << "	</drawProject:req>";
 	}
 	saveFile << "\n</svg>";
 	saveFile.close();
@@ -1367,7 +1382,19 @@ bool Model::CreateObjByID(object_type type, Array<ID>& IDs, Array<double>& param
 		}
 		case ot_arc:
 		{
-			// написать
+			if (IDs.GetSize() != 3 || params.GetSize() != 1) return false; //исключение
+			Point* p1 = dynamic_cast<Point*>(*dataPrim.Find(IDs[1]));
+			Point* p2 = dynamic_cast<Point*>(*dataPrim.Find(IDs[2]));
+			Arc* arc = new Arc(IDs[0], p1, p2, params[0]);
+			dataPrim.Add(IDs[0], arc);
+			arc->RestoreCenter();
+			Array<Primitive*> primitives;
+			primitives.PushBack(p1);
+			primitives.PushBack(p2);
+			primitives.PushBack(arc);
+			ConnectionReq* _connection = new ConnectionReq;
+			dataReq.Add(_connection->GetID(), _connection);
+			CreateLink(_connection->GetID(), primitives);
 			break; 
 		}
 		case ot_circle:
@@ -1406,7 +1433,7 @@ bool Model::CreateObjByID(object_type type, Array<ID>& IDs, Array<double>& param
 			dataReq.Add(IDs[0], req);
 			Array<Primitive*> primitives;
 			primitives.PushBack(seg1);
-			primitives.PushBack(seg1);
+			primitives.PushBack(seg2);
 			CreateLink(IDs[0], primitives);
 			break;
 		}	
@@ -1451,27 +1478,44 @@ bool Model::CreateObjByID(object_type type, Array<ID>& IDs, Array<double>& param
 		}	
 		case ot_distBetPointArc:
 		{
-			// дописать
+			if (IDs.GetSize() != 3 || params.GetSize() != 1) return false;
+			Arc* arc = dynamic_cast<Arc*>(*dataPrim.Find(IDs[1]));
+			Point* p = dynamic_cast<Point*>(*dataPrim.Find(IDs[2]));
+			DistanceBetweenPointArc* req = new DistanceBetweenPointArc(IDs[0], arc, p, params[0]);
+			dataReq.Add(IDs[0], req);
+			Array<Primitive*> primitives;
+			primitives.PushBack(arc);
+			primitives.PushBack(p);
+			CreateLink(IDs[0], primitives);
 			break;
 		}	
 		case ot_angleBetSeg:
 		{
-			//разобраться с углом
+			//проблема была только с 90 град 
 			if (IDs.GetSize() != 3 || params.GetSize() != 1) return false;
 			Segment* seg1 = dynamic_cast<Segment*>(*dataPrim.Find(IDs[1]));
 			Segment* seg2 = dynamic_cast<Segment*>(*dataPrim.Find(IDs[2]));
 			double angle = (acos(params[0]) * 180) / PI;
-			AngleBetweenSegments* req = new AngleBetweenSegments(IDs[0], seg1, seg2, 90);
+			AngleBetweenSegments* req = new AngleBetweenSegments(IDs[0], seg1, seg2, angle);
 			dataReq.Add(IDs[0], req);
 			Array<Primitive*> primitives;
 			primitives.PushBack(seg1);
-			primitives.PushBack(seg1);
+			primitives.PushBack(seg2);
 			CreateLink(IDs[0], primitives);
 			break;
 		}	
 		case ot_pointInArc:
 		{
-			// дописать
+			//не реализовано
+			if (IDs.GetSize() != 3 || params.GetSize() != 0) return false;
+			Arc* arc = dynamic_cast<Arc*>(*dataPrim.Find(IDs[1]));
+			Point* p = dynamic_cast<Point*>(*dataPrim.Find(IDs[2]));
+			PointInArc* req = new PointInArc(IDs[0], arc, p);
+			dataReq.Add(IDs[0], req);
+			Array<Primitive*> primitives;
+			primitives.PushBack(arc);
+			primitives.PushBack(p);
+			CreateLink(IDs[0], primitives);
 			break;
 		}
 		default:
@@ -1497,7 +1541,7 @@ std::string Model::Download::ScanAttribute(std::ifstream& file)
 	file.seekg(-2, std::ios_base::cur);
 	char tempSymbol = file.get();
 	std::string attribute;
-	while (tempSymbol != ' ')
+	while (tempSymbol != ' ' && tempSymbol != '\n' && tempSymbol  != char(9))
 	{
 		attribute.insert(attribute.begin(), tempSymbol);
 		file.seekg(-2, std::ios_base::cur);
@@ -1636,6 +1680,49 @@ bool Model::Download::ParseCircleTag(std::ifstream& file)
 	return true;
 }
 
+bool Model::Download::ParseArcTag(std::ifstream& file)
+{
+	Array<ID> IDs;
+	Array <double> params;
+	char tempSymbol = file.get();
+	while (tempSymbol != '>')
+	{
+		if (tempSymbol == '=')
+		{
+			std::string attribute = ScanAttribute(file);
+			Array<double> _params = ScanParams(file);
+			if (attribute == "id")
+			{
+				if (_params.GetSize() == 1)
+				{
+					IDs.PushBack(ID(int(_params[0])));
+				}
+				else return false; //бросить исключение
+			}
+			if (attribute == "childIds")
+			{
+				if (_params.GetSize() == 2)
+				{
+					IDs.PushBack(ID(int(_params[0])));
+					IDs.PushBack(ID(int(_params[1])));
+				}
+				else return false; //бросить исключение
+			}
+			if (attribute == "angle")
+			{
+				if (_params.GetSize() == 1)
+				{
+					params.PushBack(_params[0]);
+				}
+				else return false; //бросить исключение
+			}
+		}
+		tempSymbol = file.get();
+	}
+	model->CreateObjByID(ot_arc, IDs, params);
+	return true;
+}
+
 bool Model::Download::ParseRequirementTag(std::ifstream& file, object_type typeReq)
 {
 	Array<ID> IDs;
@@ -1690,10 +1777,11 @@ bool Model::Download::SetFile(const std::string nameFile)
 		{
 			std::string tag;
 			file >> tag;
-			if (tag == "point")ParsePointTag(file);
+			if (tag == "drawProject:point")ParsePointTag(file);
 			if (tag == "line")ParseSegmentTag(file);
 			if (tag == "circle")ParseCircleTag(file);
-			if (tag == "req>")
+			if (tag == "drawProject:arc")ParseArcTag(file);
+			if (tag == "drawProject:req>")
 			{
 				bool isEnd = false;
 				while (!isEnd)
@@ -1710,7 +1798,7 @@ bool Model::Download::SetFile(const std::string nameFile)
 						if (tag == "distBetPointArc")ParseRequirementTag(file, ot_distBetPointArc);
 						if (tag == "angleBetSeg")ParseRequirementTag(file, ot_angleBetSeg);
 						if (tag == "pointInArc")ParseRequirementTag(file, ot_pointInArc);
-						if (tag == "/req>")isEnd = true;
+						if (tag == "/drawProject:req>")isEnd = true;
 					}
 				}
 			}

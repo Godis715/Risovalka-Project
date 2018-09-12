@@ -371,8 +371,10 @@ public:
 		arguments[5] = &_segment2->point1->position.y;
 		arguments[6] = &_segment2->point2->position.x;
 		arguments[7] = &_segment2->point2->position.y;
-
-		params[0] = abs(cos((_andle / 180) * PI));
+		if (_andle == 90)
+		{
+			params[0] = 0;
+		}else params[0] = abs(cos((_andle / 180) * PI));
 		sinus = sin((_andle / 180) * PI);
 	}
 	AngleBetweenSegments(ID id, Segment* _segment1, Segment* _segment2, double _andle) :

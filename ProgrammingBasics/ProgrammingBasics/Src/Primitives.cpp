@@ -168,6 +168,24 @@ Arc::Arc(Point* _p1, Point* _p2, double _angle) :
 	_p2->SetParent(this);
 }
 
+Arc::Arc(ID id, Point* _p1, Point* _p2, double _angle) :
+	Primitive(id, ot_arc)
+{
+	IDGenerator::isLastHash(id.GetHash());
+	if (_p1 == nullptr || _p2 == nullptr) {
+		throw std::invalid_argument("Arc::Arc::parameters was nullptr");
+	}
+	
+
+	point1 = _p1;
+	point2 = _p2;
+
+	angle = _angle;
+
+	_p1->SetParent(this);
+	_p2->SetParent(this);
+}
+
 // write this function
 double Arc::GetDistance(const Vector2& _point) const {
 	Vector2 r1 = point1->GetPosition() - center;

@@ -80,6 +80,7 @@ private:
 		bool ParsePointTag(std::ifstream&);
 		bool ParseSegmentTag(std::ifstream&);
 		bool ParseCircleTag(std::ifstream&);
+		bool ParseArcTag(std::ifstream&);
 		bool ParseRequirementTag(std::ifstream&, object_type);
 	public:
 		Download();

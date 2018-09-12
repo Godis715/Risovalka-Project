@@ -93,6 +93,7 @@ public:
 	double angle;
 
 	Arc(Point*, Point*, double);
+	Arc(ID, Point*, Point*, double);
 
 	double GetDistance(const Vector2&) const;
 	void RestoreCenter();
