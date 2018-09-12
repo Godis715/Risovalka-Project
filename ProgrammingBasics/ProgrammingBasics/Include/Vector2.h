@@ -1,7 +1,8 @@
 #ifndef __VECTOR2
 #define __VECTOR2
 
-#include "Type.h"
+#define PI 3.141592653589793 
+#include <cmath>
 
 class Vector2 {
 private:

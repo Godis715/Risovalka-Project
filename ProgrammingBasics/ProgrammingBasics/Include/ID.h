@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include "Array.h"
+#include "Logger.h"
 
 enum object_type {
 	ot_point,
@@ -17,6 +18,7 @@ enum object_type {
 	ot_pointsOnTheOneHand,
 	ot_distBetPointSeg,
 	ot_distBetPointArc,
+	ot_segmentTouchCircle,
 
 	ot_angleBetSeg,
 	ot_pointInArc,
@@ -27,12 +29,14 @@ enum object_type {
 };
 
 class ID;
+class Object;
+class DataController;
 
 class IDGenerator
 {
 public:
 	static IDGenerator* getInstance();
-	ID* generateID();
+	ID* generateID(Object*);
 private:
 	IDGenerator() { }
 	static IDGenerator* _instance;
@@ -68,8 +72,12 @@ private:
 	Object* object;
 
 	friend class ObjectController;
+	friend class IDGenerator;
+
+	ID(unsigned long long, Object*);
+	ID(unsigned long long); //?
+
 public:
-	ID(unsigned long long);
 	ID(const ID&);
 	ID();
 	~ID();

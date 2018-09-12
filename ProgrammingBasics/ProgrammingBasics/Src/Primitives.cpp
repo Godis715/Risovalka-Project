@@ -10,33 +10,37 @@ Point::Point(const Vector2& pos) :
 	Primitive(ot_point)
 {
 	this->parent = nullptr;
-	this->pos = pos;
+	this->x = pos.x;
+	this->y = pos.y;
 }
 Point::Point(double _x, double _y) :
 	Primitive(ot_point)
 {
 	this->parent = nullptr;
-	this->pos = Vector2(_x, _y);
+	this->x = _x;
+	this->y = _y;
 }
 Point::Point(const Point& _p) :
 	Primitive(ot_point)
 {
 	this->parent = nullptr;
-	this->pos = _p.pos;
+	this->x = _p.x;
+	this->y = _p.y;
 }
 double Point::GetDist(const Vector2& point) const {
-	return sqrt((pos.x - point.x)*(pos.x - point.x) +
-		(pos.y - point.y)*(pos.y - point.y));
+	return sqrt((x - point.x)*(x - point.x) +
+		(y - point.y)*(y - point.y));
 }
 Vector2 Point::GetPos() const {
-	return pos;
+	return Vector2(x, y);
 }
 void Point::SetPos(const Vector2& _pos) {
-	pos = _pos;
+	x = _pos.x;
+	y = _pos.y;
 }
-void Point::SetPos(double x, double y) {
-	pos.x = x;
-	pos.y = y;
+void Point::SetPos(double _x, double _y) {
+	x = _x;
+	y = _y;
 }
 Primitive* Point::GetParent() {
 	return parent;

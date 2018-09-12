@@ -2,15 +2,22 @@
 
 // ID FUNCTIONS
 
-ID::ID(unsigned long long h) {
+ID::ID(unsigned long long h, Object* obj) {
 	hash = h;
+	object = obj;
 }
 ID::ID() {
 	hash = 0;
 	object = nullptr;
 }
+ID::ID(const ID& _id) {
+	hash = _id.hash;
+	object = _id.object;
+}
+ID::~ID() { }
 void ID::operator= (const ID& item) {
 	hash = item.hash;
+	object = item.object;
 }
 bool ID::operator== (const ID& item) const {
 	return hash == item.hash;
@@ -28,8 +35,9 @@ unsigned long long ID::GetHash() const {
 
 // IDGENERATOR FUNCTIONS
 
-ID* IDGenerator::generateID() {
-	return new ID(++_lastGivenHash);
+ID* IDGenerator::generateID(Object* obj) {
+	ID* id = new ID(++_lastGivenHash, obj);
+	return id;
 }
 
 IDGenerator* IDGenerator::getInstance() {
@@ -53,7 +61,7 @@ IDGenerator* IDGenerator::_instance = nullptr;
 // 
 
 Object::Object(object_type _type) : type(_type) {
-	id = IDGenerator::getInstance()->generateID();
+	id = IDGenerator::getInstance()->generateID(this);
 }
 Object::~Object() {
 	delete id;

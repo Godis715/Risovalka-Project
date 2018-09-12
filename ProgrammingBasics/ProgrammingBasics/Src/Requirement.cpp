@@ -1,12 +1,11 @@
 #include <Requirement.h>
 
-template Array<double>;
-template Array<double*>;
 
-Requirement::Requirement(object_type _type, const Array<double*>& _args) :
+Requirement::Requirement(object_type _type, const Array<double>& _params) :
 	Object(_type),
-	args(_args)
+	params(_params)
 {
+	primCtrl = PrimController::GetInstance();
 
 	int argNum;
 	int paramNum;
@@ -57,19 +56,20 @@ Requirement::Requirement(object_type _type, const Array<double*>& _args) :
 		paramNum = 0;
 		break;
 	}
+	case ot_segmentTouchCircle: {
+		argNum = 7;
+		paramNum = 0;
+		break;
+	}
 	default: {
 		throw std::exception("Couldn't create requirement. Invalid requirement type");
 	}
 	}
 
-	if (argNum != args.GetSize()) {
-		throw std::exception("Couldn't create requirement. Invalid number of arguments");
-	}
-
-	params = Array<double>(paramNum);
+	
 }
 
-Array<double*> Requirement::GetArgs() {
+Array<double*> Requirement::GetArgs() const {
 	return args;
 }
 
@@ -91,4 +91,16 @@ Array<double> Requirement::Gradient() {
 	return grad;
 }
 
-void Requirement::Change(const double) {}
+void Requirement::Change(const double) { }
+
+DistBetPointsReq::DistBetPointsReq(const Array<ID>& _objects, const Array<double>& _params) :
+	Requirement(ot_distBetPoints, _params)
+{
+	args = primCtrl->GetPrimitiveParamsAsPointers(_objects, 4);
+}
+
+double DistBetPointsReq::error() {
+	Vector2 vectorAB(*(args[2]) - *(args[0]), *(args[3]) - *(args[1]));
+	double modAB_inSquare = Vector2::Dot(vectorAB, vectorAB);
+	return modAB_inSquare - params[0] * (2 * sqrt(modAB_inSquare) - params[0]);
+}

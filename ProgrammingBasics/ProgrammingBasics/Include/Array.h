@@ -1,8 +1,6 @@
 #ifndef __ARRAY
 #define __ARRAY
 
-#include "List.h"
-
 template <class T> class Array
 {
 private:
@@ -185,7 +183,7 @@ public:
 	
 	void operator=(Array&& arr) {
 
-		delete this->_storage;
+		delete[] this->_storage;
 
 		this->_capacity = arr._capacity;
 		this->_size = arr._size;
@@ -195,7 +193,7 @@ public:
 
 	void operator=(const Array& arr) {
 		
-		delete this->_storage;
+		delete[] this->_storage;
 
 		this->_capacity = arr._capacity;
 		this->_size = arr._size;
@@ -203,6 +201,40 @@ public:
 		for (int i = 0; i < _size; ++i) {
 			this->_storage[i] = arr._storage[i];
 		}
+	}
+
+	Array<T>& operator+(const Array& arr) {
+		_capacity = this->_capacity + arr._capacity;
+		T* newStorage = new T[_capacity];
+		
+		for (int i = 0; i < _size; ++i) {
+			newStorage[i] = this->_storage[i];
+		}
+		for (int i = 0; i < arr._size; ++i) {
+			newStorage[i + _size] = arr._storage[i];
+		}
+		delete[] this->_storage;
+
+		this->_size = arr._size + _size;
+		this->_storage = newStorage;
+
+		return *this;
+	}
+
+	Array<T>& operator+(const T& elem) {
+		_capacity = this->_capacity + 1;
+		T* newStorage = new T[_capacity];
+
+		for (int i = 0; i < _size; ++i) {
+			newStorage[i] = this->_storage[i];
+		}
+		newStorage[_size] = elem;
+		delete[] this->_storage;
+
+		this->_size = _size + 1;
+		this->_storage = newStorage;
+
+		return *this;
 	}
 
 	int GetSize() const
@@ -434,8 +466,20 @@ public:
 	ReadMarker End() {
 		return ReadMarker(this, _size);
 	}
-
 }; 
+
+template<typename T, typename ...Args> Array<T> CreateArr(const T& val, const Args& ... args) {
+	int numargs = sizeof...(args)+1;
+	Array<T> arr(numargs);
+	arr[0] = val;
+	int i = 1;
+	for (auto&& p : std::initializer_list<T>{ args... })
+	{
+		arr[i] = p;
+		++i;
+	}
+	return arr;
+}
 
 //template <class T> std::ostream& operator<< (std::ostream& out, Array<T>& arr)
 //{

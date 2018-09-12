@@ -1,8 +1,9 @@
 #ifndef __PRIMITIVES
 #define __PRIMITIVES
-#define PI 3.141592653589793 
 
 #include "Vector2.h"
+#include "ID.h"
+
 
 class Primitive : public Object{
 private:
@@ -15,6 +16,7 @@ public:
 class Arc;
 class Point;
 class Segment;
+class Circle;
 
 class PrimController{
 private:
@@ -23,16 +25,24 @@ private:
 
 	ObjectController* objCtrl;
 
-	Primitive* GetPrimitive(const ID&);
-	Primitive* ConvertToPrimitive(Object*);
-	bool IsPrimitive(object_type);
+	Primitive* ConvertToPrimitive(Object*) const;
+	bool IsPrimitive(object_type) const;
 public:
-	PrimController* GetInstance();
+	static PrimController* GetInstance();
 
-	Array<double*> GetPrimitiveParamsAsPointers(const ID&);
-	void SetPrimitiveParams(const ID&, const Array<double>&);
+	Primitive* GetPrimitive(const ID&) const;
 
-	ID CreatePrimitive(object_type, const Array<double>&);
+	bool IsPrimitive(const ID&) const;
+
+	Array<double> GetPrimitiveParamsAsValues(const ID&) const;
+
+	Array<double*> GetPrimitiveParamsAsPointers(const ID&) const;
+	Array<double*> GetPrimitiveParamsAsPointers(const Array<ID>&, int) const;
+
+	void SetPrimitiveParams(const ID&, const Array<double>&) const;
+
+	ID CreatePrimitive(object_type, const Array<double>&) const;
+	Array<ID> GetChildren(const ID&);
 };
 
 class Point : public Primitive {
@@ -110,6 +120,8 @@ private:
 	Point* point1;
 	Point* point2;
 
+	Vector2 center;
+
 	friend class PrimController;
 public:
 	Arc(Point*, Point*, double);
@@ -149,27 +161,5 @@ public:
 	void SetRadius(double);
 	//
 };
-
-class Requirement : public Object {
-private:
-protected:
-	Array<double*> args;
-	Array<double> params;
-public:
-	// checking type - it must by requirement type
-	Requirement(object_type, const Array<double*>&);
-	
-	virtual double error() = 0;
-	virtual void Change(const double);
-	virtual void ChangeParams(const Array<double>& newParams) {
-		if (newParams.GetSize() != params.GetSize()) {
-			throw std::exception("Invalid requirement parameters!");
-		}
-		params = newParams;
-	}
-	Array<double> Gradient();
-	Array<double*> GetArgs();
-};
-
 
 #endif
