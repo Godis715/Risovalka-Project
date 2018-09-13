@@ -1,4 +1,4 @@
-﻿#include "Model.h"
+#include "Model.h"
 #include <functional>
 #define cast dynamic_cast
 
@@ -34,12 +34,13 @@ bool Model::NewComponent(const ID& id, Array<ID>& Prims, Array<ID>& Reqs)
 	}
 
 	queueReq.Push(currentID);
+	currentComponent->Add(currentID, currentID);
 	while (!queueReq.IsEmpty())
 	{
 		while (!queueReq.IsEmpty())
 		{
 			currentID = queueReq.Pop();
-			currentComponent->Add(currentID, currentID);
+
 			Reqs.PushBack(currentID);
 			
 			auto marker = dataLink.Find(currentID);
@@ -47,7 +48,9 @@ bool Model::NewComponent(const ID& id, Array<ID>& Prims, Array<ID>& Reqs)
 				for (auto l = (*marker)->GetMarker(); l.IsValid(); ++l) {
 					currentID = l.GetValue();
 					if (!currentComponent->Find(currentID).IsValid()) {
+						currentComponent->Add(currentID, currentID);
 						queuePrim.Push(currentID);
+						
 					}
 				}
 			}
@@ -55,7 +58,7 @@ bool Model::NewComponent(const ID& id, Array<ID>& Prims, Array<ID>& Reqs)
 		while (!queuePrim.IsEmpty())
 		{
 			currentID = queuePrim.Pop();
-			currentComponent->Add(currentID, currentID);
+			
 			Prims.PushBack(currentID);
 
 			auto marker = dataLink.Find(currentID);
@@ -63,7 +66,9 @@ bool Model::NewComponent(const ID& id, Array<ID>& Prims, Array<ID>& Reqs)
 				for (auto l = (*marker)->GetMarker(); l.IsValid(); ++l) {
 					currentID = l.GetValue();
 					if (!currentComponent->Find(currentID).IsValid()) {
+						currentComponent->Add(currentID, currentID);
 						queueReq.Push(currentID);
+						
 					}
 				}
 			}
@@ -687,7 +692,7 @@ bool Model::OptimizeRequirements(const Array<Requirement*>& requirments) {
 	// get parameters number
 	int params_number = 0;
 	for (int i = 0; i < requirments.GetSize(); ++i) {
-		Array<double*> params = requirments[i]->GetParams();
+		Array<double*> params = requirments[i]->GetArguments();
 		params_number += params.GetSize();
 	}
 
@@ -714,7 +719,7 @@ bool Model::OptimizeRequirements(const Array<Requirement*>& requirments) {
 	// filling match_array
 	for (int i = 0; i < requirments.GetSize(); ++i) {
 
-		Array<double*> currentRequirmentParams = requirments[i]->GetParams();
+		Array<double*> currentRequirmentParams = requirments[i]->GetArguments();
 
 		for (int j = 0; j < currentRequirmentParams.GetSize(); ++j) {
 
@@ -785,9 +790,6 @@ bool Model::OptimizeByID(const ID& id) {
 	Array<Requirement*> reqs;
 	GetRequirements(reqID, reqs);
 
-	/*if (!GetRequirementsFromComponent(component, reqs)) {
-		return;
-	}*/
 	bool result =  OptimizeRequirements(reqs);
 
 	Array<Primitive*> prims;
@@ -1176,4 +1178,197 @@ void Model::GetPointsFromPrimitives(Array<Primitive*>& primitives, BinSearchTree
 			break;
 		}
 	}
+}
+
+bool Model::CreateObjByID(object_type type, Array<ID>& IDs, Array<double>& params)
+{
+	switch (type)
+	{
+		case ot_point: 
+		{
+			if (IDs.GetSize() != 1 || params.GetSize() != 2) return false; //исключение
+			Point* point = new Point(IDs[0], params[0], params[1]);
+			dataPrim.Add(IDs[0], point);
+			break; 
+		}
+		case ot_segment:
+		{
+			if (IDs.GetSize() != 3 || params.GetSize() != 0) return false; //исключение
+			Point* p1 = dynamic_cast<Point*>(*dataPrim.Find(IDs[1]));
+			Point* p2 = dynamic_cast<Point*>(*dataPrim.Find(IDs[2]));
+			Segment* seg = new Segment(IDs[0], p1, p2);
+			dataPrim.Add(IDs[0], seg);
+			Array<Primitive*> primitives;
+			primitives.PushBack(p1);
+			primitives.PushBack(p2);
+			primitives.PushBack(seg);
+			ConnectionReq* _connection = new ConnectionReq;
+			dataReq.Add(_connection->GetID(), _connection);
+			CreateLink(_connection->GetID(), primitives);
+			break; 
+		}
+		case ot_arc:
+		{
+			if (IDs.GetSize() != 3 || params.GetSize() != 1) return false; //исключение
+			Point* p1 = dynamic_cast<Point*>(*dataPrim.Find(IDs[1]));
+			Point* p2 = dynamic_cast<Point*>(*dataPrim.Find(IDs[2]));
+			Arc* arc = new Arc(IDs[0], p1, p2, params[0]);
+			dataPrim.Add(IDs[0], arc);
+			arc->RestoreCenter();
+			Array<Primitive*> primitives;
+			primitives.PushBack(p1);
+			primitives.PushBack(p2);
+			primitives.PushBack(arc);
+			ConnectionReq* _connection = new ConnectionReq;
+			dataReq.Add(_connection->GetID(), _connection);
+			CreateLink(_connection->GetID(), primitives);
+			break; 
+		}
+		case ot_circle:
+		{
+			if (IDs.GetSize() != 2 || params.GetSize() != 1) return false; //исключение
+			Point* center = dynamic_cast<Point*>(*dataPrim.Find(IDs[1]));
+			Circle* circle = new Circle(IDs[0], center, params[0]);
+			dataPrim.Add(IDs[0], circle);
+			Array<Primitive*> primitives;
+			primitives.PushBack(center);
+			primitives.PushBack(circle);
+			ConnectionReq* _connection = new ConnectionReq;
+			dataReq.Add(_connection->GetID(), _connection);
+			CreateLink(_connection->GetID(), primitives);
+			break; 
+		}
+		case ot_distBetPoints:
+		{
+			if (IDs.GetSize() != 3 || params.GetSize() != 1) return false;
+			Point* p1 = dynamic_cast<Point*>(*dataPrim.Find(IDs[1]));
+			Point* p2 = dynamic_cast<Point*>(*dataPrim.Find(IDs[2]));
+			DistBetPointsReq* req = new DistBetPointsReq(IDs[0], p1, p2, params[0]);
+			dataReq.Add(IDs[0], req);
+			Array<Primitive*> primitives;
+			primitives.PushBack(p1);
+			primitives.PushBack(p2);
+			CreateLink(IDs[0], primitives);
+			break;
+		}	
+		case ot_equalSegmentLen:
+		{
+			if (IDs.GetSize() != 3 || params.GetSize() != 0) return false;
+			Segment* seg1 = dynamic_cast<Segment*>(*dataPrim.Find(IDs[1]));
+			Segment* seg2 = dynamic_cast<Segment*>(*dataPrim.Find(IDs[2]));
+			EqualSegmentLenReq* req = new EqualSegmentLenReq(IDs[0], seg1, seg2);
+			dataReq.Add(IDs[0], req);
+			Array<Primitive*> primitives;
+			primitives.PushBack(seg1);
+			primitives.PushBack(seg2);
+			CreateLink(IDs[0], primitives);
+			break;
+		}	
+		case ot_pointPosReq:
+		{
+			if (IDs.GetSize() != 2 || params.GetSize() != 2) return false;
+			Point* p = dynamic_cast<Point*>(*dataPrim.Find(IDs[1]));
+			PointPosReq* req = new PointPosReq(IDs[0], p, params[0], params[1]);
+			dataReq.Add(IDs[0], req);
+			Array<Primitive*> primitives;
+			primitives.PushBack(p);
+			CreateLink(IDs[0], primitives);
+			break;
+		}	
+		case ot_pointsOnTheOneHand:
+		{
+			if (IDs.GetSize() != 4 || params.GetSize() != 0) return false;
+			Segment* seg = dynamic_cast<Segment*>(*dataPrim.Find(IDs[1]));
+			Point* p1 = dynamic_cast<Point*>(*dataPrim.Find(IDs[2]));
+			Point* p2 = dynamic_cast<Point*>(*dataPrim.Find(IDs[3]));
+			PointsOnTheOneHand* req = new PointsOnTheOneHand(IDs[0], seg, p1, p2);
+			dataReq.Add(IDs[0], req);
+			Array<Primitive*> primitives;
+			primitives.PushBack(seg);
+			primitives.PushBack(p1);
+			primitives.PushBack(p2);
+			CreateLink(IDs[0], primitives);
+			break;
+		}	
+		case ot_distBetPointSeg:
+		{
+			if (IDs.GetSize() != 3 || params.GetSize() != 1) return false;
+			Segment* seg = dynamic_cast<Segment*>(*dataPrim.Find(IDs[1]));
+			Point* p = dynamic_cast<Point*>(*dataPrim.Find(IDs[2]));
+			DistanceBetweenPointSegment* req = new DistanceBetweenPointSegment(IDs[0], seg, p, params[0]);
+			dataReq.Add(IDs[0], req);
+			Array<Primitive*> primitives;
+			primitives.PushBack(seg);
+			primitives.PushBack(p);
+			CreateLink(IDs[0], primitives);
+			break;
+		}	
+		case ot_distBetPointArc:
+		{
+			if (IDs.GetSize() != 3 || params.GetSize() != 1) return false;
+			Arc* arc = dynamic_cast<Arc*>(*dataPrim.Find(IDs[1]));
+			Point* p = dynamic_cast<Point*>(*dataPrim.Find(IDs[2]));
+			DistanceBetweenPointArc* req = new DistanceBetweenPointArc(IDs[0], arc, p, params[0]);
+			dataReq.Add(IDs[0], req);
+			Array<Primitive*> primitives;
+			primitives.PushBack(arc);
+			primitives.PushBack(p);
+			CreateLink(IDs[0], primitives);
+			break;
+		}	
+		case ot_angleBetSeg:
+		{
+			//проблема была только с 90 град 
+			if (IDs.GetSize() != 3 || params.GetSize() != 1) return false;
+			Segment* seg1 = dynamic_cast<Segment*>(*dataPrim.Find(IDs[1]));
+			Segment* seg2 = dynamic_cast<Segment*>(*dataPrim.Find(IDs[2]));
+			double angle = (acos(params[0]) * 180) / PI;
+			AngleBetweenSegments* req = new AngleBetweenSegments(IDs[0], seg1, seg2, angle);
+			dataReq.Add(IDs[0], req);
+			Array<Primitive*> primitives;
+			primitives.PushBack(seg1);
+			primitives.PushBack(seg2);
+			CreateLink(IDs[0], primitives);
+			break;
+		}	
+		case ot_pointInArc:
+		{
+			//не реализовано
+			if (IDs.GetSize() != 3 || params.GetSize() != 0) return false;
+			Arc* arc = dynamic_cast<Arc*>(*dataPrim.Find(IDs[1]));
+			Point* p = dynamic_cast<Point*>(*dataPrim.Find(IDs[2]));
+			PointInArc* req = new PointInArc(IDs[0], arc, p);
+			dataReq.Add(IDs[0], req);
+			Array<Primitive*> primitives;
+			primitives.PushBack(arc);
+			primitives.PushBack(p);
+			CreateLink(IDs[0], primitives);
+			break;
+		}
+		default:
+		{
+			return false; 
+		}
+	}
+	
+	return true;
+}
+
+bool Model::SaveProject(const std::string way)
+{
+	workingWithReester = new SVGformat(this);
+	bool isNotError = workingWithReester->Save(way);
+	delete workingWithReester;
+	return isNotError;
+}
+
+bool Model::DownloadFile(const std::string nameFile)
+{
+	dataPrim.DeleteDict();
+	dataReq.DeleteDict();
+	dataLink.DeleteDict();
+	workingWithReester = new SVGformat(this);
+	bool isNotError = workingWithReester->Download(nameFile);
+	delete workingWithReester;
+	return isNotError;
 }

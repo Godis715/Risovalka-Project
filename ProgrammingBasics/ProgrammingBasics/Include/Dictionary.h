@@ -49,6 +49,10 @@ private:
 		Node<TKey, TVal>* node = head;
 		while (node != nullptr)
 		{
+			if (key == node->key)
+			{
+				return nullptr;
+			}
 			if (key > node->key)
 			{
 				if (node->right != nullptr)
@@ -64,7 +68,7 @@ private:
 					return node->right;
 				}
 			}
-			else
+			if (key < node->key)
 			{
 				if (node->left != nullptr)
 				{

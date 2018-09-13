@@ -7,12 +7,11 @@ class IDGenerator
 {
 	public:
 	static IDGenerator * getInstance();
-
+	static void isLastHash(unsigned long long);
 		ID generateID();
 	private:
 		IDGenerator() { }
 		static IDGenerator* _instance;
-
 	static unsigned long long _lastGivenHash;
 };
 

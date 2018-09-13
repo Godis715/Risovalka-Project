@@ -15,18 +15,3 @@ Presenter::Created object #17
 Presenter::Creating requirement
 Presenter::Creating requirement
 Presenter::Could not create requirement
-could not move prim
-could not move prim
-could not move prim
-could not move prim
-could not move prim
-could not move prim
-could not move prim
-could not move prim
-could not move prim
-could not move prim
-could not move prim
-could not move prim
-could not move prim
-could not move prim
-could not move prim

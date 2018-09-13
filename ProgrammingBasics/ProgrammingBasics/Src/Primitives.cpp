@@ -26,6 +26,14 @@ Point::Point(double _x, double _y) :
 	this->parent = nullptr;
 	this->position = Vector2(_x, _y);
 }
+
+Point::Point(ID id, double _x, double _y) :
+	Primitive(id, ot_point)
+{
+	IDGenerator::isLastHash(id.GetHash());
+	this->parent = nullptr;
+	this->position = Vector2(_x, _y);
+}
 Point::Point(const Point& _p) :
 	Primitive(IDGenerator::getInstance()->generateID(), ot_point)
 {
@@ -63,6 +71,22 @@ bool Point::SetParent(Primitive* _parent) {
 Segment::Segment(Point* _p1, Point* _p2) :
 	Primitive(IDGenerator::getInstance()->generateID(), ot_segment)
 {
+	if (_p1 == nullptr || _p2 == nullptr) {
+		throw std::invalid_argument("Segment::Segment::parameters was nullptr");
+	}
+
+	point1 = _p1;
+	point2 = _p2;
+
+	_p1->SetParent(this);
+	_p1->SetParent(this);
+
+}
+
+Segment::Segment(ID id, Point* _p1, Point* _p2) :
+	Primitive(id, ot_segment)
+{
+	IDGenerator::isLastHash(id.GetHash());
 	if (_p1 == nullptr || _p2 == nullptr) {
 		throw std::invalid_argument("Segment::Segment::parameters was nullptr");
 	}
@@ -134,6 +158,24 @@ Arc::Arc(Point* _p1, Point* _p2, double _angle) :
 	if (_p1 == nullptr || _p2 == nullptr) {
 		throw std::invalid_argument("Arc::Arc::parameters was nullptr");
 	}
+
+	point1 = _p1;
+	point2 = _p2;
+
+	angle = _angle;
+
+	_p1->SetParent(this);
+	_p2->SetParent(this);
+}
+
+Arc::Arc(ID id, Point* _p1, Point* _p2, double _angle) :
+	Primitive(id, ot_arc)
+{
+	IDGenerator::isLastHash(id.GetHash());
+	if (_p1 == nullptr || _p2 == nullptr) {
+		throw std::invalid_argument("Arc::Arc::parameters was nullptr");
+	}
+	
 
 	point1 = _p1;
 	point2 = _p2;
@@ -234,6 +276,24 @@ void Arc::SetAngle(double newAngle) {
 Circle::Circle(Point* _center,  double _radius) :
 	Primitive(IDGenerator::getInstance()->generateID(), ot_circle)
 {
+	if (_center == nullptr) {
+		throw std::invalid_argument("Circle::Circle::_center was nullptr");
+	}
+	if (_radius < 0) {
+		throw std::invalid_argument("Circle::Circle::_radius was negative");
+	}
+
+	center = _center;
+
+	radius = _radius;
+
+	_center->SetParent(this);
+}
+
+Circle::Circle(ID id, Point* _center, double _radius) :
+	Primitive(id, ot_circle)
+{
+	IDGenerator::isLastHash(id.GetHash());
 	if (_center == nullptr) {
 		throw std::invalid_argument("Circle::Circle::_center was nullptr");
 	}

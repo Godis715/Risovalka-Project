@@ -197,6 +197,17 @@ void Presenter::DrawScene()
 	mode->DrawMode();
 }
 
+void Presenter::SaveProject(std::string way) 
+{
+	model->SaveProject(way);
+}
+
+void Presenter::DownloadFile(std::string nameFile)
+{
+	model->DownloadFile(nameFile);
+	view->Update();
+}
+
 void Presenter::Set_event(Event _ev, Array<double>& _params)
 {
 	Mode* temp = mode->HandleEvent(_ev, _params);

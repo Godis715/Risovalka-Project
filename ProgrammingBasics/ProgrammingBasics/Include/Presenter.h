@@ -15,6 +15,8 @@ private:
 	static Model* model;
 	static IView* view;
 public:
+	static void SaveProject(std::string);
+	static void DownloadFile(std::string);
 	static IView* GetView();
 	static void DrawScene();
 	static void DrawSelectedObjects(const Array<ID>&);
