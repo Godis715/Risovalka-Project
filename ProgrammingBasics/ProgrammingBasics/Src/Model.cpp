@@ -4,7 +4,6 @@
 
 bool Model::NewComponent(const ID& id, Array<ID>& Prims, Array<ID>& Reqs)
 {
-	system("cls");
 	delete currentComponent;
 	currentComponent = new BinSearchTree<ID, ID>;
 	Queue<ID> queuePrim;
@@ -36,10 +35,8 @@ bool Model::NewComponent(const ID& id, Array<ID>& Prims, Array<ID>& Reqs)
 
 	queueReq.Push(currentID);
 	currentComponent->Add(currentID, currentID);
-	std::cout << "r: " << currentID.GetHash() << " ";
 	while (!queueReq.IsEmpty())
 	{
-		std::cout << std::endl << "p:  ";
 		while (!queueReq.IsEmpty())
 		{
 			currentID = queueReq.Pop();
@@ -51,7 +48,6 @@ bool Model::NewComponent(const ID& id, Array<ID>& Prims, Array<ID>& Reqs)
 				for (auto l = (*marker)->GetMarker(); l.IsValid(); ++l) {
 					currentID = l.GetValue();
 					if (!currentComponent->Find(currentID).IsValid()) {
-						std::cout << currentID.GetHash() << " ";
 						currentComponent->Add(currentID, currentID);
 						queuePrim.Push(currentID);
 						
@@ -59,8 +55,6 @@ bool Model::NewComponent(const ID& id, Array<ID>& Prims, Array<ID>& Reqs)
 				}
 			}
 		}
-		std::cout << std::endl << "r: ";
-
 		while (!queuePrim.IsEmpty())
 		{
 			currentID = queuePrim.Pop();
@@ -72,7 +66,6 @@ bool Model::NewComponent(const ID& id, Array<ID>& Prims, Array<ID>& Reqs)
 				for (auto l = (*marker)->GetMarker(); l.IsValid(); ++l) {
 					currentID = l.GetValue();
 					if (!currentComponent->Find(currentID).IsValid()) {
-						std::cout << currentID.GetHash() << " ";
 						currentComponent->Add(currentID, currentID);
 						queueReq.Push(currentID);
 						
