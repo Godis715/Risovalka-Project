@@ -185,7 +185,7 @@ public:
 	
 	void operator=(Array&& arr) {
 
-		delete this->_storage;
+		delete[] this->_storage;
 
 		this->_capacity = arr._capacity;
 		this->_size = arr._size;
@@ -195,7 +195,7 @@ public:
 
 	void operator=(const Array& arr) {
 		
-		delete this->_storage;
+		delete[] this->_storage;
 
 		this->_capacity = arr._capacity;
 		this->_size = arr._size;

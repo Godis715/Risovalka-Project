@@ -17,6 +17,7 @@
 #include <FL/Fl_Output.H>
 #include <FL/Fl_Float_Input.H>
 #include <FL/math.h>
+//#include <FL/Fl_File_Chooser.H>
 
 ID CreatePoint(const Array<ID>& obj, const Array<double>& params) {
 	return Presenter::CreateObject(ot_point, params);
@@ -108,6 +109,9 @@ private:
 
 	Fl_Menu_Item* requirements;
 	Fl_Menu_Button* createRequirement_b;
+
+	Fl_Button* save_b;
+	Fl_Button* downland_b;
 
 	class SecondWindow : public Fl_Double_Window
 	{
@@ -407,6 +411,24 @@ private:
 		mainWindow->redraw();
 	}
 
+	static void cl_SaveProject(Fl_Widget* o, void*)
+	{
+		//char *newfile;
+		
+		//newfile = fl_file_chooser("Save File As?", "*", "title");
+		Presenter::SaveProject("way");
+		((Fl_Button*)o)->deactivate();
+		((Fl_Button*)o)->activate();
+	}
+
+	static void cl_DownloadFile(Fl_Widget* o, void*)
+	{
+		Presenter::DownloadFile("nameFile");
+		((Fl_Button*)o)->deactivate();
+		((Fl_Button*)o)->activate();
+	}
+
+
 	//..
 
 	static Fl_Window* mainWindow;
@@ -421,6 +443,14 @@ public:
 
 		drawWindow = new SecondWindow(10, 30, 1000, 600, "Draw Window");
 		drawWindow->end();
+
+		save_b = new Fl_Button(1010, 80, 50, 30, "Save");
+		save_b->callback(cl_SaveProject);
+		save_b->color(FL_WHITE);
+
+		downland_b = new Fl_Button(1010, 140, 100, 30, "Downland");
+		downland_b->callback(cl_DownloadFile);
+		downland_b->color(FL_WHITE);
 
 		log = new Fl_Output(1010, 0, 300, 30);
 
@@ -473,8 +503,8 @@ public:
 		
 		mainWindow->show();
 		drawWindow->show();
-
-		BinSearchTree<string, ID(*)(const Array<ID>&, const Array<double>&)> kek;
+    
+    BinSearchTree<string, ID(*)(const Array<ID>&, const Array<double>&)> kek;
 		kek.Add("Create_point", CreatePoint);
 		kek.Add("Create_segment", CreateSegment);
 		kek.Add("Create_arc", CreateArc);
@@ -485,7 +515,7 @@ public:
 		kek.Add("Equal_segment", EqualSegment);
 		kek.Add("Distance_bet_point_segment", DistanceBetPointSegment);
 		kek.Add("Delete", Delete);
-		Compiler compiler(kek);
+    Compiler compiler(kek);
 		std::ifstream file;
 		file.open("script.txt");
 		if (!file.eof()) {

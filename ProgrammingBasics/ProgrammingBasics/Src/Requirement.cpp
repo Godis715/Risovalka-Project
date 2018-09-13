@@ -3,8 +3,13 @@
 template Array<double>;
 template Array<double*>;
 
-Array<double*> Requirement::GetParams() {
+Array<double*> Requirement::GetArguments() {
 	return arguments;
+}
+
+Array<double> Requirement::GetParams()
+{
+	return params;
 }
 
 Array<double> Requirement::Gradient() {

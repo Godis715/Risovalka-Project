@@ -84,7 +84,8 @@ public:
 	}
 	Array<double> Gradient();
 	ID GetID() const;
-	Array<double*> GetParams();
+	Array<double*> GetArguments();
+	Array<double> GetParams();
 	object_type GetType() const;
 };
 
@@ -109,6 +110,22 @@ public:
 
 		params[0] = _distance;
 	}
+	DistBetPointsReq(ID id, Point* _point1, Point* _point2, double _distance) :
+		Requirement(id, ot_distBetPoints)
+	{
+		IDGenerator::isLastHash(id.GetHash());
+		arguments = Array<double*>(4);
+		params = Array<double>(1);
+		Vector2* pos1 = &_point1->position;
+		Vector2* pos2 = &_point2->position;
+
+		arguments[0] = &pos1->x;
+		arguments[1] = &pos1->y;
+		arguments[2] = &pos2->x;
+		arguments[3] = &pos2->y;
+
+		params[0] = _distance;
+	}
 	~DistBetPointsReq() { }
 
 	double error() {
@@ -124,6 +141,21 @@ public:
 	EqualSegmentLenReq(Segment* _seg1, Segment* _seg2) :
 		Requirement(IDGenerator::getInstance()->generateID(), ot_equalSegmentLen)
 	{
+		arguments = Array<double*>(8);
+		params = Array<double>(0);
+		arguments[0] = (&_seg1->point1->position.x);
+		arguments[1] = (&_seg1->point1->position.y);
+		arguments[2] = (&_seg1->point2->position.x);
+		arguments[3] = (&_seg1->point2->position.y);
+		arguments[4] = (&_seg2->point1->position.x);
+		arguments[5] = (&_seg2->point1->position.y);
+		arguments[6] = (&_seg2->point2->position.x);
+		arguments[7] = (&_seg2->point2->position.y);
+	}
+	EqualSegmentLenReq(ID id, Segment* _seg1, Segment* _seg2) :
+		Requirement(id, ot_equalSegmentLen)
+	{
+		IDGenerator::isLastHash(id.GetHash());
 		arguments = Array<double*>(8);
 		params = Array<double>(0);
 		arguments[0] = (&_seg1->point1->position.x);
@@ -178,6 +210,17 @@ public:
 		params[0] = _x;
 		params[1] = _y;
 	}
+	PointPosReq(ID id, Point* _point, double _x, double _y) :
+		Requirement(id, ot_pointPosReq) {
+		IDGenerator::isLastHash(id.GetHash());
+		arguments = Array<double*>(2);
+		params = Array<double>(2);
+		arguments[0] = &_point->position.x;
+		arguments[1] = &_point->position.y;
+
+		params[0] = _x;
+		params[1] = _y;
+	}
 	PointPosReq(Point* _point, const Vector2& _vec) :
 		Requirement(IDGenerator::getInstance()->generateID(), ot_pointPosReq) {
 		arguments[0] = &_point->position.x;
@@ -202,6 +245,26 @@ public:
 		point2(_point2),
 		Requirement(IDGenerator::getInstance()->generateID(), ot_pointsOnTheOneHand)
 	{
+
+		arguments = Array<double*>(8);
+		params = Array<double>(0);
+
+		arguments[0] = &_segment->point1->position.x;
+		arguments[1] = &_segment->point1->position.y;
+		arguments[2] = &_segment->point2->position.x;
+		arguments[3] = &_segment->point2->position.y;
+		arguments[4] = &_point1->position.x;
+		arguments[5] = &_point1->position.y;
+		arguments[6] = &_point2->position.x;
+		arguments[7] = &_point2->position.y;
+	}
+	PointsOnTheOneHand(ID id, Segment* _segment, Point* _point1, Point* _point2) :
+		segment(_segment),
+		point1(_point1),
+		point2(_point2),
+		Requirement(id, ot_pointsOnTheOneHand)
+	{
+		IDGenerator::isLastHash(id.GetHash());
 		arguments = Array<double*>(8);
 		params = Array<double>(0);
 
@@ -259,6 +322,24 @@ public:
 
 		params[0] = _distance;
 	}
+	DistanceBetweenPointSegment(ID id, Segment* _segment, Point* _point, double _distance) :
+		segment(_segment),
+		point(_point),
+		Requirement(id, ot_distBetPointSeg)
+	{
+		IDGenerator::isLastHash(id.GetHash());
+		arguments = Array<double*>(6);
+		params = Array<double>(1);
+
+		arguments[0] = &_segment->point1->position.x;
+		arguments[1] = &_segment->point1->position.y;
+		arguments[2] = &_segment->point2->position.x;
+		arguments[3] = &_segment->point2->position.y;
+		arguments[4] = &_point->position.x;
+		arguments[5] = &_point->position.y;
+
+		params[0] = _distance;
+	}
 	~DistanceBetweenPointSegment() {}
 	double error() {
 		double distance = segment->GetDistance(point->GetPosition()) - params[0];
@@ -279,6 +360,29 @@ public:
 		segment2(_segment2),
 		Requirement(IDGenerator::getInstance()->generateID(), ot_angleBetSeg)
 	{
+		arguments = Array<double*>(8);
+		params = Array<double>(1);
+
+		arguments[0] = &_segment1->point1->position.x;
+		arguments[1] = &_segment1->point1->position.y;
+		arguments[2] = &_segment1->point2->position.x;
+		arguments[3] = &_segment1->point2->position.y;
+		arguments[4] = &_segment2->point1->position.x;
+		arguments[5] = &_segment2->point1->position.y;
+		arguments[6] = &_segment2->point2->position.x;
+		arguments[7] = &_segment2->point2->position.y;
+		if (_andle == 90)
+		{
+			params[0] = 0;
+		}else params[0] = abs(cos((_andle / 180) * PI));
+		sinus = sin((_andle / 180) * PI);
+	}
+	AngleBetweenSegments(ID id, Segment* _segment1, Segment* _segment2, double _andle) :
+		segment1(_segment1),
+		segment2(_segment2),
+		Requirement(id, ot_angleBetSeg)
+	{
+		IDGenerator::isLastHash(id.GetHash());
 		arguments = Array<double*>(8);
 		params = Array<double>(1);
 
@@ -348,6 +452,25 @@ public:
 
 		params[0] = _distance;
 	}
+	DistanceBetweenPointArc(ID id, Arc* _arc, Point* _point, double _distance) :
+		arc(_arc),
+		point(_point),
+		Requirement(id, ot_distBetPointArc)
+	{
+		IDGenerator::isLastHash(id.GetHash());
+		arguments = Array<double*>(7);
+		params = Array<double>(1);
+
+		arguments[0] = &_arc->point1->position.x;
+		arguments[1] = &_arc->point1->position.y;
+		arguments[2] = &_arc->point2->position.x;
+		arguments[3] = &_arc->point2->position.y;
+		arguments[4] = &_arc->angle;
+		arguments[5] = &_point->position.x;
+		arguments[6] = &_point->position.y;
+
+		params[0] = _distance;
+	}
 	~DistanceBetweenPointArc() {}
 	double error() {
 		Vector2 vector(point->position - arc->GetCenter());
@@ -398,6 +521,20 @@ public:
 		point(_point),
 		Requirement(IDGenerator::getInstance()->generateID(), ot_pointInArc)
 	{
+		arguments[0] = &_arc->point1->position.x;
+		arguments[1] = &_arc->point1->position.y;
+		arguments[2] = &_arc->point2->position.x;
+		arguments[3] = &_arc->point2->position.y;
+		arguments[4] = &_arc->angle;
+		arguments[5] = &_point->position.x;
+		arguments[6] = &_point->position.y;
+	}
+	PointInArc(ID id, Arc* _arc, Point* _point) :
+		arc(_arc),
+		point(_point),
+		Requirement(id, ot_pointInArc)
+	{
+		IDGenerator::isLastHash(id.GetHash());
 		arguments[0] = &_arc->point1->position.x;
 		arguments[1] = &_arc->point1->position.y;
 		arguments[2] = &_arc->point2->position.x;

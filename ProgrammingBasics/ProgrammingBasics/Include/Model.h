@@ -1,7 +1,6 @@
 #ifndef __MODEL
 #define __MODEL
 
-
 #include "Copmilator.h"
 
 // ID
@@ -37,7 +36,6 @@ private:
 
 	BinSearchTree<ID, ID>* currentComponent;
 
-
 	bool GetRequirements(const Array<ID>&, Array<Requirement*>&);
 
 	bool GetPrimitives(const Array<ID>&, Array<Primitive*>&);
@@ -69,6 +67,30 @@ private:
 	void GetPointsFromPrimitives(Array<Primitive*>&, BinSearchTree<ID, Point*>&);
 
 	bool pointInArea(double, double, double, double, double, double);
+
+	bool CreateObjByID(object_type, Array<ID>&, Array<double>&);
+
+	class SVGformat
+	{
+	private:
+		Model* model;
+		std::string ScanAttribute(std::ifstream&);
+		Array<double> ScanParams(std::ifstream&);
+		bool ParsePointTag(std::ifstream&);
+		bool ParseSegmentTag(std::ifstream&);
+		bool ParseCircleTag(std::ifstream&);
+		bool ParseArcTag(std::ifstream&);
+		bool ParseRequirementTag(std::ifstream&, object_type);
+	public:
+		SVGformat();
+		SVGformat(Model*);
+		~SVGformat();
+		bool Download(const std::string);
+		bool Save(const std::string);
+
+	};
+	SVGformat* workingWithReester;
+
 public:
 	class infoObject
 	{
@@ -125,5 +147,9 @@ public:
 	bool Scale(const Array<ID>&, const double);
 
 	bool Move(const Array<ID>&, const Vector2&);
+
+	bool SaveProject(const std::string);
+
+	bool DownloadFile(const std::string);
 };
 #endif
