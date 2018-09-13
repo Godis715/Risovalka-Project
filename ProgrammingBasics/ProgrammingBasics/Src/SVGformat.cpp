@@ -42,7 +42,7 @@ Array<double> Model::SVGformat::ScanParams(std::ifstream& file)
 					params.PushBack(std::stod(dig));
 					dig.clear();
 				}
-				else if ((tempSymbol >= 48 && tempSymbol <= 57)
+				else if ((tempSymbol >= '0' && tempSymbol <= '9')
 					|| tempSymbol == '.') dig += tempSymbol;
 			} while (tempSymbol != '"');
 		}
