@@ -2,99 +2,169 @@
 <!-- DrawProject -->
 <svg width="1000" height="1000">
 	<drawProject:point
-		px="200"
-		py="400"
-		id="20"
-	/>
-	<drawProject:point
-		px="336.861"
-		py="136.004"
+		px="436.482"
+		py="126.858"
 		id="1"
 	/>
 	<drawProject:point
-		px="153"
-		py="326"
+		px="366.256"
+		py="362.616"
 		id="2"
 	/>
 	<line
-		x1="336.861"
-		y1="136.004"
-		x2="153"
-		y2="326"
+		x1="436.482"
+		y1="126.858"
+		x2="366.256"
+		y2="362.616"
 		id="3"
 		childIds="1 2"
 		stroke="red"
 		stroke-width="5"
 	/>
 	<drawProject:point
-		px="336.86"
-		py="136.005"
+		px="327.59"
+		py="216.65"
 		id="5"
 	/>
 	<drawProject:point
-		px="488.028"
-		py="319.204"
+		px="573.335"
+		py="226.857"
 		id="6"
 	/>
 	<line
-		x1="336.86"
-		y1="136.005"
-		x2="488.028"
-		y2="319.204"
+		x1="327.59"
+		y1="216.65"
+		x2="573.335"
+		y2="226.857"
 		id="7"
 		childIds="5 6"
 		stroke="red"
 		stroke-width="5"
 	/>
 	<drawProject:point
-		px="494"
-		py="68"
-		id="10"
-	/>
-	<circle
-		cx="494"
-		cy="68"
-		r="45.607"
-		id="11"
-		childIds="10"
-		stroke="red"
-		stroke-width="5"
-		fill="none"
+		px="436.332"
+		py="126.847"
+		id="9"
 	/>
 	<drawProject:point
-		px="622"
-		py="189"
+		px="534.451"
+		py="352.465"
+		id="10"
+	/>
+	<line
+		x1="436.332"
+		y1="126.847"
+		x2="534.451"
+		y2="352.465"
+		id="11"
+		childIds="9 10"
+		stroke="red"
+		stroke-width="5"
+	/>
+	<drawProject:point
+		px="366.485"
+		py="362.393"
 		id="13"
 	/>
 	<drawProject:point
-		px="593.955"
-		py="265.23"
+		px="572.295"
+		py="227.128"
 		id="14"
 	/>
-	<path
-		d="M622,189 A58.3485,58.3485 0 0,0 593.955,265.23"
+	<line
+		x1="366.485"
+		y1="362.393"
+		x2="572.295"
+		y2="227.128"
 		id="15"
 		childIds="13 14"
 		stroke="red"
 		stroke-width="5"
-		fill="none"
 	/>
-	<drawProject:arc
-		x1="622"
-		y1="189"
-		x2="593.955"
-		y2="265.23"
-		angle="1.53972"
-		id="15"
-		childIds="13 14"
+	<drawProject:point
+		px="328.55"
+		py="216.936"
+		id="17"
+	/>
+	<drawProject:point
+		px="534.225"
+		py="352.251"
+		id="18"
+	/>
+	<line
+		x1="328.55"
+		y1="216.936"
+		x2="534.225"
+		y2="352.251"
+		id="19"
+		childIds="17 18"
+		stroke="red"
+		stroke-width="5"
+	/>
+	<drawProject:point
+		px="260"
+		py="71"
+		id="34"
+	/>
+	<drawProject:point
+		px="150"
+		py="194"
+		id="35"
+	/>
+	<line
+		x1="260"
+		y1="71"
+		x2="150"
+		y2="194"
+		id="36"
+		childIds="34 35"
+		stroke="red"
+		stroke-width="5"
 	/>
 	<drawProject:req>
 		<distBetPoints
-			id="9"
-			IDs="1 5"
+			id="21"
+			IDs="6 14"
 			params="0"	/>
-		<pointsOnTheOneHand
-			id="17"
-			IDs="7 10 14"	/>
+		<distBetPoints
+			id="22"
+			IDs="1 9"
+			params="0"	/>
+		<distBetPoints
+			id="23"
+			IDs="5 17"
+			params="0"	/>
+		<distBetPoints
+			id="24"
+			IDs="2 13"
+			params="0"	/>
+		<distBetPoints
+			id="25"
+			IDs="10 18"
+			params="0"	/>
+		<equalSegmentLen
+			id="26"
+			IDs="11 3"	/>
+		<equalSegmentLen
+			id="27"
+			IDs="7 11"	/>
+		<equalSegmentLen
+			id="28"
+			IDs="15 11"	/>
+		<equalSegmentLen
+			id="29"
+			IDs="19 11"	/>
+		<equalSegmentLen
+			id="30"
+			IDs="19 7"	/>
+		<equalSegmentLen
+			id="31"
+			IDs="15 7"	/>
+		<equalSegmentLen
+			id="32"
+			IDs="7 19"	/>
+		<equalSegmentLen
+			id="33"
+			IDs="15 3"	/>
 	</drawProject:req>
 </svg>

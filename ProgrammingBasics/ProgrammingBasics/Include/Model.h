@@ -71,7 +71,7 @@ private:
 
 	bool CreateObjByID(object_type, Array<ID>&, Array<double>&);
 
-	class Download
+	class SVGformat
 	{
 	private:
 		Model* model;
@@ -83,13 +83,14 @@ private:
 		bool ParseArcTag(std::ifstream&);
 		bool ParseRequirementTag(std::ifstream&, object_type);
 	public:
-		Download();
-		Download(Model*);
-		~Download();
-		bool SetFile(std::string);
+		SVGformat();
+		SVGformat(Model*);
+		~SVGformat();
+		bool Download(const std::string);
+		bool Save(const std::string);
 
 	};
-	Download* download;
+	SVGformat* workingWithReester;
 
 public:
 	class infoObject
