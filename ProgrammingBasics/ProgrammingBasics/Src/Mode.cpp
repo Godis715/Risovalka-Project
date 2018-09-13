@@ -38,7 +38,7 @@ CreatingSegment::CreatingSegment() : segmentParameters(4) {
 Mode* CreatingSegment::HandleEvent(const Event ev, Array<double>& params) {
 	if (ev == ev_leftMouseDown) {
 		if (params.GetSize() != 2) {
-			throw std::exception("Bad number of parameters");
+            throw std::invalid_argument("Bad number of parameters");
 		}
 		// if it were no clicks
 		// then create one point and change the state
@@ -75,7 +75,7 @@ Mode* CreatingSegment::HandleEvent(const Event ev, Array<double>& params) {
 	if (ev == ev_mouseMove)
 	{
 		if (params.GetSize() != 2) {
-			throw std::exception("Bad number of parameters");
+            throw std::invalid_argument("Bad number of parameters");
 		}
 
 		if (state == noClick) {
@@ -111,7 +111,7 @@ CreatingSegment::~CreatingSegment() {
 Mode* CreatingPoint::HandleEvent(const Event ev, Array<double>& params) {
 	if (ev == ev_leftMouseDown) {
 		if (params.GetSize() != 2) {
-			throw std::exception("Bad number of parameters");
+            throw std::invalid_argument("Bad number of parameters");
 		}
 
 		ID id = Presenter::CreateObject(ot_point, params);
@@ -133,7 +133,7 @@ CreatingCircle::CreatingCircle() : CircleParameters(3) {
 Mode* CreatingCircle::HandleEvent(const Event ev, Array<double>& params) {
 	if (ev == ev_leftMouseDown) {
 		if (params.GetSize() != 2) {
-			throw std::exception("Bad number of parameters");
+            throw std::invalid_argument("Bad number of parameters");
 		}
 		// if it were no clicks
 		// then create one point and change the state
@@ -165,7 +165,7 @@ Mode* CreatingCircle::HandleEvent(const Event ev, Array<double>& params) {
 	if (ev == ev_mouseMove)
 	{
 		if (params.GetSize() != 2) {
-			throw std::exception("Bad number of parameters");
+            throw std::invalid_argument("Bad number of parameters");
 		}
 		if (state == noClick) {
 			return nullptr;
@@ -203,7 +203,7 @@ CreatingArc::CreatingArc() : arcParameters(6) {
 Mode* CreatingArc::HandleEvent(const Event ev, Array<double>& params) {
 	if (ev == ev_leftMouseDown) {
 		if (params.GetSize() != 2) {
-			throw std::exception("Bad number of parameters");
+            throw std::invalid_argument("Bad number of parameters");
 		}
 		// if it were no clicks
 		// then create one point and change the state
@@ -249,7 +249,7 @@ Mode* CreatingArc::HandleEvent(const Event ev, Array<double>& params) {
 	if (ev == ev_mouseMove)
 	{
 		if (params.GetSize() != 2) {
-			throw std::exception("Bad number of parameters");
+            throw std::invalid_argument("Bad number of parameters");
 		}
 		if (state == noClick) {
 			return nullptr;
@@ -323,7 +323,7 @@ void Selection::AddObject(const ID& obj) {
 Mode* Selection::HandleEvent(const Event e, Array<double>& params) {
 	if (e == ev_leftMouseDown) {
 		if (params.GetSize() != 2) {
-			throw std::exception("Bad number of parameters");
+            throw std::invalid_argument("Bad number of parameters");
 		}
 
 		//for area selection
@@ -467,7 +467,7 @@ Redaction::Redaction(Array<ID> _selecObj, Event _ev) : selectedObjects(_selecObj
 		status = scale;
 		break;
 	default:
-		std::exception("Redaction : not valid status");
+        std::invalid_argument("Redaction : not valid status");
 		break;
 	}
 }
@@ -482,7 +482,7 @@ Mode* Redaction::HandleEvent(const Event e, Array<double>& params)
 	{
 		if (e == ev_leftMouseDown) {
 			if (params.GetSize() != 2) {
-				throw std::exception("Bad number of parameters");
+                throw std::invalid_argument("Bad number of parameters");
 			}
 			posStart.x = params[0];
 			posStart.y = params[1];
@@ -493,7 +493,7 @@ Mode* Redaction::HandleEvent(const Event e, Array<double>& params)
 		if (e == ev_mouseMove && state == click)
 		{
 			if (params.GetSize() != 2) {
-				throw std::exception("Bad number of parameters");
+                throw std::invalid_argument("Bad number of parameters");
 			}
 			posEnd.x = params[0];
 			posEnd.y = params[1];
@@ -511,7 +511,7 @@ Mode* Redaction::HandleEvent(const Event e, Array<double>& params)
 		if (e == ev_scroll)
 		{
 			if (params.GetSize() != 1) {
-				throw std::exception("Bad number of parameters");
+                throw std::invalid_argument("Bad number of parameters");
 			}
 			double coef;
 			if (params[0] > 0 )
@@ -594,7 +594,7 @@ CreateRequirementWithParam::CreateRequirementWithParam(Array<ID> _selecObj, Even
 		break;
 	}
 	default:
-		std::exception("CreateRequirement : not valid status");
+        std::invalid_argument("CreateRequirement : not valid status");
 		break;
 	}
 }
@@ -609,7 +609,7 @@ Mode* CreateRequirementWithParam::HandleEvent(const Event ev, Array<double>& par
 	if (ev == ev_input)
 	{
 		if (params.GetSize() != 1) {
-			throw std::exception("Bad number of parameters");
+            throw std::invalid_argument("Bad number of parameters");
 		}
 
 		Presenter::CreateRequirement(typeRequirement, selectedPrim, params);
@@ -642,7 +642,7 @@ Mode* NavigationOnScene::HandleEvent(const Event ev, Array<double>& params) {
 	//for translate 
 	if (ev == ev_leftMouseDown) {
 		if (params.GetSize() != 2) {
-			throw std::exception("Bad number of parameters");
+            throw std::invalid_argument("Bad number of parameters");
 		}
 		posStart.x = params[0];
 		posStart.y = params[1];
@@ -653,7 +653,7 @@ Mode* NavigationOnScene::HandleEvent(const Event ev, Array<double>& params) {
 	if (ev == ev_mouseMove && stateMove == click)
 	{
 		if (params.GetSize() != 2) {
-			throw std::exception("Bad number of parameters");
+            throw std::invalid_argument("Bad number of parameters");
 		}
 		posEnd.x = params[0];
 		posEnd.y = params[1];
@@ -691,7 +691,7 @@ Mode* NavigationOnScene::HandleEvent(const Event ev, Array<double>& params) {
 	if (ev == ev_scroll)
 	{
 		if (params.GetSize() != 1) {
-			throw std::exception("Bad number of parameters");
+            throw std::invalid_argument("Bad number of parameters");
 		}
 		double deltaCoef;
 		if (params[0] > 0)

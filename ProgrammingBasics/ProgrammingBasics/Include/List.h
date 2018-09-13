@@ -115,7 +115,7 @@ public:
 
 		T GetValue() const {
 			if (!isValid) {
-				throw std::exception("Marker was not valid");
+                throw std::runtime_error("Marker was not valid");
 			}
 			return current->value;
 		}
