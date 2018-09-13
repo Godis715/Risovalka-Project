@@ -1,8 +1,7 @@
 #ifndef __MODEL
 #define __MODEL
 
-#include "Logger.h"
-#include <math.h>
+#include "Copmilator.h"
 
 // ID
 // IDGenerator

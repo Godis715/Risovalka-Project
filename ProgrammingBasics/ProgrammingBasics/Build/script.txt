@@ -1,0 +1,10 @@
+Create_point()(50, 50)->poi_q;
+Create_segment()(50, 20, 200, 100)->seg_q;
+Create_circle()(60, 60, 20)->cir_q;
+Create_arc()(100, 100, 120, 120, 90, 90)->arc_q;
+Create_point()(100, 300)->poi_w;
+Dist_bet_points(poi_q, poi_w)(20);
+Create_segment()(0, 0, 20, 20)->seg_w;
+Equal_segment(seg_q, seg_w)();
+
+Distance_bet_point_segment(seg_q, poi_q)(10);
