@@ -11,7 +11,7 @@
 #include <FL/Fl_Window.H>
 #include <FL/Fl_Box.H>
 #include <FL/fl_draw.H>
-#include <FL/Fl_Button.h>
+#include <FL/Fl_Button.H>
 #include <FL/Fl_Menu_Button.H>
 #include <FL/Fl_Menu_Item.H>
 #include <FL/Fl_Output.H>
@@ -32,7 +32,7 @@ ID CreateCircle(const Array<ID>& obj, const Array<double>& params) {
 }
 ID Move(const Array<ID>& obj, const Array<double>& params) {
 	if (params.GetSize() != 2) {
-		throw std::exception("invalid arguments");
+        throw std::invalid_argument("invalid arguments");
 	}
 	Presenter::MoveObject(obj, Vector2(params[0], params[1]));
 	return ID();
@@ -40,7 +40,7 @@ ID Move(const Array<ID>& obj, const Array<double>& params) {
 }
 ID Scale(const Array<ID>& obj, const Array<double>& params) {
 	if (params.GetSize() != 1) {
-		throw std::exception("invalid arguments");
+        throw std::invalid_argument("invalid arguments");
 	}
 	Presenter::ScaleObjects(obj, params[0]);
 	return ID();

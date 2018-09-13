@@ -1,7 +1,7 @@
 #include <Requirement.h>
 
-template Array<double>;
-template Array<double*>;
+//template Array<double>;
+//template Array<double*>;
 
 Array<double*> Requirement::GetParams() {
 	return arguments;

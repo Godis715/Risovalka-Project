@@ -45,7 +45,7 @@ public:
 	{
 		if (IsEmpty())
 		{
-			throw new std::exception("Stack is empty!");
+            throw new std::runtime_error("Stack is empty!");
 		}
 		else
 		{
@@ -120,7 +120,7 @@ public:
 
 	Type Pop() {
 		if (IsEmpty()) {
-			throw std::exception("stack is Empty");
+            throw std::runtime_error("stack is Empty");
 		}
 		Type value = stack->value;
 		Element<Type>* temp = stack;

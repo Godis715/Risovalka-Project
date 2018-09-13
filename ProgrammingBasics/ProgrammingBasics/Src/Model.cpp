@@ -227,7 +227,7 @@ bool Model::DeleteRequirement(const ID& req_id) {
 
 	auto dataLinkMarker = dataLink.Find(req_id);
 	if (!dataLinkMarker.IsValid()) {
-		throw std::exception("Invalid link requirement->primitive");
+        throw std::invalid_argument("Invalid link requirement->primitive");
 	}
 
 	auto listPrim = *dataLinkMarker;
@@ -236,7 +236,7 @@ bool Model::DeleteRequirement(const ID& req_id) {
 	for (auto i = listPrim->GetMarker(); i.IsValid(); ++i) {
 		dataLinkMarker = dataLink.Find(i.GetValue());
 		if (!dataLinkMarker.IsValid()) {
-			throw std::exception("Invalid link primitive->requirement");
+            throw std::invalid_argument("Invalid link primitive->requirement");
 		}
 		auto listReq = *dataLinkMarker;
 		listReq->Find(req_id).DeleteCurrent();

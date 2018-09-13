@@ -67,7 +67,7 @@ public:
 			break;
 		}
 		default: {
-			throw std::exception("Couldn't create requirement. Invalid requirement type");
+            throw std::invalid_argument("Couldn't create requirement. Invalid requirement type");
 		}
 		}
 
@@ -78,7 +78,7 @@ public:
 	virtual void Change(const double);
 	virtual void ChangeParams(const Array<double>& newParams) {
 		if (newParams.GetSize() != params.GetSize()) {
-			throw std::exception("Invalid requirement parameters!");
+            throw std::invalid_argument("Invalid requirement parameters!");
 		}
 		params = newParams;
 	}
@@ -316,7 +316,7 @@ public:
 
 	void ChangeParams(const Array<double>& newParams) {
 		if (newParams.GetSize() != 1) {
-			throw std::exception("Invalid new param argement");
+            throw std::invalid_argument("Invalid new param argement");
 		}
 		params[0] = abs(cos((newParams[0] / 180) * PI));
 		sinus = sin((newParams[0] / 180) * PI);

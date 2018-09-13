@@ -31,7 +31,7 @@ public:
 		}
 	}
 private:
-	bool IsRight(string& const str) {
+    bool IsRight(const string& str) {
 		std::cmatch result;
 		std::regex regul("[A-Z]"
 			"([a-z0-9_])*"
@@ -76,7 +76,7 @@ private:
 		return result;
 	}
 
-	bool ParseNumber(string& const number, double& num) {
+    bool ParseNumber(const string& number, double& num) {
 		int countPoint = 0;
 		if ((number[0] < 48) && (number[0] > 57)) {
 			return false;
@@ -145,7 +145,7 @@ private:
 		return result;
 	}
 
-	ID Complete(string& const func, const Array<string>& variables, const Array<double>& params, bool& flag) {
+    ID Complete(const string& func, const Array<string>& variables, const Array<double>& params, bool& flag) {
 		ID id;
 		double param;
 

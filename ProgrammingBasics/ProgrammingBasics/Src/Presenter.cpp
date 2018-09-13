@@ -25,7 +25,7 @@ ID Presenter::CreateObject(object_type type, const Array<double>& params) {
 	bool result = model->CreateObject(type, params, id);
 	if (!result) {
 		LOG(string("Presenter::Could not create object"), LEVEL_3);
-		throw std::exception("could not create object");
+        throw std::runtime_error("could not create object");
 	}
 	LOG(string("Presenter::Created object"), id, LEVEL_1);
 	return id;
