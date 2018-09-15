@@ -161,7 +161,13 @@ private:
 			}
 		}
 
-		return Tree.Find(func).operator*()(ids, params);
+		auto marker = Tree.Find(func);
+		if (marker.IsValid()) {
+			return marker.operator*()(ids, params);
+		}
+		else {
+			return id;
+		}
 	}
 
 	bool Command(string& input) {

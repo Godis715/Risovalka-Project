@@ -518,8 +518,10 @@ public:
     Compiler compiler(kek);
 		std::ifstream file;
 		file.open("script.txt");
-		if (!file.eof()) {
-			compiler.Parse(file);
+		if (file.is_open()) {
+			if (!file.eof()) {
+				compiler.Parse(file);
+			}
 		}
 	}
 	~ViewFLTK(){}
