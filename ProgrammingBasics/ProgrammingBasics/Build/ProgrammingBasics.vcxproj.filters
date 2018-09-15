@@ -42,6 +42,9 @@
     <ClCompile Include="..\Src\Requirement.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
+    <ClCompile Include="..\Src\DataController.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Include\Array.h">
@@ -75,6 +78,9 @@
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="..\Include\List.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Include\Queue.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>

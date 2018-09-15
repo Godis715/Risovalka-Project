@@ -30,6 +30,10 @@ bool ReqController::IsReq(object_type type) const {
 		type == ot_distBetPointArc;
 }
 
+bool ReqController::IsReq(const ID& obj) const {
+	return IsReq(objCtrl->GetType(obj));
+}
+
 ReqController* ReqController::GetInstance() {
 	if (instance == nullptr) {
 		instance = new ReqController;

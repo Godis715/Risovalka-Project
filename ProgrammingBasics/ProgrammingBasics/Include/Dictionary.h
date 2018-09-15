@@ -2,6 +2,7 @@
 #define __DICT
 
 #include "Array.h"
+#include "Queue.h"
 
 // class - parent of all Nodes
 template <class TKey, class TVal> class Node {

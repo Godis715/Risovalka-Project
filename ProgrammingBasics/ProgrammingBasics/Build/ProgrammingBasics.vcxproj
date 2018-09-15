@@ -129,6 +129,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\Src\Controllers.cpp" />
+    <ClCompile Include="..\Src\DataController.cpp" />
     <ClCompile Include="..\Src\ID.cpp" />
     <ClCompile Include="..\Src\Logger.cpp" />
     <ClCompile Include="..\Src\main.cpp" />
@@ -148,6 +149,7 @@
     <ClInclude Include="..\Include\List.h" />
     <ClInclude Include="..\Include\Logger.h" />
     <ClInclude Include="..\Include\Primitives.h" />
+    <ClInclude Include="..\Include\Queue.h" />
     <ClInclude Include="..\Include\Requirement.h" />
     <ClInclude Include="..\Include\Vector2.h" />
   </ItemGroup>

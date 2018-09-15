@@ -21,6 +21,8 @@ private:
 public:
 	static ReqController* GetInstance();
 
+	bool IsReq(const ID&) const;
+
 	Array<double> GetReqParamsAsValues(const ID&) const;
 	Array<double*> GetReqArgsAsPointers(const ID&) const;
 

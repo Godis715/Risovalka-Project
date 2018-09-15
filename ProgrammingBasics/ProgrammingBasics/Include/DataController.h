@@ -1,7 +1,7 @@
 #ifndef __DATACONTROLLER
 #define __DATACONTROLLER
 
-#include "ID.h"
+#include "Requirement.h"
 #include "Dictionary.h"
 #include "List.h"
 
@@ -11,17 +11,21 @@ private:
 	DataController();
 
 	typedef BinSearchTree<ID, ID> DataID;
-	typedef BinSearchTree<ID, List<ID> > DataLink;
+	typedef BinSearchTree<ID, BinSearchTree<ID, ID>* > DataLink;
 	
 	DataID primData;
 	DataID reqData;
 	DataLink dataLink;
 
+	PrimController* primCtrl;
+	ReqController* reqCtrl;
+
+	BinSearchTree<ID, ID> currentComponent;
+
 public:
 	DataController* GetInstance();
 
-	void AddPrimitive(const ID&);
-	void AddRequirement(const ID&);
+	void AddObject(const ID&);
 	void Connect(const ID&, const Array<ID>&);
 	void DeleteObject(const ID&);
 	Array<ID> GetComponent(const ID&) const;
