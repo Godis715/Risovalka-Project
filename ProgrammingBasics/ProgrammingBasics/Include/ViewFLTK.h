@@ -163,6 +163,12 @@ private:
 						delete ViewFLTK::currentWindget;
 						ViewFLTK::mainWindow->redraw();
 					}
+					if (displayParams != nullptr)
+					{
+						delete ViewFLTK::displayParams;
+						ViewFLTK::displayParams = nullptr;
+						ViewFLTK::mainWindow->redraw();
+					}
 					delete ViewFLTK::lastCursor;
 					ViewFLTK::lastCursor = new Fl_Cursor(FL_CURSOR_DEFAULT);
 					ViewFLTK::lastEvent = ev_ctrlUp;
@@ -217,12 +223,16 @@ private:
 		int coordX = 1010;
 		int coordY = 100;
 		int sizeX = 110;
-		int sizeY = 200;
+		int sizeY = 230;
+
 		object_type type;
+
 		Fl_Group* group;
 		Array<Fl_Float_Input*> inputs;
 		Fl_Button* b_OK;
 		Fl_Button* b_close;
+		Fl_Button* b_req;
+
 		const char* ReverseParse(const double dig, int& size)
 		{
 			std::string strDig;
@@ -327,12 +337,28 @@ private:
 		}
 
 	public:
-		DisplayParams(const object_type type, const Array<double>& params)
+		DisplayParams(const object_type _type, const Array<double>& params)
 		{
-
+			switch (_type)
+			{
+			case ot_point:
+				sizeY = 140;
+				break;
+			case ot_segment:
+				sizeY = 200;
+				break;
+			case ot_arc: 
+				sizeY = 230;
+				break;
+			case ot_circle: 
+				sizeY = 170;
+				break;
+			default:
+				break;
+			}
 			group = new Fl_Group(coordX, coordY, sizeX, sizeY);
 			{
-				switch (type)
+				switch (_type)
 				{
 				case ot_point: {
 					DisplayPoint(params);
@@ -353,9 +379,13 @@ private:
 				default:
 					break;
 				}
-
+				type = _type;
 				b_OK = new Fl_Button(coordX + 10, coordY + sizeY - 30, 30, 20, "OK");
+				b_OK->color(FL_WHITE);
 				b_close = new Fl_Button(coordX + 50, coordY + sizeY - 30, 50, 20, "CLOSE");
+				b_close->color(FL_WHITE);
+				b_req = new Fl_Button(coordX + 10, coordY + sizeY - 60, 30, 20, "Req");
+				b_req->color(FL_WHITE);
 				group->color(FL_YELLOW);
 				group->box(FL_UP_BOX);
 				group->end();
@@ -363,7 +393,17 @@ private:
 			
 		}
 
-
+		~DisplayParams()
+		{
+			delete b_OK;
+			delete b_close;
+			delete b_req;
+			for (int i = 0; i < inputs.GetSize(); i++)
+			{
+				delete inputs[i];
+			}
+			delete group;
+		}
 
 	};
 
@@ -765,6 +805,11 @@ public:
 	void GiveParams(const object_type type, const Array<double>& params)
 	{
 		mainWindow->begin();
+		if (displayParams != nullptr)
+		{
+			delete displayParams;
+			displayParams = nullptr;
+		}
 		displayParams = new DisplayParams(type, params);
 		mainWindow->end();
 		mainWindow->redraw();
