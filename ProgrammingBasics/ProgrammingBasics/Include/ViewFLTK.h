@@ -17,6 +17,8 @@
 #include <FL/Fl_Output.H>
 #include <FL/Fl_Float_Input.H>
 #include <FL/math.h>
+#include <sstream>
+#include <iomanip>
 //#include <FL/Fl_File_Chooser.H>
 
 
@@ -209,29 +211,169 @@ private:
 		}
 	};
 
-	/*class testClass
+	class DisplayParams
 	{
 	private:
-		Fl_Float_Input * textBuffer;
-	public:
-		testClass()
+		int coordX = 1010;
+		int coordY = 100;
+		int sizeX = 110;
+		int sizeY = 200;
+		object_type type;
+		Fl_Group* group;
+		Array<Fl_Float_Input*> inputs;
+		Fl_Button* b_OK;
+		Fl_Button* b_close;
+		const char* ReverseParse(const double dig, int& size)
 		{
-			textBuffer = new Fl_Float_Input(1010, 50, 100, 30);
-			textBuffer->when(FL_WHEN_ENTER_KEY);
-			textBuffer->callback(cl_Input);
+			std::string strDig;
+			std::ostringstream ost;
+			ost << std::fixed << std::setprecision(2) << dig;
+			strDig = ost.str();
+
+			size = strDig.length();
+			char* charDig = new char[size];
+			for (int i = 0; i < size; i++)
+			{
+				charDig[i] = strDig[i];
+			}
+			return charDig;
 		}
+
+		bool DisplayPoint(const Array<double>& params)
+		{
+			if (params.GetSize() != 2) return false; //исключение
+			int digLength = 0;
+			const char* dig;
+
+			inputs.PushBack(new Fl_Float_Input(coordX + 20, coordY + 10, 50, 30, "x"));
+			dig = ReverseParse(params[0], digLength);
+			inputs[0]->value(dig, digLength);
+
+			inputs.PushBack(new Fl_Float_Input(coordX + 20, coordY + 40, 50, 30, "y"));
+			dig = ReverseParse(params[1], digLength);
+			inputs[1]->value(dig, digLength);
+		}
+
+		bool DisplaySegment(const Array<double>& params)
+		{
+			if (params.GetSize() != 4) return false; //исключение
+			int digLength = 0;
+			const char* dig;
+
+			inputs.PushBack(new Fl_Float_Input(coordX + 20, coordY + 10, 50, 30, "x1"));
+			dig = ReverseParse(params[0], digLength);
+			inputs[0]->value(dig, digLength);
+
+			inputs.PushBack(new Fl_Float_Input(coordX + 20, coordY + 40, 50, 30, "y1"));
+			dig = ReverseParse(params[1], digLength);
+			inputs[1]->value(dig, digLength);
+
+			inputs.PushBack(new Fl_Float_Input(coordX + 20, coordY + 70, 50, 30, "x2"));
+			dig = ReverseParse(params[2], digLength);
+			inputs[2]->value(dig, digLength);
+
+			inputs.PushBack(new Fl_Float_Input(coordX + 20, coordY + 100, 50, 30, "y2"));
+			dig = ReverseParse(params[3], digLength);
+			inputs[3]->value(dig, digLength);
+		}
+
+		bool DisplayArc(const Array<double>& params)
+		{
+			if (params.GetSize() != 6) return false; //исключение
+			int digLength = 0;
+			const char* dig;
+
+			inputs.PushBack(new Fl_Float_Input(coordX + 20, coordY + 10, 50, 30, "x1"));
+			dig = ReverseParse(params[2], digLength);
+			inputs[0]->value(dig, digLength);
+
+			inputs.PushBack(new Fl_Float_Input(coordX + 20, coordY + 40, 50, 30, "y1"));
+			dig = ReverseParse(params[3], digLength);
+			inputs[1]->value(dig, digLength);
+
+			inputs.PushBack(new Fl_Float_Input(coordX + 20, coordY + 70, 50, 30, "x2"));
+			dig = ReverseParse(params[4], digLength);
+			inputs[2]->value(dig, digLength);
+
+			inputs.PushBack(new Fl_Float_Input(coordX + 20, coordY + 100, 50, 30, "y2"));
+			dig = ReverseParse(params[5], digLength);
+			inputs[3]->value(dig, digLength);
+
+			Vector2 vector1 = Vector2(params[2], params[3]) - Vector2(params[0], params[1]);
+			Vector2 vector2 = Vector2(params[4], params[5]) - Vector2(params[0], params[1]);
+			double angle = (Vector2::Angle(vector1, vector2) * 180)/PI;
+			inputs.PushBack(new Fl_Float_Input(coordX + 20, coordY + 130, 50, 30, "an"));
+			dig = ReverseParse(angle, digLength);
+			inputs[4]->value(dig, digLength);
+		}
+
+		bool DisplayCircle(const Array<double>& params)
+		{
+			if (params.GetSize() != 3) return false; //исключение
+			int digLength = 0;
+			const char* dig;
+
+			inputs.PushBack(new Fl_Float_Input(coordX + 20, coordY + 10, 50, 30, "x"));
+			dig = ReverseParse(params[0], digLength);
+			inputs[0]->value(dig, digLength);
+
+			inputs.PushBack(new Fl_Float_Input(coordX + 20, coordY + 40, 50, 30, "y"));
+			dig = ReverseParse(params[1], digLength);
+			inputs[1]->value(dig, digLength);
+
+			inputs.PushBack(new Fl_Float_Input(coordX + 20, coordY + 70, 50, 30, "r"));
+			dig = ReverseParse(params[2], digLength);
+			inputs[2]->value(dig, digLength);
+		}
+
+	public:
+		DisplayParams(const object_type type, const Array<double>& params)
+		{
+
+			group = new Fl_Group(coordX, coordY, sizeX, sizeY);
+			{
+				switch (type)
+				{
+				case ot_point: {
+					DisplayPoint(params);
+					break;
+				}
+				case ot_segment: {
+					DisplaySegment(params);
+					break;
+				}
+				case ot_arc: {
+					DisplayArc(params);
+					break;
+				}
+				case ot_circle: {
+					DisplayCircle(params);
+					break;
+				}
+				default:
+					break;
+				}
+
+				b_OK = new Fl_Button(coordX + 10, coordY + sizeY - 30, 30, 20, "OK");
+				b_close = new Fl_Button(coordX + 50, coordY + sizeY - 30, 50, 20, "CLOSE");
+				group->color(FL_YELLOW);
+				group->box(FL_UP_BOX);
+				group->end();
+			}
+			
+		}
+
 
 
 	};
 
-	static testClass* t;*/
+	static DisplayParams* displayParams;
 
 	//callbacks
 	static void cl_Create(Fl_Widget* o, void*)
 	{
 		delete lastCursor;
 		lastCursor = new Fl_Cursor(FL_CURSOR_DEFAULT);
-
 		Array<double> params(0);
 		if (((Fl_Menu_Button*)o)->mvalue()->label() == "Point")
 		{
@@ -372,8 +514,6 @@ private:
 		mainWindow->redraw();
 	}
 
-	
-
 	static void cl_execute_script_b(Fl_Widget* o, void*)
 	{
 		Presenter::Compile();
@@ -412,15 +552,15 @@ public:
 		drawWindow = new SecondWindow(10, 30, 1000, 600, "Draw Window");
 		drawWindow->end();
 
-		save_b = new Fl_Button(1010, 80, 50, 30, "Save");
+		save_b = new Fl_Button(1050, 30, 40, 30, "Save");
 		save_b->callback(cl_SaveProject);
 		save_b->color(FL_WHITE);
 
-		execute_script_b = new Fl_Button(1010, 110, 50, 30, "script");
+		execute_script_b = new Fl_Button(1010, 30, 40, 30, "script");
 		execute_script_b->callback(cl_execute_script_b);
-		execute_script_b->color(FL_WHITE);
+		execute_script_b->color(fl_rgb_color(255, 105, 180));
 
-		downland_b = new Fl_Button(1010, 140, 100, 30, "Download");
+		downland_b = new Fl_Button(1090, 30, 70, 30, "Download");
 		downland_b->callback(cl_DownloadFile);
 		downland_b->color(FL_WHITE);
 
@@ -622,6 +762,14 @@ public:
 		drawWindow->redraw();
 	}
 
+	void GiveParams(const object_type type, const Array<double>& params)
+	{
+		mainWindow->begin();
+		displayParams = new DisplayParams(type, params);
+		mainWindow->end();
+		mainWindow->redraw();
+	}
+
 	//for navigation on scene
 	void TranslateScene(const Vector2& deltaCor)
 	{
@@ -659,6 +807,6 @@ double ViewFLTK::scaleScene = 1.0;
 
 double ViewFLTK::rotateScene = 0.0;
 
-//ViewFLTK::testClass* ViewFLTK::t = nullptr;
+ViewFLTK::DisplayParams* ViewFLTK::displayParams = nullptr;
 
 #endif // !__VIEW_FLTK

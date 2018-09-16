@@ -337,6 +337,13 @@ Mode* Selection::HandleEvent(const Event e, Array<double>& params) {
 			if (state == single_selection) {
 				selectedObjects.Clear();
 				selectedObjects.PushBack(obj);
+				//test
+				object_type type;
+				Presenter::GetObjType(obj, type);
+				Array<double> params;
+				Presenter::GetObjParam(obj, params);
+				Presenter::GetView()->GiveParams(type, params);
+				//..test
 				return nullptr;
 			}
 
