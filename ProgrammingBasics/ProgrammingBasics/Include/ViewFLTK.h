@@ -427,8 +427,6 @@ private:
 		((Fl_Button*)o)->deactivate();
 		((Fl_Button*)o)->activate();
 	}
-
-
 	//..
 
 	static Fl_Window* mainWindow;
@@ -448,7 +446,7 @@ public:
 		save_b->callback(cl_SaveProject);
 		save_b->color(FL_WHITE);
 
-		downland_b = new Fl_Button(1010, 140, 100, 30, "Downland");
+		downland_b = new Fl_Button(1010, 140, 100, 30, "Download");
 		downland_b->callback(cl_DownloadFile);
 		downland_b->color(FL_WHITE);
 
@@ -503,13 +501,20 @@ public:
 		
 		mainWindow->show();
 		drawWindow->show();
+
+		Model* model = Presenter::get();
+		//
+		std::function<ID(const Array<ID>&, const Array<double>&)> f = [model](const Array<ID>& a, const Array<double>& b) {
+			model->Move(a, Vector2(b[0], b[1]));
+			return ID();
+		};
     
-    BinSearchTree<string, ID(*)(const Array<ID>&, const Array<double>&)> kek;
+    BinSearchTree<string, std::function<ID(const Array<ID>&, const Array<double>&)>> kek;
 		kek.Add("Create_point", CreatePoint);
 		kek.Add("Create_segment", CreateSegment);
 		kek.Add("Create_arc", CreateArc);
 		kek.Add("Create_circle", CreateCircle);
-		kek.Add("Move", Move);
+		kek.Add("Move", f);
 		kek.Add("Scale", Scale);
 		kek.Add("Dist_bet_points", DistBetPoints);
 		kek.Add("Equal_segment", EqualSegment);
@@ -524,6 +529,8 @@ public:
 			}
 		}
 	}
+
+
 	~ViewFLTK(){}
 
 	int Run(){return Fl::run();}

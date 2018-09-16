@@ -60,6 +60,10 @@ public:
 
 	static void GetComponent(const ID&, Array<ID>&, Array<ID>&);
 
+	static Model* get() {
+		return model;
+	}
+
 	//function for viewFLTK
 	static void Set_event(Event, Array<double>&);
 };

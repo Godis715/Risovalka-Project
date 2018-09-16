@@ -4,7 +4,7 @@
 #include "Logger.h"
 #include <regex>
 
-typedef BinSearchTree<string, ID(*)(const Array<ID>&, const Array<double>&)>& kek;
+typedef BinSearchTree<string, std::function<ID(const Array<ID>&, const Array<double>&)>>& kek;
 typedef void(*kik)(const Array<ID>&, const Array<double>&);
 
 
