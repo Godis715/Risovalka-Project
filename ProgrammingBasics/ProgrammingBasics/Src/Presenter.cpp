@@ -1,6 +1,48 @@
 #include "Presenter.h"
 #include "Mode.h"
 
+ID CreatePoint(const Array<ID>& obj, const Array<double>& params) {
+	return Presenter::CreateObject(ot_point, params);
+}
+ID CreateSegment(const Array<ID>& obj, const Array<double>& params) {
+	return Presenter::CreateObject(ot_segment, params);
+}
+ID CreateArc(const Array<ID>& obj, const Array<double>& params) {
+	return Presenter::CreateObject(ot_arc, params);
+}
+ID CreateCircle(const Array<ID>& obj, const Array<double>& params) {
+	return Presenter::CreateObject(ot_circle, params);
+}
+ID Move(const Array<ID>& obj, const Array<double>& params) {
+	if (params.GetSize() != 2) {
+		throw std::exception("invalid arguments");
+	}
+	Presenter::MoveObject(obj, Vector2(params[0], params[1]));
+	return ID();
+
+}
+ID Scale(const Array<ID>& obj, const Array<double>& params) {
+	if (params.GetSize() != 1) {
+		throw std::exception("invalid arguments");
+	}
+	Presenter::ScaleObjects(obj, params[0]);
+	return ID();
+}
+ID DistBetPoints(const Array<ID>& obj, const Array<double>& params) {
+	return Presenter::CreateRequirement(ot_distBetPoints, obj, params);
+}
+ID EqualSegment(const Array<ID>& obj, const Array<double>& params) {
+	return Presenter::CreateRequirement(ot_equalSegmentLen, obj, params);
+}
+ID DistanceBetPointSegment(const Array<ID>& obj, const Array<double>& params) {
+	return Presenter::CreateRequirement(ot_distBetPointSeg, obj, params);
+}
+ID Delete(const Array<ID>& obj, const Array<double>& params) {
+	Presenter::DeletePrimitives(obj);
+	return ID();
+}
+
+
 Model* Presenter::model(nullptr);
 Mode* Presenter::mode(nullptr);
 IView* Presenter::view(nullptr);
@@ -17,6 +59,24 @@ void Presenter::Initializer(IView* _view)
 	view = _view;
 	model = new Model();
 	mode = new Selection();
+	// BinSearchTree<string, std::function<ID(const Array<ID>&, const Array<double>&)>> kek;
+	//std::function<ID(const Array<ID>&, const Array<double>&)> f = [model](const Array<ID>& a, const Array<double>& b) {
+	//	model->Move(a, Vector2(b[0], b[1]));
+	//	return ID();
+	//};
+	kek* tree = new kek;
+	tree->Add("Create_point", CreatePoint);
+	tree->Add("Create_segment", CreateSegment);
+	tree->Add("Create_arc", CreateArc);
+	tree->Add("Create_circle", CreateCircle);
+	tree->Add("Move", Move);
+	tree->Add("Scale", Scale);
+	tree->Add("Dist_bet_points", DistBetPoints);
+	tree->Add("Equal_segment", EqualSegment);
+	tree->Add("Distance_bet_point_segment", DistanceBetPointSegment);
+	tree->Add("Delete", Delete);
+	Compiler::Initializer(tree);
+
 }
 
 ID Presenter::CreateObject(object_type type, const Array<double>& params) {
@@ -227,4 +287,16 @@ bool Presenter::GetObjType(const ID& id, object_type& type)
 bool Presenter::GetObjParam(const ID& id, Array<double>& params)
 {
 	return model->GetObjParam(id, params);
+}
+
+void Presenter::Compile() {
+
+	Compiler* compiler = Compiler::GetInstance();
+	std::ifstream file;
+	file.open("script.txt");
+	if (file.is_open()) {
+		if (!file.eof()) {
+			compiler->Parse(file);
+		}
+	}
 }

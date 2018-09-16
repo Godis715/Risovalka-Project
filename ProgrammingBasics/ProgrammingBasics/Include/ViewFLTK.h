@@ -19,46 +19,6 @@
 #include <FL/math.h>
 //#include <FL/Fl_File_Chooser.H>
 
-ID CreatePoint(const Array<ID>& obj, const Array<double>& params) {
-	return Presenter::CreateObject(ot_point, params);
-}
-ID CreateSegment(const Array<ID>& obj, const Array<double>& params) {
-	return Presenter::CreateObject(ot_segment, params);
-}
-ID CreateArc(const Array<ID>& obj, const Array<double>& params) {
-	return Presenter::CreateObject(ot_arc, params);
-}
-ID CreateCircle(const Array<ID>& obj, const Array<double>& params) {
-	return Presenter::CreateObject(ot_circle, params);
-}
-ID Move(const Array<ID>& obj, const Array<double>& params) {
-	if (params.GetSize() != 2) {
-		throw std::exception("invalid arguments");
-	}
-	Presenter::MoveObject(obj, Vector2(params[0], params[1]));
-	return ID();
-
-}
-ID Scale(const Array<ID>& obj, const Array<double>& params) {
-	if (params.GetSize() != 1) {
-		throw std::exception("invalid arguments");
-	}
-	Presenter::ScaleObjects(obj, params[0]);
-	return ID();
-}
-ID DistBetPoints(const Array<ID>& obj, const Array<double>& params) {
-	return Presenter::CreateRequirement(ot_distBetPoints, obj, params);
-}
-ID EqualSegment(const Array<ID>& obj, const Array<double>& params) {
-	return Presenter::CreateRequirement(ot_equalSegmentLen, obj, params);
-}
-ID DistanceBetPointSegment(const Array<ID>& obj, const Array<double>& params) {
-	return Presenter::CreateRequirement(ot_distBetPointSeg, obj, params);
-}
-ID Delete(const Array<ID>& obj, const Array<double>& params) {
-	Presenter::DeletePrimitives(obj);
-	return ID();
-}
 
 double Parse(string number) {
 	int countPoint = 0;
@@ -110,6 +70,7 @@ private:
 	Fl_Menu_Item* requirements;
 	Fl_Menu_Button* createRequirement_b;
 
+	Fl_Button* execute_script_b;
 	Fl_Button* save_b;
 	Fl_Button* downland_b;
 
@@ -411,6 +372,15 @@ private:
 		mainWindow->redraw();
 	}
 
+	
+
+	static void cl_execute_script_b(Fl_Widget* o, void*)
+	{
+		Presenter::Compile();
+		((Fl_Button*)o)->deactivate();
+		((Fl_Button*)o)->activate();
+	}
+
 	static void cl_SaveProject(Fl_Widget* o, void*)
 	{
 		//char *newfile;
@@ -445,6 +415,10 @@ public:
 		save_b = new Fl_Button(1010, 80, 50, 30, "Save");
 		save_b->callback(cl_SaveProject);
 		save_b->color(FL_WHITE);
+
+		execute_script_b = new Fl_Button(1010, 110, 50, 30, "script");
+		execute_script_b->callback(cl_execute_script_b);
+		execute_script_b->color(FL_WHITE);
 
 		downland_b = new Fl_Button(1010, 140, 100, 30, "Download");
 		downland_b->callback(cl_DownloadFile);
@@ -501,33 +475,6 @@ public:
 		
 		mainWindow->show();
 		drawWindow->show();
-
-		Model* model = Presenter::get();
-		//
-		std::function<ID(const Array<ID>&, const Array<double>&)> f = [model](const Array<ID>& a, const Array<double>& b) {
-			model->Move(a, Vector2(b[0], b[1]));
-			return ID();
-		};
-    
-    BinSearchTree<string, std::function<ID(const Array<ID>&, const Array<double>&)>> kek;
-		kek.Add("Create_point", CreatePoint);
-		kek.Add("Create_segment", CreateSegment);
-		kek.Add("Create_arc", CreateArc);
-		kek.Add("Create_circle", CreateCircle);
-		kek.Add("Move", f);
-		kek.Add("Scale", Scale);
-		kek.Add("Dist_bet_points", DistBetPoints);
-		kek.Add("Equal_segment", EqualSegment);
-		kek.Add("Distance_bet_point_segment", DistanceBetPointSegment);
-		kek.Add("Delete", Delete);
-    Compiler compiler(kek);
-		std::ifstream file;
-		file.open("script.txt");
-		if (file.is_open()) {
-			if (!file.eof()) {
-				compiler.Parse(file);
-			}
-		}
 	}
 
 

@@ -1,3 +1,27 @@
 Initializing presenter
 Presenter::Creating object
 Presenter::Created object #3
+Presenter::Creating object
+Presenter::Created object #79
+Presenter::Creating object
+Presenter::Created object #151
+Presenter::Creating object
+Presenter::Created object #163
+Presenter::Creating object
+Presenter::Created object #169
+Presenter::Creating object
+Presenter::Created object #175
+Presenter::Creating object
+Presenter::Created object #181
+Presenter::Creating object
+Presenter::Created object #187
+Presenter::Creating object
+Presenter::Created object #193
+Presenter::Creating object
+Presenter::Created object #9955
+Presenter::Creating object
+Presenter::Created object #9959
+Presenter::Creating object
+Presenter::Created object #10097
+Presenter::Creating object
+Presenter::Created object #10101

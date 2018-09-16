@@ -1,2 +1,4 @@
 Create_segment()(50, 20, 20, 10)->seg_q;
 Move(seg_q)(200, 200);
+
+Create_point()(50, 50)->t;
