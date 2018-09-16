@@ -60,11 +60,11 @@ bool Model::SVGformat::ParsePointTag(std::ifstream& file)
 		if (tempSymbol == '=')
 		{
 			std::string attribute = ScanAttribute(file);
-			Array<double> params = ScanParams(file);
-			if (params.GetSize() != 1) return false; //бросить исключение
-			if (attribute == "px")params.PushBack(params[0]);
-			if (attribute == "py")params.PushBack(params[0]);
-			if (attribute == "id")IDs.PushBack(ID(int(params[0])));
+			Array<double> _params = ScanParams(file);
+			if (_params.GetSize() != 1) return false; //бросить исключение
+			if (attribute == "px")params.PushBack(_params[0]);
+			if (attribute == "py")params.PushBack(_params[0]);
+			if (attribute == "id")IDs.PushBack(ID(int(_params[0])));
 		}
 		tempSymbol = file.get();
 	}
@@ -82,21 +82,21 @@ bool Model::SVGformat::ParseSegmentTag(std::ifstream& file)
 		if (tempSymbol == '=')
 		{
 			std::string attribute = ScanAttribute(file);
-			Array<double> params = ScanParams(file);
+			Array<double> _params = ScanParams(file);
 			if (attribute == "id")
 			{
-				if (params.GetSize() == 1)
+				if (_params.GetSize() == 1)
 				{
-					IDs.PushBack(ID(int(params[0])));
+					IDs.PushBack(ID(int(_params[0])));
 				}
 				else return false; //бросить исключение
 			}
 			if (attribute == "childIds")
 			{
-				if (params.GetSize() == 2)
+				if (_params.GetSize() == 2)
 				{
-					IDs.PushBack(ID(int(params[0])));
-					IDs.PushBack(ID(int(params[1])));
+					IDs.PushBack(ID(int(_params[0])));
+					IDs.PushBack(ID(int(_params[1])));
 				}
 				else return false; //бросить исключение
 			}
