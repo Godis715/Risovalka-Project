@@ -196,7 +196,7 @@ bool Presenter::GetObjectsOnArea(double x1, double y1, double x2, double y2, Arr
 	return model->GetObjectsOnArea(x1, y1, x2, y2, obj_id, types);
 }
 
-void Presenter::DrawSelectedObjects(const Array<ID>& selectedObjects)
+void Presenter::DrawSelectedObjects(const Array<ID>& selectedObjects, const color col)
 {
 	for (int i = 0; i < selectedObjects.GetSize(); i++)
 	{
@@ -205,26 +205,22 @@ void Presenter::DrawSelectedObjects(const Array<ID>& selectedObjects)
 
 		GetObjParam(selectedObjects[i], params);
 		GetObjType(selectedObjects[i], type);
-
+		GetView()->SetColor(col);
 		switch (type)
 		{
 		case ot_point:
-			GetView()->SetColor(green);
 			GetView()->DrawPoint(Vector2(params[0], params[1]));
 			break;
 		case ot_segment:
-			GetView()->SetColor(green);
 			GetView()->DrawLine(Vector2(params[0], params[1]),
 				Vector2(params[2], params[3]), line);
 			break;
 		case ot_arc:
-			GetView()->SetColor(green);
 			GetView()->DrawArc(Vector2(params[0], params[1]),
 				Vector2(params[2], params[3]),
 				Vector2(params[4], params[5]), line);
 			break;
 		case ot_circle:
-			GetView()->SetColor(green);
 			GetView()->DrawCircle(Vector2(params[0], params[1]),
 				Vector2(params[0] + params[2], params[1]), line);
 			break;

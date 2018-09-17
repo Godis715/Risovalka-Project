@@ -125,7 +125,14 @@ private:
 				fl_cursor(*ViewFLTK::lastCursor);
 				params.PushBack((Fl::event_x() - ViewFLTK::translateScene->x) / scaleScene);
 				params.PushBack((Fl::event_y() - ViewFLTK::translateScene->y) / scaleScene);
-				Presenter::Set_event(ev_leftMouseDown, params);
+				if (Fl::event_button() == FL_RIGHT_MOUSE)
+				{
+					Presenter::Set_event(ev_rightMouseDown, params);
+				}
+				if (Fl::event_button() == FL_LEFT_MOUSE)
+				{
+					Presenter::Set_event(ev_leftMouseDown, params);
+				}
 				break;
 			case FL_RELEASE:
 				fl_cursor(FL_CURSOR_DEFAULT);
@@ -164,7 +171,6 @@ private:
 				}
 				if (Fl::event_key() == FL_Control_L && lastEvent != ev_ctrlDown)
 				{
-					ViewFLTK::DeleteDisplay();
 					Presenter::Set_event(ev_ctrlDown, params);
 					lastEvent = ev_ctrlDown;
 				}
@@ -180,7 +186,6 @@ private:
 						delete ViewFLTK::currentWindget;
 						ViewFLTK::mainWindow->redraw();
 					}
-					ViewFLTK::DeleteDisplay();
 					delete ViewFLTK::lastCursor;
 					ViewFLTK::lastCursor = new Fl_Cursor(FL_CURSOR_DEFAULT);
 					ViewFLTK::lastEvent = ev_ctrlUp;
@@ -421,20 +426,9 @@ private:
 
 	static SecondWindow* drawWindow;
 
-	static void DeleteDisplay()
-	{
-		if (displayParams != nullptr)
-		{
-			delete ViewFLTK::displayParams;
-			ViewFLTK::displayParams = nullptr;
-			ViewFLTK::mainWindow->redraw();
-		}
-	}
-
 	//callbacks
 	static void cl_Create(Fl_Widget* o, void*)
 	{
-		DeleteDisplay();
 		delete lastCursor;
 		lastCursor = new Fl_Cursor(FL_CURSOR_DEFAULT);
 		Array<double> params(0);
@@ -466,7 +460,6 @@ private:
 
 	static void cl_Redaction(Fl_Widget* o, void*)
 	{
-		DeleteDisplay();
 		delete lastCursor;
 		lastCursor = new Fl_Cursor(FL_CURSOR_DEFAULT);
 		Array<double> params(0);
@@ -500,7 +493,6 @@ private:
 
 	static void cl_Requirement(Fl_Widget* o, void*)
 	{
-		DeleteDisplay();
 		delete lastCursor;
 		lastCursor = new Fl_Cursor(FL_CURSOR_DEFAULT);
 		Array<double> params(0);
@@ -566,7 +558,6 @@ private:
 	}
 
 	static void cl_Input(Fl_Widget* o, void*) {
-		DeleteDisplay();
 
 		fl_cursor(FL_CURSOR_DEFAULT);
 
@@ -583,7 +574,6 @@ private:
 
 	static void cl_execute_script_b(Fl_Widget* o, void*)
 	{
-		DeleteDisplay();
 		Presenter::Compile();
 		((Fl_Button*)o)->deactivate();
 		((Fl_Button*)o)->activate();
@@ -591,7 +581,6 @@ private:
 
 	static void cl_SaveProject(Fl_Widget* o, void*)
 	{
-		DeleteDisplay();
 		//char *newfile;
 		
 		//newfile = fl_file_chooser("Save File As?", "*", "title");
@@ -602,7 +591,6 @@ private:
 
 	static void cl_DownloadFile(Fl_Widget* o, void*)
 	{
-		DeleteDisplay();
 		Presenter::DownloadFile("nameFile");
 		((Fl_Button*)o)->deactivate();
 		((Fl_Button*)o)->activate();
@@ -823,6 +811,9 @@ public:
 			case blue:
 				fl_color(FL_BLUE);
 				break;
+			case orange:
+				fl_color(fl_rgb_color(255, 140, 0));
+				break;
 		}
 	}
 	
@@ -842,6 +833,16 @@ public:
 		displayParams = new DisplayParams(type, params);
 		mainWindow->end();
 		mainWindow->redraw();
+	}
+
+	void DeleteDisplay()
+	{
+		if (displayParams != nullptr)
+		{
+			delete ViewFLTK::displayParams;
+			ViewFLTK::displayParams = nullptr;
+			ViewFLTK::mainWindow->redraw();
+		}
 	}
 
 	//for navigation on scene

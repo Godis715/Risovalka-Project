@@ -1,3 +1,5 @@
 Initializing presenter
 Presenter::Creating object
 Presenter::Created object #3
+Presenter::Creating object
+Presenter::Created object #7

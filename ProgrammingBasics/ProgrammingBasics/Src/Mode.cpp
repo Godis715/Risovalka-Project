@@ -293,6 +293,59 @@ CreatingArc::~CreatingArc() {
 	arcParameters.Clear();
 }
 
+//CHANGING_PROPERTIES
+
+ChangingProperties::ChangingProperties() : Mode()
+{
+
+}
+
+ChangingProperties::ChangingProperties(const ID _selObject) : Mode(), selectedObject(_selObject)
+{
+	object_type type;
+	Presenter::GetObjType(selectedObject, type);
+	Array<double> params;
+	Presenter::GetObjParam(selectedObject, params);
+	Presenter::GetView()->GiveParams(type, params);
+}
+
+ChangingProperties::~ChangingProperties()
+{
+	if (isNew) {
+		Presenter::GetView()->DeleteDisplay();
+	}
+}
+
+Mode* ChangingProperties::HandleEvent(const Event e, Array<double>& params)
+{
+	if (e == ev_change_Prim)
+	{
+		Presenter::ChangeParamPrimitive(selectedObject, params);
+		return new Selection();
+	}
+	if (e == ev_rightMouseDown)
+	{
+		ID obj;
+		bool isFound = Presenter::GetObject(params[0], params[1], obj);
+		if (isFound)
+		{
+			isNew = false;
+			Presenter::GetView()->DeleteDisplay();
+			return new ChangingProperties(obj);
+		}
+		return nullptr;
+	}
+	
+	return UnexpectedEvent(e);
+}
+
+void ChangingProperties::DrawMode()
+{
+	Array<ID> selectedObjects;
+	selectedObjects.PushBack(selectedObject);
+	Presenter::DrawSelectedObjects(selectedObjects, orange);
+}
+
 // SELECTION
 
 Selection::Selection(Array<ID> _selObjects) : Mode(), selectedObjects(_selObjects) {
@@ -321,10 +374,17 @@ void Selection::AddObject(const ID& obj) {
 }
 
 Mode* Selection::HandleEvent(const Event e, Array<double>& params) {
-	if (e == ev_change_Prim && state == single_selection)
+	if (e == ev_rightMouseDown)
 	{
-		Presenter::ChangeParamPrimitive(selectedObjects[0], params);
+		selectedObjects.Clear();
+		ID obj;
+		bool isFound = Presenter::GetObject(params[0], params[1], obj);
+		if (isFound)
+		{
+			return new ChangingProperties(obj);
+		}
 		return nullptr;
+	
 	}
 	if (e == ev_leftMouseDown) {
 		if (params.GetSize() != 2) {
@@ -342,13 +402,6 @@ Mode* Selection::HandleEvent(const Event e, Array<double>& params) {
 			if (state == single_selection) {
 				selectedObjects.Clear();
 				selectedObjects.PushBack(obj);
-				//test
-				object_type type;
-				Presenter::GetObjType(obj, type);
-				Array<double> params;
-				Presenter::GetObjParam(obj, params);
-				Presenter::GetView()->GiveParams(type, params);
-				//..test
 				return nullptr;
 			}
 
@@ -451,7 +504,7 @@ Mode* Selection::HandleEvent(const Event e, Array<double>& params) {
 
 void Selection::DrawMode()
 {
-	Presenter::DrawSelectedObjects(selectedObjects);
+	Presenter::DrawSelectedObjects(selectedObjects, green);
 
 	if (state == area_selection)
 	{
@@ -559,7 +612,7 @@ Mode* Redaction::HandleEvent(const Event e, Array<double>& params)
 }
 
 void Redaction::DrawMode() {
-	Presenter::DrawSelectedObjects(selectedObjects);
+	Presenter::DrawSelectedObjects(selectedObjects, green);
 }
 
 // REDACTION_REQ
@@ -637,7 +690,7 @@ Mode* CreateRequirementWithParam::HandleEvent(const Event ev, Array<double>& par
 }
 
 void CreateRequirementWithParam::DrawMode() {
-	Presenter::DrawSelectedObjects(selectedPrim);
+	Presenter::DrawSelectedObjects(selectedPrim, green);
 }
 
 //NAVIGATION ON SCENE
@@ -731,5 +784,5 @@ Mode* NavigationOnScene::HandleEvent(const Event ev, Array<double>& params) {
 }
 
 void NavigationOnScene::DrawMode() {
-	Presenter::DrawSelectedObjects(selectedPrim);
+	Presenter::DrawSelectedObjects(selectedPrim, green);
 }

@@ -2,7 +2,7 @@
 #define __IVIEW
 #include "Vector2.h"
 
-enum color { white, red, black, green, yellow, blue};
+enum color { white, red, black, green, yellow, blue, orange};
 enum typeDrawing{points, line, polygon};
 enum statusCreate { drawPoint, drawSegment, drawArc, drawCircle };
 
@@ -22,6 +22,7 @@ public:
 	virtual void ScaleScene(const double&) = 0;
 	virtual void RotateScene(const double&) = 0;
 	virtual void GiveParams(const object_type, const Array<double>&) = 0;
+	virtual void DeleteDisplay() = 0;
 
 };
 

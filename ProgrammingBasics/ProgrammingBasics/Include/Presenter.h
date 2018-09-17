@@ -19,7 +19,7 @@ public:
 	static void DownloadFile(std::string);
 	static IView* GetView();
 	static void DrawScene();
-	static void DrawSelectedObjects(const Array<ID>&);
+	static void DrawSelectedObjects(const Array<ID>&, const color);
 
 	//static void DrawObject(const ID&, color);
 
