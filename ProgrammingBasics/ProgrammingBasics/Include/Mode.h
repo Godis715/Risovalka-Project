@@ -48,6 +48,7 @@ enum Event
 	ev_input,
 	//end new events
 
+	ev_change_Prim,
 	ev_save
 	// 14
 };

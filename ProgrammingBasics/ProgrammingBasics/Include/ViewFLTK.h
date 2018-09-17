@@ -42,6 +42,22 @@ double Parse(string number) {
 	return stod(number);
 }
 
+const char* ReverseParse(const double dig, int& size)
+{
+	std::string strDig;
+	std::ostringstream ost;
+	ost << std::fixed << std::setprecision(2) << dig;
+	strDig = ost.str();
+
+	size = strDig.length();
+	char* charDig = new char[size];
+	for (int i = 0; i < size; i++)
+	{
+		charDig[i] = strDig[i];
+	}
+	return charDig;
+}
+
 class ViewFLTK : public IView
 {
 private:
@@ -148,6 +164,7 @@ private:
 				}
 				if (Fl::event_key() == FL_Control_L && lastEvent != ev_ctrlDown)
 				{
+					ViewFLTK::DeleteDisplay();
 					Presenter::Set_event(ev_ctrlDown, params);
 					lastEvent = ev_ctrlDown;
 				}
@@ -163,12 +180,7 @@ private:
 						delete ViewFLTK::currentWindget;
 						ViewFLTK::mainWindow->redraw();
 					}
-					if (displayParams != nullptr)
-					{
-						delete ViewFLTK::displayParams;
-						ViewFLTK::displayParams = nullptr;
-						ViewFLTK::mainWindow->redraw();
-					}
+					ViewFLTK::DeleteDisplay();
 					delete ViewFLTK::lastCursor;
 					ViewFLTK::lastCursor = new Fl_Cursor(FL_CURSOR_DEFAULT);
 					ViewFLTK::lastEvent = ev_ctrlUp;
@@ -228,26 +240,10 @@ private:
 		object_type type;
 
 		Fl_Group* group;
-		Array<Fl_Float_Input*> inputs;
+		static Array<Fl_Float_Input*> inputs;
 		Fl_Button* b_OK;
 		Fl_Button* b_close;
 		Fl_Button* b_req;
-
-		const char* ReverseParse(const double dig, int& size)
-		{
-			std::string strDig;
-			std::ostringstream ost;
-			ost << std::fixed << std::setprecision(2) << dig;
-			strDig = ost.str();
-
-			size = strDig.length();
-			char* charDig = new char[size];
-			for (int i = 0; i < size; i++)
-			{
-				charDig[i] = strDig[i];
-			}
-			return charDig;
-		}
 
 		bool DisplayPoint(const Array<double>& params)
 		{
@@ -336,6 +332,16 @@ private:
 			inputs[2]->value(dig, digLength);
 		}
 
+		static void cl_OK(Fl_Widget* o, void*)
+		{
+			Array<double> params;
+			for (int i = 0; i < inputs.GetSize(); i++)
+			{
+				params.PushBack(Parse(inputs[i]->value()));
+			}
+			Presenter::Set_event(ev_change_Prim, params);
+		}
+
 	public:
 		DisplayParams(const object_type _type, const Array<double>& params)
 		{
@@ -382,8 +388,9 @@ private:
 				type = _type;
 				b_OK = new Fl_Button(coordX + 10, coordY + sizeY - 30, 30, 20, "OK");
 				b_OK->color(FL_WHITE);
-				b_close = new Fl_Button(coordX + 50, coordY + sizeY - 30, 50, 20, "CLOSE");
-				b_close->color(FL_WHITE);
+				b_OK->callback(cl_OK);
+			/*	b_close = new Fl_Button(coordX + 50, coordY + sizeY - 30, 50, 20, "CLOSE");
+				b_close->color(FL_WHITE);*/
 				b_req = new Fl_Button(coordX + 10, coordY + sizeY - 60, 30, 20, "Req");
 				b_req->color(FL_WHITE);
 				group->color(FL_YELLOW);
@@ -402,6 +409,7 @@ private:
 			{
 				delete inputs[i];
 			}
+			inputs.Clear();
 			delete group;
 		}
 
@@ -409,9 +417,24 @@ private:
 
 	static DisplayParams* displayParams;
 
+	static Fl_Window* mainWindow;
+
+	static SecondWindow* drawWindow;
+
+	static void DeleteDisplay()
+	{
+		if (displayParams != nullptr)
+		{
+			delete ViewFLTK::displayParams;
+			ViewFLTK::displayParams = nullptr;
+			ViewFLTK::mainWindow->redraw();
+		}
+	}
+
 	//callbacks
 	static void cl_Create(Fl_Widget* o, void*)
 	{
+		DeleteDisplay();
 		delete lastCursor;
 		lastCursor = new Fl_Cursor(FL_CURSOR_DEFAULT);
 		Array<double> params(0);
@@ -443,6 +466,7 @@ private:
 
 	static void cl_Redaction(Fl_Widget* o, void*)
 	{
+		DeleteDisplay();
 		delete lastCursor;
 		lastCursor = new Fl_Cursor(FL_CURSOR_DEFAULT);
 		Array<double> params(0);
@@ -476,6 +500,7 @@ private:
 
 	static void cl_Requirement(Fl_Widget* o, void*)
 	{
+		DeleteDisplay();
 		delete lastCursor;
 		lastCursor = new Fl_Cursor(FL_CURSOR_DEFAULT);
 		Array<double> params(0);
@@ -541,6 +566,8 @@ private:
 	}
 
 	static void cl_Input(Fl_Widget* o, void*) {
+		DeleteDisplay();
+
 		fl_cursor(FL_CURSOR_DEFAULT);
 
 		Array<double> params(1);
@@ -556,6 +583,7 @@ private:
 
 	static void cl_execute_script_b(Fl_Widget* o, void*)
 	{
+		DeleteDisplay();
 		Presenter::Compile();
 		((Fl_Button*)o)->deactivate();
 		((Fl_Button*)o)->activate();
@@ -563,6 +591,7 @@ private:
 
 	static void cl_SaveProject(Fl_Widget* o, void*)
 	{
+		DeleteDisplay();
 		//char *newfile;
 		
 		//newfile = fl_file_chooser("Save File As?", "*", "title");
@@ -573,14 +602,13 @@ private:
 
 	static void cl_DownloadFile(Fl_Widget* o, void*)
 	{
+		DeleteDisplay();
 		Presenter::DownloadFile("nameFile");
 		((Fl_Button*)o)->deactivate();
 		((Fl_Button*)o)->activate();
 	}
 	//..
 
-	static Fl_Window* mainWindow;
-	SecondWindow* drawWindow;
 public:
 	ViewFLTK()
 	{
@@ -588,6 +616,7 @@ public:
 
 		mainWindow = new Fl_Window(1300, 620, "Main Window");
 		mainWindow->color(FL_WHITE);
+		mainWindow->size_range(600, 300);
 
 		drawWindow = new SecondWindow(10, 30, 1000, 600, "Draw Window");
 		drawWindow->end();
@@ -836,6 +865,8 @@ public:
 };
 Fl_Window* ViewFLTK::mainWindow;
 
+ViewFLTK::SecondWindow* ViewFLTK::drawWindow;
+
 Fl_Output* ViewFLTK::log = nullptr;
 
 Fl_Float_Input* ViewFLTK::textBuffer = nullptr;
@@ -853,5 +884,9 @@ double ViewFLTK::scaleScene = 1.0;
 double ViewFLTK::rotateScene = 0.0;
 
 ViewFLTK::DisplayParams* ViewFLTK::displayParams = nullptr;
+
+//DisplayParams
+
+Array<Fl_Float_Input*> ViewFLTK::DisplayParams::inputs;
 
 #endif // !__VIEW_FLTK

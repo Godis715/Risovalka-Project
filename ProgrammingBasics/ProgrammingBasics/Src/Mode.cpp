@@ -321,6 +321,11 @@ void Selection::AddObject(const ID& obj) {
 }
 
 Mode* Selection::HandleEvent(const Event e, Array<double>& params) {
+	if (e == ev_change_Prim && state == single_selection)
+	{
+		Presenter::ChangeParamPrimitive(selectedObjects[0], params);
+		return nullptr;
+	}
 	if (e == ev_leftMouseDown) {
 		if (params.GetSize() != 2) {
             throw std::invalid_argument("Bad number of parameters");

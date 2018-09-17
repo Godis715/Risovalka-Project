@@ -125,6 +125,11 @@ void Presenter::ChangeParamRequirement(const ID& id, const double param) {
 	model->ChangeRequirement(id, param);
 }
 
+void Presenter::ChangeParamPrimitive(const ID& id, Array<double>& params)
+{
+	model->ChangePrimitive(id, params);
+}
+
 void Presenter::ScaleObjects(const Array<ID>& primitiveID, const double koef) {
 	if (!model->Scale(primitiveID, koef)) {
 		LOG(string("could not Scale prim"), LEVEL_3);
@@ -298,5 +303,7 @@ void Presenter::Compile() {
 		if (!file.eof()) {
 			compiler->Parse(file);
 		}
+		file.close();
 	}
+	view->Update();
 }

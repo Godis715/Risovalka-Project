@@ -1023,6 +1023,47 @@ void Model::ChangeRequirement(const ID& id, const double param) {
 	}
 }
 
+void Model::ChangePrimitive(const ID& id, Array<double>& params)
+{
+	auto marker = dataPrim.Find(id);
+	if (marker.IsValid()) {
+		switch ((*marker)->GetType())
+		{
+		case ot_point: {
+			//if(params.GetSize() != 2) 
+			Point* point = dynamic_cast<Point*>((*marker));
+			point->SetPosition(Vector2(params[0], params[1]));
+			break;
+		}
+		case ot_segment: {
+			Segment* seg = dynamic_cast<Segment*>((*marker));
+			seg->SetPoint1_pos(Vector2(params[0], params[1]));
+			seg->SetPoint2_pos(Vector2(params[2], params[3]));
+			break;
+		}
+		case ot_arc: {
+			Arc* arc = dynamic_cast<Arc*>((*marker));
+			arc->SetPoint1_pos(Vector2(params[0], params[1]));
+			arc->SetPoint2_pos(Vector2(params[2], params[3]));
+			arc->SetAngle(params[4]);
+			arc->RestoreCenter();
+			break;
+		}
+		case ot_circle: {
+			Circle* circle = dynamic_cast<Circle*>((*marker));
+			circle->SetCenter_pos(Vector2(params[0], params[1]));
+			circle->SetRadius(params[2]);
+			break;
+		}
+		default:
+			break;
+		}
+		Array<ID> idPrim;
+		idPrim.PushBack(id);
+		Move(idPrim, Vector2(0, 0));
+	}
+}
+
 bool Model::OptimizeGroup(Array<Primitive*>& group) {
 
 	do {

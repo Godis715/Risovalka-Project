@@ -52,6 +52,8 @@ public:
 
 	static void ChangeParamRequirement(const ID&, const double);
 
+	static void ChangeParamPrimitive(const ID&, Array<double>& params);
+
 	static void ScaleObjects(const Array<ID>&, const double);
 
 	static void MoveObject(const Array<ID>&, const Vector2&);

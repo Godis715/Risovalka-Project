@@ -145,6 +145,8 @@ public:
 
 	void ChangeRequirement(const ID&, const double);
 
+	void ChangePrimitive(const ID&, Array<double>&);
+
 	bool Scale(const Array<ID>&, const double);
 
 	bool Move(const Array<ID>&, const Vector2&);
