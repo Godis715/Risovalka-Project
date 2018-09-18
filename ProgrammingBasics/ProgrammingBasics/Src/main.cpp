@@ -44,55 +44,7 @@ public:
 	}
 };
 
-
-bool CheckCircles(BinSearchTree<int, int>& tree) {
-	auto it = tree.GetMarker();
-	int size = tree.GetSize();
-
-	int i = 0;
-	while (it.IsValid()) {
-		++it;
-		i++;
-		if (i > size) {
-			return false;
-		}
-	}
-	return true;
-}
-const int number = 6;
-int* GenerateRandomArray() {
-	int* arr = new int[number];
-	for (int i = 0; i < number; ++i) {
-		arr[i] = rand() % 3;
-	}
-	return arr;
-}
-
-int GetErrorIteration() {
-	while (true) {
-		int* arr = GenerateRandomArray();
-		for (int i = 1; i < number; ++i) {
-			BinSearchTree<int, int> tree;
-			for (int j = 0; j < i; ++j) {
-				tree.Add(arr[j], arr[j]);
-			}
-			bool goodTree = CheckCircles(tree);
-			if (!goodTree) {
-				for (int k = 0; k < number; k++) {
-					std::cout << arr[k] << " ";
-				}
-				std::cout << "\nat " << i;
-				system("pause");
-			}
-		}
-		delete[] arr;
-	}
-	return -1;
-}
-
-int main()
+int main(int, int, int, int)
 {
-	srand(time(0));
-	int n = GetErrorIteration();
 	system("pause");
 }

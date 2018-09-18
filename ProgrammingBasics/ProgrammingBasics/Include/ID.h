@@ -64,6 +64,7 @@ public:
 
 	Object* GetObject(const ID&) const;
 	object_type GetType(const ID&) const;
+	void DeleteObj(ID&) const;
 };
 
 class ID {

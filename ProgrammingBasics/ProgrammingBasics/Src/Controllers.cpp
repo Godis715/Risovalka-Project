@@ -25,3 +25,10 @@ object_type ObjectController::GetType(const ID& id) const {
 	}
 }
 
+void ObjectController::DeleteObj(ID& id) const {
+	if (id.object != nullptr) {
+		delete id.object;
+		id.object = nullptr;
+		id.hash = 0;
+	}
+}

@@ -1,9 +1,11 @@
 #ifndef __DATACONTROLLER
 #define __DATACONTROLLER
 
-#include "Requirement.h"
 #include "Dictionary.h"
 #include "List.h"
+#include "Requirement.h"
+
+typedef BinSearchTree<ID, ID> Component;
 
 class DataController {
 private:
@@ -19,6 +21,7 @@ private:
 
 	PrimController* primCtrl;
 	ReqController* reqCtrl;
+	ObjectController* objCtrl;
 
 	BinSearchTree<ID, ID> currentComponent;
 
@@ -28,7 +31,7 @@ public:
 	void AddObject(const ID&);
 	void Connect(const ID&, const Array<ID>&);
 	void DeleteObject(const ID&);
-	Array<ID> GetComponent(const ID&) const;
+	Component GetComponent(const ID&);
 };
 
 #endif
