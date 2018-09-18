@@ -21,61 +21,6 @@ private:
 		_capacity *= 2;
 	}
 
-	//Sort methods begin
-	// look after
-	/*void createPyramid(int cur, int end, int delta)
-	{
-		int child;
-		while ((cur - delta) <= (end - delta) / 2)
-		{
-			if ((cur - delta) * 2 + 1 <= (end - delta))
-			{
-				if ((cur - delta) * 2 + 2 <= (end - delta) && _storage[(cur - delta) * 2 + 2 + delta] > _storage[(cur - delta) * 2 + 1 + delta])
-				{
-					child = (cur - delta) * 2 + 2 + delta;
-				}
-				else
-				{
-					child = (cur - delta) * 2 + 1 + delta;
-				}
-				if (_storage[cur] < _storage[child])
-				{
-					swap(cur, child);
-					cur = child;
-				}
-				else
-				{
-					break;
-				}
-			}
-			else
-			{
-				break;
-			}
-		}
-	}
-
-	void phaseOne(int l, int r, int delta)
-	{
-		for (int i = (l + r) / 2; i >= l; i--)
-		{
-			createPyramid(i, r, delta);
-		}
-	}
-
-	void phaseTwo(int l, int r, int delta)
-	{
-		int end = r;
-		while (end != l)
-		{
-			swap(l, end);
-			end--;
-			createPyramid(l, end, delta);
-		}
-	}*/
-
-	//Sort methods end
-
 public:
 
 	class ReadMarker {
@@ -331,29 +276,6 @@ public:
 		_storage[index2] = temp;
 	}
 
-	/*void sort(int l, int r)
-	{
-		if (l < 0 || r < 0 || l > r || l >= _size || r >= _size)
-		{
-			throw std::invalid_argument("Negative index! OR Index out of range\n");
-		}
-		int delta = l;
-		phaseOne(l, r, delta);
-		phaseTwo(l, r, delta);
-	} */
-
-	/*void Reverse(int l, int r)
-	{
-		if (l < 0 || r < 0 || l > r || l >= _size || r >= _size)
-		{
-			throw std::invalid_argument("Negative index! OR Index out of range\n");
-		}
-		for (int i = 0; i < (r - l + 1) / 2; i++)
-		{
-			Swap(l + i, r - i);
-		}
-	}*/
-
 	void Insert(int index, const T& value) {
 		if (index >= _size) {
 			throw std::out_of_range("Index out of range!");
@@ -397,56 +319,6 @@ public:
 		PopBack();
 	}
 
-	/*int BinSearch(int l, int r, T value)
-	{
-		if (l < 0 || r < 0 || l > r || l >= _size || r >= _size)
-		{
-			throw std::invalid_argument("Negative index! OR Index out of range\n");
-		}
-		if (value < _storage[l])
-		{
-			return l - 1;
-		}
-		if (value > _storage[r])
-		{
-			return r;
-		}
-		int index;
-		while (true)
-		{
-			int center = (l + r) / 2;
-			if (_storage[center] == value)
-			{
-				index = center;
-				break;
-			}
-			if (r - l <= 1)
-			{
-				if (_storage[l] == value)
-				{
-					index = l;
-					break;
-				}
-				if (_storage[r] == value)
-				{
-					index = r;
-					break;
-				}
-				index = l;
-				break;
-			}
-			if (value < _storage[center])
-			{
-				r = center;
-			}
-			else
-			{
-				l = center;
-			}
-		}
-		return index;
-	} */
-
 	bool find(T& value, bool(*cmp)())
 	{
 		for (int i = 0; i < _size; i++)
@@ -480,6 +352,8 @@ template<typename T, typename ...Args> Array<T> CreateArr(const T& val, const Ar
 	}
 	return arr;
 }
+
+// everlasting memory
 
 //template <class T> std::ostream& operator<< (std::ostream& out, Array<T>& arr)
 //{

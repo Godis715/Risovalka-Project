@@ -148,6 +148,7 @@
     <ClInclude Include="..\Include\IDGenerator.h" />
     <ClInclude Include="..\Include\List.h" />
     <ClInclude Include="..\Include\Logger.h" />
+    <ClInclude Include="..\Include\Model.h" />
     <ClInclude Include="..\Include\Primitives.h" />
     <ClInclude Include="..\Include\Queue.h" />
     <ClInclude Include="..\Include\Requirement.h" />

@@ -37,6 +37,7 @@ class IDGenerator
 public:
 	static IDGenerator* getInstance();
 	ID* generateID(Object*);
+	ID* generateID(Object*, unsigned long long);
 private:
 	IDGenerator() { }
 	static IDGenerator* _instance;
@@ -48,8 +49,11 @@ class Object {
 protected:
 	ID* id;
 	object_type type;
+
+	Array<double> params;
 public:
-	Object(object_type);
+	Object(object_type, const Array<double>&);
+	Object(object_type, const Array<double>&, unsigned long long);
 	~Object();
 	object_type GetType() const;
 	ID GetID() const;
@@ -76,7 +80,6 @@ private:
 	friend class IDGenerator;
 
 	ID(unsigned long long, Object*);
-	ID(unsigned long long); //?
 
 public:
 	ID(const ID&);

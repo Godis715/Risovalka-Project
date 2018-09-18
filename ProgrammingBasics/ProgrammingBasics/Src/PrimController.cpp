@@ -174,23 +174,18 @@ Array<ID> PrimController::GetChildren(const ID& obj) {
 		return Array<ID>(0);
 	}
 	case ot_segment: {
-		Array<ID> children(2);
 		Segment* seg = static_cast<Segment*>(GetPrimitive(obj));
-		children[0] = seg->point1->GetID();
-		children[1] = seg->point2->GetID();
+		Array<ID> children = CreateArr(seg->point1->GetID(), seg->point2->GetID());
 		return children;
 	}
 	case ot_arc: {
-		Array<ID> children(2);
 		Arc* arc = static_cast<Arc*>(GetPrimitive(obj));
-		children[0] = arc->point1->GetID();
-		children[1] = arc->point2->GetID();
+		Array<ID> children = CreateArr(arc->point1->GetID(), arc->point2->GetID());
 		return children;
 	}
 	case ot_circle: {
-		Array<ID> children(1);
 		Circle* circle = static_cast<Circle*>(GetPrimitive(obj));
-		children[0] = circle->center->GetID();
+		Array<ID> children = CreateArr(circle->center->GetID());
 		return children;
 	}
 	default: {

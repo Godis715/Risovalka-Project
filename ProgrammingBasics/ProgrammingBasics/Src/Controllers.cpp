@@ -21,7 +21,7 @@ object_type ObjectController::GetType(const ID& id) const {
 		return obj->GetType();
 	}
 	else {
-		// ERROR
+		LOGERROR("GetType: object is not exist", LEVEL_1);
 	}
 }
 

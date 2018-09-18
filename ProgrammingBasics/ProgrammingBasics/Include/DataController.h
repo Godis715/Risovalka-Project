@@ -14,16 +14,18 @@ private:
 
 	typedef BinSearchTree<ID, ID> DataID;
 	typedef BinSearchTree<ID, BinSearchTree<ID, ID>* > DataLink;
-	
+	typedef BinSearchTree<string, bool> DataName;
+
 	DataID primData;
 	DataID reqData;
-	DataLink dataLink;
+	DataLink linkData;
+	DataName nameData;
 
 	PrimController* primCtrl;
 	ReqController* reqCtrl;
 	ObjectController* objCtrl;
 
-	BinSearchTree<ID, ID> currentComponent;
+	BinSearchTree<ID, ID>* currentComponent;
 
 public:
 	DataController* GetInstance();
@@ -32,6 +34,8 @@ public:
 	void Connect(const ID&, const Array<ID>&);
 	void DeleteObject(const ID&);
 	Component GetComponent(const ID&);
+
+	bool IsUniqueName(const string&) const;
 };
 
 #endif

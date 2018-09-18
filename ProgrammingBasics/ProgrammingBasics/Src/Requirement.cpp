@@ -2,8 +2,7 @@
 
 
 Requirement::Requirement(object_type _type, const Array<double>& _params) :
-	Object(_type),
-	params(_params)
+	Object(_type, _params)
 {
 	primCtrl = PrimController::GetInstance();
 

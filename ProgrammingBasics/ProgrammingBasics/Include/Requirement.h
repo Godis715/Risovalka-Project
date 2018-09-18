@@ -38,7 +38,6 @@ private:
 protected:
 
 	Array<double*> args;
-	Array<double> params;
 
 	PrimController* primCtrl;
 	
