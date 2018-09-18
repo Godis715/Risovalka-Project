@@ -132,6 +132,8 @@ public:
 	//test
 	bool GetObjectsOnArea(double, double, double, double, Array<ID>&, Array<object_type>&);
 
+	void GetRequirementsByID(const ID&, Array<ID>&);
+
 	bool GetObjType(const ID&, object_type&);
 
 	// bool ImposeRequirement(object_type, const Array<ID>&);

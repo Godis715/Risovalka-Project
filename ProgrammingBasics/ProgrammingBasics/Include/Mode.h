@@ -76,6 +76,7 @@ public:
 class ChangingProperties : public Mode {
 private:
 	ID selectedObject;
+	Array<ID> reqIDs;
 	bool isNew = true;
 	//enum State { single_selection, poly_selection, area_selection };
 	//State state;

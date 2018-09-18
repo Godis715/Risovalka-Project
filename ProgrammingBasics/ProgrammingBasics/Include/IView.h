@@ -21,7 +21,7 @@ public:
 	virtual void TranslateScene(const Vector2&) = 0;
 	virtual void ScaleScene(const double&) = 0;
 	virtual void RotateScene(const double&) = 0;
-	virtual void GiveParams(const object_type, const Array<double>&) = 0;
+	virtual void GiveParams(const object_type, const Array<double>&, const Array<string>&, const Array<Array<double>>&) = 0;
 	virtual void DeleteDisplay() = 0;
 
 };

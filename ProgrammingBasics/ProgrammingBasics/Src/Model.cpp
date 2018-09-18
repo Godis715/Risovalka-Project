@@ -772,7 +772,7 @@ bool Model::OptimizeRequirements(const Array<Requirement*>& requirments) {
 		
 		optimization_iter++;
 		// temp
-		if (optimization_iter >= 200) {
+		if (optimization_iter >= 100) {
 			return (err < OPTIM_EPS * 10);
 		}
 	}
@@ -845,29 +845,52 @@ void Model::GetDifferential(const Array<Requirement*>& reqs, Array<double*>& par
 }
 
 //
-
-bool Model::GetObjType(const ID& obj_id, object_type& type) {
-	Primitive* obj = nullptr;
-	auto dataPrimMarker = dataPrim.Find(obj_id);
-
-	if (dataPrimMarker.IsValid()) {
-		obj = (*dataPrimMarker);
-		type = obj->GetType();
-		return true;
-	}
-	else {
-		return false;
+void Model::GetRequirementsByID(const ID& id, Array<ID>& reqIDs)
+{
+	if (dataPrim.Find(id).IsValid())
+	{
+		auto marker = dataLink.Find(id);
+		if (marker.IsValid()) {
+			auto listMarker = (*marker)->GetMarker();
+			do
+			{
+				ID currentID = listMarker.GetValue();
+				if ((*dataReq.Find(currentID))->GetType() != ot_connection)
+				{
+					reqIDs.PushBack(currentID);
+				}
+			} while (++listMarker);
+		}
 	}
 }
 
-bool Model::GetObjParam(const ID& obj_id, Array<double>& result) {
-	Primitive* obj = nullptr;
+bool Model::GetObjType(const ID& obj_id, object_type& type) {
+	Primitive* objPrim = nullptr;
 	auto dataPrimMarker = dataPrim.Find(obj_id);
 	if (dataPrimMarker.IsValid()) {
-		obj = *dataPrimMarker;
-		switch (obj->GetType()) {
+		objPrim = (*dataPrimMarker);
+		type = objPrim->GetType();
+		return true;
+	}
+
+	Requirement* objReq = nullptr;
+	auto dataReqMarker = dataReq.Find(obj_id);
+	if (dataReqMarker.IsValid()) {
+		objReq = (*dataReqMarker);
+		type = objReq->GetType();
+		return true;
+	}
+	return false;
+}
+
+bool Model::GetObjParam(const ID& obj_id, Array<double>& result) {
+	Primitive* objPrim = nullptr;
+	auto dataPrimMarker = dataPrim.Find(obj_id);
+	if (dataPrimMarker.IsValid()) {
+		objPrim = *dataPrimMarker;
+		switch (objPrim->GetType()) {
 		case ot_point: {
-			Point* point = cast<Point*>(obj);
+			Point* point = cast<Point*>(objPrim);
 			result.Clear();
 			Vector2 pos = point->GetPosition();
 			result.PushBack(pos.x);
@@ -876,7 +899,7 @@ bool Model::GetObjParam(const ID& obj_id, Array<double>& result) {
 			break;
 		}
 		case ot_segment: {
-			Segment* segment = cast<Segment*>(obj);
+			Segment* segment = cast<Segment*>(objPrim);
 			result.Clear();
 			Vector2 pos1 = segment->GetPoint1_pos();
 			Vector2 pos2 = segment->GetPoint2_pos();
@@ -888,7 +911,7 @@ bool Model::GetObjParam(const ID& obj_id, Array<double>& result) {
 			break;
 		}
 		case ot_arc: {
-			Arc* arc = cast<Arc*>(obj);
+			Arc* arc = cast<Arc*>(objPrim);
 			result.Clear();
 			Vector2 pos1 = arc->GetPoint1_pos();
 			Vector2 pos2 = arc->GetPoint2_pos();
@@ -903,7 +926,7 @@ bool Model::GetObjParam(const ID& obj_id, Array<double>& result) {
 			break;
 		}
 		case ot_circle: {
-			Circle* circle = dynamic_cast<Circle*>(obj);
+			Circle* circle = dynamic_cast<Circle*>(objPrim);
 			result.Clear();
 			Vector2 center = circle->GetCenter();
 			double radius = circle->GetRadius();
@@ -917,6 +940,13 @@ bool Model::GetObjParam(const ID& obj_id, Array<double>& result) {
 			return false;
 		}
 		}
+	}
+
+	Requirement* objReq = nullptr;
+	auto dataReqMarker = dataReq.Find(obj_id);
+	if (dataReqMarker.IsValid()) {
+		objReq = *dataReqMarker;
+		result = objReq->GetParams();
 	}
 	return false;
 }

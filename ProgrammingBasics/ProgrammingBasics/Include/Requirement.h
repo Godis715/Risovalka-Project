@@ -232,7 +232,7 @@ public:
 
 	double error() {
 		Vector2 vector(*arguments[0] - params[0], *arguments[1] - params[1]);
-		return Vector2::Dot(vector, vector);
+		return 5000 * (Vector2::Dot(vector, vector));
 	}
 };
 

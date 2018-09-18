@@ -24,6 +24,7 @@ public:
 	//static void DrawObject(const ID&, color);
 
 	//static void DrawSelected(const Array<ID>&){}
+	static void GetRequirementsByID(const ID&, Array<ID>&);
 
 	static bool GetObjType(const ID&, object_type&);
 

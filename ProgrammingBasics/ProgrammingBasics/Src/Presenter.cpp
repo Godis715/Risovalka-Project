@@ -280,6 +280,11 @@ void Presenter::Set_event(Event _ev, Array<double>& _params)
 	view->Update();
 }
 
+void Presenter::GetRequirementsByID(const ID& id, Array<ID>& reqIDs)
+{
+	model->GetRequirementsByID(id, reqIDs);
+}
+
 bool Presenter::GetObjType(const ID& id, object_type& type)
 {
 	return model->GetObjType(id, type);

@@ -118,10 +118,17 @@ private:
 		~SecondWindow() {}
 		int handle(int e)
 		{
+
 			Array<double> params;
 			switch (e)
 			{
-			case FL_PUSH:
+			case FL_PUSH: {
+				if (currentWindget != nullptr)
+				{
+					delete ViewFLTK::currentWindget;
+					currentWindget = nullptr;
+					ViewFLTK::mainWindow->redraw();
+				}
 				fl_cursor(*ViewFLTK::lastCursor);
 				params.PushBack((Fl::event_x() - ViewFLTK::translateScene->x) / scaleScene);
 				params.PushBack((Fl::event_y() - ViewFLTK::translateScene->y) / scaleScene);
@@ -134,25 +141,34 @@ private:
 					Presenter::Set_event(ev_leftMouseDown, params);
 				}
 				break;
-			case FL_RELEASE:
+			}
+			case FL_RELEASE: {
 				fl_cursor(FL_CURSOR_DEFAULT);
 				params.PushBack((Fl::event_x() - ViewFLTK::translateScene->x) / scaleScene);
 				params.PushBack((Fl::event_y() - ViewFLTK::translateScene->y) / scaleScene);
 				Presenter::Set_event(ev_leftMouseUp, params);
 				break;
-			case FL_MOUSEWHEEL:
+			}
+			case FL_MOUSEWHEEL: {
 				params.PushBack(Fl::event_dy());
 				Presenter::Set_event(ev_scroll, params);
 				break;
-			case FL_ENTER:
+			}
+			case FL_ENTER: {
 				fl_cursor(*ViewFLTK::lastCursor);
 				break;
-
-			case FL_LEAVE:
+			}
+			case FL_LEAVE: {
 				fl_cursor(FL_CURSOR_DEFAULT);
 				break;
-
-			case FL_KEYDOWN:
+			}
+			case FL_KEYDOWN: {
+				if (currentWindget != nullptr)
+				{
+					delete ViewFLTK::currentWindget;
+					currentWindget = nullptr;
+					ViewFLTK::mainWindow->redraw();
+				}
 				if (Fl::event_key() == FL_Down)
 				{
 					Presenter::Set_event(ev_arrowDown, params);
@@ -181,11 +197,7 @@ private:
 				}
 				if (Fl::event_key() == FL_Escape)
 				{
-					if (currentWindget != nullptr)
-					{
-						delete ViewFLTK::currentWindget;
-						ViewFLTK::mainWindow->redraw();
-					}
+					
 					delete ViewFLTK::lastCursor;
 					ViewFLTK::lastCursor = new Fl_Cursor(FL_CURSOR_DEFAULT);
 					ViewFLTK::lastEvent = ev_ctrlUp;
@@ -202,7 +214,8 @@ private:
 				}
 
 				break;
-			case FL_KEYUP:
+			}
+			case FL_KEYUP: {
 				if (Fl::event_key() == FL_Control_L)
 				{
 					Presenter::Set_event(ev_ctrlUp, params);
@@ -214,13 +227,15 @@ private:
 					lastEvent = ev_altUp;
 				}
 				break;
-			case FL_MOVE:
+			}
+			case FL_MOVE: {
 				fl_cursor(*ViewFLTK::lastCursor);
 				params.PushBack((Fl::event_x() - ViewFLTK::translateScene->x) / scaleScene);
 				params.PushBack((Fl::event_y() - ViewFLTK::translateScene->y) / scaleScene);
 				Presenter::Set_event(ev_mouseMove, params);
 				break;
-			case FL_DRAG:
+			}
+			case FL_DRAG: {
 				/*if (*ViewFLTK::lastCursor == FL_CURSOR_DEFAULT)
 				{
 					fl_cursor(FL_CURSOR_CROSS);
@@ -230,6 +245,7 @@ private:
 				Presenter::Set_event(ev_mouseMove, params);
 				break;
 			}
+			}
 			return e;
 		}
 	};
@@ -238,8 +254,8 @@ private:
 	{
 	private:
 		int coordX = 1010;
-		int coordY = 100;
-		int sizeX = 110;
+		int coordY = 90;
+		int sizeX = 160;
 		int sizeY = 230;
 
 		object_type type;
@@ -248,7 +264,9 @@ private:
 		static Array<Fl_Float_Input*> inputs;
 		Fl_Button* b_OK;
 		Fl_Button* b_close;
-		Fl_Button* b_req;
+
+		Fl_Menu_Button* b_req;
+		Fl_Menu_Item* i_req;
 
 		bool DisplayPoint(const Array<double>& params)
 		{
@@ -348,7 +366,8 @@ private:
 		}
 
 	public:
-		DisplayParams(const object_type _type, const Array<double>& params)
+		DisplayParams(const object_type _type, const Array<double>& params,
+			const Array<string>& nameReqs, const Array<Array<double>>& reqParams)
 		{
 			switch (_type)
 			{
@@ -394,10 +413,25 @@ private:
 				b_OK = new Fl_Button(coordX + 10, coordY + sizeY - 30, 30, 20, "OK");
 				b_OK->color(FL_WHITE);
 				b_OK->callback(cl_OK);
-			/*	b_close = new Fl_Button(coordX + 50, coordY + sizeY - 30, 50, 20, "CLOSE");
-				b_close->color(FL_WHITE);*/
-				b_req = new Fl_Button(coordX + 10, coordY + sizeY - 60, 30, 20, "Req");
-				b_req->color(FL_WHITE);
+				{
+					i_req = new Fl_Menu_Item[nameReqs.GetSize() + 1];
+					for (int i = 0; i < nameReqs.GetSize(); ++i) {
+						char* nameIt = new char[nameReqs[i].size() + 1];
+						for (int j = 0; j < nameReqs[i].size(); j++)
+						{
+							nameIt[j] = nameReqs[i][j];
+						}
+						nameIt[nameReqs[i].size()] = '\0';
+						i_req[i] = { nameIt };
+						//delete[] nameIt;
+					}
+					i_req[nameReqs.GetSize()] = { 0 };
+					b_req = new  Fl_Menu_Button(coordX + 90, coordY + 10, 50, 30, "Req");
+					b_req->menu(i_req);
+					b_req->callback(cl_Create);
+					b_req->clear_visible_focus();
+					b_req->color(FL_WHITE);
+				}
 				group->color(FL_YELLOW);
 				group->box(FL_UP_BOX);
 				group->end();
@@ -500,7 +534,7 @@ private:
 		{
 			log->value("Log::Create requirement: Dist points");
 			mainWindow->begin();
-			textBuffer = new Fl_Float_Input(1010, 50, 100, 30);
+			textBuffer = new Fl_Float_Input(1010, 60, 100, 30);
 			textBuffer->when(FL_WHEN_ENTER_KEY);
 			textBuffer->callback(cl_Input);
 			mainWindow->end();
@@ -522,7 +556,7 @@ private:
 		{
 			log->value("Log::Create requirement: Dist point segment");
 			mainWindow->begin();
-			textBuffer = new Fl_Float_Input(1010, 50, 100, 30);
+			textBuffer = new Fl_Float_Input(1010, 60, 100, 30);
 			textBuffer->when(FL_WHEN_ENTER_KEY);
 			textBuffer->callback(cl_Input);
 			mainWindow->end();
@@ -534,7 +568,7 @@ private:
 		{
 			log->value("Log::Create requirement: Dist point arc");
 			mainWindow->begin();
-			textBuffer = new Fl_Float_Input(1010, 50, 100, 30);
+			textBuffer = new Fl_Float_Input(1010, 60, 100, 30);
 			textBuffer->when(FL_WHEN_ENTER_KEY);
 			textBuffer->callback(cl_Input);
 			mainWindow->end();
@@ -546,7 +580,7 @@ private:
 		{
 			log->value("Log::Create requirement: Angle between segment");
 			mainWindow->begin();
-			textBuffer = new Fl_Float_Input(1010, 50, 100, 30);
+			textBuffer = new Fl_Float_Input(1010, 60, 100, 30);
 			textBuffer->when(FL_WHEN_ENTER_KEY);
 			textBuffer->callback(cl_Input);
 			mainWindow->end();
@@ -639,7 +673,7 @@ public:
 
 		{
 			toolingRed = new Fl_Menu_Item[6];
-			toolingRed[0] = { "Move selection" };
+			toolingRed[0] = { "Move selection"};
 			toolingRed[1] = { "Scale selection" };
 			toolingRed[2] = { "Delete selection"};
 			toolingRed[3] = { "Delete all scene"};
@@ -822,7 +856,8 @@ public:
 		drawWindow->redraw();
 	}
 
-	void GiveParams(const object_type type, const Array<double>& params)
+	void GiveParams(const object_type type, const Array<double>& params,
+		const Array<string>& Reqs, const Array<Array<double>>& reqParams)
 	{
 		mainWindow->begin();
 		if (displayParams != nullptr)
@@ -830,7 +865,7 @@ public:
 			delete displayParams;
 			displayParams = nullptr;
 		}
-		displayParams = new DisplayParams(type, params);
+		displayParams = new DisplayParams(type, params, Reqs, reqParams);
 		mainWindow->end();
 		mainWindow->redraw();
 	}

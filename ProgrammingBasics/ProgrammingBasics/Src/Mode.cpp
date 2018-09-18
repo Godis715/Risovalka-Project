@@ -1,6 +1,51 @@
 #include "Mode.h"
 #include "Presenter.h"
 
+string objTypeToString(const object_type type)
+{
+	switch (type)
+	{
+	case ot_point: {
+		return string("point");
+	}
+	case ot_segment: {
+		return string("segment");
+	}
+	case ot_arc: {
+		return string("arc");
+	}
+	case ot_circle: {
+		return string("circle");
+	}
+	case ot_distBetPoints: {
+		return string("distBetPoints");
+	}
+	case ot_equalSegmentLen: {
+		return string("equalSegmentLen");
+	}
+	case ot_pointsOnTheOneHand: {
+		return string("pointsOnTheOneHand");
+	}
+	case ot_distBetPointSeg: {
+		return string("distBetPointSeg");
+	}
+	case ot_pointPosReq: {
+		return string("pointPosReq");
+	}
+	case ot_angleBetSeg: {
+		return string("angleBetSeg");
+	}
+	case ot_distBetPointArc: {
+		return string("distBetPointArc");
+	}
+	case ot_pointInArc: {
+		return string("pointInArc");
+	}
+	default:
+		return string("");
+	}
+}
+
 
 Mode* Mode::UnexpectedEvent(const Event e) {
 	switch (e) {
@@ -302,11 +347,28 @@ ChangingProperties::ChangingProperties() : Mode()
 
 ChangingProperties::ChangingProperties(const ID _selObject) : Mode(), selectedObject(_selObject)
 {
-	object_type type;
-	Presenter::GetObjType(selectedObject, type);
-	Array<double> params;
-	Presenter::GetObjParam(selectedObject, params);
-	Presenter::GetView()->GiveParams(type, params);
+	object_type typePrim;
+	Presenter::GetObjType(selectedObject, typePrim);
+
+	Array<double> paramsPrim;
+	Presenter::GetObjParam(selectedObject, paramsPrim);
+
+	Presenter::GetRequirementsByID(selectedObject, reqIDs);
+
+	Array<string> nameReqs;
+	Array<Array<double>>paramsReqs;
+	for (int i = 0; i < reqIDs.GetSize(); i++)
+	{
+		Array<double>paramsReq;
+		Presenter::GetObjParam(reqIDs[i], paramsReq);
+		paramsReqs.PushBack(paramsReq);
+
+		object_type typeReq;
+		Presenter::GetObjType(reqIDs[i], typeReq);
+		nameReqs.PushBack(objTypeToString(typeReq) + '#' + reqIDs[i].GetHash());
+	}
+
+	Presenter::GetView()->GiveParams(typePrim, paramsPrim, nameReqs, paramsReqs);
 }
 
 ChangingProperties::~ChangingProperties()
