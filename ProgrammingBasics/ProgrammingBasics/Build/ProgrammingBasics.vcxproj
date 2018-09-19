@@ -137,6 +137,7 @@
     <ClCompile Include="..\Src\Primitives.cpp" />
     <ClCompile Include="..\Src\ReqController.cpp" />
     <ClCompile Include="..\Src\Requirement.cpp" />
+    <ClCompile Include="..\Src\SVGformat.cpp" />
     <ClCompile Include="..\Src\Vector2.cpp" />
   </ItemGroup>
   <ItemGroup>
