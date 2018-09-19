@@ -2,9 +2,9 @@
 
 // ID FUNCTIONS
 
-ID::ID(unsigned long long h, Object* obj) {
+ID::ID(unsigned long long h) {
 	hash = h;
-	object = obj;
+	object = nullptr;
 }
 ID::ID() {
 	hash = 0;
@@ -35,14 +35,14 @@ unsigned long long ID::GetHash() const {
 
 // IDGENERATOR FUNCTIONS
 
-ID* IDGenerator::generateID(Object* obj) {
-	ID* id = new ID(++_lastGivenHash, obj);
+ID IDGenerator::generateID() const {
+	ID id(++_lastGivenHash);
 	return id;
 }
 
-ID* IDGenerator::generateID(Object* obj, unsigned long long hash) {
+ID IDGenerator::generateID(unsigned long long hash) const {
 	if (hash > _lastGivenHash) {
-		ID* id = new ID(hash, obj);
+		ID id(hash);
 		_lastGivenHash = hash + 1;
 		return id;
 	}
@@ -50,6 +50,14 @@ ID* IDGenerator::generateID(Object* obj, unsigned long long hash) {
 		LOGERROR("generateID: this hash already used", LEVEL_3);
 	}
 	
+}
+
+ID IDGenerator::GetNullID() const {
+	return ID(0);
+}
+
+bool IDGenerator::IsNullID(const ID& id) const {
+	return (id.object == nullptr);
 }
 
 IDGenerator* IDGenerator::getInstance() {
@@ -75,22 +83,23 @@ IDGenerator* IDGenerator::_instance = nullptr;
 Object::Object(object_type _type, const Array<double>& _params) : 
 	type(_type),
 	params(_params) {
-	id = IDGenerator::getInstance()->generateID(this);
+	id = IDGenerator::getInstance()->generateID();
+	id.object = this;
 }
 
 Object::Object(object_type _type, const Array<double>& _params, unsigned long long _hash) :
 	type(_type),
 	params(_params)
 {
-	id = IDGenerator::getInstance()->generateID(this, _hash);
+	id = IDGenerator::getInstance()->generateID(_hash);
+	id.object = this;
 }
 
 Object::~Object() {
-	delete id;
 }
 object_type Object::GetType() const {
 	return type;
 }
 ID Object::GetID() const {
-	return *id;
+	return id;
 }

@@ -46,7 +46,7 @@ void DataController::AddObject(const ID& obj) {
 
 void DataController::Connect(const ID& head, const Array<ID>& nodes) {
 	LOG("Connect: creating a connection", LEVEL_2);
-	auto headIterator = dataLink.Find(head);
+	auto headIterator = linkData.Find(head);
 	BinSearchTree<ID, ID>* newNode;
 	if (!headIterator.IsValid()) {
 		newNode = new BinSearchTree<ID, ID>;
@@ -59,7 +59,7 @@ void DataController::Connect(const ID& head, const Array<ID>& nodes) {
 		if (repeatCheckIter.IsValid()) {
 			newNode->Add(nodes[i], nodes[i]);
 
-			auto nodeIterator = dataLink.Find(nodes[i]);
+			auto nodeIterator = linkData.Find(nodes[i]);
 			BinSearchTree<ID, ID>* currentNode;
 			if (nodeIterator.IsValid()) {
 				currentNode = (*nodeIterator);
@@ -72,7 +72,7 @@ void DataController::Connect(const ID& head, const Array<ID>& nodes) {
 				currentNode = new BinSearchTree<ID, ID>;
 				currentNode->Add(head, head);
 
-				dataLink.Add(nodes[i], currentNode);
+				linkData.Add(nodes[i], currentNode);
 			}
 
 			continue;
@@ -108,7 +108,7 @@ void DataController::DeleteObject(const ID& id) {
 	// deleting links
 	while (!queue.IsEmpty()) {
 		ID currID = queue.Pop();
-		auto linkIt = dataLink.Find(currID);
+		auto linkIt = linkData.Find(currID);
 		if (linkIt.IsValid()) {
 			auto connectedNodes = (*linkIt);
 			auto connNodesIt = connectedNodes->GetMarker();
@@ -124,7 +124,7 @@ void DataController::DeleteObject(const ID& id) {
 					}
 				}
 
-				auto linkItOfConnNode = dataLink.Find(currConnNode);
+				auto linkItOfConnNode = linkData.Find(currConnNode);
 				if (linkItOfConnNode.IsValid()) {
 					auto connOfConnNode = (*linkItOfConnNode);
 					auto connOfConnNodeIt = connOfConnNode->Find(currID);
@@ -188,8 +188,8 @@ Component DataController::GetComponent(const ID& id) {
 		if (!componentIt.IsValid()) {
 			component.Add(currID, currID);
 
-			auto linkIt = dataLink.Find(currID);
-
+			auto linkIt = linkData.Find(currID);
+			// ...
 		}
 	}
 }
