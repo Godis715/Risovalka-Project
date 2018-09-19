@@ -118,7 +118,7 @@ Array<double*> PrimController::GetPrimitiveParamsAsPointers(const Array<ID>& ids
 
 void PrimController::SetPrimitiveParams(const ID&, const Array<double>&) const {}
 
-ID PrimController::CreatePrimitive(object_type type, const Array<double>& params) const {
+ID PrimController::CreatePrimitive(object_type type, const Array<ID>& dependObjs, const Array<double>& params) const {
 	Primitive* prim = nullptr;
 	switch (type) {
 	case ot_point: {
@@ -130,23 +130,56 @@ ID PrimController::CreatePrimitive(object_type type, const Array<double>& params
 		break;
 	}
 	case ot_segment: {
-		if (params.GetSize() != 4) {
-			LOGERROR("CreatePrimitive: bad size of params", LEVEL_1);
+		if (dependObjs.GetSize() == 0) {
+			if (params.GetSize() != 4) {
+				LOGERROR("CreatePrimitive: bad size of params", LEVEL_1);
+			}
+			Point* point1 = new Point(params[0], params[1]);
+			Point* point2 = new Point(params[2], params[3]);
+			prim = new Segment(point1, point2);
 		}
-		Point* point1 = new Point(params[0], params[1]);
-		Point* point2 = new Point(params[2], params[3]);
-		prim = new Segment(point1, point2);
+		else {
+			if (params.GetSize() != 0) {
+				LOGERROR("CreatePrimitive: bad size of params", LEVEL_1);
+			}
+			if (dependObjs.GetSize() != 2) {
+				LOGERROR("CreatePrimitive: bad size of dependent objs", LEVEL_1);
+			}
+			if (objCtrl->GetType(dependObjs[0]) != ot_point ||
+				objCtrl->GetType(dependObjs[1]) != ot_point) {
+				LOGERROR("CreatePrimitive: bad type of dependent object", LEVEL_1);
+			}
+			Point* point1 = dynamic_cast<Point*>(GetPrimitive(dependObjs[0]));
+			Point* point2 = dynamic_cast<Point*>(GetPrimitive(dependObjs[1]));
+			prim = new Segment(point1, point2);
+		}
 		LOG("CreatePrimitive: created segment", LEVEL_2);
 		break;
-
 	}
 	case ot_arc: {
-		if (params.GetSize() != 4) {
-			LOGERROR("CreatePrimitive: bad size of params", LEVEL_1);
+		if (dependObjs.GetSize() == 0) {
+			if (params.GetSize() != 5) {
+				LOGERROR("CreatePrimitive: bad size of params", LEVEL_1);
+			}
+			Point* point1 = new Point(params[0], params[1]);
+			Point* point2 = new Point(params[2], params[3]);
+			prim = new Arc(point1, point2, params[4]);
 		}
-		Point* point1 = new Point(params[0], params[1]);
-		Point* point2 = new Point(params[2], params[3]);
-		prim = new Arc(point1, point2, params[4]);
+		else {
+			if (params.GetSize() != 1) {
+				LOGERROR("CreatePrimitive: bad size of params", LEVEL_1);
+			}
+			if (dependObjs.GetSize() != 2) {
+				LOGERROR("CreatePrimitive: bad size of dependent objs", LEVEL_1);
+			}
+			if (objCtrl->GetType(dependObjs[0]) != ot_point ||
+				objCtrl->GetType(dependObjs[1]) != ot_point) {
+				LOGERROR("CreatePrimitive: bad type of dependent object", LEVEL_1);
+			}
+			Point* point1 = dynamic_cast<Point*>(GetPrimitive(dependObjs[0]));
+			Point* point2 = dynamic_cast<Point*>(GetPrimitive(dependObjs[1]));
+			prim = new Arc(point1, point2, params[0]);
+		}
 		LOG("CreatePrimitive: created arc", LEVEL_2);
 
 		break;

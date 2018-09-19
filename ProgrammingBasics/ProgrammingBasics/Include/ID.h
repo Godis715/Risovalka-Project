@@ -36,8 +36,8 @@ class IDGenerator
 {
 public:
 	static IDGenerator* getInstance();
-	ID generateID() const;
-	ID generateID(unsigned long long) const;
+	ID* generateID() const;
+	ID* generateID(unsigned long long) const;
 	ID GetNullID() const;
 
 	bool IsNullID(const ID&) const;
@@ -50,7 +50,7 @@ private:
 
 class Object {
 protected:
-	ID id;
+	ID* id;
 	object_type type;
 
 	Array<double> params;

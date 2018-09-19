@@ -35,14 +35,13 @@ unsigned long long ID::GetHash() const {
 
 // IDGENERATOR FUNCTIONS
 
-ID IDGenerator::generateID() const {
-	ID id(++_lastGivenHash);
-	return id;
+ID* IDGenerator::generateID() const {
+	return new ID(++_lastGivenHash);
 }
 
-ID IDGenerator::generateID(unsigned long long hash) const {
+ID* IDGenerator::generateID(unsigned long long hash) const {
 	if (hash > _lastGivenHash) {
-		ID id(hash);
+		ID* id = new ID(hash);
 		_lastGivenHash = hash + 1;
 		return id;
 	}
@@ -84,7 +83,7 @@ Object::Object(object_type _type, const Array<double>& _params) :
 	type(_type),
 	params(_params) {
 	id = IDGenerator::getInstance()->generateID();
-	id.object = this;
+	id->object = this;
 }
 
 Object::Object(object_type _type, const Array<double>& _params, unsigned long long _hash) :
@@ -92,14 +91,15 @@ Object::Object(object_type _type, const Array<double>& _params, unsigned long lo
 	params(_params)
 {
 	id = IDGenerator::getInstance()->generateID(_hash);
-	id.object = this;
+	id->object = this;
 }
 
 Object::~Object() {
+	delete id;
 }
 object_type Object::GetType() const {
 	return type;
 }
 ID Object::GetID() const {
-	return id;
+	return *id;
 }

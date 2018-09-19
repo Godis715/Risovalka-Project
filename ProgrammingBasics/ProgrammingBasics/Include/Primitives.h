@@ -41,7 +41,7 @@ public:
 
 	void SetPrimitiveParams(const ID&, const Array<double>&) const;
 
-	ID CreatePrimitive(object_type, const Array<double>&) const;
+	ID CreatePrimitive(object_type, const Array<ID>&, const Array<double>&) const;
 	Array<ID> GetChildren(const ID&);
 };
 
