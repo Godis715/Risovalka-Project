@@ -185,11 +185,26 @@ ID PrimController::CreatePrimitive(object_type type, const Array<ID>& dependObjs
 		break;
 	}
 	case ot_circle: {
-		if (params.GetSize() != 3) {
-			LOGERROR("CreatePrimitive: bad size of params", LEVEL_1);
+		if (dependObjs.GetSize() == 0) {
+			if (params.GetSize() != 3) {
+				LOGERROR("CreatePrimitive: bad size of params", LEVEL_1);
+			}
+			Point* point = new Point(params[0], params[1]);
+			prim = new Circle(point, params[2]);
 		}
-		Point* point = new Point(params[0], params[1]);
-		prim = new Circle(point, params[2]);
+		else {
+			if (params.GetSize() != 1) {
+				LOGERROR("CreatePrimitive: bad size of params", LEVEL_1);
+			}
+			if (dependObjs.GetSize() != 1) {
+				LOGERROR("CreatePrimitive: bad size of dependent objs", LEVEL_1);
+			}
+			if (objCtrl->GetType(dependObjs[0]) != ot_point) {
+				LOGERROR("CreatePrimitive: bad type of dependent object", LEVEL_1);
+			}
+			Point* point = dynamic_cast<Point*>(GetPrimitive(dependObjs[0]));
+			prim = new Circle(point, params[0]);
+		}
 		LOG("CreatePrimitive: created circle", LEVEL_2);
 
 		break;

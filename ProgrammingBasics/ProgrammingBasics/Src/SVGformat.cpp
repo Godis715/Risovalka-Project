@@ -47,9 +47,14 @@ Array<double> SVGformat::ScanParams(std::ifstream& file)
 	return params;
 }
 
-bool SVGformat::ParsePointTag(std::ifstream& file)
+bool SVGformat::IsContains(IDmap& idMap, unsigned long long hash) {
+	auto iter = idMap.Find(hash);
+	return iter.IsValid();
+}
+
+bool SVGformat::ParsePointTag(std::ifstream& file, IDmap& idMap)
 {
-	Array<ID> IDs;
+	Array<unsigned long long> hashes;
 	Array<double> params;
 	char tempSymbol = file.get();
 	while (tempSymbol != '>')
@@ -61,15 +66,18 @@ bool SVGformat::ParsePointTag(std::ifstream& file)
 			if (_params.GetSize() != 1) return false; //бросить исключение
 			if (attribute == "px")params.PushBack(_params[0]);
 			if (attribute == "py")params.PushBack(_params[0]);
-			if (attribute == "id")IDs.PushBack(ID(int(_params[0])));
+			if (attribute == "id")hashes.PushBack(_params[0]);
 		}
 		tempSymbol = file.get();
 	}
-	model->CreateObjByID(ot_point, IDs, params);
+	if(!IsContains())
+	ID obj = primCtrl->CreatePrimitive(ot_point, Array<ID>(0), params);
+
+
 	return true;
 }
 
-bool SVGformat::ParseSegmentTag(std::ifstream& file)
+bool SVGformat::ParseSegmentTag(std::ifstream& file, IDmap& idMap)
 {
 	Array<ID> IDs;
 	Array<double> params;
@@ -103,7 +111,7 @@ bool SVGformat::ParseSegmentTag(std::ifstream& file)
 	model->CreateObjByID(ot_segment, IDs, params);
 }
 
-bool SVGformat::ParseCircleTag(std::ifstream& file)
+bool SVGformat::ParseCircleTag(std::ifstream& file, IDmap& idMap)
 {
 	Array<ID> IDs;
 	Array <double> params;
@@ -145,7 +153,7 @@ bool SVGformat::ParseCircleTag(std::ifstream& file)
 	return true;
 }
 
-bool SVGformat::ParseArcTag(std::ifstream& file)
+bool SVGformat::ParseArcTag(std::ifstream& file, IDmap& idMap)
 {
 	Array<ID> IDs;
 	Array <double> params;
@@ -188,7 +196,7 @@ bool SVGformat::ParseArcTag(std::ifstream& file)
 	return true;
 }
 
-bool SVGformat::ParseRequirementTag(std::ifstream& file, object_type typeReq)
+bool SVGformat::ParseRequirementTag(std::ifstream& file, object_type typeReq, IDmap& idMap)
 {
 	Array<ID> IDs;
 	Array <double> params;
@@ -229,13 +237,16 @@ bool SVGformat::ParseRequirementTag(std::ifstream& file, object_type typeReq)
 }
 
 //public
-bool SVGformat::Download(const std::string nameFile)
+bool SVGformat::Download(const std::string& nameFile)
 {
 	std::ifstream file("project.svg");
 	if (!file.is_open())
 	{
 		return false;
 	}
+
+	IDmap idMap;
+
 	while (!file.eof())
 	{
 		char tempSymbol = file.get();
@@ -243,10 +254,10 @@ bool SVGformat::Download(const std::string nameFile)
 		{
 			std::string tag;
 			file >> tag;
-			if (tag == "drawProject:point")ParsePointTag(file);
-			if (tag == "line")ParseSegmentTag(file);
-			if (tag == "circle")ParseCircleTag(file);
-			if (tag == "drawProject:arc")ParseArcTag(file);
+			if (tag == "drawProject:point")ParsePointTag(file, idMap);
+			if (tag == "line")ParseSegmentTag(file, idMap);
+			if (tag == "circle")ParseCircleTag(file, idMap);
+			if (tag == "drawProject:arc")ParseArcTag(file, idMap);
 			if (tag == "drawProject:req>")
 			{
 				bool isEnd = false;
@@ -256,14 +267,14 @@ bool SVGformat::Download(const std::string nameFile)
 					if (tempSymbol == '<')
 					{
 						file >> tag;
-						if (tag == "distBetPoints")ParseRequirementTag(file, ot_distBetPoints);
-						if (tag == "equalSegmentLen")ParseRequirementTag(file, ot_equalSegmentLen);
-						if (tag == "pointPosReq")ParseRequirementTag(file, ot_pointPosReq);
-						if (tag == "pointsOnTheOneHand")ParseRequirementTag(file, ot_pointsOnTheOneHand);
-						if (tag == "distBetPointSeg")ParseRequirementTag(file, ot_distBetPointSeg);
-						if (tag == "distBetPointArc")ParseRequirementTag(file, ot_distBetPointArc);
-						if (tag == "angleBetSeg")ParseRequirementTag(file, ot_angleBetSeg);
-						if (tag == "pointInArc")ParseRequirementTag(file, ot_pointInArc);
+						if (tag == "distBetPoints")ParseRequirementTag(file, ot_distBetPoints, idMap);
+						if (tag == "equalSegmentLen")ParseRequirementTag(file, ot_equalSegmentLen, idMap);
+						if (tag == "pointPosReq")ParseRequirementTag(file, ot_pointPosReq, idMap);
+						if (tag == "pointsOnTheOneHand")ParseRequirementTag(file, ot_pointsOnTheOneHand, idMap);
+						if (tag == "distBetPointSeg")ParseRequirementTag(file, ot_distBetPointSeg, idMap);
+						if (tag == "distBetPointArc")ParseRequirementTag(file, ot_distBetPointArc, idMap);
+						if (tag == "angleBetSeg")ParseRequirementTag(file, ot_angleBetSeg, idMap);
+						if (tag == "pointInArc")ParseRequirementTag(file, ot_pointInArc, idMap);
 						if (tag == "/drawProject:req>")isEnd = true;
 					}
 				}
@@ -274,7 +285,7 @@ bool SVGformat::Download(const std::string nameFile)
 	return true;
 }
 
-bool SVGformat::Save(const std::string way)
+bool SVGformat::Save(const std::string& way)
 {
 	std::ofstream file("project.svg");
 	if (!file.is_open())

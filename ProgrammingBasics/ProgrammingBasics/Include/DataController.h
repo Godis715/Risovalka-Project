@@ -10,15 +10,23 @@ class Model;
 
 class SVGformat {
 private:
+
+	typedef BinSearchTree<unsigned long long, ID> IDmap;
+
 	std::string ScanAttribute(std::ifstream&);
 	Array<double> ScanParams(std::ifstream&);
-	bool ParsePointTag(std::ifstream&);
-	bool ParseSegmentTag(std::ifstream&);
-	bool ParseCircleTag(std::ifstream&);
-	bool ParseArcTag(std::ifstream&);
-	bool ParseRequirementTag(std::ifstream&, object_type);
+	bool ParsePointTag(std::ifstream&, IDmap&);
+	bool ParseSegmentTag(std::ifstream&, IDmap&);
+	bool ParseCircleTag(std::ifstream&, IDmap&);
+	bool ParseArcTag(std::ifstream&, IDmap&);
+	bool ParseRequirementTag(std::ifstream&, object_type, IDmap&);
 
-	BinSearchTree<unsigned long long, ID> idMap;
+	bool IsContains(IDmap&, unsigned long long);
+
+	PrimController* primCtrl;
+	ReqController* reqCtrl;
+
+
 public:
 	SVGformat();
 	~SVGformat();
