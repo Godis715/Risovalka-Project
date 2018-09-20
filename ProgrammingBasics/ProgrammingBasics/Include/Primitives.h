@@ -26,11 +26,12 @@ private:
 	ObjectController* objCtrl;
 
 	Primitive* ConvertToPrimitive(Object*) const;
-	bool IsPrimitive(object_type) const;
 public:
 	static PrimController* GetInstance();
 
 	Primitive* GetPrimitive(const ID&) const;
+
+	bool IsPrimitive(object_type) const;
 
 	bool IsPrimitive(const ID&) const;
 

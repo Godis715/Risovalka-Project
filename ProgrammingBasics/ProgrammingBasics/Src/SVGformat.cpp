@@ -1,6 +1,24 @@
 #include "DataController.h"
 
 //private
+
+#define POINT_PRMS 2
+#define SEGMENT_PRMS 0
+#define ARC_PRMS 1
+#define CIRCLE_PRMS 1
+
+#define POINT_CHLD 0
+#define SEGMENT_CHLD 2
+#define ARC_CHLD 2
+#define CIRCLE_CHLD 1
+
+SVGformat::SVGObject::SVGObject(object_type _type, int childrenNum, int paramsNum) :
+	children(childrenNum), params(paramsNum), type(_type)
+{
+	
+}
+
+
 SVGformat::SVGformat() {}
 
 SVGformat::~SVGformat() {}
@@ -47,15 +65,19 @@ Array<double> SVGformat::ScanParams(std::ifstream& file)
 	return params;
 }
 
-bool SVGformat::IsContains(IDmap& idMap, unsigned long long hash) {
-	auto iter = idMap.Find(hash);
-	return iter.IsValid();
+void SVGformat::AddObject(const SVGObject& obj) {
+	auto iter = objMap.Find(obj.hash);
+	if (!iter.IsValid()) {
+		objMap.Add(obj.hash, obj);
+	}
+	else {
+		LOG("SVGformat::AddObject: Object with that ID already exist", LEVEL_3);
+	}
 }
 
-bool SVGformat::ParsePointTag(std::ifstream& file, IDmap& idMap)
+bool SVGformat::ParsePointTag(std::ifstream& file)
 {
-	Array<unsigned long long> hashes;
-	Array<double> params;
+	SVGObject obj(ot_point, POINT_CHLD, POINT_PRMS);
 	char tempSymbol = file.get();
 	while (tempSymbol != '>')
 	{
@@ -64,23 +86,21 @@ bool SVGformat::ParsePointTag(std::ifstream& file, IDmap& idMap)
 			std::string attribute = ScanAttribute(file);
 			Array<double> _params = ScanParams(file);
 			if (_params.GetSize() != 1) return false; //бросить исключение
-			if (attribute == "px")params.PushBack(_params[0]);
-			if (attribute == "py")params.PushBack(_params[0]);
-			if (attribute == "id")hashes.PushBack(_params[0]);
+			if (attribute == "px")obj.params[0] = _params[0];
+			if (attribute == "py")obj.params[1] = _params[0];
+			if (attribute == "id")obj.hash = _params[0];
 		}
 		tempSymbol = file.get();
 	}
-	if(!IsContains())
-	ID obj = primCtrl->CreatePrimitive(ot_point, Array<ID>(0), params);
-
+	
+	AddObject(obj);
 
 	return true;
 }
 
-bool SVGformat::ParseSegmentTag(std::ifstream& file, IDmap& idMap)
+bool SVGformat::ParseSegmentTag(std::ifstream& file)
 {
-	Array<ID> IDs;
-	Array<double> params;
+	SVGObject obj(ot_segment, SEGMENT_CHLD, SEGMENT_PRMS);
 	char tempSymbol = file.get();
 	while (tempSymbol != '>')
 	{
@@ -92,7 +112,7 @@ bool SVGformat::ParseSegmentTag(std::ifstream& file, IDmap& idMap)
 			{
 				if (_params.GetSize() == 1)
 				{
-					IDs.PushBack(ID(int(_params[0])));
+					obj.hash = _params[0];
 				}
 				else return false; //бросить исключение
 			}
@@ -100,21 +120,20 @@ bool SVGformat::ParseSegmentTag(std::ifstream& file, IDmap& idMap)
 			{
 				if (_params.GetSize() == 2)
 				{
-					IDs.PushBack(ID(int(_params[0])));
-					IDs.PushBack(ID(int(_params[1])));
+					obj.children[0] = _params[0];
+					obj.children[1] = _params[1];
 				}
 				else return false; //бросить исключение
 			}
 		}
 		tempSymbol = file.get();
 	}
-	model->CreateObjByID(ot_segment, IDs, params);
+	AddObject(obj);
 }
 
-bool SVGformat::ParseCircleTag(std::ifstream& file, IDmap& idMap)
+bool SVGformat::ParseCircleTag(std::ifstream& file)
 {
-	Array<ID> IDs;
-	Array <double> params;
+	SVGObject obj(ot_circle, CIRCLE_CHLD, CIRCLE_PRMS);
 	char tempSymbol = file.get();
 	while (tempSymbol != '>')
 	{
@@ -126,7 +145,7 @@ bool SVGformat::ParseCircleTag(std::ifstream& file, IDmap& idMap)
 			{
 				if (_params.GetSize() == 1)
 				{
-					IDs.PushBack(ID(int(_params[0])));
+					obj.hash = _params[0];
 				}
 				else return false; //бросить исключение
 			}
@@ -134,7 +153,7 @@ bool SVGformat::ParseCircleTag(std::ifstream& file, IDmap& idMap)
 			{
 				if (_params.GetSize() == 1)
 				{
-					IDs.PushBack(ID(int(_params[0])));
+					obj.children[0] = _params[0];
 				}
 				else return false; //бросить исключение
 			}
@@ -142,21 +161,20 @@ bool SVGformat::ParseCircleTag(std::ifstream& file, IDmap& idMap)
 			{
 				if (_params.GetSize() == 1)
 				{
-					params.PushBack(_params[0]);
+					obj.params[0] = _params[0];
 				}
 				else return false; //бросить исключение
 			}
 		}
 		tempSymbol = file.get();
 	}
-	model->CreateObjByID(ot_circle, IDs, params);
+	AddObject(obj);
 	return true;
 }
 
-bool SVGformat::ParseArcTag(std::ifstream& file, IDmap& idMap)
+bool SVGformat::ParseArcTag(std::ifstream& file)
 {
-	Array<ID> IDs;
-	Array <double> params;
+	SVGObject obj(ot_arc, ARC_CHLD, ARC_PRMS);
 	char tempSymbol = file.get();
 	while (tempSymbol != '>')
 	{
@@ -168,7 +186,7 @@ bool SVGformat::ParseArcTag(std::ifstream& file, IDmap& idMap)
 			{
 				if (_params.GetSize() == 1)
 				{
-					IDs.PushBack(ID(int(_params[0])));
+					obj.hash = _params[0];
 				}
 				else return false; //бросить исключение
 			}
@@ -176,8 +194,8 @@ bool SVGformat::ParseArcTag(std::ifstream& file, IDmap& idMap)
 			{
 				if (_params.GetSize() == 2)
 				{
-					IDs.PushBack(ID(int(_params[0])));
-					IDs.PushBack(ID(int(_params[1])));
+					obj.children[0] = _params[0];
+					obj.children[1] = _params[1];
 				}
 				else return false; //бросить исключение
 			}
@@ -185,21 +203,20 @@ bool SVGformat::ParseArcTag(std::ifstream& file, IDmap& idMap)
 			{
 				if (_params.GetSize() == 1)
 				{
-					params.PushBack(_params[0]);
+					obj.params = _params[0];
 				}
 				else return false; //бросить исключение
 			}
 		}
 		tempSymbol = file.get();
 	}
-	model->CreateObjByID(ot_arc, IDs, params);
+	AddObject(obj);
 	return true;
 }
 
-bool SVGformat::ParseRequirementTag(std::ifstream& file, object_type typeReq, IDmap& idMap)
+bool SVGformat::ParseRequirementTag(std::ifstream& file, object_type typeReq)
 {
-	Array<ID> IDs;
-	Array <double> params;
+	SVGObject obj(typeReq, 0, 0);
 	char tempSymbol = file.get();
 	while (tempSymbol != '>')
 	{
@@ -211,7 +228,7 @@ bool SVGformat::ParseRequirementTag(std::ifstream& file, object_type typeReq, ID
 			{
 				if (_params.GetSize() == 1)
 				{
-					IDs.PushBack(ID(int(_params[0])));
+					obj.hash = _params[0];
 				}
 				else return false; //бросить исключение
 			}
@@ -219,33 +236,35 @@ bool SVGformat::ParseRequirementTag(std::ifstream& file, object_type typeReq, ID
 			{
 				for (int i = 0; i < _params.GetSize(); i++)
 				{
-					IDs.PushBack(ID(int(_params[i])));
+					obj.children.PushBack(int(_params[i]));
 				}
 			}
 			if (attribute == "params")
 			{
 				for (int i = 0; i < _params.GetSize(); i++)
 				{
-					params.PushBack(_params[i]);
+					obj.params.PushBack(_params[i]);
 				}
 			}
 		}
 		tempSymbol = file.get();
 	}
-	model->CreateObjByID(typeReq, IDs, params);
+	AddObject(obj);
 	return true;
 }
 
 //public
 bool SVGformat::Download(const std::string& nameFile)
 {
+
+	objMap.DeleteDict();
+
 	std::ifstream file("project.svg");
 	if (!file.is_open())
 	{
+		LOGERROR("SVGformat::Download: couldn't open the file", LEVEL_3);
 		return false;
 	}
-
-	IDmap idMap;
 
 	while (!file.eof())
 	{
@@ -254,10 +273,10 @@ bool SVGformat::Download(const std::string& nameFile)
 		{
 			std::string tag;
 			file >> tag;
-			if (tag == "drawProject:point")ParsePointTag(file, idMap);
-			if (tag == "line")ParseSegmentTag(file, idMap);
-			if (tag == "circle")ParseCircleTag(file, idMap);
-			if (tag == "drawProject:arc")ParseArcTag(file, idMap);
+			if (tag == "drawProject:point")ParsePointTag(file);
+			if (tag == "line")ParseSegmentTag(file);
+			if (tag == "circle")ParseCircleTag(file);
+			if (tag == "drawProject:arc")ParseArcTag(file);
 			if (tag == "drawProject:req>")
 			{
 				bool isEnd = false;
@@ -267,14 +286,14 @@ bool SVGformat::Download(const std::string& nameFile)
 					if (tempSymbol == '<')
 					{
 						file >> tag;
-						if (tag == "distBetPoints")ParseRequirementTag(file, ot_distBetPoints, idMap);
-						if (tag == "equalSegmentLen")ParseRequirementTag(file, ot_equalSegmentLen, idMap);
-						if (tag == "pointPosReq")ParseRequirementTag(file, ot_pointPosReq, idMap);
-						if (tag == "pointsOnTheOneHand")ParseRequirementTag(file, ot_pointsOnTheOneHand, idMap);
-						if (tag == "distBetPointSeg")ParseRequirementTag(file, ot_distBetPointSeg, idMap);
-						if (tag == "distBetPointArc")ParseRequirementTag(file, ot_distBetPointArc, idMap);
-						if (tag == "angleBetSeg")ParseRequirementTag(file, ot_angleBetSeg, idMap);
-						if (tag == "pointInArc")ParseRequirementTag(file, ot_pointInArc, idMap);
+						if (tag == "distBetPoints")ParseRequirementTag(file, ot_distBetPoints);
+						if (tag == "equalSegmentLen")ParseRequirementTag(file, ot_equalSegmentLen);
+						if (tag == "pointPosReq")ParseRequirementTag(file, ot_pointPosReq);
+						if (tag == "pointsOnTheOneHand")ParseRequirementTag(file, ot_pointsOnTheOneHand);
+						if (tag == "distBetPointSeg")ParseRequirementTag(file, ot_distBetPointSeg);
+						if (tag == "distBetPointArc")ParseRequirementTag(file, ot_distBetPointArc);
+						if (tag == "angleBetSeg")ParseRequirementTag(file, ot_angleBetSeg);
+						if (tag == "pointInArc")ParseRequirementTag(file, ot_pointInArc);
 						if (tag == "/drawProject:req>")isEnd = true;
 					}
 				}
@@ -282,8 +301,78 @@ bool SVGformat::Download(const std::string& nameFile)
 		}
 	}
 	file.close();
+	ApplyDownloadData();
 	return true;
 }
+
+void SVGformat::ApplyDownloadData() {
+	IDMap idMap;
+	auto objIt = objMap.GetMarker();
+
+	// init points - as first
+	while (objIt.IsValid()) {
+		SVGObject obj = *objIt;
+		if (obj.type == ot_point) {
+			if (!IsContains(idMap, obj.hash)) {
+				ID point = primCtrl->CreatePrimitive(obj.type, Array<ID>(0), obj.params);
+				dataCtrl->AddObject(point);
+			}
+			else {
+				LOG("SVGformat::ApplyDonwloadData: this ID already exist", LEVEL_3);
+			}
+		}
+		++objIt;
+	}
+
+	// init points - as first
+
+	objIt = objMap.GetMarker();
+	while (objIt.IsValid()) {
+		SVGObject obj = *objIt;
+		if (primCtrl->IsPrimitive(obj.type) && obj.type != ot_point) {
+			if (!IsContains(idMap, obj.hash)) {
+				Array<ID> children(obj.children.GetSize());
+				for (int i = 0; i < obj.children.GetSize(); ++i) {
+					if (!IsContains(idMap, obj.children[i])) {
+						LOGERROR("SVGformat::ApplyDonwloadData: trying to use unknown ID", LEVEL_3);
+					}
+					children[i] = *(idMap.Find(obj.children[i]));
+				}
+				ID newObject = primCtrl->CreatePrimitive(obj.type, children, obj.params);
+				dataCtrl->AddObject(newObject);
+				dataCtrl->Connect(newObject, children);
+			}
+			else {
+				LOG("SVGformat::ApplyDonwloadData: this ID already exist", LEVEL_3);
+			}
+		}
+		++objIt;
+	}
+
+	objIt = objMap.GetMarker();
+	while (objIt.IsValid()) {
+		SVGObject obj = *objIt;
+		if (reqCtrl->IsReq(obj.type)) {
+			if (!IsContains(idMap, obj.hash)) {
+				Array<ID> children(obj.children.GetSize());
+				for (int i = 0; i < obj.children.GetSize(); ++i) {
+					if (!IsContains(idMap, obj.children[i])) {
+						LOGERROR("SVGformat::ApplyDonwloadData: trying to use unknown ID", LEVEL_3);
+					}
+					children[i] = *(idMap.Find(obj.children[i]));
+				}
+				ID newObject = reqCtrl->CreateReq(obj.type, children, obj.params);
+				dataCtrl->AddObject(newObject);
+				dataCtrl->Connect(newObject, children);
+			}
+			else {
+				LOG("SVGformat::ApplyDonwloadData: this ID already exist", LEVEL_3);
+			}
+		}
+		++objIt;
+	}
+}
+
 
 bool SVGformat::Save(const std::string& way)
 {

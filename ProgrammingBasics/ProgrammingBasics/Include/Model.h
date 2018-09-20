@@ -5,18 +5,18 @@
 #include "Primitives.h"
 #include "DataController.h"
 
-class ClassName {
+class Model {
 private:
 	ObjectController* objCtrl;
 	PrimController* primCtrl;
 	ReqController* reqCtrl;
 	DataController* dataCtrl;
 
-	static ClassName* instance;
+	static Model* instance;
 
-	ClassName();
+	Model();
 public:
-	ClassName* GetInstance();
+	Model* GetInstance();
 
 	ID CreatePrimitive(object_type, const Array<double>&);
 	ID CreateRequirement(object_type, const Array<ID>&, const Array<double>&);

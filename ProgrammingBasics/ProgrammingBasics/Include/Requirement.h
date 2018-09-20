@@ -17,9 +17,10 @@ private:
 
 	Requirement* GetReq(const ID&) const;
 	Requirement* ConvertToReq(Object*) const;
-	bool IsReq(object_type) const;
 public:
 	static ReqController* GetInstance();
+
+	bool IsReq(object_type) const;
 
 	bool IsReq(const ID&) const;
 

@@ -11,21 +11,41 @@ class Model;
 class SVGformat {
 private:
 
-	typedef BinSearchTree<unsigned long long, ID> IDmap;
+	class SVGObject {
+	private:
+	public:
+
+		// (<children>, <params>)
+		SVGObject(object_type, int, int);
+
+		object_type type;
+		unsigned long long hash;
+		Array<unsigned long long> children;
+		Array<double> params;
+	};
+
+	typedef BinSearchTree<unsigned long long, SVGObject> ObjectMap;
+	typedef BinSearchTree<unsigned long long, ID> IDMap;
+
+	ObjectMap objMap;
 
 	std::string ScanAttribute(std::ifstream&);
 	Array<double> ScanParams(std::ifstream&);
-	bool ParsePointTag(std::ifstream&, IDmap&);
-	bool ParseSegmentTag(std::ifstream&, IDmap&);
-	bool ParseCircleTag(std::ifstream&, IDmap&);
-	bool ParseArcTag(std::ifstream&, IDmap&);
-	bool ParseRequirementTag(std::ifstream&, object_type, IDmap&);
+	bool ParsePointTag(std::ifstream&);
+	bool ParseSegmentTag(std::ifstream&);
+	bool ParseCircleTag(std::ifstream&);
+	bool ParseArcTag(std::ifstream&);
+	bool ParseRequirementTag(std::ifstream&, object_type);
 
-	bool IsContains(IDmap&, unsigned long long);
+	bool IsContains(const IDMap&, unsigned long long);
+
+	void AddObject(const SVGObject&);
+	void ApplyDownloadData();
 
 	PrimController* primCtrl;
 	ReqController* reqCtrl;
-
+	DataController* dataCtrl;
+	ObjectController* objCtrl;
 
 public:
 	SVGformat();
