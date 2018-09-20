@@ -19,9 +19,19 @@ SVGformat::SVGObject::SVGObject(object_type _type, int childrenNum, int paramsNu
 }
 
 
-SVGformat::SVGformat() {}
+SVGformat::SVGformat() {
+	dataCtrl = DataController::GetInstance();
+	primCtrl = PrimController::GetInstance();
+	reqCtrl = ReqController::GetInstance();
+	objCtrl = ObjectController::GetInstance();
+}
 
 SVGformat::~SVGformat() {}
+
+bool SVGformat::IsContains(IDMap& idMap, unsigned long long hash) {
+	auto it = idMap.Find(hash);
+	return it.IsValid();
+}
 
 std::string SVGformat::ScanAttribute(std::ifstream& file)
 {
@@ -469,8 +479,7 @@ bool SVGformat::Save(const std::string& way)
 	if (dataCtrl->reqData.GetSize() != 0) {
 		file << "\n	<drawProject:req>\n";
 		auto dataReqMarker = dataCtrl->reqData.GetMarker();
-		do
-		{
+		while(dataReqMarker.IsValid()) {
 			ID tempID = (*dataReqMarker);
 			Array<double> tempParams = reqCtrl->GetReqParamsAsValues(tempID);
 			object_type tempType = objCtrl->GetType(tempID);
@@ -537,7 +546,8 @@ bool SVGformat::Save(const std::string& way)
 				else file << " ";
 			}
 			file << "	/>\n";
-		} while (++dataReqMarker);
+			++dataReqMarker;
+		}
 		file << "	</drawProject:req>";
 	}
 	file << "\n</svg>";

@@ -340,19 +340,6 @@ public:
 	}
 }; 
 
-template<typename T, typename ...Args> Array<T> CreateArr(const T& val, const Args& ... args) {
-	int numargs = sizeof...(args)+1;
-	Array<T> arr(numargs);
-	arr[0] = val;
-	int i = 1;
-	for (auto&& p : std::initializer_list<T>{ args... })
-	{
-		arr[i] = p;
-		++i;
-	}
-	return arr;
-}
-
 // everlasting memory
 
 //template <class T> std::ostream& operator<< (std::ostream& out, Array<T>& arr)

@@ -50,13 +50,14 @@ void DataController::Connect(const ID& head, const Array<ID>& nodes) {
 	BinSearchTree<ID, ID>* newNode;
 	if (!headIterator.IsValid()) {
 		newNode = new BinSearchTree<ID, ID>;
+		linkData.Add(head, newNode);
 	}
 	else {
 		newNode = (*headIterator);
 	}
 	for (int i = 0; i < nodes.GetSize(); ++i) {
 		auto repeatCheckIter = newNode->Find(nodes[i]);
-		if (repeatCheckIter.IsValid()) {
+		if (!repeatCheckIter.IsValid()) {
 			newNode->Add(nodes[i], nodes[i]);
 
 			auto nodeIterator = linkData.Find(nodes[i]);
@@ -176,20 +177,21 @@ void DataController::DeleteObject(const ID& id) {
 		++objToDelete;
 	}
 }
+//
+//Component DataController::GetComponent(const ID& id) {
+//	Component component;
+//	Queue<ID> queue;
+//	queue.Push(id);
+//
+//	while (!queue.IsEmpty()) {
+//		ID currID = queue.Pop();
+//		auto componentIt = component.Find(currID);
+//		if (!componentIt.IsValid()) {
+//			component.Add(currID, currID);
+//
+//			auto linkIt = linkData.Find(currID);
+//			// ...
+//		}
+//	}
+//}
 
-Component DataController::GetComponent(const ID& id) {
-	Component component;
-	Queue<ID> queue;
-	queue.Push(id);
-
-	while (!queue.IsEmpty()) {
-		ID currID = queue.Pop();
-		auto componentIt = component.Find(currID);
-		if (!componentIt.IsValid()) {
-			component.Add(currID, currID);
-
-			auto linkIt = linkData.Find(currID);
-			// ...
-		}
-	}
-}

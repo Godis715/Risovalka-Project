@@ -8,7 +8,7 @@
 class Primitive : public Object{
 private:
 public:
-	Primitive(object_type);
+	Primitive(object_type, const Array<double>&);
 	virtual double GetDist(const Vector2&) const = 0;
 };
 

@@ -13,6 +13,10 @@ bool PrimController::IsPrimitive(object_type type) const {
 		(type == ot_circle);
 }
 
+bool PrimController::IsPrimitive(const ID& obj) const {
+	return IsPrimitive(objCtrl->GetType(obj));
+}
+
 Primitive* PrimController::ConvertToPrimitive(Object* obj) const {
 	bool isPrim = IsPrimitive(obj->GetType());
 	if (!isPrim) {

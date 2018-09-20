@@ -37,7 +37,7 @@ private:
 	bool ParseArcTag(std::ifstream&);
 	bool ParseRequirementTag(std::ifstream&, object_type);
 
-	bool IsContains(const IDMap&, unsigned long long);
+	bool IsContains(IDMap&, unsigned long long);
 
 	void AddObject(const SVGObject&);
 	void ApplyDownloadData();
@@ -79,7 +79,7 @@ private:
 	friend class SVGformat;
 
 public:
-	DataController* GetInstance();
+	static DataController* GetInstance();
 
 	void AddObject(const ID&);
 	void Connect(const ID&, const Array<ID>&);

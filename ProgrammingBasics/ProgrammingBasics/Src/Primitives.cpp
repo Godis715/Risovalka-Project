@@ -1,27 +1,27 @@
 #include "Primitives.h"
 #include <stdexcept>
 
-Primitive::Primitive(object_type _type) : Object(_type)
+Primitive::Primitive(object_type _type, const Array<double>& _params) : Object(_type, _params)
 {
 
 }
 
 Point::Point(const Vector2& pos) :
-	Primitive(ot_point)
+	Primitive(ot_point, CreateArr(pos.x, pos.y))
 {
 	this->parent = nullptr;
 	this->x = pos.x;
 	this->y = pos.y;
 }
 Point::Point(double _x, double _y) :
-	Primitive(ot_point)
+	Primitive(ot_point, CreateArr(_x, _y))
 {
 	this->parent = nullptr;
 	this->x = _x;
 	this->y = _y;
 }
 Point::Point(const Point& _p) :
-	Primitive(ot_point)
+	Primitive(ot_point, CreateArr(_p.x, _p.y))
 {
 	this->parent = nullptr;
 	this->x = _p.x;
@@ -57,7 +57,7 @@ bool Point::SetParent(Primitive* _parent) {
 
 
 Segment::Segment(Point* _p1, Point* _p2) :
-	Primitive(ot_segment)
+	Primitive(ot_segment, Array<double>())
 {
 	if (_p1 == nullptr || _p2 == nullptr) {
 		throw std::invalid_argument("Segment::Segment::parameters was nullptr");
@@ -125,7 +125,7 @@ double Segment::GetDist(const Vector2& point) const {
 }
 
 Arc::Arc(Point* _p1, Point* _p2, double _angle) :
-	Primitive(ot_arc)
+	Primitive(ot_arc, CreateArr(_angle))
 {
 	if (_p1 == nullptr || _p2 == nullptr) {
 		throw std::invalid_argument("Arc::Arc::parameters was nullptr");
@@ -228,7 +228,7 @@ void Arc::SetAngle(double newAngle) {
 }
 
 Circle::Circle(Point* _center,  double _radius) :
-	Primitive(ot_circle)
+	Primitive(ot_circle, CreateArr(_radius))
 {
 	if (_center == nullptr) {
 		throw std::invalid_argument("Circle::Circle::_center was nullptr");
