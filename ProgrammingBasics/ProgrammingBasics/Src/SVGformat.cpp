@@ -387,19 +387,17 @@ bool SVGformat::Save(const std::string& way)
 	file << "\n<svg";
 	file << " width=" << '"' << "1000" << '"';
 	file << " height=" << '"' << "1000" << '"' << ">";
-	if (model->dataPrim.GetSize() == 0) {
+	if (dataCtrl->primData.GetSize() == 0) {
 		file << "\n</svg>";
 		file.close();
 		return false;
 	}
-	auto dataPrimMarker = model->dataPrim.GetMarker();
-	do
-	{
-		object_type tempType;
-		Array<double> tempParams;
-		ID tempID = (*dataPrimMarker)->GetID();
-		model->GetObjParam(tempID, tempParams);
-		model->GetObjType(tempID, tempType);
+	auto primDataMarker = dataCtrl->primData.GetMarker();
+	while(primDataMarker.IsValid()) {
+		ID tempID = (*primDataMarker);
+		Array<double> tempParams = primCtrl->GetPrimitiveParamsAsValues(tempID);
+		object_type tempType = objCtrl->GetType(tempID);
+		Array<ID> children = primCtrl->GetChildren(tempID);
 		if (tempType == ot_point) {
 			file << "\n	<drawProject:point";
 			file << "\n		px=" << '"' << tempParams[0] << '"';
@@ -408,21 +406,20 @@ bool SVGformat::Save(const std::string& way)
 			file << "\n	/>";
 		}
 		if (tempType == ot_segment) {
-			Segment* tepmSeg = dynamic_cast<Segment*>((*dataPrimMarker));
 			file << "\n	<line";
 			file << "\n		x1=" << '"' << tempParams[0] << '"';
 			file << "\n		y1=" << '"' << tempParams[1] << '"';
 			file << "\n		x2=" << '"' << tempParams[2] << '"';
 			file << "\n		y2=" << '"' << tempParams[3] << '"';
 			file << "\n		id=" << '"' << tempID.GetHash() << '"';
-			file << "\n		childIds=" << '"' << tepmSeg->point1->GetID().GetHash() << " "
-				<< tepmSeg->point2->GetID().GetHash() << '"';
+			file << "\n		childIds=" << '"' << children[0].GetHash() << " "
+				<< children[1].GetHash() << '"';
 			file << "\n		stroke=" << '"' << "red" << '"';
 			file << "\n		stroke-width=" << '"' << 5 << '"';
 			file << "\n	/>";
 		}
 		if (tempType == ot_arc) {
-			Arc* tempArc = dynamic_cast<Arc*>((*dataPrimMarker));
+			Arc* tempArc = dynamic_cast<Arc*>(primCtrl->GetPrimitive(tempID));
 			file << "\n	<path";
 			file << "\n		d=" << '"';
 			file << "M" << tempParams[2] << "," << tempParams[3] << " ";
@@ -436,8 +433,8 @@ bool SVGformat::Save(const std::string& way)
 			else file << "0 " << 1 << "," << 0 << " ";
 			file << tempParams[4] << "," << tempParams[5] << '"';
 			file << "\n		id=" << '"' << tempID.GetHash() << '"';
-			file << "\n		childIds=" << '"' << tempArc->point1->GetID().GetHash() << " "
-				<< tempArc->point2->GetID().GetHash() << '"';
+			file << "\n		childIds=" << '"' << children[0].GetHash() << " "
+				<< children[1].GetHash() << '"';
 			file << "\n		stroke=" << '"' << "red" << '"';
 			file << "\n		stroke-width=" << '"' << 5 << '"';
 			file << "\n		fill=" << '"' << "none" << '"';
@@ -450,33 +447,34 @@ bool SVGformat::Save(const std::string& way)
 			file << "\n		y2=" << '"' << tempParams[5] << '"';
 			file << "\n		angle=" << '"' << tempArc->GetAngle() << '"';
 			file << "\n		id=" << '"' << tempID.GetHash() << '"';
-			file << "\n		childIds=" << '"' << tempArc->point1->GetID().GetHash() << " "
-				<< tempArc->point2->GetID().GetHash() << '"';
+			file << "\n		childIds=" << '"' << children[0].GetHash() << " "
+				<< children[1].GetHash() << '"';
 			file << "\n	/>";
 		}
 		if (tempType == ot_circle) {
-			Circle* tepmCircle = dynamic_cast<Circle*>((*dataPrimMarker));
+			Circle* tepmCircle = dynamic_cast<Circle*>(primCtrl->GetPrimitive(tempID));
 			file << "\n	<circle";
 			file << "\n		cx=" << '"' << tempParams[0] << '"';
 			file << "\n		cy=" << '"' << tempParams[1] << '"';
 			file << "\n		r=" << '"' << tempParams[2] << '"';
 			file << "\n		id=" << '"' << tempID.GetHash() << '"';
-			file << "\n		childIds=" << '"' << tepmCircle->center->GetID().GetHash() << '"';
+			file << "\n		childIds=" << '"' << children[0].GetHash() << '"';
 			file << "\n		stroke=" << '"' << "red" << '"';
 			file << "\n		stroke-width=" << '"' << 5 << '"';
 			file << "\n		fill=" << '"' << "none" << '"';
 			file << "\n	/>";
 		}
-	} while (++dataPrimMarker);
-	if (model->dataReq.GetSize() != 0) {
+		++primDataMarker;
+	}
+	if (dataCtrl->reqData.GetSize() != 0) {
 		file << "\n	<drawProject:req>\n";
-		auto dataReqMarker = model->dataReq.GetMarker();
+		auto dataReqMarker = dataCtrl->reqData.GetMarker();
 		do
 		{
-			ID tempID = (*dataReqMarker)->GetID();
-			object_type tempType = (*dataReqMarker)->GetType();
-			Array<double> tempParams = (*dataReqMarker)->GetParams();
-			List<ID>* tempIDs = (*model->dataLink.Find(tempID));
+			ID tempID = (*dataReqMarker);
+			Array<double> tempParams = reqCtrl->GetReqParamsAsValues(tempID);
+			object_type tempType = objCtrl->GetType(tempID);
+			BinSearchTree<ID, ID>* tempIDs = (*dataCtrl->linkData.Find(tempID));
 			switch (tempType) {
 			case ot_distBetPoints: {
 				file << "		<distBetPoints";
@@ -522,7 +520,7 @@ bool SVGformat::Save(const std::string& way)
 				int i = 0;
 				do
 				{
-					file << tempMarker.GetValue().GetHash();
+					file << (*tempMarker).GetHash();
 					if (i != tempIDs->GetSize() - 1) file << " ";
 					i++;
 				} while (++tempMarker);

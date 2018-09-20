@@ -76,6 +76,8 @@ private:
 
 	BinSearchTree<ID, ID>* currentComponent;
 
+	friend class SVGformat;
+
 public:
 	DataController* GetInstance();
 
