@@ -62,7 +62,8 @@ int main()
 	ID segment1 = model->CreatePrimitive(ot_segment, CreateArr(0.0, 1.1, 2.2, -5.5));
 	ID segment2 = model->CreatePrimitive(ot_segment, CreateArr(100.0, 200.0, 5.0, 6.0));
 	ID equalSegment = model->CreateRequirement(ot_equalSegmentLen, CreateArr(segment1, segment2), Array<double>(0));
-
+	
 	SVGformat svg;
-	svg.Save("project.svg");
+
+	svg.Save("project.svg", false);
 }

@@ -11,14 +11,14 @@ private:
 
 	void doubleCapacity()
 	{
-		auto newStorage = new T[2 * _capacity];
+		auto newStorage = new T[((_capacity != 0) ? (2 * _capacity) : 1)];
 		for (int i = 0; i < _capacity; i++)
 		{
 			newStorage[i] = _storage[i];
 		}
 		delete[] _storage;
 		_storage = newStorage;
-		_capacity *= 2;
+		_capacity = ((_capacity != 0) ? (2 * _capacity) : 1);
 	}
 
 public:
@@ -115,7 +115,7 @@ public:
 	Array(const Array& arr) : _default_capacity(arr._default_capacity) {
 		this->_capacity = arr._capacity;
 		this->_size = arr._size;
-		this->_storage = new T[_capacity];
+		this->_storage = (arr._storage != nullptr) ? new T[_capacity] : nullptr;
 		for (int i = 0; i < _size; ++i) {
 			this->_storage[i] = arr._storage[i];
 		}
@@ -123,12 +123,14 @@ public:
 
 	~Array()
 	{
-		delete[] _storage;
+		if(_capacity != 0) delete[] _storage;
 	}
 	
 	void operator=(Array&& arr) {
 
-		delete[] this->_storage;
+		if (_capacity != 0) {
+			delete[] this->_storage;
+		}
 
 		this->_capacity = arr._capacity;
 		this->_size = arr._size;

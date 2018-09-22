@@ -12,6 +12,11 @@
 #define ARC_CHLD 2
 #define CIRCLE_CHLD 1
 
+#define STROKE_WIDTH 5
+#define STROKE_COLOR "red"
+#define DOC_WIDTH 1000
+#define DOC_HEIGHT 1000
+
 SVGformat::SVGObject::SVGObject(object_type _type, int childrenNum, int paramsNum) :
 	children(childrenNum), params(paramsNum), type(_type)
 {
@@ -68,7 +73,7 @@ Array<double> SVGformat::ScanParams(std::ifstream& file)
 					dig.clear();
 				}
 				else if ((tempSymbol >= '0' && tempSymbol <= '9')
-					|| tempSymbol == '.') dig += tempSymbol;
+					|| tempSymbol == '.' || tempSymbol == '-') dig += tempSymbol;
 			} while (tempSymbol != '"');
 		}
 	} while (tempSymbol != '"');
@@ -96,9 +101,12 @@ bool SVGformat::ParsePointTag(std::ifstream& file)
 			std::string attribute = ScanAttribute(file);
 			Array<double> _params = ScanParams(file);
 			if (_params.GetSize() != 1) return false; //бросить исключение
-			if (attribute == "px")obj.params[0] = _params[0];
-			if (attribute == "py")obj.params[1] = _params[0];
-			if (attribute == "id")obj.hash = _params[0];
+			if (attribute == "px")
+				obj.params[0] = _params[0];
+			if (attribute == "py")
+				obj.params[1] = _params[0];
+			if (attribute == "id")
+				obj.hash = _params[0];
 		}
 		tempSymbol = file.get();
 	}
@@ -283,10 +291,14 @@ bool SVGformat::Download(const std::string& nameFile)
 		{
 			std::string tag;
 			file >> tag;
-			if (tag == "drawProject:point")ParsePointTag(file);
-			if (tag == "line")ParseSegmentTag(file);
-			if (tag == "circle")ParseCircleTag(file);
-			if (tag == "drawProject:arc")ParseArcTag(file);
+			if (tag == "drawProject:point")
+				ParsePointTag(file);
+			if (tag == "line")
+				ParseSegmentTag(file);
+			if (tag == "circle")
+				ParseCircleTag(file);
+			if (tag == "drawProject:arc")
+				ParseArcTag(file);
 			if (tag == "drawProject:req>")
 			{
 				bool isEnd = false;
@@ -326,6 +338,7 @@ void SVGformat::ApplyDownloadData() {
 			if (!IsContains(idMap, obj.hash)) {
 				ID point = primCtrl->CreatePrimitive(obj.type, Array<ID>(0), obj.params);
 				dataCtrl->AddObject(point);
+				idMap.Add(obj.hash, point);
 			}
 			else {
 				LOG("SVGformat::ApplyDonwloadData: this ID already exist", LEVEL_3);
@@ -351,6 +364,7 @@ void SVGformat::ApplyDownloadData() {
 				ID newObject = primCtrl->CreatePrimitive(obj.type, children, obj.params);
 				dataCtrl->AddObject(newObject);
 				dataCtrl->Connect(newObject, children);
+				idMap.Add(obj.hash, newObject);
 			}
 			else {
 				LOG("SVGformat::ApplyDonwloadData: this ID already exist", LEVEL_3);
@@ -374,6 +388,7 @@ void SVGformat::ApplyDownloadData() {
 				ID newObject = reqCtrl->CreateReq(obj.type, children, obj.params);
 				dataCtrl->AddObject(newObject);
 				dataCtrl->Connect(newObject, children);
+				idMap.Add(obj.hash, newObject);
 			}
 			else {
 				LOG("SVGformat::ApplyDonwloadData: this ID already exist", LEVEL_3);
@@ -384,7 +399,7 @@ void SVGformat::ApplyDownloadData() {
 }
 
 
-bool SVGformat::Save(const std::string& way)
+bool SVGformat::Save(const std::string& path, bool withDrawProjectTags)
 {
 	std::ofstream file("project.svg");
 	if (!file.is_open())
@@ -395,8 +410,8 @@ bool SVGformat::Save(const std::string& way)
 	file << "<?xml version=" << '"' << "1.0" << '"' << " encoding=" << '"' << "UTF-8" << '"' << "?>";
 	file << "\n<!-- DrawProject -->";
 	file << "\n<svg";
-	file << " width=" << '"' << "1000" << '"';
-	file << " height=" << '"' << "1000" << '"' << ">";
+	file << " width=" << '"' << DOC_WIDTH << '"';
+	file << " height=" << '"' << DOC_HEIGHT << '"' << ">";
 	if (dataCtrl->primData.GetSize() == 0) {
 		file << "\n</svg>";
 		file.close();
@@ -409,146 +424,160 @@ bool SVGformat::Save(const std::string& way)
 		object_type tempType = objCtrl->GetType(tempID);
 		Array<ID> children = primCtrl->GetChildren(tempID);
 		if (tempType == ot_point) {
-			file << "\n	<drawProject:point";
-			file << "\n		px=" << '"' << tempParams[0] << '"';
-			file << "\n		py=" << '"' << tempParams[1] << '"';
-			file << "\n		id=" << '"' << tempID.GetHash() << '"';
-			file << "\n	/>";
+			if (withDrawProjectTags) {
+				file << "\n	<drawProject:point";
+				file << "\n		px=" << '"' << tempParams[0] << '"';
+				file << "\n		py=" << '"' << tempParams[1] << '"';
+				file << "\n		id=" << '"' << tempID.GetHash() << '"';
+				file << "\n	/>";
+			}
 		}
 		if (tempType == ot_segment) {
+			auto point1 = primCtrl->GetPrimitiveParamsAsValues(children[0]);
+			auto point2 = primCtrl->GetPrimitiveParamsAsValues(children[1]);
+
 			file << "\n	<line";
-			file << "\n		x1=" << '"' << tempParams[0] << '"';
-			file << "\n		y1=" << '"' << tempParams[1] << '"';
-			file << "\n		x2=" << '"' << tempParams[2] << '"';
-			file << "\n		y2=" << '"' << tempParams[3] << '"';
+			file << "\n		x1=" << '"' << point1[0] << '"';
+			file << "\n		y1=" << '"' << point1[1] << '"';
+			file << "\n		x2=" << '"' << point2[0] << '"';
+			file << "\n		y2=" << '"' << point2[1] << '"';
 			file << "\n		id=" << '"' << tempID.GetHash() << '"';
 			file << "\n		childIds=" << '"' << children[0].GetHash() << " "
 				<< children[1].GetHash() << '"';
-			file << "\n		stroke=" << '"' << "red" << '"';
-			file << "\n		stroke-width=" << '"' << 5 << '"';
+			file << "\n		stroke=" << '"' << STROKE_COLOR << '"';
+			file << "\n		stroke-width=" << '"' << STROKE_WIDTH << '"';
 			file << "\n	/>";
 		}
 		if (tempType == ot_arc) {
 			Arc* tempArc = dynamic_cast<Arc*>(primCtrl->GetPrimitive(tempID));
+			auto point1 = primCtrl->GetPrimitiveParamsAsValues(children[0]);
+			auto point2 = primCtrl->GetPrimitiveParamsAsValues(children[1]);
+			auto center = tempArc->GetCenter();
+
 			file << "\n	<path";
 			file << "\n		d=" << '"';
-			file << "M" << tempParams[2] << "," << tempParams[3] << " ";
-			double r = std::sqrt((tempParams[0] - tempParams[2])*(tempParams[0] - tempParams[2]) +
-				(tempParams[1] - tempParams[3])*(tempParams[1] - tempParams[3]));
+			file << "M" << point1[0] << "," << point1[1] << " ";
+			double r = std::sqrt((center.x - point1[0])*(center.x - point1[0]) +
+				(center.y - point2[0])*(center.y - point2[0]));
 			file << "A" << r << "," << r << " ";
 			if (tempArc->GetAngle() <= PI)
 			{
 				file << "0 " << 0 << "," << 0 << " ";
 			}
 			else file << "0 " << 1 << "," << 0 << " ";
-			file << tempParams[4] << "," << tempParams[5] << '"';
+			file << point2[0] << "," << point2[1] << '"';
 			file << "\n		id=" << '"' << tempID.GetHash() << '"';
 			file << "\n		childIds=" << '"' << children[0].GetHash() << " "
 				<< children[1].GetHash() << '"';
-			file << "\n		stroke=" << '"' << "red" << '"';
-			file << "\n		stroke-width=" << '"' << 5 << '"';
+			file << "\n		stroke=" << '"' << STROKE_COLOR << '"';
+			file << "\n		stroke-width=" << '"' << STROKE_WIDTH << '"';
 			file << "\n		fill=" << '"' << "none" << '"';
 			file << "\n	/>";
 
-			file << "\n	<drawProject:arc";
-			file << "\n		x1=" << '"' << tempParams[2] << '"';
-			file << "\n		y1=" << '"' << tempParams[3] << '"';
-			file << "\n		x2=" << '"' << tempParams[4] << '"';
-			file << "\n		y2=" << '"' << tempParams[5] << '"';
-			file << "\n		angle=" << '"' << tempArc->GetAngle() << '"';
-			file << "\n		id=" << '"' << tempID.GetHash() << '"';
-			file << "\n		childIds=" << '"' << children[0].GetHash() << " "
-				<< children[1].GetHash() << '"';
-			file << "\n	/>";
+			if (withDrawProjectTags) {
+				file << "\n	<drawProject:arc";
+				file << "\n		x1=" << '"' << point1[0] << '"';
+				file << "\n		y1=" << '"' << point1[1] << '"';
+				file << "\n		x2=" << '"' << point2[0] << '"';
+				file << "\n		y2=" << '"' << point2[1] << '"';
+				file << "\n		angle=" << '"' << tempParams[0] << '"';
+				file << "\n		id=" << '"' << tempID.GetHash() << '"';
+				file << "\n		childIds=" << '"' << children[0].GetHash() << " "
+					<< children[1].GetHash() << '"';
+				file << "\n	/>";
+			}
 		}
 		if (tempType == ot_circle) {
 			Circle* tepmCircle = dynamic_cast<Circle*>(primCtrl->GetPrimitive(tempID));
+			auto center = primCtrl->GetPrimitiveParamsAsValues(children[0]);
 			file << "\n	<circle";
-			file << "\n		cx=" << '"' << tempParams[0] << '"';
-			file << "\n		cy=" << '"' << tempParams[1] << '"';
-			file << "\n		r=" << '"' << tempParams[2] << '"';
+			file << "\n		cx=" << '"' << center[0] << '"';
+			file << "\n		cy=" << '"' << center[1] << '"';
+			file << "\n		r=" << '"' << tempParams[0] << '"';
 			file << "\n		id=" << '"' << tempID.GetHash() << '"';
 			file << "\n		childIds=" << '"' << children[0].GetHash() << '"';
-			file << "\n		stroke=" << '"' << "red" << '"';
-			file << "\n		stroke-width=" << '"' << 5 << '"';
+			file << "\n		stroke=" << '"' << STROKE_COLOR << '"';
+			file << "\n		stroke-width=" << '"' << STROKE_WIDTH << '"';
 			file << "\n		fill=" << '"' << "none" << '"';
 			file << "\n	/>";
 		}
 		++primDataMarker;
 	}
 	if (dataCtrl->reqData.GetSize() != 0) {
-		file << "\n	<drawProject:req>\n";
-		auto dataReqMarker = dataCtrl->reqData.GetMarker();
-		while(dataReqMarker.IsValid()) {
-			ID tempID = (*dataReqMarker);
-			Array<double> tempParams = reqCtrl->GetReqParamsAsValues(tempID);
-			object_type tempType = objCtrl->GetType(tempID);
-			BinSearchTree<ID, ID>* tempIDs = (*dataCtrl->linkData.Find(tempID));
-			switch (tempType) {
-			case ot_distBetPoints: {
-				file << "		<distBetPoints";
-				break;
-			}
-			case ot_equalSegmentLen: {
-				file << "		<equalSegmentLen";
-				break;
-			}
-			case ot_connection: {
-				continue;
-			}
-			case ot_pointPosReq: {
-				file << "		<pointPosReq";
-				break;
-			}
-			case ot_pointsOnTheOneHand: {
-				file << "		<pointsOnTheOneHand";
-				break;
-			}
-			case ot_distBetPointSeg: {
-				file << "		<distBetPointSeg";
-				break;
-			}
-			case ot_angleBetSeg: {
-				file << "		<angleBetSeg";
-				break;
-			}
-			case ot_distBetPointArc: {
-				file << "		<distBetPointArc";
-				break;
-			}
-			case ot_pointInArc: {
-				file << "		<pointInArc";
-				break;
-			}
-			}
-			file << "\n			id=" << '"' << tempID.GetHash() << '"';
-			if (tempIDs->GetSize() != 0)
-			{
-				file << "\n			IDs=" << '"';
-				auto tempMarker = tempIDs->GetMarker();
-				int i = 0;
-				do
+		if (withDrawProjectTags) {
+			file << "\n	<drawProject:req>\n";
+			auto dataReqMarker = dataCtrl->reqData.GetMarker();
+			while (dataReqMarker.IsValid()) {
+				ID tempID = (*dataReqMarker);
+				Array<double> tempParams = reqCtrl->GetReqParamsAsValues(tempID);
+				object_type tempType = objCtrl->GetType(tempID);
+				BinSearchTree<ID, ID>* tempIDs = (*dataCtrl->linkData.Find(tempID));
+				switch (tempType) {
+				case ot_distBetPoints: {
+					file << "		<distBetPoints";
+					break;
+				}
+				case ot_equalSegmentLen: {
+					file << "		<equalSegmentLen";
+					break;
+				}
+				case ot_connection: {
+					continue;
+				}
+				case ot_pointPosReq: {
+					file << "		<pointPosReq";
+					break;
+				}
+				case ot_pointsOnTheOneHand: {
+					file << "		<pointsOnTheOneHand";
+					break;
+				}
+				case ot_distBetPointSeg: {
+					file << "		<distBetPointSeg";
+					break;
+				}
+				case ot_angleBetSeg: {
+					file << "		<angleBetSeg";
+					break;
+				}
+				case ot_distBetPointArc: {
+					file << "		<distBetPointArc";
+					break;
+				}
+				case ot_pointInArc: {
+					file << "		<pointInArc";
+					break;
+				}
+				}
+				file << "\n			id=" << '"' << tempID.GetHash() << '"';
+				if (tempIDs->GetSize() != 0)
 				{
-					file << (*tempMarker).GetHash();
-					if (i != tempIDs->GetSize() - 1) file << " ";
-					i++;
-				} while (++tempMarker);
-				file << '"';
-			}
-			for (int i = 0; i < tempParams.GetSize(); i++)
-			{
-				if (i == 0) file << "\n			params=" << '"';
-				file << tempParams[i];
-				if (i == tempParams.GetSize() - 1)
-				{
+					file << "\n			IDs=" << '"';
+					auto tempMarker = tempIDs->GetMarker();
+					int i = 0;
+					do
+					{
+						file << (*tempMarker).GetHash();
+						if (i != tempIDs->GetSize() - 1) file << " ";
+						i++;
+					} while (++tempMarker);
 					file << '"';
 				}
-				else file << " ";
+				for (int i = 0; i < tempParams.GetSize(); i++)
+				{
+					if (i == 0) file << "\n			params=" << '"';
+					file << tempParams[i];
+					if (i == tempParams.GetSize() - 1)
+					{
+						file << '"';
+					}
+					else file << " ";
+				}
+				file << "	/>\n";
+				++dataReqMarker;
 			}
-			file << "	/>\n";
-			++dataReqMarker;
+			file << "	</drawProject:req>";
 		}
-		file << "	</drawProject:req>";
 	}
 	file << "\n</svg>";
 	file.close();

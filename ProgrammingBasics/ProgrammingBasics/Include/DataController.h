@@ -51,7 +51,7 @@ public:
 	SVGformat();
 	~SVGformat();
 	bool Download(const std::string&);
-	bool Save(const std::string&);
+	bool Save(const std::string&, bool);
 };
 
 typedef BinSearchTree<ID, ID> Component;
