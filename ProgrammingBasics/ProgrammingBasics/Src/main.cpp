@@ -65,5 +65,6 @@ int main()
 	
 	SVGformat svg;
 
-	svg.Save("project.svg", false);
+	svg.Download("project.svg");
+	svg.Save("temp.svg", false);
 }

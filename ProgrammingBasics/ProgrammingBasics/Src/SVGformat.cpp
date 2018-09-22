@@ -221,7 +221,7 @@ bool SVGformat::ParseArcTag(std::ifstream& file)
 			{
 				if (_params.GetSize() == 1)
 				{
-					obj.params = _params[0];
+					obj.params[0] = _params[0];
 				}
 				else return false; //бросить исключение
 			}
@@ -277,7 +277,7 @@ bool SVGformat::Download(const std::string& nameFile)
 
 	objMap.DeleteDict();
 
-	std::ifstream file("project.svg");
+	std::ifstream file(nameFile);
 	if (!file.is_open())
 	{
 		LOGERROR("SVGformat::Download: couldn't open the file", LEVEL_3);
@@ -401,7 +401,7 @@ void SVGformat::ApplyDownloadData() {
 
 bool SVGformat::Save(const std::string& path, bool withDrawProjectTags)
 {
-	std::ofstream file("project.svg");
+	std::ofstream file(path);
 	if (!file.is_open())
 	{
 		return false;

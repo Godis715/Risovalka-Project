@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg viewBox='0 0 2000 2000' xmlns='http://www.w3.org/2000/svg'>
+	<line
+		x1="0"
+		y1="1.1"
+		x2="2.2"
+		y2="-5.5"
+		id="6"
+		childIds="4 5"
+		stroke="red"
+		stroke-width="5"
+	/>
+	<line
+		x1="100"
+		y1="200"
+		x2="5"
+		y2="6"
+		id="9"
+		childIds="7 8"
+		stroke="red"
+		stroke-width="5"
+	/>
+	<path
+		d="M316.32,244.534 A441.448,441.448 0 0,0 307.925,322.388"
+		id="37"
+		childIds="11 12"
+		stroke="red"
+		stroke-width="5"
+		fill="none"
+	/>
+	<path
+		d="M307.925,322.388 A561.877,561.877 0 0,0 469.987,298.382"
+		id="38"
+		childIds="13 14"
+		stroke="red"
+		stroke-width="5"
+		fill="none"
+	/>
+	<path
+		d="M469.987,298.382 A582.668,582.668 0 1,0 344.404,220.739"
+		id="39"
+		childIds="15 16"
+		stroke="red"
+		stroke-width="5"
+		fill="none"
+	/>
+	<path
+		d="M344.401,220.736 A468.225,468.225 0 0,0 317.211,244.58"
+		id="40"
+		childIds="17 18"
+		stroke="red"
+		stroke-width="5"
+		fill="none"
+	/>
+	<circle
+		cx="377.472"
+		cy="205.056"
+		r="16.2788"
+		id="41"
+		childIds="19"
+		stroke="red"
+		stroke-width="5"
+		fill="none"
+	/>
+	<circle
+		cx="433.38"
+		cy="233.239"
+		r="19.2094"
+		id="42"
+		childIds="20"
+		stroke="red"
+		stroke-width="5"
+		fill="none"
+	/>
+	<path
+		d="M327.064,310.76 A558.082,558.082 0 0,0 452.2,296.923"
+		id="43"
+		childIds="21 22"
+		stroke="red"
+		stroke-width="5"
+		fill="none"
+	/>
+	<path
+		d="M378,228 A556.041,556.041 0 0,0 407.796,245.79"
+		id="44"
+		childIds="23 24"
+		stroke="red"
+		stroke-width="5"
+		fill="none"
+	/>
+	<path
+		d="M377,272 A555.629,555.629 0 1,0 408.16,282.133"
+		id="45"
+		childIds="25 26"
+		stroke="red"
+		stroke-width="5"
+		fill="none"
+	/>
+	<circle
+		cx="433.62"
+		cy="232.761"
+		r="12.6491"
+		id="46"
+		childIds="27"
+		stroke="red"
+		stroke-width="5"
+		fill="none"
+	/>
+	<circle
+		cx="377.528"
+		cy="204.944"
+		r="9"
+		id="47"
+		childIds="28"
+		stroke="red"
+		stroke-width="5"
+		fill="none"
+	/>
+	<path
+		d="M453,295 A650.38,650.38 0 0,0 466.675,181.239"
+		id="48"
+		childIds="29 30"
+		stroke="red"
+		stroke-width="5"
+		fill="none"
+	/>
+	<path
+		d="M276,275 A428.36,428.36 0 0,0 327.592,310.63"
+		id="49"
+		childIds="31 32"
+		stroke="red"
+		stroke-width="5"
+		fill="none"
+	/>
+	<path
+		d="M431.901,176.399 A593.002,593.002 0 0,0 406.341,200.181"
+		id="50"
+		childIds="33 34"
+		stroke="red"
+		stroke-width="5"
+		fill="none"
+	/>
+	<path
+		d="M424.961,196.03 A586.601,586.601 0 0,0 404.363,185.043"
+		id="51"
+		childIds="35 36"
+		stroke="red"
+		stroke-width="5"
+		fill="none"
+	/>
+</svg>
