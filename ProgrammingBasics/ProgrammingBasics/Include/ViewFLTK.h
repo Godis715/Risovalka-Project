@@ -3,6 +3,8 @@
 #define text_type 102
 #include <iostream>
 #include "IView.h"
+#include "Mode.h"
+#include "Array.h"
 #include "Presenter.h"
 #include <string>
 
@@ -11,14 +13,16 @@
 #include <FL/Fl_Window.H>
 #include <FL/Fl_Box.H>
 #include <FL/fl_draw.H>
-#include <FL/Fl_Button.h>
+#include <FL/Fl_Button.H>
 #include <FL/Fl_Menu_Button.H>
 #include <FL/Fl_Menu_Item.H>
 #include <FL/Fl_Output.H>
 #include <FL/Fl_Float_Input.H>
 #include <FL/math.h>
+//#include <FL/Fl_File_Chooser.H>
 
-double Parse(string number) {
+
+double Parse(std::string number) {
 	int countPoint = 0;
 	if (number[0] == 'e' || number[0] == '.') {
 		return -1;
@@ -68,6 +72,10 @@ private:
 	Fl_Menu_Item* requirements;
 	Fl_Menu_Button* createRequirement_b;
 
+	Fl_Button* execute_script_b;
+	Fl_Button* save_b;
+	Fl_Button* downland_b;
+
 	class SecondWindow : public Fl_Double_Window
 	{
 		void draw()
@@ -82,7 +90,7 @@ private:
 			Presenter::DrawScene();
 			fl_pop_matrix();
 		}
-		
+	
 	public:
 		SecondWindow(int x, int y, int w, int h, const char *l)
 			: Fl_Double_Window(x, y, w, h, l)
@@ -356,7 +364,7 @@ private:
 		fl_cursor(FL_CURSOR_DEFAULT);
 
 		Array<double> params(1);
-		string numbers = ((Fl_Float_Input*)o)->value();
+		std::string numbers = ((Fl_Float_Input*)o)->value();
 		((Fl_Float_Input*)o)->value("");
 		params[0] = Parse(numbers);
 		Presenter::Set_event(ev_input, params);
@@ -366,6 +374,31 @@ private:
 		mainWindow->redraw();
 	}
 
+	
+
+	static void cl_execute_script_b(Fl_Widget* o, void*)
+	{
+		Presenter::Compile();
+		((Fl_Button*)o)->deactivate();
+		((Fl_Button*)o)->activate();
+	}
+
+	static void cl_SaveProject(Fl_Widget* o, void*)
+	{
+		//char *newfile;
+		
+		//newfile = fl_file_chooser("Save File As?", "*", "title");
+		Presenter::SaveProject("way");
+		((Fl_Button*)o)->deactivate();
+		((Fl_Button*)o)->activate();
+	}
+
+	static void cl_DownloadFile(Fl_Widget* o, void*)
+	{
+		Presenter::DownloadFile("nameFile");
+		((Fl_Button*)o)->deactivate();
+		((Fl_Button*)o)->activate();
+	}
 	//..
 
 	static Fl_Window* mainWindow;
@@ -380,6 +413,18 @@ public:
 
 		drawWindow = new SecondWindow(10, 30, 1000, 600, "Draw Window");
 		drawWindow->end();
+
+		save_b = new Fl_Button(1010, 80, 50, 30, "Save");
+		save_b->callback(cl_SaveProject);
+		save_b->color(FL_WHITE);
+
+		execute_script_b = new Fl_Button(1010, 110, 50, 30, "script");
+		execute_script_b->callback(cl_execute_script_b);
+		execute_script_b->color(FL_WHITE);
+
+		downland_b = new Fl_Button(1010, 140, 100, 30, "Download");
+		downland_b->callback(cl_DownloadFile);
+		downland_b->color(FL_WHITE);
 
 		log = new Fl_Output(1010, 0, 300, 30);
 
@@ -433,6 +478,8 @@ public:
 		mainWindow->show();
 		drawWindow->show();
 	}
+
+
 	~ViewFLTK(){}
 
 	int Run(){return Fl::run();}
@@ -596,6 +643,7 @@ public:
 		rotateScene += deltaAngle;
 	}
 };
+
 Fl_Window* ViewFLTK::mainWindow;
 
 Fl_Output* ViewFLTK::log = nullptr;

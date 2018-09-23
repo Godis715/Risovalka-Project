@@ -8,6 +8,13 @@
 #include "Model.h"
 #include "Mode.h"
 
+class ModeController {
+private:
+	Mode* mode;
+	Model* model;
+public:
+
+};
 
 class Presenter {
 private:
@@ -15,6 +22,8 @@ private:
 	static Model* model;
 	static IView* view;
 public:
+	static void SaveProject(std::string);
+	static void DownloadFile(std::string);
 	static IView* GetView();
 	static void DrawScene();
 	static void DrawSelectedObjects(const Array<ID>&);
@@ -36,7 +45,7 @@ public:
 	/* trying to impose requirements
 	on selected object */
 
-	static bool CreateRequirement(object_type, const Array<ID>&, const Array<double>&);
+	static ID CreateRequirement(object_type, const Array<ID>&, const Array<double>&);
 
 	static bool GetObject(double, double, ID&);
 
@@ -57,6 +66,8 @@ public:
 	/*static void ChangeObject(){}*/
 
 	static void GetComponent(const ID&, Array<ID>&, Array<ID>&);
+
+	static void Compile();
 
 	//function for viewFLTK
 	static void Set_event(Event, Array<double>&);
