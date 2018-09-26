@@ -703,7 +703,6 @@ public:
 
 		mainWindow->end();
 
-		
 		mainWindow->show();
 		drawWindow->show();
 	}
@@ -883,7 +882,9 @@ public:
 	//for navigation on scene
 	void TranslateScene(const Vector2& deltaCor)
 	{
-		*translateScene += deltaCor;
+		if ((translateScene->x + deltaCor.x >= 0) && (translateScene->y + deltaCor.y >= 0)) {
+			*translateScene += deltaCor;
+		}
 	}
 
 	void ScaleScene(const double& deltaCoef)

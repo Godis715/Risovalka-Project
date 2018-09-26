@@ -28,8 +28,9 @@ public:
 		return ID();
 	}
 
-	void ChangeRequirement(const ID&, const Array<double>&) const {}
+	void ChangeObject(const ID&, const Array<double>&) const {}
 	void DeleteObject(const ID&) const {}
+	void DeleteObjects(const Array<ID>&) const {}
 	void OptimizeByID(const ID&) const {}
 	void Scale(const Array<ID>&, const double) const {}
 	void Move(const Array<ID>&, const Vector2&) const {}

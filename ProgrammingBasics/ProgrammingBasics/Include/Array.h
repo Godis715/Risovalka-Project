@@ -126,7 +126,7 @@ public:
 
 	};
 
-	Array() : _default_capacity(64)
+	Array() : _default_capacity(32)
 	{
 		_capacity = _default_capacity;
 		_size = 0;

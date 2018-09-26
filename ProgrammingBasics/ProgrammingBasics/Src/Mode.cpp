@@ -74,6 +74,12 @@ Mode* Mode::UnexpectedEvent(const Event e) {
 	}
 }
 
+Mode::Mode() {
+	model = Model::GetInstance();
+	modelNew = ModelNew::GetInstance();
+	view = Presenter::GetView();
+}
+
 // SEGMENT
 
 CreatingSegment::CreatingSegment() : segmentParameters(4) {
@@ -109,8 +115,8 @@ Mode* CreatingSegment::HandleEvent(const Event ev, Array<double>& params) {
 			segmentParameters[2] = params[0];
 			segmentParameters[3] = params[1];
 
-			ID id;
-			id = Presenter::CreateObject(ot_segment, segmentParameters);
+			ID id = modelNew->CreatePrimitive(ot_segment, segmentParameters);
+			model->CreateObject(ot_segment, segmentParameters, id); // $$$
 
 			Array<ID> selectedObjects(1);
 			selectedObjects[0] = id;
@@ -139,10 +145,10 @@ Mode* CreatingSegment::HandleEvent(const Event ev, Array<double>& params) {
 void CreatingSegment::DrawMode() {
 	if (state == oneClick)
 	{
-		Presenter::GetView()->SetColor(red);
-		Presenter::GetView()->DrawPoint(Vector2(segmentParameters[0], segmentParameters[1]));
-		Presenter::GetView()->SetColor(yellow);
-		Presenter::GetView()->DrawLine(Vector2(segmentParameters[0], segmentParameters[1]), infoMode, points);
+		view->SetColor(red);
+		view->DrawPoint(Vector2(segmentParameters[0], segmentParameters[1]));
+		view->SetColor(yellow);
+		view->DrawLine(Vector2(segmentParameters[0], segmentParameters[1]), infoMode, points);
 	}
 }
 
@@ -159,7 +165,9 @@ Mode* CreatingPoint::HandleEvent(const Event ev, Array<double>& params) {
             throw std::invalid_argument("Bad number of parameters");
 		}
 
-		ID id = Presenter::CreateObject(ot_point, params);
+		ID id = modelNew->CreatePrimitive(ot_point, params);
+		model->CreateObject(ot_point, params, id); // $$$
+
 		Array<ID> selectedObjects(1);
 		selectedObjects[0] = id;
 		return new Selection(selectedObjects);
@@ -200,7 +208,9 @@ Mode* CreatingCircle::HandleEvent(const Event ev, Array<double>& params) {
 		// with selected circle
 		if (state == oneClick) {
 			CircleParameters[2] = (Vector2(params[0], params[1]) - Vector2(CircleParameters[0], CircleParameters[1])).GetLength();
-			ID id = Presenter::CreateObject(ot_circle, CircleParameters);
+			
+			ID id = modelNew->CreatePrimitive(ot_circle, CircleParameters);
+			model->CreateObject(ot_circle, CircleParameters, id); // $$$
 
 			Array<ID> selectedObjects(1);
 			selectedObjects[0] = id;
@@ -228,10 +238,10 @@ Mode* CreatingCircle::HandleEvent(const Event ev, Array<double>& params) {
 void CreatingCircle::DrawMode() {
 	if (state == oneClick)
 	{
-		Presenter::GetView()->SetColor(red);
-		Presenter::GetView()->DrawPoint(Vector2(CircleParameters[0], CircleParameters[1]));
-		Presenter::GetView()->SetColor(yellow);
-		Presenter::GetView()->DrawCircle(Vector2(CircleParameters[0], CircleParameters[1]), infoMode, points);
+		view->SetColor(red);
+		view->DrawPoint(Vector2(CircleParameters[0], CircleParameters[1]));
+		view->SetColor(yellow);
+		view->DrawCircle(Vector2(CircleParameters[0], CircleParameters[1]), infoMode, points);
 	}
 }
 
@@ -284,7 +294,8 @@ Mode* CreatingArc::HandleEvent(const Event ev, Array<double>& params) {
 			arcParameters[4] = params[0];
 			arcParameters[5] = params[1];
 
-			ID id = Presenter::CreateObject(ot_arc, arcParameters);
+			ID id = modelNew->CreatePrimitive(ot_arc, arcParameters);
+			model->CreateObject(ot_arc, arcParameters, id); // $$$
 
 			Array<ID> selectedObjects(1);
 			selectedObjects[0] = id;
@@ -312,25 +323,25 @@ Mode* CreatingArc::HandleEvent(const Event ev, Array<double>& params) {
 void CreatingArc::DrawMode() {
 	if (state == oneClick)
 	{
-		Presenter::GetView()->SetColor(red);
-		Presenter::GetView()->DrawPoint(Vector2(arcParameters[0], arcParameters[1]));
+		view->SetColor(red);
+		view->DrawPoint(Vector2(arcParameters[0], arcParameters[1]));
 
-		Presenter::GetView()->SetColor(yellow);
-		Presenter::GetView()->DrawCircle(Vector2(arcParameters[0], arcParameters[1]), infoMode, points);
+		view->SetColor(yellow);
+		view->DrawCircle(Vector2(arcParameters[0], arcParameters[1]), infoMode, points);
 	}
 	if (state == twoClick)
 	{
-		Presenter::GetView()->SetColor(red);
-		Presenter::GetView()->DrawPoint(Vector2(arcParameters[0], arcParameters[1]));
+		view->SetColor(red);
+		view->DrawPoint(Vector2(arcParameters[0], arcParameters[1]));
 
-		Presenter::GetView()->SetColor(yellow);
-		Presenter::GetView()->DrawCircle(Vector2(arcParameters[0], arcParameters[1]), Vector2(arcParameters[2], arcParameters[3]), points);
+		view->SetColor(yellow);
+		view->DrawCircle(Vector2(arcParameters[0], arcParameters[1]), Vector2(arcParameters[2], arcParameters[3]), points);
 		
-		Presenter::GetView()->SetColor(red);
-		Presenter::GetView()->DrawPoint(Vector2(arcParameters[2], arcParameters[3]));
+		view->SetColor(red);
+		view->DrawPoint(Vector2(arcParameters[2], arcParameters[3]));
 		
-		Presenter::GetView()->SetColor(yellow);
-		Presenter::GetView()->DrawArc(Vector2(arcParameters[0], arcParameters[1]), Vector2(arcParameters[2], arcParameters[3]), infoMode, line);
+		view->SetColor(yellow);
+		view->DrawArc(Vector2(arcParameters[0], arcParameters[1]), Vector2(arcParameters[2], arcParameters[3]), infoMode, line);
 	}
 }
 
@@ -348,33 +359,33 @@ ChangingProperties::ChangingProperties() : Mode()
 ChangingProperties::ChangingProperties(const ID _selObject) : Mode(), selectedObject(_selObject)
 {
 	object_type typePrim;
-	Presenter::GetObjType(selectedObject, typePrim);
+	model->GetObjType(selectedObject, typePrim);
 
 	Array<double> paramsPrim;
-	Presenter::GetObjParam(selectedObject, paramsPrim);
+	model->GetObjParam(selectedObject, paramsPrim);
 
-	Presenter::GetRequirementsByID(selectedObject, reqIDs);
+	model->GetRequirementsByID(selectedObject, reqIDs);
 
 	Array<string> nameReqs;
 	Array<Array<double>>paramsReqs;
 	for (int i = 0; i < reqIDs.GetSize(); i++)
 	{
 		Array<double>paramsReq;
-		Presenter::GetObjParam(reqIDs[i], paramsReq);
+		model->GetObjParam(reqIDs[i], paramsReq);
 		paramsReqs.PushBack(paramsReq);
 
 		object_type typeReq;
-		Presenter::GetObjType(reqIDs[i], typeReq);
+		model->GetObjType(reqIDs[i], typeReq);
 		nameReqs.PushBack(objTypeToString(typeReq) + '#' + reqIDs[i].GetHash());
 	}
 
-	Presenter::GetView()->GiveParams(typePrim, paramsPrim, nameReqs, paramsReqs);
+	view->GiveParams(typePrim, paramsPrim, nameReqs, paramsReqs);
 }
 
 ChangingProperties::~ChangingProperties()
 {
 	if (isNew) {
-		Presenter::GetView()->DeleteDisplay();
+		view->DeleteDisplay();
 	}
 }
 
@@ -382,17 +393,18 @@ Mode* ChangingProperties::HandleEvent(const Event e, Array<double>& params)
 {
 	if (e == ev_change_Prim)
 	{
-		Presenter::ChangeParamPrimitive(selectedObject, params);
+		modelNew->ChangeObject(selectedObject, params);
+		model->ChangePrimitive(selectedObject, params);
 		return new Selection();
 	}
 	if (e == ev_rightMouseDown)
 	{
-		ID obj;
+		ID obj = modelNew->GetObjectByClick(params[0], params[1]);
 		bool isFound = Presenter::GetObject(params[0], params[1], obj);
 		if (isFound)
 		{
 			isNew = false;
-			Presenter::GetView()->DeleteDisplay();
+			view->DeleteDisplay();
 			return new ChangingProperties(obj);
 		}
 		return nullptr;
@@ -439,7 +451,7 @@ Mode* Selection::HandleEvent(const Event e, Array<double>& params) {
 	if (e == ev_rightMouseDown)
 	{
 		selectedObjects.Clear();
-		ID obj;
+		ID obj = modelNew->GetObjectByClick(params[0], params[1]);
 		bool isFound = Presenter::GetObject(params[0], params[1], obj);
 		if (isFound)
 		{
@@ -458,7 +470,7 @@ Mode* Selection::HandleEvent(const Event e, Array<double>& params) {
 		infoArea1.x = params[0];
 		infoArea1.y = params[1];
 
-		ID obj;
+		ID obj = modelNew->GetObjectByClick(params[0], params[1]);
 		bool isFound = Presenter::GetObject(params[0], params[1], obj);
 		if (isFound) {
 			if (state == single_selection) {
@@ -489,7 +501,10 @@ Mode* Selection::HandleEvent(const Event e, Array<double>& params) {
 		infoArea2.y = params[1];
 		selectedObjects.Clear();
 		lastEvent = e;
-		Presenter::GetObjectsOnArea(infoArea1.x, infoArea1.y, infoArea2.x, infoArea2.y, selectedObjects);
+		selectedObjects = modelNew->GetObjectsByArea(infoArea1.x, infoArea1.y, infoArea2.x, infoArea2.y);
+		//Presenter::GetObjectsOnArea(infoArea1.x, infoArea1.y, infoArea2.x, infoArea2.y, selectedObjects);
+		Array<object_type> temp;
+		model->GetObjectsOnArea(infoArea1.x, infoArea1.y, infoArea2.x, infoArea2.y, selectedObjects, temp);
 		return nullptr;
 	}
 	if (e == ev_leftMouseUp)
@@ -532,7 +547,7 @@ Mode* Selection::HandleEvent(const Event e, Array<double>& params) {
 		return new Redaction(selectedObjects, ev_scaleObjects);
 	}
 	case ev_del: {
-		Presenter::DeletePrimitives(selectedObjects);
+		model->DeletePrimitives(selectedObjects);
 		return nullptr;
 	}
 	case ev_req_D_point: {
@@ -550,13 +565,17 @@ Mode* Selection::HandleEvent(const Event e, Array<double>& params) {
 	case ev_req_Eq_Segment: {
 		Array<double>param(0);
 
-		Presenter::CreateRequirement(ot_equalSegmentLen, selectedObjects, param);
+		modelNew->CreateRequirement(ot_equalSegmentLen, selectedObjects, param);
+		ID id;
+		model->CreateRequirementByID(ot_equalSegmentLen, selectedObjects, param, id);
 		return nullptr;
 	}
 	case ev_req_on_one_hand: {
 		Array<double>param(0);
 
-		Presenter::CreateRequirement(ot_pointsOnTheOneHand, selectedObjects, param);
+		modelNew->CreateRequirement(ot_pointsOnTheOneHand, selectedObjects, param);
+		ID id;
+		model->CreateRequirementByID(ot_pointsOnTheOneHand, selectedObjects, param, id);
 		return nullptr;
 	}
 	default:
@@ -573,11 +592,11 @@ void Selection::DrawMode()
 		Vector2 point1(infoArea2.x, infoArea1.y);
 		Vector2 point2(infoArea1.x, infoArea2.y);
 
-		Presenter::GetView()->SetColor(blue);
-		Presenter::GetView()->DrawLine(infoArea1, point1, points);
-		Presenter::GetView()->DrawLine(infoArea1, point2, points);
-		Presenter::GetView()->DrawLine(infoArea2, point1, points);
-		Presenter::GetView()->DrawLine(infoArea2, point2, points);
+		view->SetColor(blue);
+		view->DrawLine(infoArea1, point1, points);
+		view->DrawLine(infoArea1, point2, points);
+		view->DrawLine(infoArea2, point1, points);
+		view->DrawLine(infoArea2, point2, points);
 	}
 }
 
@@ -624,7 +643,8 @@ Mode* Redaction::HandleEvent(const Event e, Array<double>& params)
 			}
 			posEnd.x = params[0];
 			posEnd.y = params[1];
-			Presenter::MoveObject(selectedObjects, posEnd - posStart);
+			modelNew->Move(selectedObjects, posEnd - posStart);
+			model->Move(selectedObjects, posEnd - posStart);
 			posStart = posEnd;
 			return nullptr;
 		}
@@ -649,7 +669,8 @@ Mode* Redaction::HandleEvent(const Event e, Array<double>& params)
 			{
 				coef = 1.1;
 			}
-			Presenter::ScaleObjects(selectedObjects, coef);
+			modelNew->Scale(selectedObjects, coef);
+			model->Scale(selectedObjects, coef);
 			return nullptr;
 		}
 	}
@@ -667,7 +688,8 @@ Mode* Redaction::HandleEvent(const Event e, Array<double>& params)
 	}
 	if (e == ev_del)
 	{
-		Presenter::DeletePrimitives(selectedObjects);
+		modelNew->DeleteObjects(selectedObjects);
+		model->DeletePrimitives(selectedObjects);
 		return new Selection();
 	}
 	return UnexpectedEvent(e);
@@ -679,25 +701,25 @@ void Redaction::DrawMode() {
 
 // REDACTION_REQ
 
-RedactionReq::RedactionReq(ID _selecObj) : selectedPrim(_selecObj) {
-	Presenter::GetComponent(selectedPrim, objects, reqs);
-}
-
-RedactionReq::RedactionReq() { }
-
-RedactionReq::~RedactionReq() {
-	objects.Clear();
-	reqs.Clear();
-	objectsOfreq.Clear();
-}
-
-Mode* RedactionReq::HandleEvent(const Event ev, Array<double>& param) {
-	return nullptr;
-}
-
-void RedactionReq::DrawMode() {
-
-}
+//RedactionReq::RedactionReq(ID _selecObj) : selectedPrim(_selecObj) {
+//	model->GetComponent(selectedPrim, objects, reqs);
+//}
+//
+//RedactionReq::RedactionReq() { }
+//
+//RedactionReq::~RedactionReq() {
+//	objects.Clear();
+//	reqs.Clear();
+//	objectsOfreq.Clear();
+//}
+//
+//Mode* RedactionReq::HandleEvent(const Event ev, Array<double>& param) {
+//	return nullptr;
+//}
+//
+//void RedactionReq::DrawMode() {
+//
+//}
 
 
 //CREATE REQUIRMENT
@@ -739,7 +761,11 @@ Mode* CreateRequirementWithParam::HandleEvent(const Event ev, Array<double>& par
             throw std::invalid_argument("Bad number of parameters");
 		}
 
-		Presenter::CreateRequirement(typeRequirement, selectedPrim, params);
+		modelNew->CreateRequirement(typeRequirement, selectedPrim, params);
+		//
+		ID d;
+		model->CreateRequirementByID(typeRequirement, selectedPrim, params, d);
+		//
 		return new Selection(selectedPrim);
 
 	}
@@ -784,7 +810,7 @@ Mode* NavigationOnScene::HandleEvent(const Event ev, Array<double>& params) {
 		}
 		posEnd.x = params[0];
 		posEnd.y = params[1];
-		Presenter::GetView()->TranslateScene(posEnd - posStart);
+		view->TranslateScene(posEnd - posStart);
 		posStart = posEnd;
 		return nullptr;
 	}
@@ -795,22 +821,22 @@ Mode* NavigationOnScene::HandleEvent(const Event ev, Array<double>& params) {
 
 	if (ev == ev_arrowUp)
 	{
-		Presenter::GetView()->TranslateScene(Vector2(0, -speedMove));
+		view->TranslateScene(Vector2(0, -speedMove));
 		return nullptr;
 	}
 	if (ev == ev_arrowDown)
 	{
-		Presenter::GetView()->TranslateScene(Vector2(0, speedMove));
+		view->TranslateScene(Vector2(0, speedMove));
 		return nullptr;
 	}
 	if (ev == ev_arrowLeft)
 	{
-		Presenter::GetView()->TranslateScene(Vector2(-speedMove, 0));
+		view->TranslateScene(Vector2(-speedMove, 0));
 		return nullptr;
 	}
 	if (ev == ev_arrowRight)
 	{
-		Presenter::GetView()->TranslateScene(Vector2(speedMove, 0));
+		view->TranslateScene(Vector2(speedMove, 0));
 		return nullptr;
 	}
 	
@@ -829,7 +855,7 @@ Mode* NavigationOnScene::HandleEvent(const Event ev, Array<double>& params) {
 		{
 			deltaCoef = 0.1;
 		}
-		Presenter::GetView()->ScaleScene(deltaCoef);
+		view->ScaleScene(deltaCoef);
 		return nullptr;
 	}
 

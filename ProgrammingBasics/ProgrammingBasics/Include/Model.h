@@ -112,7 +112,9 @@ public:
 	Model() { }
 
 	// Create destructor
-	~Model() { }
+	~Model() {
+		int i = 0;
+	}
 
 	bool NewComponent(const ID&, Array<ID>&, Array<ID>&);
 
@@ -125,6 +127,14 @@ public:
 	void CreateLink(const ID&, const Array<Primitive*>&);
 
 	bool DeletePrimitive(const ID&);
+
+	void DeletePrimitives(const Array<ID>& primitiveID) {
+		for (int i = 0; i < primitiveID.GetSize(); ++i) {
+			if (!DeletePrimitive(primitiveID[i])) {
+				LOG(string("could not delete prim"), primitiveID[i], LEVEL_3);
+			}
+		}
+	}
 
 	bool DeleteRequirement(const ID&);
 

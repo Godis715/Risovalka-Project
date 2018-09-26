@@ -2,6 +2,8 @@
 #define __MODE
 
 #include "Vector2.h"
+#include "IView.h"
+#include "ModelNew.h"
 
 enum Event
 {
@@ -59,6 +61,10 @@ protected:
 
 	Mode* UnexpectedEvent(const Event e);
 
+	IView* view;
+	Model* model;
+	ModelNew* modelNew;
+
 public:
 
 	//Mode(Presenter* _pres) {
@@ -67,7 +73,7 @@ public:
 	//	}
 	//	presenter = _pres;
 	//}
-	Mode() {}
+	Mode();
 	virtual ~Mode() {}
 	virtual Mode* HandleEvent(const Event, Array<double>&) = 0;
 	virtual void DrawMode() { }
@@ -75,6 +81,7 @@ public:
 
 class ChangingProperties : public Mode {
 private:
+
 	ID selectedObject;
 	Array<ID> reqIDs;
 	bool isNew = true;
@@ -198,22 +205,22 @@ public:
 	void DrawMode();
 };
 
-class RedactionReq : public Mode {
-private:
-	Array<ID> objects;
-	Array<ID> reqs;
-	ID selectedReq;
-	ID selectedPrim;
-	Array<ID> objectsOfreq;
-public:
-	RedactionReq(ID _selecObj);
-	RedactionReq();
-	~RedactionReq();
-
-	Mode* HandleEvent(const Event, Array<double>&);
-
-	void DrawMode();
-};
+//class RedactionReq : public Mode {
+//private:
+//	Array<ID> objects;
+//	Array<ID> reqs;
+//	ID selectedReq;
+//	ID selectedPrim;
+//	Array<ID> objectsOfreq;
+//public:
+//	RedactionReq(ID _selecObj);
+//	RedactionReq();
+//	~RedactionReq();
+//
+//	Mode* HandleEvent(const Event, Array<double>&);
+//
+//	void DrawMode();
+//};
 
 //CREATE REQUIRMENT
 
