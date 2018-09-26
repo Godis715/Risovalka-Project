@@ -32,6 +32,11 @@ public:
 	Array<double*> GetPrimitiveParamsAsPointers(const ID&) const;
 	Array<double*> GetPrimitiveParamsAsPointers(const Array<ID>&, int) const;
 
+	Array<double*> GetPrimitiveDoubleParamsAsPointers(const ID&) const;
+	Array<double*> GetPrimitiveDoubleParamsAsPointers(const Array<ID>&, int) const;
+	
+	void ApplyPrimitiveDoubleParams(const ID&) const;
+
 	void SetPrimitiveParams(const ID&, const Array<double>&) const;
 
 	ID CreatePrimitive(object_type, const Array<ID>&, const Array<double>&) const;
@@ -45,6 +50,7 @@ private:
 	Array<double*> doubleParams;
 public:
 	Primitive(object_type, const Array<double>&, const Array<ID>&);
+	virtual ~Primitive();
 	virtual double GetDist(const Vector2&) const = 0;
 
 	Array<double> GetDoubleParamsAsValues();

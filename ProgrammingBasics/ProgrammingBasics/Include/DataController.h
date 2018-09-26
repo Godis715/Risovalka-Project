@@ -89,7 +89,7 @@ public:
 
 	Component GetComponent(const ID&);
 
-	bool IsUniqueName(const string&) const;
+	
 };
 
 #endif

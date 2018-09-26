@@ -2,8 +2,18 @@
 #include <stdexcept>
 
 Primitive::Primitive(object_type _type, const Array<double>& _params, const Array<ID>& _children)
-	: Object(_type, _params, children)
+	: Object(_type, _params, children),
+	doubleParams(_params.GetSize())
 {
+	for (int i = 0; i < doubleParams.GetSize(); ++i) {
+		doubleParams[i] = new double(0.0);
+	}
+}
+
+Primitive::~Primitive() {
+	for (int i = 0; i < doubleParams.GetSize(); ++i) {
+		delete doubleParams[i];
+	}
 
 }
 
