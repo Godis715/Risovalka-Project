@@ -26,6 +26,7 @@ typedef BinSearchTree<ID, Requirement*> DataReq;
 class Model
 {
 private:
+	static Model* instance;
 
 	IDGenerator* idGen;
 
@@ -93,6 +94,8 @@ private:
 	SVGformat* workingWithReester;
 
 public:
+	static Model* GetInstance();
+
 	class infoObject
 	{
 	public:

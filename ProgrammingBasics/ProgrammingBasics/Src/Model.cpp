@@ -1443,3 +1443,13 @@ bool Model::DownloadFile(const std::string nameFile)
 	delete workingWithReester;
 	return isNotError;
 }
+
+
+Model* Model::instance = nullptr;
+
+Model* Model::GetInstance() {
+	if (instance == nullptr) {
+		instance = new Model;
+	}
+	return instance;
+}

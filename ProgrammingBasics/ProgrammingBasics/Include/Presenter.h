@@ -5,7 +5,7 @@
 #define __PRESENTER
 
 #include "IView.h"
-#include "Model.h"
+#include "ModelNew.h"
 #include "Mode.h"
 
 
