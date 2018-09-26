@@ -1,63 +1,66 @@
 #include "Primitives.h"
 #include <stdexcept>
 
-Primitive::Primitive(object_type _type, const Array<double>& _params) : Object(_type, _params)
+Primitive::Primitive(object_type _type, const Array<double>& _params, const Array<ID>& _children)
+	: Object(_type, _params, children)
 {
 
+}
+
+Array<double> Primitive::GetDoubleParamsAsValues() {
+	Array<double> doubleParamsValues(doubleParams.GetSize());
+	for (int i = 0; i < params.GetSize(); ++i) {
+		doubleParamsValues[i] = *doubleParams[i];
+	}
+	return doubleParamsValues;
+}
+
+Array<double*> Primitive::GetDoubleParamsAsPointers() {
+	return doubleParams;
+}
+
+void Primitive::ApplyDoubleParams() {
+	for (int i = 0; i < params.GetSize(); ++i) {
+		params[i] = *doubleParams[i];
+	}
 }
 
 Point::Point(const Vector2& pos) :
-	Primitive(ot_point, CreateArr(pos.x, pos.y))
+	Primitive(ot_point, CreateArr(pos.x, pos.y), Array<ID>(0))
 {
-	this->parent = nullptr;
-	this->x = pos.x;
-	this->y = pos.y;
+	this->x = &params[0];
+	this->y = &params[1];
 }
 Point::Point(double _x, double _y) :
-	Primitive(ot_point, CreateArr(_x, _y))
+	Primitive(ot_point, CreateArr(_x, _y), Array<ID>(0))
 {
-	this->parent = nullptr;
-	this->x = _x;
-	this->y = _y;
+	this->x = &params[0];
+	this->y = &params[1];
 }
 Point::Point(const Point& _p) :
-	Primitive(ot_point, CreateArr(_p.x, _p.y))
+	Primitive(ot_point, CreateArr(*_p.x, *_p.y), Array<ID>(0))
 {
-	this->parent = nullptr;
-	this->x = _p.x;
-	this->y = _p.y;
+	this->x = &params[0];
+	this->y = &params[1];
 }
 double Point::GetDist(const Vector2& point) const {
-	return sqrt((x - point.x)*(x - point.x) +
-		(y - point.y)*(y - point.y));
+	return sqrt((*x - point.x)*(*x - point.x) +
+		(*y - point.y)*(*y - point.y));
 }
 Vector2 Point::GetPos() const {
-	return Vector2(x, y);
+	return Vector2(*x, *y);
 }
 void Point::SetPos(const Vector2& _pos) {
-	x = _pos.x;
-	y = _pos.y;
+	*x = _pos.x;
+	*y = _pos.y;
 }
 void Point::SetPos(double _x, double _y) {
-	x = _x;
-	y = _y;
+	*x = _x;
+	*y = _y;
 }
-Primitive* Point::GetParent() {
-	return parent;
-}
-void Point::DeleteParent() {
-	parent = nullptr;
-}
-bool Point::SetParent(Primitive* _parent) {
-	if (parent != nullptr || _parent == nullptr) {
-		return false;
-	}
-	parent = _parent;
-}
-
 
 Segment::Segment(Point* _p1, Point* _p2) :
-	Primitive(ot_segment, Array<double>())
+	Primitive(ot_segment, Array<double>(0), CreateArr(_p1->GetID(), _p2->GetID()))
 {
 	if (_p1 == nullptr || _p2 == nullptr) {
 		throw std::invalid_argument("Segment::Segment::parameters was nullptr");
@@ -65,10 +68,6 @@ Segment::Segment(Point* _p1, Point* _p2) :
 
 	point1 = _p1;
 	point2 = _p2;
-
-	_p1->SetParent(this);
-	_p1->SetParent(this);
-
 }
 double Segment::GetLength() const {
 	return (point1->GetPos() - point2->GetPos()).GetLength();
@@ -125,7 +124,7 @@ double Segment::GetDist(const Vector2& point) const {
 }
 
 Arc::Arc(Point* _p1, Point* _p2, double _angle) :
-	Primitive(ot_arc, CreateArr(_angle))
+	Primitive(ot_arc, CreateArr(_angle), CreateArr(_p1->GetID(), _p2->GetID()))
 {
 	if (_p1 == nullptr || _p2 == nullptr) {
 		throw std::invalid_argument("Arc::Arc::parameters was nullptr");
@@ -134,14 +133,12 @@ Arc::Arc(Point* _p1, Point* _p2, double _angle) :
 	point1 = _p1;
 	point2 = _p2;
 
-	angle = _angle;
-
-	_p1->SetParent(this);
-	_p2->SetParent(this);
+	angle = &params[0];
 }
 
 // write this function
 double Arc::GetDist(const Vector2& _point) const {
+	Vector2 center(cx, cy);
 	Vector2 r1 = point1->GetPos() - center;
 	Vector2 r2 = point2->GetPos() - center;
 	Vector2 vec = _point - center;
@@ -151,7 +148,7 @@ double Arc::GetDist(const Vector2& _point) const {
 	double cross1 = Vector2::Cross(r1, vec);
 	double cross2 = Vector2::Cross(vec, r2);
 
-	if (angle < PI) {
+	if (*angle < PI) {
 		inSector = (cross1 > 0 && cross2 > 0);
 	}
 	else {
@@ -168,18 +165,18 @@ double Arc::GetDist(const Vector2& _point) const {
 }
 
 Vector2 Arc::GetCenter() const {
-	return center;
+	return Vector2(cx, cy);
 }
 
 void Arc::RestoreCenter() {
-	
+	Vector2 center;
 	Vector2 point1Pos = point1->GetPos();
 	Vector2 point2Pos = point2->GetPos();
 
 	Vector2 base = point2Pos - point1Pos;
 	double baseLength = base.GetLength();
 
-	double H = (baseLength / 2.0) / tan(angle / 2.0);
+	double H = (baseLength / 2.0) / tan(*angle / 2.0);
 
 	Vector2 ortH(-base.y / baseLength, base.x / baseLength);
 	Vector2 midBase = (point1Pos + point2Pos) / 2.0;
@@ -189,9 +186,11 @@ void Arc::RestoreCenter() {
 	point1Pos = point1Pos - center;
 	point2Pos = point2Pos - center;
 
-	if (Vector2::Cross(point1Pos, point2Pos) * (angle - PI) > 0) {
+	if (Vector2::Cross(point1Pos, point2Pos) * (*angle - PI) > 0) {
 		center = midBase - (ortH * H);
 	}
+	cx = center.x;
+	cy = center.y;
 }
 
 ID Arc::GetPointID1() const {
@@ -213,22 +212,22 @@ void Arc::SetPointPos2(Vector2 _pos) {
 	point2->SetPos(_pos);
 }
 double Arc::GetAngle() const {
-	return angle;
+	return *angle;
 }
 
 void Arc::SetAngle(double newAngle) {
 	if (newAngle > 2 * PI) {
-		angle = newAngle - (double)(int)(newAngle / (2 * PI)) * 2 * PI;
+		*angle = newAngle - (double)(int)(newAngle / (2 * PI)) * 2 * PI;
 		return;
 	}
 	if (newAngle < 0.0) {
-		angle = newAngle + ((double)((int)(abs(newAngle) / (2 * PI)) + 1) * 2 * PI);
+		*angle = newAngle + ((double)((int)(abs(newAngle) / (2 * PI)) + 1) * 2 * PI);
 		return;
 	}
 }
 
 Circle::Circle(Point* _center,  double _radius) :
-	Primitive(ot_circle, CreateArr(_radius))
+	Primitive(ot_circle, CreateArr(_radius), CreateArr(_center->GetID()))
 {
 	if (_center == nullptr) {
 		throw std::invalid_argument("Circle::Circle::_center was nullptr");
@@ -239,14 +238,12 @@ Circle::Circle(Point* _center,  double _radius) :
 
 	center = _center;
 
-	radius = _radius;
-
-	_center->SetParent(this);
+	radius = &params[0];
 }
 
 // write this function
 double Circle::GetDist(const Vector2& _point) const {
-	return abs(radius - (_point - Vector2(center->GetPos().x, center->GetPos().y)).GetLength());
+	return abs(*radius - (_point - Vector2(center->GetPos().x, center->GetPos().y)).GetLength());
 }
 
 Vector2 Circle::GetCenter() const {
@@ -254,7 +251,7 @@ Vector2 Circle::GetCenter() const {
 }
 
 ID Circle::GetCenterID() const {
-	return center->GetID();
+	return children[0];
 }
 
 void Circle::SetCenterPos(Vector2 _pos) {
@@ -262,11 +259,11 @@ void Circle::SetCenterPos(Vector2 _pos) {
 }
 
 double Circle::GetRadius() const {
-	return radius;
+	return *radius;
 }
 
 void Circle::SetRadius(double _radius)
 {
-	radius = _radius;
+	*radius = _radius;
 }
 

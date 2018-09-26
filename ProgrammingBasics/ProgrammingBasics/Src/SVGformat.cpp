@@ -1,17 +1,6 @@
 #include "DataController.h"
 
 //private
-
-#define POINT_PRMS 2
-#define SEGMENT_PRMS 0
-#define ARC_PRMS 1
-#define CIRCLE_PRMS 1
-
-#define POINT_CHLD 0
-#define SEGMENT_CHLD 2
-#define ARC_CHLD 2
-#define CIRCLE_CHLD 1
-
 #define STROKE_WIDTH 5
 #define STROKE_COLOR "red"
 #define DOC_WIDTH 1000

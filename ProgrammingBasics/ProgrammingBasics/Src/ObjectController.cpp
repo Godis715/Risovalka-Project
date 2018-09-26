@@ -9,7 +9,9 @@ ObjectController* ObjectController::GetInstance() {
 
 ObjectController* ObjectController::instance = nullptr;
 
-ObjectController::ObjectController() { }
+ObjectController::ObjectController() {
+
+}
 
 Object* ObjectController::GetObject(const ID& id) const {
 	return id.object;
@@ -23,6 +25,18 @@ object_type ObjectController::GetType(const ID& id) const {
 	else {
 		LOGERROR("GetType: object is not exist", LEVEL_1);
 	}
+}
+
+void ObjectController::SetObjParam(const ID& obj, const Array<double>& params) {
+	obj.object->SetParams(params);
+}
+
+Array<double> ObjectController::GetObjParam(const ID& obj) {
+	return obj.object->GetParams();
+}
+
+Array<ID> ObjectController::GetObjChildren(const ID& obj) {
+	return obj.object->GetChildren();
 }
 
 void ObjectController::DeleteObj(ID& id) const {

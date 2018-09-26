@@ -4,15 +4,7 @@
 #include "Vector2.h"
 #include "ID.h"
 
-
-class Primitive : public Object{
-private:
-public:
-	Primitive(object_type, const Array<double>&);
-	virtual double GetDist(const Vector2&) const = 0;
-};
-
-
+class Primitive;
 class Arc;
 class Point;
 class Segment;
@@ -44,14 +36,27 @@ public:
 
 	ID CreatePrimitive(object_type, const Array<ID>&, const Array<double>&) const;
 	Array<ID> GetChildren(const ID&);
+
+	double GetDistanceToPoint(const ID&, double, double) const;
+};
+
+class Primitive : public Object {
+private:
+	Array<double*> doubleParams;
+public:
+	Primitive(object_type, const Array<double>&, const Array<ID>&);
+	virtual double GetDist(const Vector2&) const = 0;
+
+	Array<double> GetDoubleParamsAsValues();
+	Array<double*> GetDoubleParamsAsPointers();
+
+	void ApplyDoubleParams();
 };
 
 class Point : public Primitive {
 private:
-	Primitive* parent;
-
-	double x;
-	double y;
+	double* x;
+	double* y;
 
 	friend class PrimController;
 public:
@@ -64,11 +69,6 @@ public:
 	Vector2 GetPos() const;
 	void SetPos(const Vector2&);
 	void SetPos(double, double);
-
-	Primitive* GetParent();
-	void DeleteParent();
-	bool SetParent(Primitive*);
-	//
 };
 
 class Segment : public Primitive {
@@ -116,12 +116,10 @@ class Arc : public Primitive {
 private:
 	double cx;
 	double cy;
-	double angle;
+	double* angle;
 
 	Point* point1;
 	Point* point2;
-
-	Vector2 center;
 
 	friend class PrimController;
 public:
@@ -145,8 +143,10 @@ public:
 
 class Circle : public Primitive {
 private:
-	double radius;
+
 	Point* center;
+
+	double* radius;
 
 	friend class PrimController;
 public:

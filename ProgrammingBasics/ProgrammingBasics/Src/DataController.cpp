@@ -9,13 +9,13 @@ DataController::DataController() {
 	objCtrl = ObjectController::GetInstance();
 }
 
-
 DataController* DataController::GetInstance() {
 	if (instance == nullptr) {
 		instance = new DataController;
 	}
 	return instance;
 }
+
 
 void DataController::AddObject(const ID& obj) {
 	LOG("AddObject: adding object to data", LEVEL_2);
@@ -75,6 +75,7 @@ void DataController::Connect(const ID& head, const Array<ID>& nodes) {
 
 				linkData.Add(nodes[i], currentNode);
 			}
+
 
 			continue;
 		}
@@ -177,21 +178,65 @@ void DataController::DeleteObject(const ID& id) {
 		++objToDelete;
 	}
 }
-//
-//Component DataController::GetComponent(const ID& id) {
-//	Component component;
-//	Queue<ID> queue;
-//	queue.Push(id);
-//
-//	while (!queue.IsEmpty()) {
-//		ID currID = queue.Pop();
-//		auto componentIt = component.Find(currID);
-//		if (!componentIt.IsValid()) {
-//			component.Add(currID, currID);
-//
-//			auto linkIt = linkData.Find(currID);
-//			// ...
-//		}
-//	}
-//}
+
+Component DataController::GetComponent(const ID& id) {
+	Component component;
+	Queue<ID> queue;
+	queue.Push(id);
+
+	while (!queue.IsEmpty()) {
+		ID currID = queue.Pop();
+		auto componentIt = component.Find(currID);
+		if (!componentIt.IsValid()) {
+			component.Add(currID, currID);
+
+			auto linkIt = linkData.Find(currID);
+			if (linkIt.IsValid()) {
+				auto childrenIt = (*linkIt)->GetMarker();
+				while (childrenIt.IsValid()) {
+					queue.Push(*childrenIt);
+					++childrenIt;
+				}
+			}
+		}
+	}
+	return component;
+}
+
+ID DataController::GetObjectInCircle(double x, double y, double r) {
+	ID currentObject = IDGenerator::GetNullID();
+	bool wasPoint = false;
+	double minDist = DBL_MAX;
+	auto primIt = primData.GetMarker();
+	while (!primIt.IsValid()) {
+		ID obj = *primIt;
+		double dist = primCtrl->GetDistanceToPoint(obj, x, y);
+		if (dist > r) {
+			continue;
+		}
+		if (objCtrl->GetType(obj) == ot_point) {
+			if (wasPoint) {
+				if (dist < minDist) {
+					minDist = dist;
+					currentObject = obj;
+				}
+			}
+			else {
+				wasPoint = true;
+				currentObject = obj;
+			}
+		}
+		else {
+			if (!wasPoint) {
+				if (dist < minDist) {
+					minDist = dist;
+					currentObject = obj;
+				}
+			}
+		}
+		++primIt;
+	}
+
+	return currentObject;
+}
 

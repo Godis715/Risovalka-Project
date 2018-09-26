@@ -1,8 +1,8 @@
 #include <Requirement.h>
 
 
-Requirement::Requirement(object_type _type, const Array<double>& _params) :
-	Object(_type, _params)
+Requirement::Requirement(object_type _type, const Array<double>& _params, const Array<ID>& _children) :
+	Object(_type, _params, _children)
 {
 	primCtrl = PrimController::GetInstance();
 
@@ -90,10 +90,8 @@ Array<double> Requirement::Gradient() {
 	return grad;
 }
 
-void Requirement::Change(const double) { }
-
 DistBetPointsReq::DistBetPointsReq(const Array<ID>& _objects, const Array<double>& _params) :
-	Requirement(ot_distBetPoints, _params)
+	Requirement(ot_distBetPoints, _params, _objects)
 {
 	args = primCtrl->GetPrimitiveParamsAsPointers(_objects, 4);
 }

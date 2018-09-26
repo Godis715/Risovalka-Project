@@ -44,11 +44,9 @@ protected:
 	
 	friend class ReqController;
 public:
-	Requirement(object_type, const Array<double>&);
-
+	Requirement(object_type, const Array<double>&, const Array<ID>&);
 	virtual double error() = 0;
-	virtual void Change(const double);
-	Array<double> Gradient();
+	virtual Array<double> Gradient();
 };
 
 
@@ -65,7 +63,7 @@ class EqualSegmentLenReq : public Requirement {
 private:
 public:
 	EqualSegmentLenReq(const Array<ID>& _objects, const Array<double>& _params) :
-		Requirement(ot_equalSegmentLen, params)
+		Requirement(ot_equalSegmentLen, params, _objects)
 	{
 		Array<ID> allPoints = primCtrl->GetChildren(_objects[0]) +
 			primCtrl->GetChildren(_objects[1]);
@@ -102,7 +100,7 @@ private:
 
 public:
 	PointPosReq(const Array<ID>& _objects, const Array<double>& _params) :
-		Requirement(ot_pointPosReq, params) {
+		Requirement(ot_pointPosReq, params, _objects) {
 
 		args = primCtrl->GetPrimitiveParamsAsPointers(_objects, 2);
 
@@ -119,7 +117,7 @@ class PointsOnTheOneHand : public Requirement
 public:
 	// _objects = <segment, point, point>
 	PointsOnTheOneHand(const Array<ID>& _objects, const Array<double>& _params) :
-		Requirement(ot_pointsOnTheOneHand, params)
+		Requirement(ot_pointsOnTheOneHand, params, _objects)
 	{
 		Array<ID> objs = primCtrl->GetChildren(_objects[0]) +
 			_objects[1] + _objects[2];
@@ -154,7 +152,7 @@ class DistanceBetweenPointSegment : public Requirement
 public:
 	// _objects = <segment, point>
 	DistanceBetweenPointSegment(const Array<ID>& _objects, const Array<double>& _params) :
-		Requirement(ot_distBetPointSeg, _params)
+		Requirement(ot_distBetPointSeg, _params, _objects)
 	{
 		Array<ID> objs = primCtrl->GetChildren(_objects[0]) + _objects[1];
 		args = primCtrl->GetPrimitiveParamsAsPointers(objs, 6);
@@ -260,7 +258,7 @@ public:
 class SegmentTouchCircle : public Requirement {
 public:
 	SegmentTouchCircle(const Array<ID>& _objects, const Array<double>& _params) :
-		Requirement(ot_segmentTouchCircle, _params)
+		Requirement(ot_segmentTouchCircle, _params, _objects)
 	{
 		Array<ID> objs =
 			primCtrl->GetChildren(_objects[0]) +

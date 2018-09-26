@@ -51,7 +51,7 @@ ID* IDGenerator::generateID(unsigned long long hash) const {
 	
 }
 
-ID IDGenerator::GetNullID() const {
+ID IDGenerator::GetNullID() {
 	return ID(0);
 }
 
@@ -79,16 +79,19 @@ IDGenerator* IDGenerator::_instance = nullptr;
 
 // 
 
-Object::Object(object_type _type, const Array<double>& _params) : 
+Object::Object(object_type _type, const Array<double>& _params, const Array<ID>& _children) : 
 	type(_type),
-	params(_params) {
+	params(_params),
+	children(_children)
+{
 	id = IDGenerator::getInstance()->generateID();
 	id->object = this;
 }
 
-Object::Object(object_type _type, const Array<double>& _params, unsigned long long _hash) :
+Object::Object(object_type _type, const Array<double>& _params, const Array<ID>& _children, unsigned long long _hash) :
 	type(_type),
-	params(_params)
+	params(_params),
+	children(_children)
 {
 	id = IDGenerator::getInstance()->generateID(_hash);
 	id->object = this;
@@ -102,4 +105,16 @@ object_type Object::GetType() const {
 }
 ID Object::GetID() const {
 	return *id;
+}
+
+void Object::SetParams(const Array<double>& _params) {
+	params = _params;
+}
+
+Array<double> Object::GetParams() const {
+	return params;
+}
+
+Array<ID> Object::GetChildren() const {
+	return children;
 }

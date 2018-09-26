@@ -47,9 +47,17 @@ Array<double> ReqController::GetReqParamsAsValues(const ID& id) const {
 }
 
 Array<double*> GetReqArgsValues(const ID&);
-void SetReqParams(const ID&, const Array<double>&);
 
-ID ReqController::CreateReq(object_type type, const Array<ID>& objects, const Array<double>& params) const {
+void ReqController::SetReqParams(const ID& obj, const Array<double>& params) const {
+	Requirement* req = GetReq(obj);
+	req->SetParams(params);
+}
+
+ID ReqController::CreateReq
+	(object_type type,
+	const Array<ID>& objects,
+	const Array<double>& params) const
+{
 	Object* obj = nullptr;
 	switch (type) {
 	case ot_distBetPoints: {

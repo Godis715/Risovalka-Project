@@ -5,6 +5,16 @@
 #include "Array.h"
 #include "Logger.h"
 
+#define POINT_PRMS 2
+#define SEGMENT_PRMS 0
+#define ARC_PRMS 1
+#define CIRCLE_PRMS 1
+
+#define POINT_CHLD 0
+#define SEGMENT_CHLD 2
+#define ARC_CHLD 2
+#define CIRCLE_CHLD 1
+
 enum object_type {
 	ot_point,
 	ot_segment,
@@ -38,7 +48,7 @@ public:
 	static IDGenerator* getInstance();
 	ID* generateID() const;
 	ID* generateID(unsigned long long) const;
-	ID GetNullID() const;
+	static ID GetNullID();
 
 	bool IsNullID(const ID&) const;
 private:
@@ -54,24 +64,38 @@ protected:
 	object_type type;
 
 	Array<double> params;
+	Array<ID> children;
+
+
 public:
-	Object(object_type, const Array<double>&);
-	Object(object_type, const Array<double>&, unsigned long long);
+	Object(object_type, const Array<double>&, const Array<ID>&);
+	Object(object_type, const Array<double>&, const Array<ID>&, unsigned long long);
 	~Object();
+
 	object_type GetType() const;
 	ID GetID() const;
+	Array<double> GetParams() const;
+	Array<ID> GetChildren() const;
+
+	void SetParams(const Array<double>&);
+
 };
 
 class ObjectController {
 private:
 	ObjectController();
 	static ObjectController* instance;
+
 public:
 	static ObjectController* GetInstance();
 
 	Object* GetObject(const ID&) const;
 	object_type GetType(const ID&) const;
+	
 	void DeleteObj(ID&) const;
+	void SetObjParam(const ID&, const Array<double>&);
+	Array<double> GetObjParam(const ID&);
+	Array<ID> GetObjChildren(const ID&);
 };
 
 class ID {

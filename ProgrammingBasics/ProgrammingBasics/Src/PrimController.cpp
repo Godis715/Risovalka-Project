@@ -38,7 +38,7 @@ PrimController* PrimController::GetInstance() {
 }
 
 Array<double> PrimController::GetPrimitiveParamsAsValues(const ID& id) const {
-	object_type type = objCtrl->GetType(id);
+	/*
 	switch (type) {
 	case ot_point: {
 
@@ -67,8 +67,8 @@ Array<double> PrimController::GetPrimitiveParamsAsValues(const ID& id) const {
 	default: {
 		LOGERROR("GetPrimitiveParamsAsValues: object is not primitive", LEVEL_1);
 	}
-	}
-	return Array<double>(0);
+	} */
+	return objCtrl->GetObjParam(id);
 }
 
 Array<double*> PrimController::GetPrimitiveParamsAsPointers(const ID& id) const {
@@ -79,7 +79,7 @@ Array<double*> PrimController::GetPrimitiveParamsAsPointers(const ID& id) const 
 		Object* obj = objCtrl->GetObject(id);
 		Point* point = static_cast<Point*>(obj);
 
-		Array<double*> params = CreateArr(&point->x, &point->y);
+		Array<double*> params = CreateArr(point->x, point->y);
 
 		return params;
 	}
@@ -93,7 +93,7 @@ Array<double*> PrimController::GetPrimitiveParamsAsPointers(const ID& id) const 
 		Object* obj = objCtrl->GetObject(id);
 		Circle* circle = static_cast<Circle*>(obj);
 
-		Array<double*> params = CreateArr(&circle->radius);
+		Array<double*> params = CreateArr(circle->radius);
 		
 		return params;
 		break;
@@ -245,4 +245,9 @@ Array<ID> PrimController::GetChildren(const ID& obj) {
 	}
 	}
 	return Array<ID>(0);
+}
+
+double PrimController::GetDistanceToPoint(const ID& obj, double x, double y) const {
+	Primitive* prim = GetPrimitive(obj);
+	return prim->GetDist(Vector2(x, y));
 }

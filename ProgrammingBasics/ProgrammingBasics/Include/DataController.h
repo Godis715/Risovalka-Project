@@ -63,7 +63,7 @@ private:
 
 	typedef BinSearchTree<ID, ID> DataID;
 	typedef BinSearchTree<ID, BinSearchTree<ID, ID>* > DataLink;
-	typedef BinSearchTree<string, bool> DataName;
+	typedef BinSearchTree<string, ID> DataName;
 
 	DataID primData;
 	DataID reqData;
@@ -84,6 +84,9 @@ public:
 	void AddObject(const ID&);
 	void Connect(const ID&, const Array<ID>&);
 	void DeleteObject(const ID&);
+
+	ID GetObjectInCircle(double, double, double);
+
 	Component GetComponent(const ID&);
 
 	bool IsUniqueName(const string&) const;
