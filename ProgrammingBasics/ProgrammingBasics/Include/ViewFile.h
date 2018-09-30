@@ -4,7 +4,7 @@
 #include "ViewHeaders.h"
 #include "ViewLog.h"
 
-class ViewFile
+class ViewFile : public DisplayWidjet
 {
 private:
 	static ViewLog* viewLog;

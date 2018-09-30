@@ -72,13 +72,6 @@ void ViewToolbar::cl_Requirement(Fl_Widget* o, void*)
 	if (((Fl_Menu_Button*)o)->mvalue()->label() == "Dist points")
 	{
 		viewLog->Push("Log::Create requirement: Dist points");
-		//mainWindow->begin();
-		//textBuffer = new Fl_Float_Input(1010, 60, 100, 30);
-		//textBuffer->when(FL_WHEN_ENTER_KEY);
-		//textBuffer->callback(cl_Input);
-		//mainWindow->end();
-		//mainWindow->redraw();
-		//currentWindget = textBuffer;
 		Presenter::Set_event(ev_req_D_point, params);
 	}
 	if (((Fl_Menu_Button*)o)->mvalue()->label() == "Equal segment")
@@ -94,37 +87,16 @@ void ViewToolbar::cl_Requirement(Fl_Widget* o, void*)
 	if (((Fl_Menu_Button*)o)->mvalue()->label() == "Dist point segment")
 	{
 		viewLog->Push("Log::Create requirement: Dist point segment");
-		/*mainWindow->begin();
-		textBuffer = new Fl_Float_Input(1010, 60, 100, 30);
-		textBuffer->when(FL_WHEN_ENTER_KEY);
-		textBuffer->callback(cl_Input);
-		mainWindow->end();
-		mainWindow->redraw();
-		currentWindget = textBuffer;*/
 		Presenter::Set_event(ev_req_D_point_segment, params);
 	}
 	if (((Fl_Menu_Button*)o)->mvalue()->label() == "Dist point arc")
 	{
 		viewLog->Push("Log::Create requirement: Dist point arc");
-		/*mainWindow->begin();
-		textBuffer = new Fl_Float_Input(1010, 60, 100, 30);
-		textBuffer->when(FL_WHEN_ENTER_KEY);
-		textBuffer->callback(cl_Input);
-		mainWindow->end();
-		mainWindow->redraw();
-		currentWindget = textBuffer;*/
 		Presenter::Set_event(ev_req_D_point_arc, params);
 	}
 	if (((Fl_Menu_Button*)o)->mvalue()->label() == "Angle between segment")
 	{
 		viewLog->Push("Log::Create requirement: Angle between segment");
-		/*mainWindow->begin();
-		textBuffer = new Fl_Float_Input(1010, 60, 100, 30);
-		textBuffer->when(FL_WHEN_ENTER_KEY);
-		textBuffer->callback(cl_Input);
-		mainWindow->end();
-		mainWindow->redraw();
-		currentWindget = textBuffer;*/
 		Presenter::Set_event(ev_req_angle_segment, params);
 	}
 
@@ -132,7 +104,6 @@ void ViewToolbar::cl_Requirement(Fl_Widget* o, void*)
 
 void ViewToolbar::Initializer()
 {
-	viewLog = viewLog->GetInstance();
 	int hGroup = 2 * indentY + hBut;
 	int wGroup = countBut * wBut + (countBut + 1) * indentX;
 	int coordX = positionX + indentX;
@@ -187,6 +158,8 @@ void ViewToolbar::Initializer()
 
 ViewToolbar::ViewToolbar()
 {
+	viewLog = viewLog->GetInstance();
+	inventory = inventory->GetInstance();
 	Initializer();
 }
 

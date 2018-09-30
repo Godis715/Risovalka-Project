@@ -351,74 +351,74 @@ CreatingArc::~CreatingArc() {
 
 //CHANGING_PROPERTIES
 
-ChangingProperties::ChangingProperties() : Mode()
-{
+//ChangingProperties::ChangingProperties() : Mode()
+//{
+//
+//}
+//
+//ChangingProperties::ChangingProperties(const ID _selObject) : Mode(), selectedObject(_selObject)
+//{
+//	object_type typePrim;
+//	model->GetObjType(selectedObject, typePrim);
+//
+//	Array<double> paramsPrim;
+//	model->GetObjParam(selectedObject, paramsPrim);
+//
+//	model->GetRequirementsByID(selectedObject, reqIDs);
+//
+//	Array<string> nameReqs;
+//	Array<Array<double>>paramsReqs;
+//	for (int i = 0; i < reqIDs.GetSize(); i++)
+//	{
+//		Array<double>paramsReq;
+//		model->GetObjParam(reqIDs[i], paramsReq);
+//		paramsReqs.PushBack(paramsReq);
+//
+//		object_type typeReq;
+//		model->GetObjType(reqIDs[i], typeReq);
+//		nameReqs.PushBack(objTypeToString(typeReq) + '#' + reqIDs[i].GetHash());
+//	}
+//
+//	view->GiveParams(typePrim, paramsPrim, nameReqs, paramsReqs);
+//}
+//
+//ChangingProperties::~ChangingProperties()
+//{
+//	if (isNew) {
+//		view->DeleteDisplay();
+//	}
+//}
 
-}
-
-ChangingProperties::ChangingProperties(const ID _selObject) : Mode(), selectedObject(_selObject)
-{
-	object_type typePrim;
-	model->GetObjType(selectedObject, typePrim);
-
-	Array<double> paramsPrim;
-	model->GetObjParam(selectedObject, paramsPrim);
-
-	model->GetRequirementsByID(selectedObject, reqIDs);
-
-	Array<string> nameReqs;
-	Array<Array<double>>paramsReqs;
-	for (int i = 0; i < reqIDs.GetSize(); i++)
-	{
-		Array<double>paramsReq;
-		model->GetObjParam(reqIDs[i], paramsReq);
-		paramsReqs.PushBack(paramsReq);
-
-		object_type typeReq;
-		model->GetObjType(reqIDs[i], typeReq);
-		nameReqs.PushBack(objTypeToString(typeReq) + '#' + reqIDs[i].GetHash());
-	}
-
-	view->GiveParams(typePrim, paramsPrim, nameReqs, paramsReqs);
-}
-
-ChangingProperties::~ChangingProperties()
-{
-	if (isNew) {
-		view->DeleteDisplay();
-	}
-}
-
-Mode* ChangingProperties::HandleEvent(const Event e, Array<double>& params)
-{
-	if (e == ev_change_Prim)
-	{
-		modelNew->ChangeObject(selectedObject, params);
-		model->ChangePrimitive(selectedObject, params);
-		return new Selection();
-	}
-	if (e == ev_rightMouseDown)
-	{
-		ID obj = modelNew->GetObjectByClick(params[0], params[1]);
-		bool isFound = Presenter::GetObject(params[0], params[1], obj);
-		if (isFound)
-		{
-			isNew = false;
-			view->DeleteDisplay();
-			return new ChangingProperties(obj);
-		}
-		return nullptr;
-	}
-	
-	return UnexpectedEvent(e);
-}
-
-void ChangingProperties::DrawMode()
-{
-	Array<ID> selectedObjects;
-	selectedObjects.PushBack(selectedObject);
-	Presenter::DrawSelectedObjects(selectedObjects, orange);
-}
+////Mode* ChangingProperties::HandleEvent(const Event e, Array<double>& params)
+////{
+////	if (e == ev_change_Prim)
+////	{
+////		modelNew->ChangeObject(selectedObject, params);
+////		model->ChangePrimitive(selectedObject, params);
+////		return new Selection();
+////	}
+////	if (e == ev_rightMouseDown)
+////	{
+////		ID obj = modelNew->GetObjectByClick(params[0], params[1]);
+////		bool isFound = Presenter::GetObject(params[0], params[1], obj);
+////		if (isFound)
+////		{
+////			isNew = false;
+////			view->DeleteDisplay();
+////			return new ChangingProperties(obj);
+////		}
+////		return nullptr;
+////	}
+////	
+////	return UnexpectedEvent(e);
+////}
+////
+////void ChangingProperties::DrawMode()
+////{
+////	Array<ID> selectedObjects;
+////	selectedObjects.PushBack(selectedObject);
+////	Presenter::DrawSelectedObjects(selectedObjects, orange);
+////}
 
 // SELECTION
 
@@ -455,7 +455,7 @@ Mode* Selection::HandleEvent(const Event e, Array<double>& params) {
 		bool isFound = Presenter::GetObject(params[0], params[1], obj);
 		if (isFound)
 		{
-			return new ChangingProperties(obj);
+			//return new ChangingProperties(obj);
 		}
 		return nullptr;
 	

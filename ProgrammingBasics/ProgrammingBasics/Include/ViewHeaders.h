@@ -14,6 +14,14 @@
 
 #include "Presenter.h"
 
+class DisplayWidjet
+{
+public:
+	DisplayWidjet();
+	~DisplayWidjet();
+private:
+};
+
 class Inventory
 {
 private:

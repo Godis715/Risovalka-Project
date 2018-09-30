@@ -65,7 +65,7 @@ int DrawWindow::handle(int e)
 		break;
 	}
 	case FL_ENTER: {
-		fl_cursor(*(inventory->lastCursor));
+		//fl_cursor(*(inventory->lastCursor));
 		break;
 	}
 	case FL_LEAVE: {

@@ -78,23 +78,23 @@ public:
 	virtual void DrawMode() { }
 };
 
-class ChangingProperties : public Mode {
-private:
-
-	ID selectedObject;
-	Array<ID> reqIDs;
-	bool isNew = true;
-	//enum State { single_selection, poly_selection, area_selection };
-	//State state;
-public:
-	ChangingProperties();
-	ChangingProperties(const ID _selObjects);
-	~ChangingProperties();
-
-	Mode* HandleEvent(const Event e, Array<double>& params);
-
-	void DrawMode();
-};
+//class ChangingProperties : public Mode {
+//private:
+//
+//	ID selectedObject;
+//	Array<ID> reqIDs;
+//	bool isNew = true;
+//	//enum State { single_selection, poly_selection, area_selection };
+//	//State state;
+//public:
+//	ChangingProperties();
+//	ChangingProperties(const ID _selObjects);
+//	~ChangingProperties();
+//
+//	Mode* HandleEvent(const Event e, Array<double>& params);
+//
+//	void DrawMode();
+//};
 
 class Selection : public Mode {
 private:

@@ -2,7 +2,7 @@
 #define __VIEW_TOOLBAR
 #include "ViewHeaders.h"
 #include "ViewLog.h"
-class ViewToolbar
+class ViewToolbar : public DisplayWidjet
 {
 private:
 	static ViewLog* viewLog;

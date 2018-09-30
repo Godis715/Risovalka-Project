@@ -1,51 +1,17 @@
 #include "ViewFLTK.h"
 
-double Parse(string number) {
-	int countPoint = 0;
-	if (number[0] == 'e' || number[0] == '.') {
-		return -1;
-	}
-
-	for (size_t i = 1; i < number.length(); ++i) {
-		if (number[i] == 'e' || number[i] == '-') {
-			return -1;
-		}
-		if (number[i] == '.') {
-			++countPoint;
-			if (countPoint > 1) {
-				return -1;
-			}
-		}
-	}
-	return stod(number);
-}
-
-const char* ReverseParse(const double dig, int& size)
-{
-	std::string strDig;
-	std::ostringstream ost;
-	ost << std::fixed << std::setprecision(2) << dig;
-	strDig = ost.str();
-
-	size = strDig.length();
-	char* charDig = new char[size];
-	for (int i = 0; i < size; i++)
-	{
-		charDig[i] = strDig[i];
-	}
-	return charDig;
-}
-
 ViewFLTK::ViewFLTK()
 {
-
+	dataWidjet = new DataWidjet();
 	Presenter::Initializer(this);
 	mainWindow = new Fl_Window(1300, 620, "Main Window");
 	mainWindow->color(FL_WHITE);
 	mainWindow->size_range(600, 300);
 
-	viewToolbar = new ViewToolbar();
-	viewFile = new ViewFile();
+	DisplayWidjet* viewToolbar = new ViewToolbar();
+	dataWidjet->Add("ToolBar", viewToolbar);
+	DisplayWidjet* viewFile = new ViewFile();
+	dataWidjet->Add("WorkFile", viewFile);
 	viewLog = ViewLog::GetInstance();
 	drawWindow = new DrawWindow(10, 30, 1000, 600, "Draw Window");
 	//drawWindow->end();
@@ -206,30 +172,6 @@ void ViewFLTK::Update()
 	drawWindow->redraw();
 }
 
-void ViewFLTK::GiveParams(const object_type type, const Array<double>& params,
-	const Array<string>& Reqs, const Array<Array<double>>& reqParams)
-{
-	/*mainWindow->begin();
-	if (displayParams != nullptr)
-	{
-		delete displayParams;
-		displayParams = nullptr;
-	}
-	displayParams = new DisplayParams(type, params, Reqs, reqParams);
-	mainWindow->end();
-	mainWindow->redraw();*/
-}
-
-void ViewFLTK::DeleteDisplay()
-{
-	/*if (displayParams != nullptr)
-	{
-		delete ViewFLTK::displayParams;
-		ViewFLTK::displayParams = nullptr;
-		ViewFLTK::mainWindow->redraw();
-	}*/
-}
-
 //for navigation on scene
 void ViewFLTK::TranslateScene(const Vector2& deltaCor)
 {
@@ -245,6 +187,17 @@ void ViewFLTK::RotateScene(const double& deltaAngle)
 {
 	drawWindow->RotateScene(deltaAngle);
 }
+
+DisplayWidjet* ViewFLTK::GetWidjet(const string nameWidjet)
+{
+	auto markerDataWidjet = dataWidjet->Find(nameWidjet);
+
+	return *markerDataWidjet; // исключение!
+}
+
+
+
+
 
 ViewLog* ViewFLTK::viewLog = nullptr;
 

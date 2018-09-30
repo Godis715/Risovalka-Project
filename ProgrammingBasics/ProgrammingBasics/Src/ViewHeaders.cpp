@@ -1,12 +1,17 @@
 #include "ViewHeaders.h"
 
+//DisplayWidjet
+DisplayWidjet::DisplayWidjet() {}
+DisplayWidjet::~DisplayWidjet() {}
+//______________
+
 Inventory::Inventory()
 {
-	Event lastEvent = ev_ctrlUp;
+	lastEvent = ev_ctrlUp;
 
-	Fl_Cursor* lastCursor = new Fl_Cursor(FL_CURSOR_DEFAULT);
+	lastCursor = new Fl_Cursor(FL_CURSOR_DEFAULT);
 
-	Fl_Widget* currentWindget;
+	currentWindget = nullptr;
 }
 
 Inventory* Inventory::GetInstance()
@@ -18,3 +23,5 @@ Inventory* Inventory::GetInstance()
 }
 
 Inventory* Inventory::instance = nullptr;
+
+
