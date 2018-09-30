@@ -46,6 +46,62 @@ string objTypeToString(const object_type type)
 	}
 }
 
+double Parse(string number) {
+	int countPoint = 0;
+	if (number[0] == 'e' || number[0] == '.') {
+		return -1;
+	}
+
+	for (size_t i = 1; i < number.length(); ++i) {
+		if (number[i] == 'e' || number[i] == '-') {
+			return -1;
+		}
+		if (number[i] == '.') {
+			++countPoint;
+			if (countPoint > 1) {
+				return -1;
+			}
+		}
+	}
+	return stod(number);
+}
+
+const char* ReverseParse(const double dig, int& size)
+{
+	std::string strDig;
+	std::ostringstream ost;
+	ost << std::fixed << std::setprecision(2) << dig;
+	strDig = ost.str();
+
+	size = strDig.length();
+	char* charDig = new char[size];
+	for (int i = 0; i < size; i++)
+	{
+		charDig[i] = strDig[i];
+	}
+	return charDig;
+}
+
+const string ReverseParse(const double dig) {
+	std::string strDig;
+	std::ostringstream ost;
+	ost << std::fixed << std::setprecision(2) << dig;
+	strDig = ost.str();
+
+	return strDig;
+}
+
+const char* str_ch(const string str) {
+	char* charDig = new char[str.length() + 1];
+	for (int i = 0; i < str.length(); i++)
+	{
+		charDig[i] = str[i];
+	}
+	charDig[str.length()] = '\0';
+	return charDig;
+}
+
+
 
 Mode* Mode::UnexpectedEvent(const Event e) {
 	switch (e) {
@@ -351,74 +407,89 @@ CreatingArc::~CreatingArc() {
 
 //CHANGING_PROPERTIES
 
-//ChangingProperties::ChangingProperties() : Mode()
-//{
-//
-//}
-//
-//ChangingProperties::ChangingProperties(const ID _selObject) : Mode(), selectedObject(_selObject)
-//{
-//	object_type typePrim;
-//	model->GetObjType(selectedObject, typePrim);
-//
-//	Array<double> paramsPrim;
-//	model->GetObjParam(selectedObject, paramsPrim);
-//
-//	model->GetRequirementsByID(selectedObject, reqIDs);
-//
-//	Array<string> nameReqs;
-//	Array<Array<double>>paramsReqs;
-//	for (int i = 0; i < reqIDs.GetSize(); i++)
-//	{
-//		Array<double>paramsReq;
-//		model->GetObjParam(reqIDs[i], paramsReq);
-//		paramsReqs.PushBack(paramsReq);
-//
-//		object_type typeReq;
-//		model->GetObjType(reqIDs[i], typeReq);
-//		nameReqs.PushBack(objTypeToString(typeReq) + '#' + reqIDs[i].GetHash());
-//	}
-//
-//	view->GiveParams(typePrim, paramsPrim, nameReqs, paramsReqs);
-//}
-//
-//ChangingProperties::~ChangingProperties()
-//{
-//	if (isNew) {
-//		view->DeleteDisplay();
-//	}
-//}
+ChangingProperties::ChangingProperties() : Mode()
+{
 
-////Mode* ChangingProperties::HandleEvent(const Event e, Array<double>& params)
-////{
-////	if (e == ev_change_Prim)
-////	{
-////		modelNew->ChangeObject(selectedObject, params);
-////		model->ChangePrimitive(selectedObject, params);
-////		return new Selection();
-////	}
-////	if (e == ev_rightMouseDown)
-////	{
-////		ID obj = modelNew->GetObjectByClick(params[0], params[1]);
-////		bool isFound = Presenter::GetObject(params[0], params[1], obj);
-////		if (isFound)
-////		{
-////			isNew = false;
-////			view->DeleteDisplay();
-////			return new ChangingProperties(obj);
-////		}
-////		return nullptr;
-////	}
-////	
-////	return UnexpectedEvent(e);
-////}
-////
-////void ChangingProperties::DrawMode()
-////{
-////	Array<ID> selectedObjects;
-////	selectedObjects.PushBack(selectedObject);
-////	Presenter::DrawSelectedObjects(selectedObjects, orange);
-////}
+}
+
+ChangingProperties::ChangingProperties(const ID _selObject) : Mode(), selectedObject(_selObject)
+{
+	object_type typePrim;
+	model->GetObjType(selectedObject, typePrim);
+
+	Array<double> params;
+	model->GetObjParam(selectedObject, params);
+
+	Array<string> paramsString;
+	if (typePrim == ot_arc){
+		paramsString = Array<string>(params.GetSize() - 1);
+		Vector2 vector1 = Vector2(params[2], params[3]) - Vector2(params[0], params[1]);
+		Vector2 vector2 = Vector2(params[4], params[5]) - Vector2(params[0], params[1]);
+		double angle = (Vector2::Angle(vector1, vector2) * 180) / PI;
+		for (int i = 2; i < params.GetSize(); ++i) {
+			paramsString[i - 2] = ReverseParse(params[i]);
+		}
+		paramsString[params.GetSize() - 2] = ReverseParse(angle);
+	}
+	else {
+		paramsString = Array<string>(params.GetSize());
+		for (int i = 0; i < params.GetSize(); ++i) {
+			paramsString[i] = ReverseParse(params[i]);
+		}
+	}
+
+	model->GetRequirementsByID(selectedObject, reqIDs);
+
+	Array<string> nameReqs;
+	for (int i = 0; i < reqIDs.GetSize(); i++)
+	{
+		object_type typeReq;
+		model->GetObjType(reqIDs[i], typeReq);
+		nameReqs.PushBack(objTypeToString(typeReq) + '#' + reqIDs[i].GetHash());
+	}
+
+	widjet = static_cast<IDisplayParam*>(view->GetWidjet(displayParam));
+
+	widjet->SetParam(paramsString, nameReqs);
+}
+
+ChangingProperties::~ChangingProperties()
+{
+	if (isNew) {
+		delete widjet;
+	}
+}
+
+Mode* ChangingProperties::HandleEvent(const Event e, Array<double>& params)
+{
+	if (e == ev_change_Prim)
+	{
+		modelNew->ChangeObject(selectedObject, params);
+		model->ChangePrimitive(selectedObject, params);
+		return new Selection();
+	}
+	if (e == ev_rightMouseDown)
+	{
+		ID obj = modelNew->GetObjectByClick(params[0], params[1]);
+		bool isFound = Presenter::GetObject(params[0], params[1], obj);
+		if (isFound)
+		{
+			isNew = false;
+			delete widjet;
+			return new ChangingProperties(obj);
+		}
+		return nullptr;
+	}
+	
+	return UnexpectedEvent(e);
+}
+
+void ChangingProperties::DrawMode()
+{
+	Array<ID> selectedObjects;
+	selectedObjects.PushBack(selectedObject);
+	Presenter::DrawSelectedObjects(selectedObjects, orange);
+}
 
 // SELECTION
 
@@ -455,7 +526,7 @@ Mode* Selection::HandleEvent(const Event e, Array<double>& params) {
 		bool isFound = Presenter::GetObject(params[0], params[1], obj);
 		if (isFound)
 		{
-			//return new ChangingProperties(obj);
+			return new ChangingProperties(obj);
 		}
 		return nullptr;
 	

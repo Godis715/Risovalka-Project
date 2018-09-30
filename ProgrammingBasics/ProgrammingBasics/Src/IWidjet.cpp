@@ -5,16 +5,24 @@
 
 IWidjet::IWidjet(const std::string _pass) : password(_pass) {}
 
-IDisplayParam::IDisplayParam(const string _pass) : IWidjet(_pass) {
+IWidjet::~IWidjet() {
 
 }
 
-IDisplayParam::~IDisplayParam() {
+IDisplayParam::IDisplayParam(const string _pass) : IWidjet(_pass) {}
 
+IDisplayParam::~IDisplayParam() {
+	auto view = ViewFLTK::GetInstance();
+	view->DeleteWidjet(password);
 }
 
 void IDisplayParam::SetParam(const Array<std::string>& params, const Array<std::string>& names) {
-
+	auto view = ViewFLTK::GetInstance();
+	auto widjet = dynamic_cast<DisplayParams*>(view->GetWidjet(password));
+	view->mainWindow->begin();
+	widjet->Inizializatoin(params, names);
+	view->mainWindow->end();
+	view->mainWindow->redraw();
 }
 
 ICreatingToolbar::ICreatingToolbar(const std::string _pass) : IWidjet(_pass) {

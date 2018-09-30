@@ -8,6 +8,7 @@ protected:
 	const std::string password;
 public:
 	IWidjet(const std::string);
+	~IWidjet();
 };
 
 class IDisplayParam : public IWidjet

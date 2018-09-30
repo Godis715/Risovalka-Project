@@ -1,127 +1,60 @@
 #include "ViewDisplay.h"
 
-double Parse(string number) {
-	int countPoint = 0;
-	if (number[0] == 'e' || number[0] == '.') {
-		return -1;
-	}
-
-	for (size_t i = 1; i < number.length(); ++i) {
-		if (number[i] == 'e' || number[i] == '-') {
-			return -1;
-		}
-		if (number[i] == '.') {
-			++countPoint;
-			if (countPoint > 1) {
-				return -1;
-			}
-		}
-	}
-	return stod(number);
-}
-
-const char* ReverseParse(const double dig, int& size)
-{
-	std::string strDig;
-	std::ostringstream ost;
-	ost << std::fixed << std::setprecision(2) << dig;
-	strDig = ost.str();
-
-	size = strDig.length();
-	char* charDig = new char[size];
-	for (int i = 0; i < size; i++)
-	{
-		charDig[i] = strDig[i];
-	}
-	return charDig;
-}
 
 //DisplayParams
-bool DisplayParams::DisplayPoint(const Array<double>& params)
+void DisplayParams::DisplayPoint(const Array<string>& params)
 {
-	if (params.GetSize() != 2) return false; //исключение
-	int digLength = 0;
-	const char* dig;
-
 	inputs.PushBack(new Fl_Float_Input(coordX + 20, coordY + 10, 50, 30, "x"));
-	dig = ReverseParse(params[0], digLength);
-	inputs[0]->value(dig, digLength);
+	inputs[0]->value(str_ch(params[0]));
+
 
 	inputs.PushBack(new Fl_Float_Input(coordX + 20, coordY + 40, 50, 30, "y"));
-	dig = ReverseParse(params[1], digLength);
-	inputs[1]->value(dig, digLength);
+	inputs[1]->value(str_ch(params[1]));
 }
 
-bool DisplayParams::DisplaySegment(const Array<double>& params)
+void DisplayParams::DisplaySegment(const Array<string>& params)
 {
-	if (params.GetSize() != 4) return false; //исключение
-	int digLength = 0;
-	const char* dig;
-
 	inputs.PushBack(new Fl_Float_Input(coordX + 20, coordY + 10, 50, 30, "x1"));
-	dig = ReverseParse(params[0], digLength);
-	inputs[0]->value(dig, digLength);
+	inputs[0]->value(str_ch(params[0]));
 
 	inputs.PushBack(new Fl_Float_Input(coordX + 20, coordY + 40, 50, 30, "y1"));
-	dig = ReverseParse(params[1], digLength);
-	inputs[1]->value(dig, digLength);
+	inputs[1]->value(str_ch(params[1]));
 
 	inputs.PushBack(new Fl_Float_Input(coordX + 20, coordY + 70, 50, 30, "x2"));
-	dig = ReverseParse(params[2], digLength);
-	inputs[2]->value(dig, digLength);
+	inputs[2]->value(str_ch(params[2]));
 
 	inputs.PushBack(new Fl_Float_Input(coordX + 20, coordY + 100, 50, 30, "y2"));
-	dig = ReverseParse(params[3], digLength);
-	inputs[3]->value(dig, digLength);
+	inputs[3]->value(str_ch(params[3]));
 }
 
-bool DisplayParams::DisplayArc(const Array<double>& params)
+void DisplayParams::DisplayArc(const Array<string>& params)
 {
-	if (params.GetSize() != 6) return false; //исключение
-	int digLength = 0;
-	const char* dig;
-
 	inputs.PushBack(new Fl_Float_Input(coordX + 20, coordY + 10, 50, 30, "x1"));
-	dig = ReverseParse(params[2], digLength);
-	inputs[0]->value(dig, digLength);
+	inputs[0]->value(str_ch(params[0]));
 
 	inputs.PushBack(new Fl_Float_Input(coordX + 20, coordY + 40, 50, 30, "y1"));
-	dig = ReverseParse(params[3], digLength);
-	inputs[1]->value(dig, digLength);
+	inputs[1]->value(str_ch(params[1]));
 
 	inputs.PushBack(new Fl_Float_Input(coordX + 20, coordY + 70, 50, 30, "x2"));
-	dig = ReverseParse(params[4], digLength);
-	inputs[2]->value(dig, digLength);
+	inputs[2]->value(str_ch(params[2]));
 
 	inputs.PushBack(new Fl_Float_Input(coordX + 20, coordY + 100, 50, 30, "y2"));
-	dig = ReverseParse(params[5], digLength);
-	inputs[3]->value(dig, digLength);
+	inputs[3]->value(str_ch(params[3]));
 
-	Vector2 vector1 = Vector2(params[2], params[3]) - Vector2(params[0], params[1]);
-	Vector2 vector2 = Vector2(params[4], params[5]) - Vector2(params[0], params[1]);
-	double angle = (Vector2::Angle(vector1, vector2) * 180) / PI;
 	inputs.PushBack(new Fl_Float_Input(coordX + 20, coordY + 130, 50, 30, "an"));
-	dig = ReverseParse(angle, digLength);
-	inputs[4]->value(dig, digLength);
+	inputs[4]->value(str_ch(params[4]));
 }
 
-bool DisplayParams::DisplayCircle(const Array<double>& params)
+void DisplayParams::DisplayCircle(const Array<string>& params)
 {
-	if (params.GetSize() != 3) return false; //исключение
-	int digLength = 0;
-	const char* dig;
-
 	inputs.PushBack(new Fl_Float_Input(coordX + 20, coordY + 10, 50, 30, "x"));
-	dig = ReverseParse(params[0], digLength);
-	inputs[0]->value(dig, digLength);
+	inputs[0]->value(str_ch(params[0]));
 
 	inputs.PushBack(new Fl_Float_Input(coordX + 20, coordY + 40, 50, 30, "y"));
-	dig = ReverseParse(params[1], digLength);
-	inputs[1]->value(dig, digLength);
+	inputs[1]->value(str_ch(params[1]));
 
 	inputs.PushBack(new Fl_Float_Input(coordX + 20, coordY + 70, 50, 30, "r"));
-	dig = ReverseParse(params[2], digLength);
-	inputs[2]->value(dig, digLength);
+	inputs[2]->value(str_ch(params[2]));
 }
 
 void DisplayParams::cl_OK(Fl_Widget* o, void*)
@@ -134,21 +67,20 @@ void DisplayParams::cl_OK(Fl_Widget* o, void*)
 	Presenter::Set_event(ev_change_Prim, params);
 }
 
-void DisplayParams::Inizializatoin(const object_type _type, const Array<double>& params,
-	const Array<string>& nameReqs, const Array<Array<double>>& reqParams)
+void DisplayParams::Inizializatoin(const Array<string>& params, const Array<string>& nameReqs)
 {
-	switch (_type)
+	switch (params.GetSize())
 	{
-	case ot_point:
+	case 2:
 		sizeY = 140;
 		break;
-	case ot_segment:
+	case 4:
 		sizeY = 200;
 		break;
-	case ot_arc:
+	case 5:
 		sizeY = 230;
 		break;
-	case ot_circle:
+	case 3:
 		sizeY = 170;
 		break;
 	default:
@@ -156,42 +88,35 @@ void DisplayParams::Inizializatoin(const object_type _type, const Array<double>&
 	}
 	group = new Fl_Group(coordX, coordY, sizeX, sizeY);
 	{
-		switch (_type)
+		switch (params.GetSize())
 		{
-		case ot_point: {
+		case 2: {
 			DisplayPoint(params);
 			break;
 		}
-		case ot_segment: {
+		case 4: {
 			DisplaySegment(params);
 			break;
 		}
-		case ot_arc: {
+		case 5: {
 			DisplayArc(params);
 			break;
 		}
-		case ot_circle: {
+		case 3: {
 			DisplayCircle(params);
 			break;
 		}
 		default:
 			break;
 		}
-		type = _type;
 		b_OK = new Fl_Button(coordX + 10, coordY + sizeY - 30, 30, 20, "OK");
 		b_OK->color(FL_WHITE);
 		b_OK->callback(cl_OK);
 		{
 			i_req = new Fl_Menu_Item[nameReqs.GetSize() + 1];
 			for (int i = 0; i < nameReqs.GetSize(); ++i) {
-				char* nameIt = new char[nameReqs[i].size() + 1];
-				for (int j = 0; j < nameReqs[i].size(); j++)
-				{
-					nameIt[j] = nameReqs[i][j];
-				}
-				nameIt[nameReqs[i].size()] = '\0';
+				const char* nameIt = str_ch(nameReqs[i]);
 				i_req[i] = { nameIt };
-				//delete[] nameIt;
 			}
 			i_req[nameReqs.GetSize()] = { 0 };
 			b_req = new  Fl_Menu_Button(coordX + 90, coordY + 10, 50, 30, "Req");

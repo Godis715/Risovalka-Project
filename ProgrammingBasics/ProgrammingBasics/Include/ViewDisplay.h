@@ -1,12 +1,6 @@
 #ifndef __DISPLAY
 #define __DISPLAY
 #include "ViewHeaders.h"
-#include <sstream>
-#include <iomanip>
-
-double Parse(string);
-
-const char* ReverseParse(const double, int&);
 
 class DisplayParams : public DisplayWidjet
 {
@@ -26,18 +20,18 @@ class DisplayParams : public DisplayWidjet
 		Fl_Menu_Button* b_req;
 		Fl_Menu_Item* i_req;
 
-		bool DisplayPoint(const Array<double>&);
+		void DisplayPoint(const Array<string>&);
 
-		bool DisplaySegment(const Array<double>&);
+		void DisplaySegment(const Array<string>&);
 
-		bool DisplayArc(const Array<double>&);
+		void DisplayArc(const Array<string>&);
 
-		bool DisplayCircle(const Array<double>&);
+		void DisplayCircle(const Array<string>&);
 
 		static void cl_OK(Fl_Widget*, void*);
 
 	public:
-		void Inizializatoin(const object_type, const Array<double>&,const Array<string>&, const Array<Array<double>>&);
+		void Inizializatoin(const Array<string>&,const Array<string>&);
 
 		DisplayParams();
 		~DisplayParams();

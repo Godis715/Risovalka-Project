@@ -17,8 +17,6 @@ class ViewFLTK : public IView
 {
 private:
 	DataWidjet* dataWidjet;
-
-	static Fl_Window* mainWindow;
 	
 	static ViewLog* viewLog;
 
@@ -44,9 +42,10 @@ private:
 			return e;
 		}
 	};*/
-
-public:
 	ViewFLTK();
+	static ViewFLTK* instance;
+public:
+	static ViewFLTK* GetInstance();
 
 	~ViewFLTK();
 
@@ -77,5 +76,9 @@ public:
 	IWidjet* GetWidjet(const typeWidjet);
 
 	DisplayWidjet* GetWidjet(const string);
+
+	void DeleteWidjet(const string);
+
+	static Fl_Window* mainWindow;
 };
 #endif // !__VIEW_FLTK

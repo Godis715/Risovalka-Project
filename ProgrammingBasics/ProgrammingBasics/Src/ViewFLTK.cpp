@@ -24,6 +24,13 @@ ViewFLTK::ViewFLTK()
 
 ViewFLTK::~ViewFLTK(){}
 
+ViewFLTK* ViewFLTK::GetInstance() {
+	if (instance == nullptr) {
+		instance = new ViewFLTK();
+	}
+	return instance;
+}
+
 int ViewFLTK::Run() 
 {
 	return Fl::run(); 
@@ -195,7 +202,7 @@ IWidjet* ViewFLTK::GetWidjet(const typeWidjet typeW)
 	{
 	case displayParam:
 	{
-		DisplayParams* displayParams = new DisplayParams();
+		auto displayParams = new DisplayParams();
 		dataWidjet->Add("DisplayParams", displayParams);
 		widjet = new IDisplayParam("DisplayParams");
 		break;
@@ -226,6 +233,18 @@ DisplayWidjet* ViewFLTK::GetWidjet(const string nameWidjet)
 	return *markerDataWidjet; // исключение!
 }
 
+void ViewFLTK::DeleteWidjet(const string nameWidjet) {
+	auto markerDataWidjet = dataWidjet->Find(nameWidjet);
+	if (markerDataWidjet.IsValid()) {
+		delete (markerDataWidjet.operator*());
+		markerDataWidjet.Delete();
+		mainWindow->redraw();
+	}
+	else {
+		// $$$
+	}
+}
+
 
 
 
@@ -235,3 +254,5 @@ ViewLog* ViewFLTK::viewLog = nullptr;
 Fl_Window* ViewFLTK::mainWindow;
 
 DrawWindow* ViewFLTK::drawWindow;
+
+ViewFLTK* ViewFLTK::instance = nullptr;

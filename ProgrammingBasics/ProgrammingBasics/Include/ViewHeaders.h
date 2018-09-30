@@ -18,7 +18,7 @@ class DisplayWidjet
 {
 public:
 	DisplayWidjet();
-	~DisplayWidjet();
+	virtual ~DisplayWidjet();
 private:
 };
 
