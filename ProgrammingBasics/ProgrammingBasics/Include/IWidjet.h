@@ -1,33 +1,42 @@
 #ifndef __IWIDJET
 #define __IWIDJET
 
-class Widjet
+
+class IWidjet
 {
 protected:
-	const string password;
+	const std::string password;
 public:
-	Widjet(const string);
+	IWidjet(const std::string);
 };
 
-class DisplayParam : public Widjet
+class IDisplayParam : public IWidjet
 {
-	Array<string> params;
-	Array<string> reqs;
+	Array<std::string> params;
+	Array<std::string> reqs;
 public:
-	DisplayParam(const string);
+	IDisplayParam(const std::string);
 
-	void AddParam(const Array<string>&);
+	~IDisplayParam();
 
-	void AddRequirements(const Array<string>&);
+	void SetParam(const Array<std::string>&, const Array<std::string>&);
 };
 
-class CreateToolbar : public Widjet
+class ICreateToolbar : public IWidjet
 {
-	Array<string> possibleReqs;
+	Array<std::string> possibleReqs;
 public:
-	CreateToolbar(const string);
+	ICreateToolbar(const std::string);
 
-	void AddPossibleReqs(const Array<string>&);
+	void SetParam(const Array<std::string>&);
+};
+
+class IRequirementInput : public IWidjet
+{
+public:
+	IRequirementInput(const std::string);
+
+	~IRequirementInput();
 };
 
 #endif __IWIDJET
