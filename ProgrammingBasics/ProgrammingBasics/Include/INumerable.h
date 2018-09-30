@@ -1,5 +1,5 @@
 #pragma once
-
+#include "ViewFLTK.h"
 //#include "IDGenerator.h"
 //#include <stdexcept>
 //#include <cmath>

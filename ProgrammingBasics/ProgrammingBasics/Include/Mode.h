@@ -1,7 +1,6 @@
 #ifndef __MODE
 #define __MODE
 
-#include "Vector2.h"
 #include "IView.h"
 #include "ModelNew.h"
 

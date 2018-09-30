@@ -1,6 +1,7 @@
 #ifndef __IVIEW
 #define __IVIEW
 #include "Vector2.h"
+#include "IWidjet.h"
 
 enum color { white, red, black, green, yellow, blue, orange};
 enum typeDrawing{points, line, polygon};
@@ -23,6 +24,10 @@ public:
 	virtual void RotateScene(const double&) = 0;
 	virtual void GiveParams(const object_type, const Array<double>&, const Array<string>&, const Array<Array<double>>&) = 0;
 	virtual void DeleteDisplay() = 0;
+	void test()
+	{
+		//IWidjet* widj = new IWidjet();
+	}
 
 };
 
