@@ -134,7 +134,7 @@ void DisplayParams::cl_OK(Fl_Widget* o, void*)
 	Presenter::Set_event(ev_change_Prim, params);
 }
 
-DisplayParams::DisplayParams(const object_type _type, const Array<double>& params,
+void DisplayParams::Inizializatoin(const object_type _type, const Array<double>& params,
 	const Array<string>& nameReqs, const Array<Array<double>>& reqParams)
 {
 	switch (_type)
@@ -206,6 +206,8 @@ DisplayParams::DisplayParams(const object_type _type, const Array<double>& param
 	}
 
 }
+
+DisplayParams::DisplayParams(){}
 
 DisplayParams::~DisplayParams()
 {

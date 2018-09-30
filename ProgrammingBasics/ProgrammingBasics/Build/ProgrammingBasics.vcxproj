@@ -140,6 +140,7 @@
     <ClCompile Include="..\Src\Primitives.cpp" />
     <ClCompile Include="..\Src\Requirement.cpp" />
     <ClCompile Include="..\Src\Vector2.cpp" />
+    <ClCompile Include="..\Src\ViewDisplay.cpp" />
     <ClCompile Include="..\Src\ViewDrawWindow.cpp" />
     <ClCompile Include="..\Src\ViewFile.cpp" />
     <ClCompile Include="..\Src\ViewFLTK.cpp" />
@@ -168,6 +169,7 @@
     <ClInclude Include="..\Include\Requirement.h" />
     <ClInclude Include="..\Include\Type.h" />
     <ClInclude Include="..\Include\Vector2.h" />
+    <ClInclude Include="..\Include\ViewDisplay.h" />
     <ClInclude Include="..\Include\ViewDrawWindow.h" />
     <ClInclude Include="..\Include\ViewFile.h" />
     <ClInclude Include="..\Include\ViewFLTK.h" />

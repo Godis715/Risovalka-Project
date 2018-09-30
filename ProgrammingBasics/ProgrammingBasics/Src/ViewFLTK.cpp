@@ -188,6 +188,37 @@ void ViewFLTK::RotateScene(const double& deltaAngle)
 	drawWindow->RotateScene(deltaAngle);
 }
 
+IWidjet* ViewFLTK::GetWidjet(const typeWidjet typeW)
+{
+	IWidjet* widjet;
+	switch (typeW)
+	{
+	case displayParam:
+	{
+		DisplayParams* displayParams = new DisplayParams();
+		dataWidjet->Add("DisplayParams", displayParams);
+		widjet = new IDisplayParam("DisplayParams");
+		break;
+	}
+	case creatingToolbar:
+	{
+		widjet = new ICreatingToolbar("ToolBar");
+		break;
+	}
+	case requirementInput:
+	{
+		RequirementInput* requirementInput = new RequirementInput();
+		dataWidjet->Add("RequirementInput", requirementInput);
+		widjet = new IRequirementInput("RequirementInput");
+		break;
+	}
+	default:
+		widjet = nullptr;
+		break;
+	}
+	return widjet;
+}
+
 DisplayWidjet* ViewFLTK::GetWidjet(const string nameWidjet)
 {
 	auto markerDataWidjet = dataWidjet->Find(nameWidjet);

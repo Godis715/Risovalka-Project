@@ -37,8 +37,9 @@ class DisplayParams : public DisplayWidjet
 		static void cl_OK(Fl_Widget*, void*);
 
 	public:
-		DisplayParams(const object_type, const Array<double>&,const Array<string>&, const Array<Array<double>>&);
+		void Inizializatoin(const object_type, const Array<double>&,const Array<string>&, const Array<Array<double>>&);
 
+		DisplayParams();
 		~DisplayParams();
 };
 

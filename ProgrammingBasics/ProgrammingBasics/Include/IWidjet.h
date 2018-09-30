@@ -22,11 +22,11 @@ public:
 	void SetParam(const Array<std::string>&, const Array<std::string>&);
 };
 
-class ICreateToolbar : public IWidjet
+class ICreatingToolbar : public IWidjet
 {
 	Array<std::string> possibleReqs;
 public:
-	ICreateToolbar(const std::string);
+	ICreatingToolbar(const std::string);
 
 	void SetParam(const Array<std::string>&);
 };

@@ -6,6 +6,7 @@
 enum color { white, red, black, green, yellow, blue, orange};
 enum typeDrawing{points, line, polygon};
 enum statusCreate { drawPoint, drawSegment, drawArc, drawCircle };
+enum typeWidjet{displayParam, creatingToolbar, requirementInput};
 
 class IView
 {
@@ -22,6 +23,7 @@ public:
 	virtual void TranslateScene(const Vector2&) = 0;
 	virtual void ScaleScene(const double&) = 0;
 	virtual void RotateScene(const double&) = 0;
+	virtual IWidjet* GetWidjet(const typeWidjet) = 0;
 };
 
 #endif // !__IVIEW

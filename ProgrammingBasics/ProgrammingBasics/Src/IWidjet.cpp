@@ -17,11 +17,11 @@ void IDisplayParam::SetParam(const Array<std::string>& params, const Array<std::
 
 }
 
-ICreateToolbar::ICreateToolbar(const std::string _pass) : IWidjet(_pass) {
+ICreatingToolbar::ICreatingToolbar(const std::string _pass) : IWidjet(_pass) {
 
 }
 
-void ICreateToolbar::SetParam(const Array<std::string>& names) {
+void ICreatingToolbar::SetParam(const Array<std::string>& names) {
 
 }
 
