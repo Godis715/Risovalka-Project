@@ -224,8 +224,6 @@ public:
 //	void DrawMode();
 //};
 
-//CREATE REQUIRMENT
-
 class CreateRequirementWithParam : public Mode {
 private:
 	Array<ID> selectedPrim;
@@ -239,8 +237,6 @@ public:
 
 	void DrawMode();
 };
-
-//NAVIGATION ON SCENE
 
 class NavigationOnScene : public Mode {
 private:
@@ -260,4 +256,4 @@ public:
 	void DrawMode();
 };
 
-#endif // !__MODE
+#endif __MODE

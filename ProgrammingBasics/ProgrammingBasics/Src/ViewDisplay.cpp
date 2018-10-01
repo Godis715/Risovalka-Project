@@ -1,7 +1,6 @@
 #include "ViewDisplay.h"
 
-
-//DisplayParams
+#pragma region DisplayParams
 void DisplayParams::DisplayPoint(const Array<string>& params)
 {
 	inputs.PushBack(new Fl_Float_Input(coordX + 20, coordY + 10, 50, 30, "x"));
@@ -148,9 +147,9 @@ DisplayParams::~DisplayParams()
 }
 
 Array<Fl_Float_Input*> DisplayParams::inputs;
-//______________
+#pragma endregion
 
-//RequirementInput
+#pragma region RequirementInput
 RequirementInput::RequirementInput()
 {
 	textBuffer = new Fl_Float_Input(1010, 60, 100, 30);
@@ -170,7 +169,8 @@ void RequirementInput::cl_Input(Fl_Widget* o, void*) {
 	params[0] = Parse(numbers);
 	Presenter::Set_event(ev_input, params);
 }
-//______________
+#pragma endregion
+
 
 
 
