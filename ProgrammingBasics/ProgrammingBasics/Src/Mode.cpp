@@ -506,20 +506,32 @@ Selection::Selection(Array<ID> _selObjects) : Mode(), selectedObjects(_selObject
 		selectedObjects = Array<ID>(1);
 	}
 	state = single_selection;
+	widjet = static_cast<ICreatingToolbar*>(view->GetWidjet(displayParam));
+	if (selectedObjects.GetSize() == 1) {
+		widjet->Clear();
+	}
+	else {
+		widjet->SetParam(GetPossibleReqType());
+	}
 }
 
 Selection::Selection() : Mode(), selectedObjects(1) {
+	widjet = static_cast<ICreatingToolbar*>(view->GetWidjet(displayParam));
 	state = single_selection;
+	widjet->Clear();
 }
 
 Selection::Selection(ID id) {
 	selectedObjects = Array<ID>(1);
 	selectedObjects[0] = id;
 	state = single_selection;
+	widjet = static_cast<ICreatingToolbar*>(view->GetWidjet(displayParam));
+	widjet->Clear();
 }
 
 Selection::~Selection() {
 	selectedObjects.Clear();
+	delete widjet;
 }
 
 void Selection::AddObject(const ID& obj) {
@@ -530,6 +542,65 @@ void Selection::AddObject(const ID& obj) {
 		}
 	}
 	selectedObjects.PushBack(obj);
+}
+
+Array<string> Selection::GetPossibleReqType() {
+	int points = 0;
+	int segments = 0;
+	int circles = 0;
+	int arcs = 0;
+	for (int i = 0; i < selectedObjects.GetSize(); ++i) {
+		object_type typePrim;
+		model->GetObjType(selectedObjects[i], typePrim);
+		switch (typePrim)
+		{
+		case ot_point: {
+			++points;
+			break;
+		}
+		case ot_segment: {
+			++segments;
+			break;
+		}
+		case ot_circle: {
+			++circles;
+			break;
+		}
+		case ot_arc: {
+			++arcs;
+			break;
+		}
+		default:
+			break;
+		}
+	}
+	Array<string> nameTypeReqs;
+
+	if ((points == 2) && (segments == 0) &&
+		(circles == 0) && (arcs == 0)) {
+		nameTypeReqs.PushBack("Dist points");
+	}
+	if ((points == 0) && (segments == 2) &&
+		(circles == 0) && (arcs == 0)) {
+		nameTypeReqs.PushBack("Equal segment");
+	}
+	if ((points == 2) && (segments == 1) &&
+		(circles == 0) && (arcs == 0)) {
+		nameTypeReqs.PushBack("Points on one hand");
+	}
+	if ((points == 1) && (segments == 1) &&
+		(circles == 0) && (arcs == 0)) {
+		nameTypeReqs.PushBack("Dist point segment");
+	}
+	if ((points == 1) && (segments == 0) &&
+		(circles == 0) && (arcs == 1)) {
+		nameTypeReqs.PushBack("Dist point arc");
+	}
+	if ((points == 0) && (segments == 2) &&
+		(circles == 0) && (arcs == 0)) {
+		nameTypeReqs.PushBack("Angle between segment");
+	}
+	return nameTypeReqs;
 }
 
 Mode* Selection::HandleEvent(const Event e, Array<double>& params) {
@@ -561,21 +632,25 @@ Mode* Selection::HandleEvent(const Event e, Array<double>& params) {
 			if (state == single_selection) {
 				selectedObjects.Clear();
 				selectedObjects.PushBack(obj);
+				widjet->Clear();
 				return nullptr;
 			}
 
 			if (state == poly_selection) {
 				AddObject(obj);
+				widjet->SetParam(GetPossibleReqType());
 				return nullptr;
 			}
 		}
 		else {
 			if (state != poly_selection)
 			{
+				widjet->Clear();
 				selectedObjects.Clear();
 			}
 			return nullptr;
 		}
+		
 	}
 
 	//for area selection

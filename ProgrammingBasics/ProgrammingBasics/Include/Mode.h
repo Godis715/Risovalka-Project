@@ -91,12 +91,12 @@ private:
 	bool isNew = true;
 	//enum State { single_selection, poly_selection, area_selection };
 	//State state;
+
+	void SetWidjetParam();
 public:
 	ChangingProperties();
 	ChangingProperties(const ID _selObjects);
 	~ChangingProperties();
-
-	void SetWidjetParam();
 
 	Mode* HandleEvent(const Event e, Array<double>& params);
 
@@ -113,8 +113,11 @@ private:
 	Event lastEvent;
 	Vector2 infoArea1;
 	Vector2 infoArea2;
+	ICreatingToolbar* widjet;
 
 	void AddObject(const ID& obj);
+
+	Array<string> GetPossibleReqType();
 public:
 	Selection();
 	Selection(ID);

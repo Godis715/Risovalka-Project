@@ -31,8 +31,26 @@ ICreatingToolbar::ICreatingToolbar(const std::string _pass) : IWidjet(_pass) {
 
 }
 
-void ICreatingToolbar::SetParam(const Array<std::string>& names) {
+ICreatingToolbar::~ICreatingToolbar() {
+	Clear();
+}
 
+void ICreatingToolbar::SetParam(const Array<std::string>& names) {
+	auto view = ViewFLTK::GetInstance();
+	auto widjet = dynamic_cast<ViewToolbar*>(view->GetWidjet(password));
+	auto mainWindow = dynamic_cast<MainWindow*>(view->GetWidjet("MainWindow"));
+	mainWindow->begin();
+	widjet->ClearRequirements();
+	widjet->SetRequirements(names);
+	mainWindow->end();
+	mainWindow->redraw();
+}
+
+
+void ICreatingToolbar::Clear() {
+	auto view = ViewFLTK::GetInstance();
+	auto widjet = dynamic_cast<ViewToolbar*>(view->GetWidjet(password));
+	widjet->ClearRequirements();
 }
 
 IRequirementInput::IRequirementInput(const std::string _pass) : IWidjet(_pass) {}

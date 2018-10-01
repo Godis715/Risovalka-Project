@@ -28,8 +28,11 @@ class ICreatingToolbar : public IWidjet
 	Array<std::string> possibleReqs;
 public:
 	ICreatingToolbar(const std::string);
+	~ICreatingToolbar();
 
 	void SetParam(const Array<std::string>&);
+
+	void Clear();
 };
 
 class IRequirementInput : public IWidjet
