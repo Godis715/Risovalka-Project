@@ -146,6 +146,7 @@
     <ClCompile Include="..\Src\ViewFLTK.cpp" />
     <ClCompile Include="..\Src\ViewHeaders.cpp" />
     <ClCompile Include="..\Src\ViewLog.cpp" />
+    <ClCompile Include="..\Src\ViewMainWindow.cpp" />
     <ClCompile Include="..\Src\ViewToolbar.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -175,6 +176,7 @@
     <ClInclude Include="..\Include\ViewFLTK.h" />
     <ClInclude Include="..\Include\ViewHeaders.h" />
     <ClInclude Include="..\Include\ViewLog.h" />
+    <ClInclude Include="..\Include\ViewMainWindow.h" />
     <ClInclude Include="..\Include\ViewToolbar.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

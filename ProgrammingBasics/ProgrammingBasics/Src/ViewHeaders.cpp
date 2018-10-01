@@ -10,8 +10,6 @@ Inventory::Inventory()
 	lastEvent = ev_ctrlUp;
 
 	lastCursor = new Fl_Cursor(FL_CURSOR_DEFAULT);
-
-	currentWindget = nullptr;
 }
 
 Inventory* Inventory::GetInstance()

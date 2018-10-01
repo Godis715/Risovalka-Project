@@ -33,8 +33,6 @@ public:
 	Event lastEvent;
 
 	Fl_Cursor* lastCursor;
-
-	Fl_Widget* currentWindget;
 };
 
 

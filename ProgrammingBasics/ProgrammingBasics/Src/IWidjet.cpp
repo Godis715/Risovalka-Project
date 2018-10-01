@@ -19,10 +19,11 @@ IDisplayParam::~IDisplayParam() {
 void IDisplayParam::SetParam(const Array<std::string>& params, const Array<std::string>& names) {
 	auto view = ViewFLTK::GetInstance();
 	auto widjet = dynamic_cast<DisplayParams*>(view->GetWidjet(password));
-	view->mainWindow->begin();
+	auto mainWindow = dynamic_cast<MainWindow*>(view->GetWidjet("MainWindow"));
+	mainWindow->begin();
 	widjet->Inizializatoin(params, names);
-	view->mainWindow->end();
-	view->mainWindow->redraw();
+	mainWindow->end();
+	mainWindow->redraw();
 }
 
 ICreatingToolbar::ICreatingToolbar(const std::string _pass) : IWidjet(_pass) {

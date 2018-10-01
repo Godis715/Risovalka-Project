@@ -3,7 +3,7 @@
 #include "ViewHeaders.h"
 #include "ViewLog.h"
 
-class DrawWindow : public Fl_Double_Window
+class DrawWindow : public Fl_Double_Window, public DisplayWidjet
 {
 private:
 	static ViewLog* viewLog;
@@ -15,7 +15,7 @@ private:
 	static double scaleScene;
 
 	static double rotateScene;
-	
+
 	void draw();
 
 public:

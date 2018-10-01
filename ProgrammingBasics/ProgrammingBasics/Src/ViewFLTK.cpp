@@ -3,18 +3,26 @@
 ViewFLTK::ViewFLTK()
 {
 	dataWidjet = new DataWidjet();
+
 	Presenter::Initializer(this);
-	mainWindow = new Fl_Window(1300, 620, "Main Window");
-	mainWindow->color(FL_WHITE);
-	mainWindow->size_range(600, 300);
+
+	inventory =inventory->GetInstance(); 
+	viewLog = ViewLog::GetInstance();
+
+	mainWindow = new MainWindow(1300, 620, "Main Window");
+	DisplayWidjet* mainWindowWidjet = mainWindow;
+	dataWidjet->Add("MainWindow", mainWindowWidjet);
 
 	DisplayWidjet* viewToolbar = new ViewToolbar();
 	dataWidjet->Add("ToolBar", viewToolbar);
+
 	DisplayWidjet* viewFile = new ViewFile();
 	dataWidjet->Add("WorkFile", viewFile);
-	viewLog = ViewLog::GetInstance();
+
+	
 	drawWindow = new DrawWindow(10, 30, 1000, 600, "Draw Window");
-	//drawWindow->end();
+	DisplayWidjet* drawWindowWidjet = drawWindow;
+	dataWidjet->Add("DrawWindow", drawWindowWidjet);
 
 	mainWindow->end();
 
@@ -248,10 +256,11 @@ void ViewFLTK::DeleteWidjet(const string nameWidjet) {
 
 
 
+Inventory* ViewFLTK::inventory = nullptr;
 
 ViewLog* ViewFLTK::viewLog = nullptr;
 
-Fl_Window* ViewFLTK::mainWindow;
+MainWindow* ViewFLTK::mainWindow;
 
 DrawWindow* ViewFLTK::drawWindow;
 

@@ -5,6 +5,7 @@
 
 #include "ViewHeaders.h"
 
+#include "ViewMainWindow.h"
 #include "ViewDrawWindow.h"
 #include "ViewToolbar.h"
 #include "ViewLog.h"
@@ -17,31 +18,15 @@ class ViewFLTK : public IView
 {
 private:
 	DataWidjet* dataWidjet;
+
+	static Inventory* inventory;
 	
 	static ViewLog* viewLog;
 
-	ViewToolbar* viewToolbar;
-
-	ViewFile* viewFile;
+	static MainWindow* mainWindow;
 
 	static DrawWindow* drawWindow;
 
-	/*class MainWindow : public Fl_Window
-	{
-	private:
-
-	public:
-		MainWindow(int x, int y, const char* name) : Fl_Window(x, y , name){}
-		~MainWindow(){}
-		int handle(int e)
-		{
-			if (e == FL_KEYDOWN || e == FL_KEYUP)
-			{
-				drawWindow->handle(e);
-			}
-			return e;
-		}
-	};*/
 	ViewFLTK();
 	static ViewFLTK* instance;
 public:
@@ -78,7 +63,5 @@ public:
 	DisplayWidjet* GetWidjet(const string);
 
 	void DeleteWidjet(const string);
-
-	static Fl_Window* mainWindow;
 };
 #endif // !__VIEW_FLTK
