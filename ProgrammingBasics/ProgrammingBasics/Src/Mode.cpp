@@ -506,7 +506,7 @@ Selection::Selection(Array<ID> _selObjects) : Mode(), selectedObjects(_selObject
 		selectedObjects = Array<ID>(1);
 	}
 	state = single_selection;
-	widjet = static_cast<ICreatingToolbar*>(view->GetWidjet(displayParam));
+	widjet = static_cast<ICreatingToolbar*>(view->GetWidjet(creatingToolbar));
 	if (selectedObjects.GetSize() == 1) {
 		widjet->Clear();
 	}
@@ -516,7 +516,7 @@ Selection::Selection(Array<ID> _selObjects) : Mode(), selectedObjects(_selObject
 }
 
 Selection::Selection() : Mode(), selectedObjects(1) {
-	widjet = static_cast<ICreatingToolbar*>(view->GetWidjet(displayParam));
+	widjet = static_cast<ICreatingToolbar*>(view->GetWidjet(creatingToolbar));
 	state = single_selection;
 	widjet->Clear();
 }
@@ -525,7 +525,7 @@ Selection::Selection(ID id) {
 	selectedObjects = Array<ID>(1);
 	selectedObjects[0] = id;
 	state = single_selection;
-	widjet = static_cast<ICreatingToolbar*>(view->GetWidjet(displayParam));
+	widjet = static_cast<ICreatingToolbar*>(view->GetWidjet(creatingToolbar));
 	widjet->Clear();
 }
 

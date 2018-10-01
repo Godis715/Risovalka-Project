@@ -4,8 +4,6 @@ ViewFLTK::ViewFLTK()
 {
 	dataWidjet = new DataWidjet();
 
-	Presenter::Initializer(this);
-
 	inventory = inventory->GetInstance();
 
 	mainWindow = new MainWindow(1300, 620, "Main Window");
@@ -41,6 +39,7 @@ ViewFLTK* ViewFLTK::GetInstance() {
 
 int ViewFLTK::Run() 
 {
+	Presenter::Initializer(this);
 	return Fl::run(); 
 }
 
