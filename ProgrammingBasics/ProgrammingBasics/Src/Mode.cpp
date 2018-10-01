@@ -452,6 +452,7 @@ void ChangingProperties::SetWidjetParam() {
 		}
 	}
 
+	reqIDs.Clear();
 	model->GetRequirementsByID(selectedObject, reqIDs);
 
 	Array<string> nameReqs;

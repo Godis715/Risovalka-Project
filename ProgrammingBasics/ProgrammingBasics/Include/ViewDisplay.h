@@ -31,6 +31,8 @@ class DisplayParams : public DisplayWidjet
 		static void cl_OK(Fl_Widget*, void*);
 
 		static void cl_Close(Fl_Widget*, void*);
+
+		static void cl_req(Fl_Widget*, void*);
 	public:
 		void Inizializatoin(const Array<string>&,const Array<string>&);
 

@@ -71,19 +71,34 @@ void DisplayParams::cl_Close(Fl_Widget* _b_close, void*) {
 	Presenter::Set_event(ev_delete_widjet, params);
 }
 
+void DisplayParams::cl_req(Fl_Widget* ob_req, void*) {
+	throw std::exception("ssdfgfd");
+}
+
 void DisplayParams::Inizializatoin(const Array<string>& params, const Array<string>& nameReqs)
 {
 	switch (params.GetSize())
 	{
+	case 2:
+	{
+		sizeY = 80;
+		break;
+	}
 	case 4:
-		sizeY += 60;
+	{
+		sizeY = 140;
 		break;
+	}
 	case 5:
-		sizeY += 90;
+	{
+		sizeY = 170;
 		break;
+	}
 	case 3:
-		sizeY += 30;
+	{
+		sizeY = 110;
 		break;
+	}
 	default:
 		break;
 	}

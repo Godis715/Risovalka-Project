@@ -13,14 +13,21 @@ private:
 
 	void doubleCapacity()
 	{
-		auto newStorage = new T[2 * _capacity];
-		for (int i = 0; i < _capacity; i++)
-		{
-			newStorage[i] = _storage[i];
+		T* newStorage;
+		if (_capacity == 0) {
+			_capacity = 1;
+			newStorage = new T[2 * _capacity];
 		}
-		delete[] _storage;
+		else {
+			newStorage = new T[2 * _capacity];
+			for (int i = 0; i < _capacity; i++)
+			{
+				newStorage[i] = _storage[i];
+			}
+			delete[] _storage;
+		}
 		_storage = newStorage;
-		_capacity *= 2;
+		
 	}
 
 	//Sort methods begin
