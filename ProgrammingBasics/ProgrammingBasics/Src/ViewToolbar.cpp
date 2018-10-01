@@ -137,14 +137,8 @@ void ViewToolbar::Initializer()
 	}
 	coordX += (wBut + indentX);
 	{
-		requirements = new Fl_Menu_Item[7];
-		requirements[0] = { "Dist points" };
-		requirements[1] = { "Equal segment" };
-		requirements[2] = { "Points on one hand" };
-		requirements[3] = { "Dist point segment" };
-		requirements[4] = { "Dist point arc" };
-		requirements[5] = { "Angle between segment" };
-		requirements[6] = { 0 };
+		requirements = new Fl_Menu_Item[1];
+		requirements[0] = { 0 };
 		createRequirement_b = new  Fl_Menu_Button(coordX, indentY, wBut, hBut, "Requirement");
 		createRequirement_b->menu(requirements);
 		createRequirement_b->callback(cl_Requirement);
@@ -164,6 +158,38 @@ ViewToolbar::ViewToolbar()
 }
 
 ViewToolbar::~ViewToolbar() {}
+
+/*
+"Dist points"
+"Equal segment"
+"Points on one hand"
+"Dist point segment"
+"Dist point arc"
+"Angle between segment"
+*/
+void ViewToolbar::SetRequirments(const Array<string>& nameReqs)
+{
+	if (nameReqs.GetSize() != 0)
+	{
+		delete[] requirements;
+		requirements = new Fl_Menu_Item[nameReqs.GetSize() + 1];
+		for (int i = 0; i < nameReqs.GetSize(); i++)
+		{
+			requirements[i] = { str_ch(nameReqs[i]) };
+		}
+		requirements[nameReqs.GetSize()] = { 0 };
+		createRequirement_b->menu(requirements);
+	}
+	else CleareRequirments();
+}
+
+void ViewToolbar::CleareRequirments()
+{
+	delete[] requirements;
+	requirements = new Fl_Menu_Item[1];
+	requirements[0] = { 0 };
+	createRequirement_b->menu(requirements);
+}
 
 ViewLog* ViewToolbar::viewLog = nullptr;
 
