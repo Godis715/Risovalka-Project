@@ -234,8 +234,9 @@ public:
 
 class CreateRequirementWithParam : public Mode {
 private:
-	Array<ID> selectedPrim;
+	Array<ID> selectedObjects;
 	object_type typeRequirement;
+	IRequirementInput* inputWidjet;
 public:
 	CreateRequirementWithParam(Array<ID>, Event);
 	CreateRequirementWithParam();

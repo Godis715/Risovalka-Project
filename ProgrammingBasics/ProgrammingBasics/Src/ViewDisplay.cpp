@@ -171,7 +171,10 @@ RequirementInput::RequirementInput()
 	textBuffer->callback(cl_Input);
 }
 
-RequirementInput::~RequirementInput(){}
+RequirementInput::~RequirementInput()
+{
+	delete textBuffer;
+}
 
 void RequirementInput::cl_Input(Fl_Widget* o, void*) {
 

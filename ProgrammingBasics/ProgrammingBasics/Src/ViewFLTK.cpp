@@ -205,6 +205,7 @@ void ViewFLTK::RotateScene(const double& deltaAngle)
 IWidjet* ViewFLTK::GetWidjet(const typeWidjet typeW)
 {
 	IWidjet* widjet;
+	mainWindow->begin();
 	switch (typeW)
 	{
 	case displayParam:
@@ -230,6 +231,8 @@ IWidjet* ViewFLTK::GetWidjet(const typeWidjet typeW)
 		widjet = nullptr;
 		break;
 	}
+	mainWindow->end();
+	mainWindow->redraw();
 	return widjet;
 }
 

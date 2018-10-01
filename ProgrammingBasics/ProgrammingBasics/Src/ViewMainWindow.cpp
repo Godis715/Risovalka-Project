@@ -16,8 +16,6 @@ int MainWindow::handle(int e)
 	switch (e)
 	{
 	case FL_KEYDOWN: {
-
-		viewLog->Push("KEYDOWN!");
 		if (Fl::event_key() == FL_Down)
 		{
 			Presenter::Set_event(ev_arrowDown, params);

@@ -1,4 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- DrawProject -->
 <svg width="1000" height="1000">
+	<drawProject:point
+		px="288"
+		py="84"
+		id="1"
+	/>
+	<drawProject:point
+		px="404"
+		py="96"
+		id="2"
+	/>
 </svg>

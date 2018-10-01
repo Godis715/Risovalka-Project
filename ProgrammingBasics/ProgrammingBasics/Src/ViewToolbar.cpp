@@ -64,37 +64,38 @@ void ViewToolbar::cl_Redaction(Fl_Widget* o, void*)
 	}
 }
 
-void ViewToolbar::cl_Requirement(Fl_Widget* o, void*)
+void ViewToolbar::cl_Requirement(Fl_Widget* b_Req, void*)
 {
 	delete inventory->lastCursor;
 	inventory->lastCursor = new Fl_Cursor(FL_CURSOR_DEFAULT);
 	Array<double> params(0);
-	if (((Fl_Menu_Button*)o)->mvalue()->label() == "Dist points")
+	const string nameReq = ((Fl_Menu_Button*)b_Req)->mvalue()->label();
+	if (nameReq == "Dist points")
 	{
 		viewLog->Push("Log::Create requirement: Dist points");
 		Presenter::Set_event(ev_req_D_point, params);
 	}
-	if (((Fl_Menu_Button*)o)->mvalue()->label() == "Equal segment")
+	if (nameReq == "Equal segment")
 	{
 		viewLog->Push("Log::Create requirement: Equal segment");
 		Presenter::Set_event(ev_req_Eq_Segment, params);
 	}
-	if (((Fl_Menu_Button*)o)->mvalue()->label() == "Points on one hand")
+	if (nameReq == "Points on one hand")
 	{
 		viewLog->Push("Log::Create requirement: Points on one hand");
 		Presenter::Set_event(ev_req_on_one_hand, params);
 	}
-	if (((Fl_Menu_Button*)o)->mvalue()->label() == "Dist point segment")
+	if (nameReq == "Dist point segment")
 	{
 		viewLog->Push("Log::Create requirement: Dist point segment");
 		Presenter::Set_event(ev_req_D_point_segment, params);
 	}
-	if (((Fl_Menu_Button*)o)->mvalue()->label() == "Dist point arc")
+	if (nameReq == "Dist point arc")
 	{
 		viewLog->Push("Log::Create requirement: Dist point arc");
 		Presenter::Set_event(ev_req_D_point_arc, params);
 	}
-	if (((Fl_Menu_Button*)o)->mvalue()->label() == "Angle between segment")
+	if (nameReq == "Angle between segment")
 	{
 		viewLog->Push("Log::Create requirement: Angle between segment");
 		Presenter::Set_event(ev_req_angle_segment, params);

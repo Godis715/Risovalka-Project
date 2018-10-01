@@ -665,6 +665,7 @@ Mode* Selection::HandleEvent(const Event e, Array<double>& params) {
 		//Presenter::GetObjectsOnArea(infoArea1.x, infoArea1.y, infoArea2.x, infoArea2.y, selectedObjects);
 		Array<object_type> temp;
 		model->GetObjectsOnArea(infoArea1.x, infoArea1.y, infoArea2.x, infoArea2.y, selectedObjects, temp);
+		
 		return nullptr;
 	}
 	if (e == ev_leftMouseUp)
@@ -672,6 +673,7 @@ Mode* Selection::HandleEvent(const Event e, Array<double>& params) {
 		if (lastEvent == ev_mouseMove)
 		{
 			state = single_selection;
+			widjet->SetParam(GetPossibleReqType());
 		}
 		lastEvent = e;
 		return nullptr;
@@ -770,8 +772,10 @@ Redaction::Redaction(Array<ID> _selecObj, Event _ev) : selectedObjects(_selecObj
 		status = move;
 		break;
 	case ev_scaleObjects:
+	{
 		status = scale;
 		break;
+	}
 	default:
         std::invalid_argument("Redaction : not valid status");
 		break;
@@ -881,7 +885,8 @@ void Redaction::DrawMode() {
 //}
 
 #pragma region CreateRequirementWithParam
-CreateRequirementWithParam::CreateRequirementWithParam(Array<ID> _selecObj, Event _ev) : selectedPrim(_selecObj) {
+CreateRequirementWithParam::CreateRequirementWithParam(Array<ID> _selecObj, Event _ev) : selectedObjects(_selecObj) {
+	inputWidjet = static_cast<IRequirementInput*>(view->GetWidjet(requirementInput));
 	switch (_ev)
 	{
 	case ev_req_D_point: {
@@ -901,42 +906,61 @@ CreateRequirementWithParam::CreateRequirementWithParam(Array<ID> _selecObj, Even
 		break;
 	}
 	default:
-        std::invalid_argument("CreateRequirement : not valid status");
+		std::invalid_argument("CreateRequirement : not valid status");
 		break;
 	}
 }
 
-CreateRequirementWithParam::CreateRequirementWithParam() { }
+CreateRequirementWithParam::CreateRequirementWithParam() {
+	inputWidjet = static_cast<IRequirementInput*>(view->GetWidjet(requirementInput));
+}
 
 CreateRequirementWithParam::~CreateRequirementWithParam() {
-	
+	delete inputWidjet;
 }
 
 Mode* CreateRequirementWithParam::HandleEvent(const Event ev, Array<double>& params) {
-	if (ev == ev_input)
+	switch (ev) {
+	case ev_input:
 	{
 		if (params.GetSize() != 1) {
-            throw std::invalid_argument("Bad number of parameters");
+			throw std::invalid_argument("Bad number of parameters");
 		}
 
-		modelNew->CreateRequirement(typeRequirement, selectedPrim, params);
+		modelNew->CreateRequirement(typeRequirement, selectedObjects, params);
 		//
 		ID d;
-		model->CreateRequirementByID(typeRequirement, selectedPrim, params, d);
+		model->CreateRequirementByID(typeRequirement, selectedObjects, params, d);
 		//
-		return new Selection(selectedPrim);
+		return new Selection(selectedObjects);
 
 	}
-	if (ev == ev_escape)
+	case ev_escape:
 	{
-		return new Selection(selectedPrim);
+		return new Selection(selectedObjects);
 	}
-
-	return UnexpectedEvent(ev);
+	case ev_moveObjects:
+	{
+		return new Redaction(selectedObjects, ev_moveObjects);
+	}
+	case ev_scaleObjects:
+	{
+		return new Redaction(selectedObjects, ev_scaleObjects);
+	}
+	case  ev_del:
+	{
+		modelNew->DeleteObjects(selectedObjects);
+		model->DeletePrimitives(selectedObjects);
+		return new Selection();
+	}
+	default:
+		return UnexpectedEvent(ev);
+	}
 }
+	
 
 void CreateRequirementWithParam::DrawMode() {
-	Presenter::DrawSelectedObjects(selectedPrim, green);
+	Presenter::DrawSelectedObjects(selectedObjects, green);
 }
 #pragma endregion
 
