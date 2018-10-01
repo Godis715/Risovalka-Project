@@ -75,17 +75,14 @@ void DisplayParams::Inizializatoin(const Array<string>& params, const Array<stri
 {
 	switch (params.GetSize())
 	{
-	case 2:
-		sizeY = 140;
-		break;
 	case 4:
-		sizeY = 200;
+		sizeY += 60;
 		break;
 	case 5:
-		sizeY = 230;
+		sizeY += 90;
 		break;
 	case 3:
-		sizeY = 170;
+		sizeY += 30;
 		break;
 	default:
 		break;
@@ -113,11 +110,11 @@ void DisplayParams::Inizializatoin(const Array<string>& params, const Array<stri
 		default:
 			break;
 		}
-		b_OK = new Fl_Button(coordX + 10, coordY + sizeY - 30, 30, 20, "OK");
+		b_OK = new Fl_Button(coordX + 80, coordY + sizeY - 30, 30, 20, "OK");
 		b_OK->color(FL_WHITE);
 		b_OK->callback(cl_OK);
 
-		b_close = new Fl_Button(coordX + 60, coordY + sizeY - 30, 30, 20, "X");
+		b_close = new Fl_Button(coordX + 120, coordY + sizeY - 30, 30, 20, "X");
 		b_close->color(FL_WHITE);
 		b_close->callback(cl_Close);
 
@@ -128,7 +125,7 @@ void DisplayParams::Inizializatoin(const Array<string>& params, const Array<stri
 				i_req[i] = { nameIt };
 			}
 			i_req[nameReqs.GetSize()] = { 0 };
-			b_req = new  Fl_Menu_Button(coordX + 90, coordY + 10, 50, 30, "Req");
+			b_req = new  Fl_Menu_Button(coordX + 80, coordY + 10, 50, 30, "Req");
 			b_req->menu(i_req);
 			b_req->callback(cl_OK);
 			b_req->clear_visible_focus();

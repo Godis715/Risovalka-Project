@@ -6,9 +6,9 @@ class DisplayParams : public DisplayWidjet
 {
 	private:
 		int coordX = 1010;
-		int coordY = 90;
+		int coordY = 30;
 		int sizeX = 160;
-		int sizeY = 230;
+		int sizeY = 80;
 
 		object_type type;
 
