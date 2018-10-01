@@ -486,7 +486,9 @@ Mode* ChangingProperties::HandleEvent(const Event e, Array<double>& params)
 		}
 		return nullptr;
 	}
-	
+	if ((e == ev_delete_widjet) || (e == ev_escape)) {
+		return new Selection(selectedObject);
+	}
 	return UnexpectedEvent(e);
 }
 
@@ -507,6 +509,12 @@ Selection::Selection(Array<ID> _selObjects) : Mode(), selectedObjects(_selObject
 }
 
 Selection::Selection() : Mode(), selectedObjects(1) {
+	state = single_selection;
+}
+
+Selection::Selection(ID id) {
+	selectedObjects = Array<ID>(1);
+	selectedObjects[0] = id;
 	state = single_selection;
 }
 

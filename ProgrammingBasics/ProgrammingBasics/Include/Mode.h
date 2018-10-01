@@ -60,7 +60,8 @@ enum Event
 	//end new events
 
 	ev_change_Prim,
-	ev_save
+	ev_save,
+	ev_delete_widjet
 	// 14
 };
 
@@ -116,7 +117,8 @@ private:
 	void AddObject(const ID& obj);
 public:
 	Selection();
-	Selection(Array<ID> _selObjects);
+	Selection(ID);
+	Selection(Array<ID>);
 	~Selection();
 
 	Mode* HandleEvent(const Event e, Array<double>& params);

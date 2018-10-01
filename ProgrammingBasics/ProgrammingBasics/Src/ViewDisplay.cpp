@@ -66,6 +66,11 @@ void DisplayParams::cl_OK(Fl_Widget* o, void*)
 	Presenter::Set_event(ev_change_Prim, params);
 }
 
+void DisplayParams::cl_Close(Fl_Widget* _b_close, void*) {
+	Array<double> params(0);
+	Presenter::Set_event(ev_delete_widjet, params);
+}
+
 void DisplayParams::Inizializatoin(const Array<string>& params, const Array<string>& nameReqs)
 {
 	switch (params.GetSize())
@@ -111,6 +116,11 @@ void DisplayParams::Inizializatoin(const Array<string>& params, const Array<stri
 		b_OK = new Fl_Button(coordX + 10, coordY + sizeY - 30, 30, 20, "OK");
 		b_OK->color(FL_WHITE);
 		b_OK->callback(cl_OK);
+
+		b_close = new Fl_Button(coordX + 60, coordY + sizeY - 30, 30, 20, "X");
+		b_close->color(FL_WHITE);
+		b_close->callback(cl_Close);
+
 		{
 			i_req = new Fl_Menu_Item[nameReqs.GetSize() + 1];
 			for (int i = 0; i < nameReqs.GetSize(); ++i) {
@@ -135,15 +145,7 @@ DisplayParams::DisplayParams(){}
 
 DisplayParams::~DisplayParams()
 {
-	delete b_OK;
-	delete b_close;
-	delete b_req;
-	for (int i = 0; i < inputs.GetSize(); i++)
-	{
-		delete inputs[i];
-	}
-	inputs.Clear();
-	delete group;
+	Clear();
 }
 
 void DisplayParams::Clear() {
