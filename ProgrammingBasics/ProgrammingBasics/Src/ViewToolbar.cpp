@@ -167,7 +167,7 @@ ViewToolbar::~ViewToolbar() {}
 "Dist point arc"
 "Angle between segment"
 */
-void ViewToolbar::SetRequirments(const Array<string>& nameReqs)
+void ViewToolbar::SetRequirements(const Array<string>& nameReqs)
 {
 	if (nameReqs.GetSize() != 0)
 	{
@@ -180,10 +180,10 @@ void ViewToolbar::SetRequirments(const Array<string>& nameReqs)
 		requirements[nameReqs.GetSize()] = { 0 };
 		createRequirement_b->menu(requirements);
 	}
-	else CleareRequirments();
+	else ClearRequirements();
 }
 
-void ViewToolbar::CleareRequirments()
+void ViewToolbar::ClearRequirements()
 {
 	delete[] requirements;
 	requirements = new Fl_Menu_Item[1];

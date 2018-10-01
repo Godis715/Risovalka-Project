@@ -39,9 +39,9 @@ public:
 
 	~ViewToolbar();
 
-	void SetRequirments(const Array<string>&);
+	void SetRequirements(const Array<string>&);
 
-	void CleareRequirments();
+	void ClearRequirements();
 };
 
 #endif
