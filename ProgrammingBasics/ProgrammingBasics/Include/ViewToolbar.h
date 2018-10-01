@@ -38,6 +38,10 @@ public:
 	ViewToolbar();
 
 	~ViewToolbar();
+
+	void SetRequirments(const Array<string>&);
+
+	void CleareRequirments();
 };
 
 #endif
