@@ -35,6 +35,8 @@ class DisplayParams : public DisplayWidjet
 
 		DisplayParams();
 		~DisplayParams();
+
+		void Clear();
 };
 
 class RequirementInput : public DisplayWidjet

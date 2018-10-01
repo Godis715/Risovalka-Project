@@ -414,6 +414,18 @@ ChangingProperties::ChangingProperties() : Mode()
 
 ChangingProperties::ChangingProperties(const ID _selObject) : Mode(), selectedObject(_selObject)
 {
+	widjet = static_cast<IDisplayParam*>(view->GetWidjet(displayParam));
+	SetWidjetParam();
+}
+
+ChangingProperties::~ChangingProperties()
+{
+	if (isNew) {
+		delete widjet;
+	}
+}
+
+void ChangingProperties::SetWidjetParam() {
 	object_type typePrim;
 	model->GetObjType(selectedObject, typePrim);
 
@@ -421,7 +433,7 @@ ChangingProperties::ChangingProperties(const ID _selObject) : Mode(), selectedOb
 	model->GetObjParam(selectedObject, params);
 
 	Array<string> paramsString;
-	if (typePrim == ot_arc){
+	if (typePrim == ot_arc) {
 		paramsString = Array<string>(params.GetSize() - 1);
 		Vector2 vector1 = Vector2(params[2], params[3]) - Vector2(params[0], params[1]);
 		Vector2 vector2 = Vector2(params[4], params[5]) - Vector2(params[0], params[1]);
@@ -448,16 +460,7 @@ ChangingProperties::ChangingProperties(const ID _selObject) : Mode(), selectedOb
 		nameReqs.PushBack(objTypeToString(typeReq) + '#' + reqIDs[i].GetHash());
 	}
 
-	widjet = static_cast<IDisplayParam*>(view->GetWidjet(displayParam));
-
 	widjet->SetParam(paramsString, nameReqs);
-}
-
-ChangingProperties::~ChangingProperties()
-{
-	if (isNew) {
-		delete widjet;
-	}
 }
 
 Mode* ChangingProperties::HandleEvent(const Event e, Array<double>& params)
@@ -466,7 +469,8 @@ Mode* ChangingProperties::HandleEvent(const Event e, Array<double>& params)
 	{
 		modelNew->ChangeObject(selectedObject, params);
 		model->ChangePrimitive(selectedObject, params);
-		return new Selection();
+		SetWidjetParam();
+		return nullptr;
 	}
 	if (e == ev_rightMouseDown)
 	{

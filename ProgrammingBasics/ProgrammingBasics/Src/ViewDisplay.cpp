@@ -147,6 +147,18 @@ DisplayParams::~DisplayParams()
 	delete group;
 }
 
+void DisplayParams::Clear() {
+	delete b_OK;
+	delete b_close;
+	delete b_req;
+	for (int i = 0; i < inputs.GetSize(); i++)
+	{
+		delete inputs[i];
+	}
+	inputs.Clear();
+	delete group;
+}
+
 Array<Fl_Float_Input*> DisplayParams::inputs;
 //______________
 

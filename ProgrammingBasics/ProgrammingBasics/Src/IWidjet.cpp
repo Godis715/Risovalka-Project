@@ -21,6 +21,7 @@ void IDisplayParam::SetParam(const Array<std::string>& params, const Array<std::
 	auto widjet = dynamic_cast<DisplayParams*>(view->GetWidjet(password));
 	auto mainWindow = dynamic_cast<MainWindow*>(view->GetWidjet("MainWindow"));
 	mainWindow->begin();
+	widjet->Clear();
 	widjet->Inizializatoin(params, names);
 	mainWindow->end();
 	mainWindow->redraw();

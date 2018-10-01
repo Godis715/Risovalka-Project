@@ -86,6 +86,7 @@ private:
 
 	ID selectedObject;
 	Array<ID> reqIDs;
+	Array<ID> primiOfReqIDs;
 	bool isNew = true;
 	//enum State { single_selection, poly_selection, area_selection };
 	//State state;
@@ -93,6 +94,8 @@ public:
 	ChangingProperties();
 	ChangingProperties(const ID _selObjects);
 	~ChangingProperties();
+
+	void SetWidjetParam();
 
 	Mode* HandleEvent(const Event e, Array<double>& params);
 
