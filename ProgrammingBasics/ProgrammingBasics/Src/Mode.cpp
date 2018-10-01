@@ -1,6 +1,7 @@
 #include "Mode.h"
 #include "Presenter.h"
 
+#pragma region OtherFunction
 string objTypeToString(const object_type type)
 {
 	switch (type)
@@ -100,9 +101,9 @@ const char* str_ch(const string str) {
 	charDig[str.length()] = '\0';
 	return charDig;
 }
+#pragma endregion
 
-
-
+#pragma region Mode
 Mode* Mode::UnexpectedEvent(const Event e) {
 	switch (e) {
 	case ev_createPoint: {
@@ -135,9 +136,9 @@ Mode::Mode() {
 	modelNew = ModelNew::GetInstance();
 	view = Presenter::GetView();
 }
+#pragma endregion
 
-// SEGMENT
-
+#pragma region CreatingSegment
 CreatingSegment::CreatingSegment() : segmentParameters(4) {
 	state = noClick;
 }
@@ -212,9 +213,9 @@ CreatingSegment::~CreatingSegment() {
 	segmentParameters.Clear();
 	state = noClick;
 }
+#pragma endregion
 
-// POINT
-
+#pragma region CreatingPoint
 Mode* CreatingPoint::HandleEvent(const Event ev, Array<double>& params) {
 	if (ev == ev_leftMouseDown) {
 		if (params.GetSize() != 2) {
@@ -233,8 +234,9 @@ Mode* CreatingPoint::HandleEvent(const Event ev, Array<double>& params) {
 
 void CreatingPoint::DrawMode() {
 }
+#pragma endregion
 
-// CIRCLE
+#pragma region CreatingCircle
 CreatingCircle::CreatingCircle() : CircleParameters(3) {
 	state = noClick;
 }
@@ -304,9 +306,9 @@ void CreatingCircle::DrawMode() {
 CreatingCircle::~CreatingCircle() {
 	CircleParameters.Clear();
 }
+#pragma endregion
 
-// ARC
-
+#pragma region CreatingArc
 CreatingArc::CreatingArc() : arcParameters(6) {
 	state = noClick;
 }
@@ -404,9 +406,9 @@ void CreatingArc::DrawMode() {
 CreatingArc::~CreatingArc() {
 	arcParameters.Clear();
 }
+#pragma endregion
 
-//CHANGING_PROPERTIES
-
+#pragma region Changing_Properties
 ChangingProperties::ChangingProperties() : Mode()
 {
 
@@ -494,9 +496,9 @@ void ChangingProperties::DrawMode()
 	selectedObjects.PushBack(selectedObject);
 	Presenter::DrawSelectedObjects(selectedObjects, orange);
 }
+#pragma endregion
 
-// SELECTION
-
+#pragma region Selection
 Selection::Selection(Array<ID> _selObjects) : Mode(), selectedObjects(_selObjects) {
 	if (selectedObjects.GetSize() == 0) {
 		selectedObjects = Array<ID>(1);
@@ -674,9 +676,9 @@ void Selection::DrawMode()
 		view->DrawLine(infoArea2, point2, points);
 	}
 }
+#pragma endregion
 
-// REDACTION
-
+#pragma region Redaction
 Redaction::Redaction(Array<ID> _selecObj, Event _ev) : selectedObjects(_selecObj){
 	state = noClick;
 	switch (_ev)
@@ -773,8 +775,7 @@ Mode* Redaction::HandleEvent(const Event e, Array<double>& params)
 void Redaction::DrawMode() {
 	Presenter::DrawSelectedObjects(selectedObjects, green);
 }
-
-// REDACTION_REQ
+#pragma endregion
 
 //RedactionReq::RedactionReq(ID _selecObj) : selectedPrim(_selecObj) {
 //	model->GetComponent(selectedPrim, objects, reqs);
@@ -796,8 +797,7 @@ void Redaction::DrawMode() {
 //
 //}
 
-
-//CREATE REQUIRMENT
+#pragma region CreateRequirementWithParam
 CreateRequirementWithParam::CreateRequirementWithParam(Array<ID> _selecObj, Event _ev) : selectedPrim(_selecObj) {
 	switch (_ev)
 	{
@@ -855,8 +855,9 @@ Mode* CreateRequirementWithParam::HandleEvent(const Event ev, Array<double>& par
 void CreateRequirementWithParam::DrawMode() {
 	Presenter::DrawSelectedObjects(selectedPrim, green);
 }
+#pragma endregion
 
-//NAVIGATION ON SCENE
+#pragma region NavigationOnScene
 NavigationOnScene::NavigationOnScene(Array<ID> _selecObj) : selectedPrim(_selecObj) { 
 	stateMove =  noClick;
 	speedMove = 10;
@@ -949,3 +950,4 @@ Mode* NavigationOnScene::HandleEvent(const Event ev, Array<double>& params) {
 void NavigationOnScene::DrawMode() {
 	Presenter::DrawSelectedObjects(selectedPrim, green);
 }
+#pragma endregion

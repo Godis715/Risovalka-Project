@@ -6,8 +6,7 @@ ViewFLTK::ViewFLTK()
 
 	Presenter::Initializer(this);
 
-	inventory =inventory->GetInstance(); 
-	viewLog = ViewLog::GetInstance();
+	inventory = inventory->GetInstance();
 
 	mainWindow = new MainWindow(1300, 620, "Main Window");
 	DisplayWidjet* mainWindowWidjet = mainWindow;
@@ -19,6 +18,7 @@ ViewFLTK::ViewFLTK()
 	DisplayWidjet* viewFile = new ViewFile();
 	dataWidjet->Add("WorkFile", viewFile);
 
+	viewLog = ViewLog::GetInstance();
 	
 	drawWindow = new DrawWindow(10, 30, 1000, 600, "Draw Window");
 	DisplayWidjet* drawWindowWidjet = drawWindow;

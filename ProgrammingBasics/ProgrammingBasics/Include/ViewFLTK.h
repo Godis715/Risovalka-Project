@@ -34,7 +34,13 @@ public:
 
 	~ViewFLTK();
 
-	//FuncIView
+	IWidjet* GetWidjet(const typeWidjet);
+
+	DisplayWidjet* GetWidjet(const string);
+
+	void DeleteWidjet(const string);
+
+#pragma region FunctionIview
 	int Run();
 
 	void DrawLine(const Vector2&, const Vector2&, typeDrawing);
@@ -58,10 +64,6 @@ public:
 
 	void RotateScene(const double&);
 	//_________________
-	IWidjet* GetWidjet(const typeWidjet);
-
-	DisplayWidjet* GetWidjet(const string);
-
-	void DeleteWidjet(const string);
+#pragma endregion
 };
 #endif // !__VIEW_FLTK
