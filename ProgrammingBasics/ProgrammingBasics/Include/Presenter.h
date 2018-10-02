@@ -8,13 +8,6 @@
 #include "Model.h"
 #include "Mode.h"
 
-class ModeController {
-private:
-	Mode* mode;
-	Model* model;
-public:
-
-};
 
 class Presenter {
 private:

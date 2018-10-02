@@ -46,11 +46,46 @@ Array<double> ReqController::GetReqParamsAsValues(const ID& id) const {
 	return req->params;
 }
 
+Array<double> ReqController::GetGradient(const ID& obj) const {
+	Requirement* req = GetReq(obj);
+	return req->Gradient();
+}
+
 Array<double*> GetReqArgsValues(const ID&);
+
+Array<double*> ReqController::GetReqArgsAsPointers(const ID& obj) const {
+	Requirement* req = GetReq(obj);
+	return req->args;
+}
+
+double ReqController::GetReqError(const ID& obj) const {
+	Requirement* req = GetReq(obj);
+	return req->error();
+}
+
+double ReqController::GetReqError(const Array<ID>& objs) const {
+	double err = 0.0;
+	for (int i = 0; i < objs.GetSize(); ++i) {
+		err += GetReqError(objs[i]);
+	}
+	return err;
+}
 
 void ReqController::SetReqParams(const ID& obj, const Array<double>& params) const {
 	Requirement* req = GetReq(obj);
 	req->SetParams(params);
+}
+
+void ReqController::ApplyChanges(const ID& obj) const {
+	Requirement* req = GetReq(obj);
+	auto children = req->GetChildren();
+	for (int i = 0; i < children.GetSize(); ++i) {
+		primCtrl->ApplyPrimitiveDoubleParams(children[i]);
+		auto points = primCtrl->GetChildren(children[i]);
+		for (int j = 0; j < points.GetSize(); ++j) {
+			primCtrl->ApplyPrimitiveDoubleParams(points[j]);
+		}
+	}
 }
 
 ID ReqController::CreateReq

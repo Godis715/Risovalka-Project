@@ -3,8 +3,6 @@
 #define text_type 102
 #include <iostream>
 #include "IView.h"
-#include "Mode.h"
-#include "Array.h"
 #include "Presenter.h"
 #include <string>
 
@@ -22,7 +20,7 @@
 //#include <FL/Fl_File_Chooser.H>
 
 
-double Parse(std::string number) {
+double Parse(string number) {
 	int countPoint = 0;
 	if (number[0] == 'e' || number[0] == '.') {
 		return -1;
@@ -90,7 +88,7 @@ private:
 			Presenter::DrawScene();
 			fl_pop_matrix();
 		}
-	
+		
 	public:
 		SecondWindow(int x, int y, int w, int h, const char *l)
 			: Fl_Double_Window(x, y, w, h, l)
@@ -364,7 +362,7 @@ private:
 		fl_cursor(FL_CURSOR_DEFAULT);
 
 		Array<double> params(1);
-		std::string numbers = ((Fl_Float_Input*)o)->value();
+		string numbers = ((Fl_Float_Input*)o)->value();
 		((Fl_Float_Input*)o)->value("");
 		params[0] = Parse(numbers);
 		Presenter::Set_event(ev_input, params);
@@ -643,7 +641,6 @@ public:
 		rotateScene += deltaAngle;
 	}
 };
-
 Fl_Window* ViewFLTK::mainWindow;
 
 Fl_Output* ViewFLTK::log = nullptr;

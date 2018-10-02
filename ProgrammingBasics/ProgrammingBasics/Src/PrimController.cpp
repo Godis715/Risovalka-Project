@@ -6,6 +6,11 @@ PrimController::PrimController() {
 	objCtrl = ObjectController::GetInstance();
 }
 
+Array<double*> PrimController::GetPrimitiveDoubleParamsAsPointers(const ID& obj) const {
+	Primitive* prim = GetPrimitive(obj);
+	return prim->GetDoubleParamsAsPointers();
+}
+
 bool PrimController::IsPrimitive(object_type type) const {
 	return	(type == ot_point) ||
 		(type == ot_segment) ||
@@ -35,6 +40,23 @@ PrimController* PrimController::GetInstance() {
 		instance = new PrimController;
 	}
 	return instance;
+}
+
+Array<double> PrimController::GetPrimParamsForDrawing(const ID& id) const {
+	if (!IsPrimitive(id)) {
+		LOGERROR("GetPrimParamsForDrawing: object is not primitive", LEVEL_1);
+	}
+	Array<ID> children = GetChildren(id);
+	Array<double> params(0);
+	for (int i = 0; i < children.GetSize(); ++i) {
+		params = params + GetPrimitiveParamsAsValues(children[i]);
+	}
+	params = params + GetPrimitiveParamsAsValues(id);
+	if (objCtrl->GetType(id) == ot_arc) {
+		Arc* arc = dynamic_cast<Arc*>(GetPrimitive(id));
+		params = params + arc->cx + arc->cy;
+	}
+	return params;
 }
 
 Array<double> PrimController::GetPrimitiveParamsAsValues(const ID& id) const {
@@ -120,7 +142,14 @@ Array<double*> PrimController::GetPrimitiveParamsAsPointers(const Array<ID>& ids
 	return allParams;
 }
 
-void PrimController::SetPrimitiveParams(const ID&, const Array<double>&) const {}
+void PrimController::SetPrimitiveParams(const ID& obj, const Array<double>& params) const {
+	
+}
+
+void PrimController::ApplyPrimitiveDoubleParams(const ID& obj) const {
+	Primitive* prim = GetPrimitive(obj);
+	prim->ApplyDoubleParams();
+}
 
 ID PrimController::CreatePrimitive(object_type type, const Array<ID>& dependObjs, const Array<double>& params) const {
 	Primitive* prim = nullptr;
@@ -220,7 +249,7 @@ ID PrimController::CreatePrimitive(object_type type, const Array<ID>& dependObjs
 	return prim->GetID();
 }
 
-Array<ID> PrimController::GetChildren(const ID& obj) {
+Array<ID> PrimController::GetChildren(const ID& obj) const {
 	switch (objCtrl->GetType(obj)) {
 	case ot_point: {
 		return Array<ID>(0);

@@ -70,7 +70,7 @@ protected:
 public:
 	Object(object_type, const Array<double>&, const Array<ID>&);
 	Object(object_type, const Array<double>&, const Array<ID>&, unsigned long long);
-	~Object();
+	virtual ~Object();
 
 	object_type GetType() const;
 	ID GetID() const;

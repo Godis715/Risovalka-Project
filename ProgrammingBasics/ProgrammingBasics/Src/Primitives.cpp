@@ -17,15 +17,11 @@ Primitive::~Primitive() {
 
 }
 
-Array<double> Primitive::GetDoubleParamsAsValues() {
-	Array<double> doubleParamsValues(doubleParams.GetSize());
-	for (int i = 0; i < params.GetSize(); ++i) {
-		doubleParamsValues[i] = *doubleParams[i];
-	}
-	return doubleParamsValues;
-}
 
 Array<double*> Primitive::GetDoubleParamsAsPointers() {
+	for (int i = 0; i < params.GetSize(); ++i) {
+		*doubleParams[i] = params[i];
+	}
 	return doubleParams;
 }
 
@@ -144,6 +140,7 @@ Arc::Arc(Point* _p1, Point* _p2, double _angle) :
 	point2 = _p2;
 
 	angle = &params[0];
+	RestoreCenter();
 }
 
 // write this function

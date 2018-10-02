@@ -24,11 +24,16 @@ public:
 
 	bool IsReq(const ID&) const;
 
+	double GetReqError(const ID&) const;
+	double GetReqError(const Array<ID>&) const;
+
 	Array<double> GetReqParamsAsValues(const ID&) const;
+	Array<double> GetGradient(const ID&) const;
+	
 	Array<double*> GetReqArgsAsPointers(const ID&) const;
 
-	
 	void SetReqParams(const ID&, const Array<double>&) const;
+	void ApplyChanges(const ID&) const;
 
 	ID CreateReq(object_type, const Array<ID>&, const Array<double>&) const;
 };
@@ -63,13 +68,16 @@ class EqualSegmentLenReq : public Requirement {
 private:
 public:
 	EqualSegmentLenReq(const Array<ID>& _objects, const Array<double>& _params) :
-		Requirement(ot_equalSegmentLen, params, _objects)
+		Requirement(ot_equalSegmentLen, _params, _objects)
 	{
 		Array<ID> allPoints = primCtrl->GetChildren(_objects[0]) +
 			primCtrl->GetChildren(_objects[1]);
 
-		args = primCtrl->GetPrimitiveParamsAsPointers(allPoints, 8);
+		for (int i = 0; i < allPoints.GetSize(); ++i) {
+			args = args + primCtrl->GetPrimitiveDoubleParamsAsPointers(allPoints[i]);
+		}
 	}
+
 	double error() {
 		Vector2 vec1(*(args[3]) - *(args[1]), *(args[2]) - *(args[0]));
 		Vector2 vec2(*(args[7]) - *(args[5]), *(args[6]) - *(args[4]));
@@ -102,8 +110,9 @@ public:
 	PointPosReq(const Array<ID>& _objects, const Array<double>& _params) :
 		Requirement(ot_pointPosReq, params, _objects) {
 
-		args = primCtrl->GetPrimitiveParamsAsPointers(_objects, 2);
-
+		for (int i = 0; i < _objects.GetSize(); ++i) {
+			args = args + primCtrl->GetPrimitiveDoubleParamsAsPointers(_objects[i]);
+		}
 	}
 
 	double error() {
@@ -122,7 +131,9 @@ public:
 		Array<ID> objs = primCtrl->GetChildren(_objects[0]) +
 			_objects[1] + _objects[2];
 
-		args = primCtrl->GetPrimitiveParamsAsPointers(objs, 8);
+		for (int i = 0; i < objs.GetSize(); ++i) {
+			args = args + primCtrl->GetPrimitiveDoubleParamsAsPointers(objs[i]);
+		}
 	}
 	double error() {
 		Vector2 pointPos1 = Vector2(*args[4], *args[5]);
@@ -155,7 +166,9 @@ public:
 		Requirement(ot_distBetPointSeg, _params, _objects)
 	{
 		Array<ID> objs = primCtrl->GetChildren(_objects[0]) + _objects[1];
-		args = primCtrl->GetPrimitiveParamsAsPointers(objs, 6);
+		for (int i = 0; i < objs.GetSize(); ++i) {
+			args = args + primCtrl->GetPrimitiveDoubleParamsAsPointers(objs[i]);
+		}
 	}
 	~DistanceBetweenPointSegment() {}
 	double error() {
@@ -265,7 +278,9 @@ public:
 			primCtrl->GetChildren(_objects[1]) +
 			_objects[1];
 
-		args = primCtrl->GetPrimitiveParamsAsPointers(objs, 7);
+		for (int i = 0; i < objs.GetSize(); ++i) {
+			args = args + primCtrl->GetPrimitiveDoubleParamsAsPointers(objs[i]);
+		}
 	}
 
 	double error() {

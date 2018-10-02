@@ -28,19 +28,20 @@ public:
 	bool IsPrimitive(const ID&) const;
 
 	Array<double> GetPrimitiveParamsAsValues(const ID&) const;
+	Array<double> GetPrimParamsForDrawing(const ID&) const;
 
 	Array<double*> GetPrimitiveParamsAsPointers(const ID&) const;
 	Array<double*> GetPrimitiveParamsAsPointers(const Array<ID>&, int) const;
 
 	Array<double*> GetPrimitiveDoubleParamsAsPointers(const ID&) const;
-	Array<double*> GetPrimitiveDoubleParamsAsPointers(const Array<ID>&, int) const;
+	//Array<double*> GetPrimitiveDoubleParamsAsPointers(const Array<ID>&, int) const;
 	
 	void ApplyPrimitiveDoubleParams(const ID&) const;
 
 	void SetPrimitiveParams(const ID&, const Array<double>&) const;
 
 	ID CreatePrimitive(object_type, const Array<ID>&, const Array<double>&) const;
-	Array<ID> GetChildren(const ID&);
+	Array<ID> GetChildren(const ID&) const;
 
 	double GetDistanceToPoint(const ID&, double, double) const;
 };
@@ -53,7 +54,6 @@ public:
 	virtual ~Primitive();
 	virtual double GetDist(const Vector2&) const = 0;
 
-	Array<double> GetDoubleParamsAsValues();
 	Array<double*> GetDoubleParamsAsPointers();
 
 	void ApplyDoubleParams();

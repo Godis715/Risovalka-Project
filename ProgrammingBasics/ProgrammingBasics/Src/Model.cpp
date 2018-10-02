@@ -32,6 +32,9 @@ ID Model::CreateRequirement(object_type type, const Array<ID>& children, const A
 	ID obj = reqCtrl->CreateReq(type, children, params);
 	dataCtrl->AddObject(obj);
 	dataCtrl->Connect(obj, children);
+
+	OptimizeByID(obj);
+
 	return obj;
 }
 ID Model::GetObjectByClick(double x, double y) const {
@@ -46,6 +49,25 @@ void Model::ChangeRequirement(const ID& req, const Array<double>& params) const 
 	reqCtrl->SetReqParams(req, params);
 }
 
+void Model::OptimizeByID(const ID& obj) const {
+	auto component = dataCtrl->GetComponent(obj);
+	
+	Array<ID> req(0);
+
+	auto compIt = component.GetMarker();
+	while (compIt.IsValid()) {
+		ID currID = *compIt;
+		if (reqCtrl->IsReq(currID)) {
+			req.PushBack(currID);
+		}
+		++compIt;
+	}
+	if (req.GetSize() != 0) {
+		Optimizer optimizer;
+		optimizer.OptimizeRequirements(req);
+	}
+}
+
 Array<double> Model::GetObjParam(const ID& obj) const {
 	if (primCtrl->IsPrimitive(obj)) {
 		return primCtrl->GetPrimitiveParamsAsValues(obj);
@@ -55,4 +77,36 @@ Array<double> Model::GetObjParam(const ID& obj) const {
 	}
 	LOGERROR("GetObjParam: unknown type", LEVEL_1);
 	
+}
+
+bool Model::IsPrim(const ID& obj) const {
+	return primCtrl->IsPrimitive(obj);
+}
+bool Model::IsReq(const ID& obj) const {
+	return reqCtrl->IsReq(obj);
+}
+
+Array<ID> Model::GetObjectsByArea(double, double, double, double) const { 
+	return Array<ID>(0);
+}
+
+void Model::Scale(const Array<ID>&, const double) const { } 
+void Model::Move(const Array<ID>&, const Vector2&) const { } 
+void Model::Clear() const { }
+
+Component Model::GetComponent(const ID& obj) {
+	return dataCtrl->GetComponent(obj);
+}
+
+object_type Model::GetObjType(const ID& obj) const {
+	return objCtrl->GetType(obj);
+}
+
+BinSearchTree<ID, ID>::bst_iterator Model::GetPrimIterator() {
+	return dataCtrl->GetPrimIterator();
+}
+
+Array<double> Model::GetPrimParamsForDrawing(const ID& obj) const {
+		Array<double> arr = primCtrl->GetPrimParamsForDrawing(obj);
+	return arr;
 }

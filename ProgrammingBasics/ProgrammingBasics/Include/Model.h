@@ -3,6 +3,7 @@
 
 #include "Requirement.h"
 #include "Primitives.h"
+#include "Optimizer.h"
 #include "DataController.h"
 
 class Model {
@@ -31,12 +32,18 @@ public:
 	void Move(const Array<ID>&, const Vector2&) const;
 	void Clear() const;
 
+	bool IsPrim(const ID&) const;
+	bool IsReq(const ID&) const;
+
+
 	Array<ID> GetObjectsByArea(double, double, double, double) const;
+	Component GetComponent(const ID&);
 
 	object_type GetObjType(const ID&) const;
 	Array<double> GetObjParam(const ID&) const;
+	Array<double> GetPrimParamsForDrawing(const ID&) const;
 
-	Array<ID> CreatePrimitive();  // fs
+	BinSearchTree<ID, ID>::bst_iterator GetPrimIterator();
 };
 
 #endif

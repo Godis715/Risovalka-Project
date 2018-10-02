@@ -1,71 +1,9 @@
 #include <Requirement.h>
 
-
 Requirement::Requirement(object_type _type, const Array<double>& _params, const Array<ID>& _children) :
-	Object(_type, _params, _children)
+	Object(_type, _params, _children), args(0)
 {
 	primCtrl = PrimController::GetInstance();
-
-	int argNum;
-	int paramNum;
-
-	switch (type) {
-	case ot_distBetPoints: {
-		argNum = 4;
-		paramNum = 1;
-		break;
-	}
-	case ot_equalSegmentLen: {
-		argNum = 8;
-		paramNum = 0;
-		break;
-	}
-	case ot_connection: {
-		argNum = 0;
-		paramNum = 0;
-		break;
-	}
-	case ot_pointPosReq: {
-		argNum = 2;
-		paramNum = 2;
-		break;
-	}
-	case ot_pointsOnTheOneHand: {
-		argNum = 8;
-		paramNum = 0;
-		break;
-	}
-	case ot_distBetPointSeg: {
-		argNum = 6;
-		paramNum = 1;
-		break;
-	}
-	case ot_angleBetSeg: {
-		argNum = 8;
-		paramNum = 1;
-		break;
-	}
-	case ot_distBetPointArc: {
-		argNum = 7;
-		paramNum = 1;
-		break;
-	}
-	case ot_pointInArc: {
-		argNum = 7;
-		paramNum = 0;
-		break;
-	}
-	case ot_segmentTouchCircle: {
-		argNum = 7;
-		paramNum = 0;
-		break;
-	}
-	default: {
-		throw std::exception("Couldn't create requirement. Invalid requirement type");
-	}
-	}
-
-	
 }
 
 Array<double*> Requirement::GetArgs() const {
@@ -93,7 +31,9 @@ Array<double> Requirement::Gradient() {
 DistBetPointsReq::DistBetPointsReq(const Array<ID>& _objects, const Array<double>& _params) :
 	Requirement(ot_distBetPoints, _params, _objects)
 {
-	args = primCtrl->GetPrimitiveParamsAsPointers(_objects, 4);
+	for (int i = 0; i < _objects.GetSize(); ++i) {
+		args = args + primCtrl->GetPrimitiveDoubleParamsAsPointers(_objects[i]);
+	}
 }
 
 double DistBetPointsReq::error() {

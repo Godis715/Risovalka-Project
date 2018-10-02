@@ -89,7 +89,7 @@ public:
 
 	Component GetComponent(const ID&);
 
-	
+	BinSearchTree<ID, ID>::bst_iterator GetPrimIterator();
 };
 
 #endif

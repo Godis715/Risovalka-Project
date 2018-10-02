@@ -40,8 +40,9 @@ Array<ID> ObjectController::GetObjChildren(const ID& obj) {
 }
 
 void ObjectController::DeleteObj(ID& id) const {
-	if (id.object != nullptr) {
-		delete id.object;
+	Object* obj = id.object;
+	if (obj != nullptr) {
+		delete obj;
 		id.object = nullptr;
 		id.hash = 0;
 	}

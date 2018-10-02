@@ -138,8 +138,12 @@ class CreatingArc : public Mode {
 private:
 	enum State { noClick, oneClick, twoClick };
 	State state;
-	Array<double> arcParameters;
 	Vector2 infoMode;
+
+	Vector2 center;
+	Vector2 point1;
+	Vector2 point2;
+	double radius;
 public:
 	CreatingArc();
 	~CreatingArc();

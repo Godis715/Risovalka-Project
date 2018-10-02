@@ -132,8 +132,11 @@
     <ClCompile Include="..\Src\ID.cpp" />
     <ClCompile Include="..\Src\Logger.cpp" />
     <ClCompile Include="..\Src\main.cpp" />
+    <ClCompile Include="..\Src\Mode.cpp" />
     <ClCompile Include="..\Src\Model.cpp" />
     <ClCompile Include="..\Src\ObjectController.cpp" />
+    <ClCompile Include="..\Src\Optimizer.cpp" />
+    <ClCompile Include="..\Src\Presenter.cpp" />
     <ClCompile Include="..\Src\PrimController.cpp" />
     <ClCompile Include="..\Src\Primitives.cpp" />
     <ClCompile Include="..\Src\ReqController.cpp" />
@@ -148,13 +151,18 @@
     <ClInclude Include="..\Include\Dictionary.h" />
     <ClInclude Include="..\Include\ID.h" />
     <ClInclude Include="..\Include\IDGenerator.h" />
+    <ClInclude Include="..\Include\IView.h" />
     <ClInclude Include="..\Include\List.h" />
     <ClInclude Include="..\Include\Logger.h" />
+    <ClInclude Include="..\Include\Mode.h" />
     <ClInclude Include="..\Include\Model.h" />
+    <ClInclude Include="..\Include\Optimizer.h" />
+    <ClInclude Include="..\Include\Presenter.h" />
     <ClInclude Include="..\Include\Primitives.h" />
     <ClInclude Include="..\Include\Queue.h" />
     <ClInclude Include="..\Include\Requirement.h" />
     <ClInclude Include="..\Include\Vector2.h" />
+    <ClInclude Include="..\Include\ViewFLTK.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

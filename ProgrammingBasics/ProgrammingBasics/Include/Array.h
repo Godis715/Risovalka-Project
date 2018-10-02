@@ -139,14 +139,15 @@ public:
 	}
 
 	void operator=(const Array& arr) {
-		
-		delete[] this->_storage;
+		if (arr._storage != this->_storage) {
+			delete[] this->_storage;
 
-		this->_capacity = arr._capacity;
-		this->_size = arr._size;
-		this->_storage = new T[_capacity];
-		for (int i = 0; i < _size; ++i) {
-			this->_storage[i] = arr._storage[i];
+			this->_capacity = arr._capacity;
+			this->_size = arr._size;
+			this->_storage = new T[_capacity];
+			for (int i = 0; i < _size; ++i) {
+				this->_storage[i] = arr._storage[i];
+			}
 		}
 	}
 

@@ -94,19 +94,6 @@ void DataController::DeleteObject(const ID& id) {
 	Queue<ID> queue;
 	queue.Push(id);
 
-	// primitive's children should be deleted
-	if (isObjPrim) {
-		Array<ID> children = primCtrl->GetChildren(id);
-		for (int i = 0; i < children.GetSize(); ++i) {
-			ID child = children[i];
-			bool isDel = objectsToDelete.Find(child).IsValid();
-			if (!isDel) {
-				queue.Push(child);
-				objectsToDelete.Add(child, child);
-			}
-		}
-	}
-
 	// deleting links
 	while (!queue.IsEmpty()) {
 		ID currID = queue.Pop();
@@ -119,10 +106,13 @@ void DataController::DeleteObject(const ID& id) {
 				
 				auto currConnNode = (*connNodesIt);
 				bool isCurrConnNodeReq = reqCtrl->IsReq(currConnNode);
-				if (isCurrConnNodeReq) {
+				bool isCurrConnNodePrim = primCtrl->IsPrimitive(currConnNode);
+				bool isCurrObjPrim = primCtrl->IsPrimitive(currID);
+				if (isCurrConnNodeReq || isObjPrim && isCurrObjPrim) {
 					bool isDel = objectsToDelete.Find(currConnNode).IsValid();
 					if (!isDel) {
 						queue.Push(currConnNode);
+						objectsToDelete.Add(currConnNode, currConnNode);
 					}
 				}
 
@@ -194,7 +184,9 @@ Component DataController::GetComponent(const ID& id) {
 			if (linkIt.IsValid()) {
 				auto childrenIt = (*linkIt)->GetMarker();
 				while (childrenIt.IsValid()) {
-					queue.Push(*childrenIt);
+					if (!component.Find(*childrenIt).IsValid()) {
+						queue.Push(*childrenIt);
+					}
 					++childrenIt;
 				}
 			}
@@ -208,29 +200,28 @@ ID DataController::GetObjectInCircle(double x, double y, double r) {
 	bool wasPoint = false;
 	double minDist = DBL_MAX;
 	auto primIt = primData.GetMarker();
-	while (!primIt.IsValid()) {
+	while (primIt.IsValid()) {
 		ID obj = *primIt;
 		double dist = primCtrl->GetDistanceToPoint(obj, x, y);
-		if (dist > r) {
-			continue;
-		}
-		if (objCtrl->GetType(obj) == ot_point) {
-			if (wasPoint) {
-				if (dist < minDist) {
-					minDist = dist;
+		if (dist <= r) {
+			if (objCtrl->GetType(obj) == ot_point) {
+				if (wasPoint) {
+					if (dist < minDist) {
+						minDist = dist;
+						currentObject = obj;
+					}
+				}
+				else {
+					wasPoint = true;
 					currentObject = obj;
 				}
 			}
 			else {
-				wasPoint = true;
-				currentObject = obj;
-			}
-		}
-		else {
-			if (!wasPoint) {
-				if (dist < minDist) {
-					minDist = dist;
-					currentObject = obj;
+				if (!wasPoint) {
+					if (dist < minDist) {
+						minDist = dist;
+						currentObject = obj;
+					}
 				}
 			}
 		}
@@ -240,3 +231,6 @@ ID DataController::GetObjectInCircle(double x, double y, double r) {
 	return currentObject;
 }
 
+BinSearchTree<ID, ID>::bst_iterator DataController::GetPrimIterator() {
+	return primData.GetMarker();
+}

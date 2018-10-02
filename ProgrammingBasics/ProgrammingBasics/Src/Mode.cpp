@@ -1,5 +1,5 @@
-#include "Mode.h"
 #include "Presenter.h"
+#include "Mode.h"
 
 
 Mode* Mode::UnexpectedEvent(const Event e) {
@@ -111,10 +111,10 @@ CreatingSegment::~CreatingSegment() {
 Mode* CreatingPoint::HandleEvent(const Event ev, Array<double>& params) {
 	if (ev == ev_leftMouseDown) {
 		if (params.GetSize() != 2) {
-			throw std::invalid_argument("Bad number of parameters");
+            throw std::invalid_argument("Bad number of parameters");
 		}
-		auto model = Model::GetInstance();
-		ID id = model->CreatePrimitive(ot_point, params);
+
+		ID id = Presenter::CreateObject(ot_point, params);
 		Array<ID> selectedObjects(1);
 		selectedObjects[0] = id;
 		return new Selection(selectedObjects);
@@ -133,7 +133,7 @@ CreatingCircle::CreatingCircle() : CircleParameters(3) {
 Mode* CreatingCircle::HandleEvent(const Event ev, Array<double>& params) {
 	if (ev == ev_leftMouseDown) {
 		if (params.GetSize() != 2) {
-			throw std::invalid_argument("Bad number of parameters");
+            throw std::invalid_argument("Bad number of parameters");
 		}
 		// if it were no clicks
 		// then create one point and change the state
@@ -196,7 +196,7 @@ CreatingCircle::~CreatingCircle() {
 
 // ARC
 
-CreatingArc::CreatingArc() : arcParameters(6) {
+CreatingArc::CreatingArc() {
 	state = noClick;
 }
 
@@ -210,8 +210,8 @@ Mode* CreatingArc::HandleEvent(const Event ev, Array<double>& params) {
 		// to one click
 		if (state == noClick) {
 
-			arcParameters[0] = params[0];
-			arcParameters[1] = params[1];
+			center.x = params[0];
+			center.y = params[1];
 
 			state = oneClick;
 			//for draw mode
@@ -224,8 +224,10 @@ Mode* CreatingArc::HandleEvent(const Event ev, Array<double>& params) {
 		// to two click
 		if (state == oneClick) {
 
-			arcParameters[2] = params[0];
-			arcParameters[3] = params[1];
+			point1.x = params[0];
+			point1.y = params[1];
+
+			radius = (point1 - center).GetLength();
 
 			state = twoClick;
 			return nullptr;
@@ -235,11 +237,24 @@ Mode* CreatingArc::HandleEvent(const Event ev, Array<double>& params) {
 		// and turn to single selection mode
 		// with selected arc
 		if (state == twoClick) {
+			
+			point2.x = params[0];
+			point2.y = params[1];
 
-			arcParameters[4] = params[0];
-			arcParameters[5] = params[1];
+			double radius2 = (point2 - center).GetLength();
 
-			ID id = Presenter::CreateObject(ot_arc, arcParameters);
+			if (abs(radius2) > DBL_EPSILON) {
+				point2 = center + (point2 - center) / radius2 * radius;
+			}
+			else {
+				point2 = center - (point1 - center);
+			}
+
+			double angle = Vector2::Angle(point1 - center, point2 - center);
+
+			Array<double> objParams = CreateArr(point1.x, point1.y, point2.x, point2.y, angle);
+
+			ID id = Presenter::CreateObject(ot_arc, objParams);
 
 			Array<ID> selectedObjects(1);
 			selectedObjects[0] = id;
@@ -268,41 +283,40 @@ void CreatingArc::DrawMode() {
 	if (state == oneClick)
 	{
 		Presenter::GetView()->SetColor(red);
-		Presenter::GetView()->DrawPoint(Vector2(arcParameters[0], arcParameters[1]));
+		Presenter::GetView()->DrawPoint(center);
 
 		Presenter::GetView()->SetColor(yellow);
-		Presenter::GetView()->DrawCircle(Vector2(arcParameters[0], arcParameters[1]), infoMode, points);
+		Presenter::GetView()->DrawCircle(center, infoMode, points);
 	}
 	if (state == twoClick)
 	{
 		Presenter::GetView()->SetColor(red);
-		Presenter::GetView()->DrawPoint(Vector2(arcParameters[0], arcParameters[1]));
+		Presenter::GetView()->DrawPoint(center);
 
 		Presenter::GetView()->SetColor(yellow);
-		Presenter::GetView()->DrawCircle(Vector2(arcParameters[0], arcParameters[1]), Vector2(arcParameters[2], arcParameters[3]), points);
+		Presenter::GetView()->DrawCircle(center, point1, points);
 		
 		Presenter::GetView()->SetColor(red);
-		Presenter::GetView()->DrawPoint(Vector2(arcParameters[2], arcParameters[3]));
+		Presenter::GetView()->DrawPoint(point1);
 		
 		Presenter::GetView()->SetColor(yellow);
-		Presenter::GetView()->DrawArc(Vector2(arcParameters[0], arcParameters[1]), Vector2(arcParameters[2], arcParameters[3]), infoMode, line);
+		Presenter::GetView()->DrawArc(center, point1, infoMode, line);
 	}
 }
 
 CreatingArc::~CreatingArc() {
-	arcParameters.Clear();
 }
 
 // SELECTION
 
 Selection::Selection(Array<ID> _selObjects) : Mode(), selectedObjects(_selObjects) {
 	if (selectedObjects.GetSize() == 0) {
-		selectedObjects = Array<ID>(1);
+		selectedObjects = Array<ID>(0);
 	}
 	state = single_selection;
 }
 
-Selection::Selection() : Mode(), selectedObjects(1) {
+Selection::Selection() : Mode(), selectedObjects(0) {
 	state = single_selection;
 }
 
@@ -406,6 +420,7 @@ Mode* Selection::HandleEvent(const Event e, Array<double>& params) {
 	}
 	case ev_del: {
 		Presenter::DeletePrimitives(selectedObjects);
+		selectedObjects.Clear();
 		return nullptr;
 	}
 	case ev_req_D_point: {
@@ -493,7 +508,7 @@ Mode* Redaction::HandleEvent(const Event e, Array<double>& params)
 		if (e == ev_mouseMove && state == click)
 		{
 			if (params.GetSize() != 2) {
-                throw std::invalid_argument("Bad number of parameters");
+				throw std::invalid_argument("Bad number of parameters");
 			}
 			posEnd.x = params[0];
 			posEnd.y = params[1];
