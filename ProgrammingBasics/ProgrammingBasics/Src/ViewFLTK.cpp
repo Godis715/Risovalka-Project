@@ -225,7 +225,7 @@ IWidjet* ViewFLTK::GetWidjet(const typeWidjet typeW)
 		Array<int> paramsDisp;
 		displayParamsPrim->GetParamDisplay(paramsDisp);
 		int coordX = paramsDisp[0];
-		int coordY = paramsDisp[1] + paramsDisp[3] + 10;
+		int coordY = paramsDisp[1] + paramsDisp[3] + 20;
 		DisplayParamsReq* displayParamsReq = new DisplayParamsReq(coordX, coordY);
 		dataWidjet->Add("DisplayParamsReq", displayParamsReq);
 		widjet = new IDisplayParamReq("DisplayParamsReq");

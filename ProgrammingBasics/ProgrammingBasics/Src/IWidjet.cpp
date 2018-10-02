@@ -40,14 +40,14 @@ IDisplayParamReq::~IDisplayParamReq() {
 }
 
 void IDisplayParamReq::SetParam(const Array<std::string>& params, const std::string name) {
-	/*auto view = ViewFLTK::GetInstance();
-	auto widjet = dynamic_cast<DisplayParamReq*>(view->GetWidjet(password));
+	auto view = ViewFLTK::GetInstance();
+	auto widjet = dynamic_cast<DisplayParamsReq*>(view->GetWidjet(password));
 	auto mainWindow = dynamic_cast<MainWindow*>(view->GetWidjet("MainWindow"));
 	mainWindow->begin();
 	widjet->Clear();
 	widjet->Inizializatoin(params, name);
 	mainWindow->end();
-	mainWindow->redraw();*/
+	mainWindow->redraw();
 }
 #pragma endregion
 

@@ -72,7 +72,9 @@ void DisplayParamsPrim::cl_Close(Fl_Widget* _b_close, void*) {
 }
 
 void DisplayParamsPrim::cl_req(Fl_Widget* ob_req, void*) {
-	throw std::exception("ssdfgfd");
+	Array<double> params;
+	params.PushBack(((Fl_Menu_Button*)ob_req)->value());
+	Presenter::Set_event(ev_click_Req, params);
 }
 
 void DisplayParamsPrim::Inizializatoin(const Array<string>& params, const Array<string>& nameReqs)
@@ -142,7 +144,7 @@ void DisplayParamsPrim::Inizializatoin(const Array<string>& params, const Array<
 			i_req[nameReqs.GetSize()] = { 0 };
 			b_req = new  Fl_Menu_Button(coordX + 80, coordY + 10, 50, 30, "Req");
 			b_req->menu(i_req);
-			b_req->callback(cl_OK);
+			b_req->callback(cl_req);
 			b_req->clear_visible_focus();
 			b_req->color(FL_WHITE);
 		}
@@ -217,7 +219,7 @@ void DisplayParamsReq::cl_OK(Fl_Widget* _b_ok, void*)
 	{
 		params.PushBack(Parse(inputs[i]->value()));
 	}
-	//Presenter::Set_event(ev_change_Req, params);
+	Presenter::Set_event(ev_change_Req, params);
 }
 
 void DisplayParamsReq::cl_Close(Fl_Widget* _b_close, void*) {
@@ -228,7 +230,7 @@ void DisplayParamsReq::cl_Close(Fl_Widget* _b_close, void*) {
 void DisplayParamsReq::cl_Delete(Fl_Widget* _b_delete, void*)
 {
 	Array<double> params(0);
-	//Presenter::Set_event(deleteReq, params);
+	Presenter::Set_event(ev_delete_Req, params);
 }
 
 void DisplayParamsReq::CreateInputs(const Array<string>& params)
@@ -282,7 +284,7 @@ void DisplayParamsReq::Inizializatoin(const Array<string>& params, const string 
 			b_delete = new Fl_Button(coordX + 80, coordY + sizeY - 30, 30, 20, "Del");
 		}
 		b_delete->color(FL_WHITE);
-		//cl
+		b_delete->callback(cl_Delete);
 
 		b_close = new Fl_Button(coordX + sizeX - 40, coordY + 10, 30, 20, "X");
 		b_close->color(FL_WHITE);
