@@ -52,8 +52,6 @@ public:
 	void DrawArc(const Vector2&, const Vector2&, const Vector2&, typeDrawing);
 
 	void DrawPoint(const Vector2&);
-	
-	void SetColor(color);
 
 	void SetColor(int, int, int);
 	

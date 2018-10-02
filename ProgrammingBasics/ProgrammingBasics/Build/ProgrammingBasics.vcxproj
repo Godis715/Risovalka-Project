@@ -151,6 +151,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Include\Array.h" />
+    <ClInclude Include="..\Include\Colors.h" />
     <ClInclude Include="..\Include\Copmilator.h" />
     <ClInclude Include="..\Include\Dequeue.h" />
     <ClInclude Include="..\Include\Dictionary.h" />

@@ -3,6 +3,7 @@
 
 #include "IView.h"
 #include "ModelNew.h"
+#include "Colors.h"
 #include <sstream>
 #include <iomanip>
 

@@ -80,9 +80,10 @@ void ViewFLTK::DrawCircle(const Vector2& center, const Vector2& pointForCircle, 
 	switch (type)
 	{
 	case points:
-		fl_begin_points();
+		fl_line_style(FL_DOT, 2);
+		fl_begin_line();
 		fl_arc(center.x, center.y, r, 0.0, 360.0);
-		fl_end_points();
+		fl_end_line();
 		break;
 	case line:
 		fl_begin_line();
@@ -126,11 +127,13 @@ void ViewFLTK::DrawArc(const Vector2& center, const Vector2& start, const Vector
 	switch (type)
 	{
 	case points:
-		fl_begin_points();
+		fl_line_style(FL_DOT, 1);
+		fl_begin_line();
 		_DrawArc(center, r1, angleStart, angleEnd);
-		fl_end_points();
+		fl_end_line();
 		break;
 	case line:
+		fl_line_style(FL_SOLID, 2);
 		fl_begin_line();
 		_DrawArc(center, r1, angleStart, angleEnd);
 		fl_end_line();
@@ -159,35 +162,7 @@ void ViewFLTK::DrawPoint(const Vector2& pos)
 
 void ViewFLTK::SetColor(int r, int g, int b)
 {
-	fl_rgb_color(r, g, b);
-}
-
-void ViewFLTK::SetColor(color col)
-{
-	switch (col)
-	{
-	case white:
-		fl_color(FL_WHITE);
-		break;
-	case red:
-		fl_color(FL_RED);
-		break;
-	case black:
-		fl_color(FL_BLACK);
-		break;
-	case green:
-		fl_color(FL_GREEN);
-		break;
-	case yellow:
-		fl_color(FL_YELLOW);
-		break;
-	case blue:
-		fl_color(FL_BLUE);
-		break;
-	case orange:
-		fl_color(fl_rgb_color(255, 140, 0));
-		break;
-	}
+	fl_color(fl_rgb_color(r, g, b));
 }
 
 void ViewFLTK::Update()

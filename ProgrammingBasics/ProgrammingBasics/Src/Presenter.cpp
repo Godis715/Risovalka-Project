@@ -235,22 +235,22 @@ void Presenter::DrawScene()
 	if (Model::GetInstance()->DischargeInfoObjects(scene)) {
 		for (int i = 0; i < scene.GetSize(); ++i) {
 			if (scene[i].type == ot_point) {
-				view->SetColor(red);
+				view->SetColor(col_Red);
 				view->DrawPoint(Vector2(scene[i].params[0], scene[i].params[1]));
 			}
 			if (scene[i].type == ot_segment) {
-				view->SetColor(white);
+				view->SetColor(col_White);
 				view->DrawLine(Vector2(scene[i].params[0], scene[i].params[1]),
 					Vector2(scene[i].params[2], scene[i].params[3]), line);
 			}
 			if (scene[i].type == ot_arc) {
-				view->SetColor(white);
+				view->SetColor(col_White);
 				view->DrawArc(Vector2(scene[i].params[0], scene[i].params[1]),
 					Vector2(scene[i].params[2], scene[i].params[3]),
 					Vector2(scene[i].params[4], scene[i].params[5]), line);
 			}
 			if (scene[i].type == ot_circle) {
-				view->SetColor(white);
+				view->SetColor(col_White);
 				view->DrawCircle(Vector2(scene[i].params[0], scene[i].params[1]),
 					Vector2(scene[i].params[0] + scene[i].params[2], scene[i].params[1]), line);
 			}

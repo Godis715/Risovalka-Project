@@ -202,9 +202,9 @@ Mode* CreatingSegment::HandleEvent(const Event ev, Array<double>& params) {
 void CreatingSegment::DrawMode() {
 	if (state == oneClick)
 	{
-		view->SetColor(red);
+		view->SetColor(col_Red);
 		view->DrawPoint(Vector2(segmentParameters[0], segmentParameters[1]));
-		view->SetColor(yellow);
+		view->SetColor(col_Yellow);
 		view->DrawLine(Vector2(segmentParameters[0], segmentParameters[1]), infoMode, points);
 	}
 }
@@ -296,9 +296,9 @@ Mode* CreatingCircle::HandleEvent(const Event ev, Array<double>& params) {
 void CreatingCircle::DrawMode() {
 	if (state == oneClick)
 	{
-		view->SetColor(red);
+		view->SetColor(col_Red);
 		view->DrawPoint(Vector2(CircleParameters[0], CircleParameters[1]));
-		view->SetColor(yellow);
+		view->SetColor(col_Yellow);
 		view->DrawCircle(Vector2(CircleParameters[0], CircleParameters[1]), infoMode, points);
 	}
 }
@@ -381,24 +381,24 @@ Mode* CreatingArc::HandleEvent(const Event ev, Array<double>& params) {
 void CreatingArc::DrawMode() {
 	if (state == oneClick)
 	{
-		view->SetColor(red);
+		view->SetColor(col_Red);
 		view->DrawPoint(Vector2(arcParameters[0], arcParameters[1]));
 
-		view->SetColor(yellow);
+		view->SetColor(col_Bisque);
 		view->DrawCircle(Vector2(arcParameters[0], arcParameters[1]), infoMode, points);
 	}
 	if (state == twoClick)
 	{
-		view->SetColor(red);
+		view->SetColor(col_Red);
 		view->DrawPoint(Vector2(arcParameters[0], arcParameters[1]));
 
-		view->SetColor(yellow);
+		view->SetColor(col_Bisque);
 		view->DrawCircle(Vector2(arcParameters[0], arcParameters[1]), Vector2(arcParameters[2], arcParameters[3]), points);
 		
-		view->SetColor(red);
+		view->SetColor(col_Red);
 		view->DrawPoint(Vector2(arcParameters[2], arcParameters[3]));
 		
-		view->SetColor(yellow);
+		view->SetColor(col_Yellow);
 		view->DrawArc(Vector2(arcParameters[0], arcParameters[1]), Vector2(arcParameters[2], arcParameters[3]), infoMode, line);
 	}
 }
@@ -555,16 +555,14 @@ Mode* ChangingProperties::HandleEvent(const Event e, Array<double>& params)
 		return UnexpectedEvent(e);
 	}
 }
-	
-	
 
 void ChangingProperties::DrawMode()
 {
 	Array<ID> selectedObjects;
 	selectedObjects.PushBack(selectedObject);
-	view->SetColor(199, 21, 33);
+	view->SetColor(col_Aqua);
 	Presenter::DrawSelectedObjects(primiOfReqIDs);
-	view->SetColor(orange);
+	view->SetColor(col_Orange);
 	Presenter::DrawSelectedObjects(selectedObjects);
 	
 }
@@ -817,7 +815,7 @@ Mode* Selection::HandleEvent(const Event e, Array<double>& params) {
 
 void Selection::DrawMode()
 {
-	view->SetColor(green);
+	view->SetColor(col_Green);
 	Presenter::DrawSelectedObjects(selectedObjects);
 
 	if (state == area_selection)
@@ -825,7 +823,7 @@ void Selection::DrawMode()
 		Vector2 point1(infoArea2.x, infoArea1.y);
 		Vector2 point2(infoArea1.x, infoArea2.y);
 
-		view->SetColor(blue);
+		view->SetColor(col_Blue);
 		view->DrawLine(infoArea1, point1, points);
 		view->DrawLine(infoArea1, point2, points);
 		view->DrawLine(infoArea2, point1, points);
@@ -931,7 +929,7 @@ Mode* Redaction::HandleEvent(const Event e, Array<double>& params)
 }
 
 void Redaction::DrawMode() {
-	view->SetColor(green);
+	view->SetColor(col_Green);
 	Presenter::DrawSelectedObjects(selectedObjects);
 }
 #pragma endregion
@@ -1032,7 +1030,7 @@ Mode* CreateRequirementWithParam::HandleEvent(const Event ev, Array<double>& par
 	
 
 void CreateRequirementWithParam::DrawMode() {
-	view->SetColor(green);
+	view->SetColor(col_Green);
 	Presenter::DrawSelectedObjects(selectedObjects);
 }
 #pragma endregion
@@ -1128,7 +1126,7 @@ Mode* NavigationOnScene::HandleEvent(const Event ev, Array<double>& params) {
 }
 
 void NavigationOnScene::DrawMode() {
-	view->SetColor(green);
+	view->SetColor(col_Green);
 	Presenter::DrawSelectedObjects(selectedPrim);
 }
 #pragma endregion
