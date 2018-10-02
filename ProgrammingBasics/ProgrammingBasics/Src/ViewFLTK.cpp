@@ -216,7 +216,7 @@ IWidjet* ViewFLTK::GetWidjet(const typeWidjet typeW)
 	{
 		DisplayParamsPrim* displayParamsPrim = new DisplayParamsPrim();
 		dataWidjet->Add("DisplayParamsPrim", displayParamsPrim);
-		widjet = new IDisplayParam("DisplayParamsPrim");
+		widjet = new IDisplayParamPrim("DisplayParamsPrim");
 		break;
 	}
 	case displayParamReq:
@@ -228,7 +228,7 @@ IWidjet* ViewFLTK::GetWidjet(const typeWidjet typeW)
 		int coordY = paramsDisp[1] + paramsDisp[3] + 10;
 		DisplayParamsReq* displayParamsReq = new DisplayParamsReq(coordX, coordY);
 		dataWidjet->Add("DisplayParamsReq", displayParamsReq);
-		widjet = new IDisplayParam("DisplayParamsReq");//исправить
+		widjet = new IDisplayParamReq("DisplayParamsReq");
 		break;
 	}
 	case creatingToolbar:

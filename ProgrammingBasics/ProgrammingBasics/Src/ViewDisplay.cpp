@@ -68,7 +68,7 @@ void DisplayParamsPrim::cl_OK(Fl_Widget* o, void*)
 
 void DisplayParamsPrim::cl_Close(Fl_Widget* _b_close, void*) {
 	Array<double> params(0);
-	Presenter::Set_event(ev_delete_widjet, params);
+	Presenter::Set_event(ev_delete_display_Prim, params);
 }
 
 void DisplayParamsPrim::cl_req(Fl_Widget* ob_req, void*) {
@@ -222,7 +222,7 @@ void DisplayParamsReq::cl_OK(Fl_Widget* _b_ok, void*)
 
 void DisplayParamsReq::cl_Close(Fl_Widget* _b_close, void*) {
 	Array<double> params(0);
-	Presenter::Set_event(ev_delete_widjet, params);
+	Presenter::Set_event(ev_delete_display_Req, params);
 }
 
 void DisplayParamsReq::cl_Delete(Fl_Widget* _b_delete, void*)

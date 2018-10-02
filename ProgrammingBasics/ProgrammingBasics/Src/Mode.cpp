@@ -416,7 +416,7 @@ ChangingProperties::ChangingProperties() : Mode()
 
 ChangingProperties::ChangingProperties(const ID _selObject) : Mode(), selectedObject(_selObject)
 {
-	widjetPrim = static_cast<IDisplayParamPrim*>(view->GetWidjet(displayParam));
+	widjetPrim = static_cast<IDisplayParamPrim*>(view->GetWidjet(displayParamPrim));
 	SetWidjetParamPrim();
 }
 
@@ -472,7 +472,7 @@ void ChangingProperties::SetWidjetParamReq() {
 	modelNew->GetRelatedObjects(reqID);
 	model->GetPrimitivesByID(reqID, primiOfReqIDs);
 	// %%% CHAnge
-	widjetReq = static_cast<IDisplayParamReq*>(view->GetWidjet(displayParam));
+	widjetReq = static_cast<IDisplayParamReq*>(view->GetWidjet(displayParamReq));
 
 	Array<double> reqParams;
 	modelNew->GetObjParam(reqID);

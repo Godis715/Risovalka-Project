@@ -21,7 +21,7 @@ IDisplayParamPrim::~IDisplayParamPrim() {
 
 void IDisplayParamPrim::SetParam(const Array<std::string>& params, const Array<std::string>& names) {
 	auto view = ViewFLTK::GetInstance();
-	auto widjet = dynamic_cast<DisplayParams*>(view->GetWidjet(password));
+	auto widjet = dynamic_cast<DisplayParamsPrim*>(view->GetWidjet(password));
 	auto mainWindow = dynamic_cast<MainWindow*>(view->GetWidjet("MainWindow"));
 	mainWindow->begin();
 	widjet->Clear();
