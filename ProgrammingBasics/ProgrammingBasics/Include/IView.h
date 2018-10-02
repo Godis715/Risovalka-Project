@@ -6,7 +6,7 @@
 enum color { white, red, black, green, yellow, blue, orange};
 enum typeDrawing{points, line, polygon};
 enum statusCreate { drawPoint, drawSegment, drawArc, drawCircle };
-enum typeWidjet{displayParam, creatingToolbar, requirementInput};
+enum typeWidjet{displayParamPrim, displayParamReq, creatingToolbar, requirementInput};
 
 class IView
 {

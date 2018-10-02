@@ -19,13 +19,17 @@ ViewFLTK::ViewFLTK()
 	viewLog = ViewLog::GetInstance();
 	
 	drawWindow = new DrawWindow(10, 30, 1000, 600, "Draw Window");
+	drawWindow->end();
 	DisplayWidjet* drawWindowWidjet = drawWindow;
 	dataWidjet->Add("DrawWindow", drawWindowWidjet);
+
 
 	mainWindow->end();
 
 	mainWindow->show();
 	drawWindow->show();
+
+
 }
 
 ViewFLTK::~ViewFLTK(){}
@@ -208,11 +212,23 @@ IWidjet* ViewFLTK::GetWidjet(const typeWidjet typeW)
 	mainWindow->begin();
 	switch (typeW)
 	{
-	case displayParam:
+	case displayParamPrim:
 	{
-		auto displayParams = new DisplayParams();
-		dataWidjet->Add("DisplayParams", displayParams);
-		widjet = new IDisplayParam("DisplayParams");
+		DisplayParamsPrim* displayParamsPrim = new DisplayParamsPrim();
+		dataWidjet->Add("DisplayParamsPrim", displayParamsPrim);
+		widjet = new IDisplayParam("DisplayParamsPrim");
+		break;
+	}
+	case displayParamReq:
+	{
+		auto displayParamsPrim = dynamic_cast<DisplayParamsPrim*>(GetWidjet("DisplayParamsPrim"));
+		Array<int> paramsDisp;
+		displayParamsPrim->GetParamDisplay(paramsDisp);
+		int coordX = paramsDisp[0];
+		int coordY = paramsDisp[1] + paramsDisp[3] + 10;
+		DisplayParamsReq* displayParamsReq = new DisplayParamsReq(coordX, coordY);
+		dataWidjet->Add("DisplayParamsReq", displayParamsReq);
+		widjet = new IDisplayParam("DisplayParamsReq");//исправить
 		break;
 	}
 	case creatingToolbar:

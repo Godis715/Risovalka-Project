@@ -1,7 +1,7 @@
 #include "ViewDisplay.h"
 
-#pragma region DisplayParams
-void DisplayParams::DisplayPoint(const Array<string>& params)
+#pragma region DisplayParamsPrim
+void DisplayParamsPrim::DisplayPoint(const Array<string>& params)
 {
 	inputs.PushBack(new Fl_Float_Input(coordX + 20, coordY + 10, 50, 30, "x"));
 	inputs[0]->value(str_ch(params[0]));
@@ -11,7 +11,7 @@ void DisplayParams::DisplayPoint(const Array<string>& params)
 	inputs[1]->value(str_ch(params[1]));
 }
 
-void DisplayParams::DisplaySegment(const Array<string>& params)
+void DisplayParamsPrim::DisplaySegment(const Array<string>& params)
 {
 	inputs.PushBack(new Fl_Float_Input(coordX + 20, coordY + 10, 50, 30, "x1"));
 	inputs[0]->value(str_ch(params[0]));
@@ -26,7 +26,7 @@ void DisplayParams::DisplaySegment(const Array<string>& params)
 	inputs[3]->value(str_ch(params[3]));
 }
 
-void DisplayParams::DisplayArc(const Array<string>& params)
+void DisplayParamsPrim::DisplayArc(const Array<string>& params)
 {
 	inputs.PushBack(new Fl_Float_Input(coordX + 20, coordY + 10, 50, 30, "x1"));
 	inputs[0]->value(str_ch(params[0]));
@@ -44,7 +44,7 @@ void DisplayParams::DisplayArc(const Array<string>& params)
 	inputs[4]->value(str_ch(params[4]));
 }
 
-void DisplayParams::DisplayCircle(const Array<string>& params)
+void DisplayParamsPrim::DisplayCircle(const Array<string>& params)
 {
 	inputs.PushBack(new Fl_Float_Input(coordX + 20, coordY + 10, 50, 30, "x"));
 	inputs[0]->value(str_ch(params[0]));
@@ -56,7 +56,7 @@ void DisplayParams::DisplayCircle(const Array<string>& params)
 	inputs[2]->value(str_ch(params[2]));
 }
 
-void DisplayParams::cl_OK(Fl_Widget* o, void*)
+void DisplayParamsPrim::cl_OK(Fl_Widget* o, void*)
 {
 	Array<double> params;
 	for (int i = 0; i < inputs.GetSize(); i++)
@@ -66,16 +66,16 @@ void DisplayParams::cl_OK(Fl_Widget* o, void*)
 	Presenter::Set_event(ev_change_Prim, params);
 }
 
-void DisplayParams::cl_Close(Fl_Widget* _b_close, void*) {
+void DisplayParamsPrim::cl_Close(Fl_Widget* _b_close, void*) {
 	Array<double> params(0);
 	Presenter::Set_event(ev_delete_widjet, params);
 }
 
-void DisplayParams::cl_req(Fl_Widget* ob_req, void*) {
+void DisplayParamsPrim::cl_req(Fl_Widget* ob_req, void*) {
 	throw std::exception("ssdfgfd");
 }
 
-void DisplayParams::Inizializatoin(const Array<string>& params, const Array<string>& nameReqs)
+void DisplayParamsPrim::Inizializatoin(const Array<string>& params, const Array<string>& nameReqs)
 {
 	switch (params.GetSize())
 	{
@@ -153,14 +153,23 @@ void DisplayParams::Inizializatoin(const Array<string>& params, const Array<stri
 
 }
 
-DisplayParams::DisplayParams(){}
+void DisplayParamsPrim::GetParamDisplay(Array<int>& paramDisp)
+{
+	paramDisp.Clear();
+	paramDisp.PushBack(coordX);
+	paramDisp.PushBack(coordY);
+	paramDisp.PushBack(sizeX);
+	paramDisp.PushBack(sizeY);
+}
 
-DisplayParams::~DisplayParams()
+DisplayParamsPrim::DisplayParamsPrim(){}
+
+DisplayParamsPrim::~DisplayParamsPrim()
 {
 	Clear();
 }
 
-void DisplayParams::Clear() {
+void DisplayParamsPrim::Clear() {
 	delete b_OK;
 	delete b_close;
 	delete b_req;
@@ -172,7 +181,7 @@ void DisplayParams::Clear() {
 	delete group;
 }
 
-Array<Fl_Float_Input*> DisplayParams::inputs;
+Array<Fl_Float_Input*> DisplayParamsPrim::inputs;
 #pragma endregion
 
 #pragma region RequirementInput
@@ -200,6 +209,111 @@ void RequirementInput::cl_Input(Fl_Widget* o, void*) {
 }
 #pragma endregion
 
+#pragma region DisplayParamsReq
+void DisplayParamsReq::cl_OK(Fl_Widget* _b_ok, void*)
+{
+	Array<double> params;
+	for (int i = 0; i < inputs.GetSize(); i++)
+	{
+		params.PushBack(Parse(inputs[i]->value()));
+	}
+	//Presenter::Set_event(ev_change_Req, params);
+}
 
+void DisplayParamsReq::cl_Close(Fl_Widget* _b_close, void*) {
+	Array<double> params(0);
+	Presenter::Set_event(ev_delete_widjet, params);
+}
+
+void DisplayParamsReq::cl_Delete(Fl_Widget* _b_delete, void*)
+{
+	Array<double> params(0);
+	//Presenter::Set_event(deleteReq, params);
+}
+
+void DisplayParamsReq::CreateInputs(const Array<string>& params)
+{
+	for (int i = 0; i < params.GetSize(); i++)
+	{
+		string name = "p" + std::to_string(i);
+		inputs.PushBack(new Fl_Float_Input(coordX + 20, coordY + 10 + 30 * i, 50, 30, str_ch(name)));
+		inputs[i]->value(str_ch(params[i]));
+	}
+}
+
+void DisplayParamsReq::Inizializatoin(const Array<string>& params, const string nameReq)
+{
+	switch (params.GetSize())
+	{
+	case 0:
+	{
+		sizeY = 40;
+		break;
+	}
+	case 1:
+	{
+		sizeY = 80;
+		break;
+	}
+	case 2:
+	{
+		sizeY = 110;
+		break;
+	}
+	default:
+		break;
+	}		
+	group = new Fl_Group(coordX, coordY, sizeX, sizeY, str_ch(nameReq));
+	{
+		CreateInputs(params);
+
+		if (params.GetSize() > 0)
+		{
+			b_OK = new Fl_Button(coordX + 20, coordY + sizeY - 30, 30, 20, "OK");
+			b_OK->color(FL_WHITE);
+			b_OK->callback(cl_OK);
+		}
+		if (params.GetSize() == 0)
+		{
+			b_delete = new Fl_Button(coordX + 10, coordY + sizeY - 30, 30, 20, "Del");
+		}
+		else
+		{
+			b_delete = new Fl_Button(coordX + 80, coordY + sizeY - 30, 30, 20, "Del");
+		}
+		b_delete->color(FL_WHITE);
+		//cl
+
+		b_close = new Fl_Button(coordX + sizeX - 40, coordY + 10, 30, 20, "X");
+		b_close->color(FL_WHITE);
+		b_close->callback(cl_Close);
+
+		group->color(FL_GREEN);
+		group->box(FL_UP_BOX);
+		group->end();
+	}
+}
+
+DisplayParamsReq::DisplayParamsReq(int _coordX, int _coordY) : coordX(_coordX), coordY(_coordY){}
+
+DisplayParamsReq::~DisplayParamsReq()
+{
+	Clear();
+}
+
+void DisplayParamsReq::Clear() {
+	delete b_OK;
+	delete b_delete;
+	delete b_close;
+	for (int i = 0; i < inputs.GetSize(); i++)
+	{
+		delete inputs[i];
+	}
+	inputs.Clear();
+	delete group;
+}
+
+Array<Fl_Float_Input*> DisplayParamsReq::inputs;
+#pragma endregion
 
 
