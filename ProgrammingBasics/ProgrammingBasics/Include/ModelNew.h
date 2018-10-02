@@ -46,6 +46,9 @@ public:
 	Array<double> GetObjParam(const ID&) const {
 		return Array<double>();
 	}
+	Array<ID> GetRelatedObjects(const ID&) {
+		return Array<ID>();
+	}
 
 	Array<ID> CreatePrimitive() {
 		return Array<ID>();

@@ -1,1 +1,16 @@
 Initializing presenter
+could not find primitives by id 0
+could not find primitives by id 0
+could not find primitives by id 0
+could not find primitives by id 0
+could not find primitives by id 0
+could not find primitives by id 0
+could not find primitives by id 0
+could not find primitives by id 0
+could not find primitives by id 0
+could not find primitives by id 0
+could not find primitives by id 0
+could not find primitives by id 0
+could not find primitives by id 0
+could not find primitives by id 0
+could not find primitives by id 0

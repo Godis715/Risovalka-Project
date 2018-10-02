@@ -147,6 +147,8 @@ public:
 
 	void GetRequirementsByID(const ID&, Array<ID>&);
 
+	void GetPrimitivesByID(const ID&, Array<ID>&);
+
 	bool GetObjType(const ID&, object_type&);
 
 	// bool ImposeRequirement(object_type, const Array<ID>&);

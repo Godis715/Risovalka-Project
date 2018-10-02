@@ -864,6 +864,20 @@ void Model::GetRequirementsByID(const ID& id, Array<ID>& reqIDs)
 	}
 }
 
+void Model::GetPrimitivesByID(const ID& id, Array<ID>& primDs) {
+	if (dataReq.Find(id).IsValid())
+	{
+		auto marker = dataLink.Find(id);
+		if (marker.IsValid()) {
+			auto listMarker = (*marker)->GetMarker();
+			do
+			{
+				primDs.PushBack(listMarker.GetValue());
+			} while (++listMarker);
+		}
+	}
+}
+
 bool Model::GetObjType(const ID& obj_id, object_type& type) {
 	Primitive* objPrim = nullptr;
 	auto dataPrimMarker = dataPrim.Find(obj_id);

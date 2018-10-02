@@ -16,28 +16,34 @@ const char* str_ch(const string);
 
 enum Event
 {
+	// create primitive
 	ev_createPoint = 1,
 	ev_createSegment,
 	ev_createArc,
 	ev_createCircle,
-	// 4
+	//create requirements
+	ev_req_D_point,
+	ev_req_Eq_Segment,
+	ev_req_on_one_hand,
+	ev_req_D_point_segment,
+	ev_req_D_point_arc,
+	ev_req_angle_segment,
+	ev_input,
+	// redaction
 	ev_moveObjects,
 	ev_scaleObjects,
-	// 9
 	ev_del,
-	ev_delReq,
-	// 11 not using
-	ev_leftMouseClick,
-	ev_rightMouseClick,
 
 	// mouseEvent
+	ev_leftMouseClick,
+	ev_rightMouseClick,
 	ev_leftMouseDown,
 	ev_rightMouseDown,
 	ev_leftMouseUp,
 	ev_rightMouseUp,
 	ev_mouseMove,
 	ev_scroll,
-	// keybourdEvent
+	// keyboardEvent
 	ev_ctrlDown,
 	ev_ctrlUp,
 	ev_altDown,
@@ -47,22 +53,15 @@ enum Event
 	ev_arrowLeft,
 	ev_arrowRight,
 	ev_escape,
-	//??
-	ev_clockOnReq,
-	//create requirements
-	ev_req_D_point,
-	ev_req_Eq_Segment,
-	ev_req_on_one_hand,
-	ev_req_D_point_segment,
-	ev_req_D_point_arc,
-	ev_req_angle_segment,
-	ev_input,
-	//end new events
-
+	// Widjets
+	ev_click_Req,
 	ev_change_Prim,
-	ev_save,
-	ev_delete_widjet
-	// 14
+	ev_change_Req,
+	ev_delete_Req,
+	ev_delete_display_Prim,
+	ev_delete_display_Req,
+	// file work
+	ev_save
 };
 
 class Mode {
@@ -74,7 +73,6 @@ protected:
 	IView* view;
 	Model* model;
 	ModelNew* modelNew;
-	IDisplayParam* widjet;
 public:
 	Mode();
 	virtual ~Mode() {}
@@ -84,15 +82,19 @@ public:
 
 class ChangingProperties : public Mode {
 private:
-
+	IDisplayParamPrim* widjetPrim;
+	IDisplayParamReq* widjetReq;
 	ID selectedObject;
 	Array<ID> reqIDs;
+	ID reqID;
 	Array<ID> primiOfReqIDs;
 	bool isNew = true;
 	//enum State { single_selection, poly_selection, area_selection };
 	//State state;
 
-	void SetWidjetParam();
+	void SetWidjetParamPrim();
+
+	void SetWidjetParamReq();
 public:
 	ChangingProperties();
 	ChangingProperties(const ID _selObjects);
