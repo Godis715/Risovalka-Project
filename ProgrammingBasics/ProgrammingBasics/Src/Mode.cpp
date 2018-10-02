@@ -416,18 +416,18 @@ ChangingProperties::ChangingProperties() : Mode()
 
 ChangingProperties::ChangingProperties(const ID _selObject) : Mode(), selectedObject(_selObject)
 {
-	widjet = static_cast<IDisplayParam*>(view->GetWidjet(displayParam));
-	SetWidjetParam();
+	widjetPrim = static_cast<IDisplayParamPrim*>(view->GetWidjet(displayParam));
+	SetWidjetParamPrim();
 }
 
 ChangingProperties::~ChangingProperties()
 {
 	if (isNew) {
-		delete widjet;
+		delete widjetPrim;
 	}
 }
 
-void ChangingProperties::SetWidjetParam() {
+void ChangingProperties::SetWidjetParamPrim() {
 	object_type typePrim;
 	model->GetObjType(selectedObject, typePrim);
 
@@ -453,6 +453,7 @@ void ChangingProperties::SetWidjetParam() {
 	}
 
 	reqIDs.Clear();
+	modelNew->GetRelatedObjects(selectedObject);
 	model->GetRequirementsByID(selectedObject, reqIDs);
 
 	Array<string> nameReqs;
@@ -463,35 +464,96 @@ void ChangingProperties::SetWidjetParam() {
 		nameReqs.PushBack(objTypeToString(typeReq) + '#' + reqIDs[i].GetHash());
 	}
 
-	widjet->SetParam(paramsString, nameReqs);
+	widjetPrim->SetParam(paramsString, nameReqs);
+}
+
+void ChangingProperties::SetWidjetParamReq() {
+	primiOfReqIDs.Clear();
+	modelNew->GetRelatedObjects(reqID);
+	model->GetPrimitivesByID(reqID, primiOfReqIDs);
+	// %%% CHAnge
+	widjetReq = static_cast<IDisplayParamReq*>(view->GetWidjet(displayParam));
+
+	Array<double> reqParams;
+	modelNew->GetObjParam(reqID);
+	model->GetObjParam(reqID, reqParams);
+
+	auto reqStringParams = Array<string>(reqParams.GetSize());
+	for (int i = 0; i < reqParams.GetSize(); ++i) {
+		reqStringParams[i] = ReverseParse(reqParams[i]);
+	}
+
+	object_type type;
+	modelNew->GetObjType(reqID);
+	model->GetObjType(reqID, type);
+
+	widjetReq->SetParam(reqStringParams, objTypeToString(type));
 }
 
 Mode* ChangingProperties::HandleEvent(const Event e, Array<double>& params)
 {
-	if (e == ev_change_Prim)
+	switch (e)
+	{
+	case ev_click_Req:
+	{
+		reqID = reqIDs[int(params[0])];
+		SetWidjetParamReq();
+		return nullptr;
+	}
+	case ev_change_Prim:
 	{
 		modelNew->ChangeObject(selectedObject, params);
 		model->ChangePrimitive(selectedObject, params);
-		SetWidjetParam();
+		SetWidjetParamPrim();
 		return nullptr;
 	}
-	if (e == ev_rightMouseDown)
+	case ev_change_Req:
+	{
+		modelNew->ChangeObject(selectedObject, params);
+		model->ChangeRequirement(selectedObject, params[0]);
+		SetWidjetParamReq();
+		return nullptr;
+	}
+	case ev_delete_Req:
+	{
+		modelNew->DeleteObject(reqID);
+		model->DeleteRequirement(reqID);
+		SetWidjetParamPrim();
+		reqID = ID();
+		delete widjetReq;
+		widjetReq = nullptr;
+		return nullptr;
+	}
+	case ev_rightMouseDown:
 	{
 		ID obj = modelNew->GetObjectByClick(params[0], params[1]);
 		bool isFound = Presenter::GetObject(params[0], params[1], obj);
 		if (isFound)
 		{
 			isNew = false;
-			delete widjet;
+			delete widjetPrim;
 			return new ChangingProperties(obj);
 		}
 		return nullptr;
 	}
-	if ((e == ev_delete_widjet) || (e == ev_escape)) {
+	case ev_delete_display_Prim: {
 		return new Selection(selectedObject);
 	}
-	return UnexpectedEvent(e);
+	case ev_delete_display_Req: {
+		reqID = ID();
+		delete widjetReq;
+		widjetReq = nullptr;
+		return nullptr;
+	}
+	case ev_escape: {
+		return new Selection(selectedObject);
+	}
+	default:
+		return UnexpectedEvent(e);
+	}
 }
+	
+	
 
 void ChangingProperties::DrawMode()
 {

@@ -12,14 +12,14 @@ IWidjet::~IWidjet() {
 
 
 #pragma region IDisplayParam
-IDisplayParam::IDisplayParam(const string _pass) : IWidjet(_pass) {}
+IDisplayParamPrim::IDisplayParamPrim(const string _pass) : IWidjet(_pass) {}
 
-IDisplayParam::~IDisplayParam() {
+IDisplayParamPrim::~IDisplayParamPrim() {
 	auto view = ViewFLTK::GetInstance();
 	view->DeleteWidjet(password);
 }
 
-void IDisplayParam::SetParam(const Array<std::string>& params, const Array<std::string>& names) {
+void IDisplayParamPrim::SetParam(const Array<std::string>& params, const Array<std::string>& names) {
 	auto view = ViewFLTK::GetInstance();
 	auto widjet = dynamic_cast<DisplayParams*>(view->GetWidjet(password));
 	auto mainWindow = dynamic_cast<MainWindow*>(view->GetWidjet("MainWindow"));
@@ -28,6 +28,26 @@ void IDisplayParam::SetParam(const Array<std::string>& params, const Array<std::
 	widjet->Inizializatoin(params, names);
 	mainWindow->end();
 	mainWindow->redraw();
+}
+#pragma endregion
+
+#pragma region IDisplayParamReq
+IDisplayParamReq::IDisplayParamReq(const string _pass) : IWidjet(_pass) {}
+
+IDisplayParamReq::~IDisplayParamReq() {
+	auto view = ViewFLTK::GetInstance();
+	view->DeleteWidjet(password);
+}
+
+void IDisplayParamReq::SetParam(const Array<std::string>& params, const std::string name) {
+	/*auto view = ViewFLTK::GetInstance();
+	auto widjet = dynamic_cast<DisplayParamReq*>(view->GetWidjet(password));
+	auto mainWindow = dynamic_cast<MainWindow*>(view->GetWidjet("MainWindow"));
+	mainWindow->begin();
+	widjet->Clear();
+	widjet->Inizializatoin(params, name);
+	mainWindow->end();
+	mainWindow->redraw();*/
 }
 #pragma endregion
 

@@ -11,16 +11,29 @@ public:
 	~IWidjet();
 };
 
-class IDisplayParam : public IWidjet
+class IDisplayParamPrim : public IWidjet
 {
 	Array<std::string> params;
 	Array<std::string> reqs;
 public:
-	IDisplayParam(const std::string);
+	IDisplayParamPrim(const std::string);
 
-	~IDisplayParam();
+	~IDisplayParamPrim();
 
 	void SetParam(const Array<std::string>&, const Array<std::string>&);
+};
+
+class IDisplayParamReq : public IWidjet
+{
+public:
+	Array<std::string> params;
+	std::string reqName;
+public:
+	IDisplayParamReq(const std::string);
+
+	~IDisplayParamReq();
+
+	void SetParam(const Array<std::string>&, const std::string);
 };
 
 class ICreatingToolbar : public IWidjet
