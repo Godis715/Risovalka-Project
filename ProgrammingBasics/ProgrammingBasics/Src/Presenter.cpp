@@ -199,17 +199,14 @@ bool Presenter::GetObject(double x, double y, ID& obj_id) {
 //	return Model::GetInstance()->GetObjectsOnArea(x1, y1, x2, y2, obj_id, types);
 //}
 
-void Presenter::DrawSelectedObjects(const Array<ID>& selectedObjects, const color col)
+void Presenter::DrawSelectedObjects(const Array<ID>& selectedObjects)
 {
 	for (int i = 0; i < selectedObjects.GetSize(); i++)
 	{
 		Array<double> params;
 		object_type type;
-
-
 		Model::GetInstance()->GetObjParam(selectedObjects[i], params);
 		Model::GetInstance()->GetObjType(selectedObjects[i], type);
-		GetView()->SetColor(col);
 		switch (type)
 		{
 		case ot_point:

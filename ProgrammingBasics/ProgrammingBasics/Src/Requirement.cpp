@@ -38,4 +38,7 @@ object_type Requirement::GetType() const {
 	return type;
 }
 
-void Requirement::Change(const double) {}
+void Requirement::Change(const double newPar)
+{
+	//params[0] = newPar;
+}

@@ -54,6 +54,8 @@ public:
 	void DrawPoint(const Vector2&);
 	
 	void SetColor(color);
+
+	void SetColor(int, int, int);
 	
 	void Update();
 

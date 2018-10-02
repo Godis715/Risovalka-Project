@@ -160,7 +160,9 @@ public:
 	bool OptimizeByID(const ID&);
 	// new functon
 
-	void ChangeRequirement(const ID&, const double);
+	//void ChangeRequirement(const ID&, const double);
+
+	void ChangeRequirement(const ID&, Array<double>&);
 
 	void ChangePrimitive(const ID&, Array<double>&);
 

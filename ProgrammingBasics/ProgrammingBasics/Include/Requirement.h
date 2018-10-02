@@ -75,7 +75,7 @@ public:
 		params = Array<double>(paramNum);
 	}
 	virtual double error() = 0;
-	virtual void Change(const double);
+	virtual void Change(const double);//may be delete?
 	virtual void ChangeParams(const Array<double>& newParams) {
 		if (newParams.GetSize() != params.GetSize()) {
             throw std::invalid_argument("Invalid requirement parameters!");

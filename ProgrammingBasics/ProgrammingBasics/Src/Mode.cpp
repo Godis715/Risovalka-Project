@@ -424,6 +424,7 @@ ChangingProperties::~ChangingProperties()
 {
 	if (isNew) {
 		delete widjetPrim;
+		delete widjetReq;
 	}
 }
 
@@ -509,9 +510,10 @@ Mode* ChangingProperties::HandleEvent(const Event e, Array<double>& params)
 	}
 	case ev_change_Req:
 	{
-		modelNew->ChangeObject(selectedObject, params);
-		model->ChangeRequirement(selectedObject, params[0]);
+		modelNew->ChangeObject(reqID, params);
+		model->ChangeRequirement(reqID, params);
 		SetWidjetParamReq();
+		SetWidjetParamPrim();
 		return nullptr;
 	}
 	case ev_delete_Req:
@@ -532,6 +534,7 @@ Mode* ChangingProperties::HandleEvent(const Event e, Array<double>& params)
 		{
 			isNew = false;
 			delete widjetPrim;
+			delete widjetReq;
 			return new ChangingProperties(obj);
 		}
 		return nullptr;
@@ -559,7 +562,11 @@ void ChangingProperties::DrawMode()
 {
 	Array<ID> selectedObjects;
 	selectedObjects.PushBack(selectedObject);
-	Presenter::DrawSelectedObjects(selectedObjects, orange);
+	view->SetColor(199, 21, 33);
+	Presenter::DrawSelectedObjects(primiOfReqIDs);
+	view->SetColor(orange);
+	Presenter::DrawSelectedObjects(selectedObjects);
+	
 }
 #pragma endregion
 
@@ -810,7 +817,8 @@ Mode* Selection::HandleEvent(const Event e, Array<double>& params) {
 
 void Selection::DrawMode()
 {
-	Presenter::DrawSelectedObjects(selectedObjects, green);
+	view->SetColor(green);
+	Presenter::DrawSelectedObjects(selectedObjects);
 
 	if (state == area_selection)
 	{
@@ -923,7 +931,8 @@ Mode* Redaction::HandleEvent(const Event e, Array<double>& params)
 }
 
 void Redaction::DrawMode() {
-	Presenter::DrawSelectedObjects(selectedObjects, green);
+	view->SetColor(green);
+	Presenter::DrawSelectedObjects(selectedObjects);
 }
 #pragma endregion
 
@@ -1023,7 +1032,8 @@ Mode* CreateRequirementWithParam::HandleEvent(const Event ev, Array<double>& par
 	
 
 void CreateRequirementWithParam::DrawMode() {
-	Presenter::DrawSelectedObjects(selectedObjects, green);
+	view->SetColor(green);
+	Presenter::DrawSelectedObjects(selectedObjects);
 }
 #pragma endregion
 
@@ -1118,6 +1128,7 @@ Mode* NavigationOnScene::HandleEvent(const Event ev, Array<double>& params) {
 }
 
 void NavigationOnScene::DrawMode() {
-	Presenter::DrawSelectedObjects(selectedPrim, green);
+	view->SetColor(green);
+	Presenter::DrawSelectedObjects(selectedPrim);
 }
 #pragma endregion

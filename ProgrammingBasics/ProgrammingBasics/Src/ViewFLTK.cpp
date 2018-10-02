@@ -157,6 +157,11 @@ void ViewFLTK::DrawPoint(const Vector2& pos)
 	fl_end_line();
 }
 
+void ViewFLTK::SetColor(int r, int g, int b)
+{
+	fl_rgb_color(r, g, b);
+}
+
 void ViewFLTK::SetColor(color col)
 {
 	switch (col)

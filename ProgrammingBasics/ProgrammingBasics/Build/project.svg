@@ -2,13 +2,19 @@
 <!-- DrawProject -->
 <svg width="1000" height="1000">
 	<drawProject:point
-		px="288"
-		py="84"
+		px="296.127"
+		py="84.8407"
 		id="1"
 	/>
 	<drawProject:point
-		px="404"
-		py="96"
+		px="395.873"
+		py="95.1593"
 		id="2"
 	/>
+	<drawProject:req>
+		<distBetPoints
+			id="3"
+			IDs="1 2"
+			params="100"	/>
+	</drawProject:req>
 </svg>

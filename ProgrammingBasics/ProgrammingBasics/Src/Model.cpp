@@ -1059,10 +1059,10 @@ bool Model::GetObjectsOnArea(double x1, double y1, double x2, double y2, Array<I
 	return isFound;
 }
 
-void Model::ChangeRequirement(const ID& id, const double param) {
+void Model::ChangeRequirement(const ID& id, Array<double>& params) {
 	auto marker = dataReq.Find(id);
 	if (marker.IsValid()) {
-		(*marker)->Change(param);
+		(*marker)->ChangeParams(params);
 		OptimizeByID(id);
 	}
 }
