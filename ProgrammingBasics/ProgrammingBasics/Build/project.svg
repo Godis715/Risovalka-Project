@@ -2,19 +2,132 @@
 <!-- DrawProject -->
 <svg width="1000" height="1000">
 	<drawProject:point
-		px="296.127"
-		py="84.8407"
-		id="1"
+		px="420.9"
+		py="205.923"
+		id="4"
 	/>
 	<drawProject:point
-		px="395.873"
-		py="95.1593"
-		id="2"
+		px="290.736"
+		py="134.996"
+		id="5"
+	/>
+	<line
+		x1="420.9"
+		y1="205.923"
+		x2="290.736"
+		y2="134.996"
+		id="6"
+		childIds="4 5"
+		stroke="red"
+		stroke-width="5"
+	/>
+	<drawProject:point
+		px="434.258"
+		py="87.6171"
+		id="8"
+	/>
+	<drawProject:point
+		px="698.742"
+		py="195.383"
+		id="9"
+	/>
+	<line
+		x1="434.258"
+		y1="87.6171"
+		x2="698.742"
+		y2="195.383"
+		id="10"
+		childIds="8 9"
+		stroke="red"
+		stroke-width="5"
+	/>
+	<drawProject:point
+		px="246.851"
+		py="152.555"
+		id="13"
+	/>
+	<drawProject:point
+		px="164.462"
+		py="282.26"
+		id="14"
+	/>
+	<line
+		x1="246.851"
+		y1="152.555"
+		x2="164.462"
+		y2="282.26"
+		id="15"
+		childIds="13 14"
+		stroke="red"
+		stroke-width="5"
+	/>
+	<drawProject:point
+		px="285.859"
+		py="187.277"
+		id="17"
+	/>
+	<drawProject:point
+		px="417.193"
+		py="255.989"
+		id="18"
+	/>
+	<line
+		x1="285.859"
+		y1="187.277"
+		x2="417.193"
+		y2="255.989"
+		id="19"
+		childIds="17 18"
+		stroke="red"
+		stroke-width="5"
+	/>
+	<drawProject:point
+		px="539"
+		py="249"
+		id="22"
+	/>
+	<drawProject:point
+		px="493.506"
+		py="363.982"
+		id="23"
+	/>
+	<path
+		d="M539,249 A114.621,114.621 0 0,0 493.506,363.982"
+		id="24"
+		childIds="22 23"
+		stroke="red"
+		stroke-width="5"
+		fill="none"
+	/>
+	<drawProject:arc
+		x1="539"
+		y1="249"
+		x2="493.506"
+		y2="363.982"
+		angle="1.13946"
+		id="24"
+		childIds="22 23"
+	/>
+	<drawProject:point
+		px="606"
+		py="341.574"
+		id="28"
 	/>
 	<drawProject:req>
+		<angleBetSeg
+			id="12"
+			IDs="6 10"
+			params="0.999962"	/>
 		<distBetPoints
-			id="3"
-			IDs="1 2"
-			params="100"	/>
+			id="26"
+			IDs="4 18"
+			params="50"	/>
+		<equalSegmentLen
+			id="27"
+			IDs="6 19"	/>
+		<distBetPointArc
+			id="29"
+			IDs="24 28"
+			params="0"	/>
 	</drawProject:req>
 </svg>
