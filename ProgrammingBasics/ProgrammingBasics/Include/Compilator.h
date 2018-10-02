@@ -2,6 +2,9 @@
 #define __PARSE
 
 #include "Logger.h"
+#include "Array.h"
+#include "Dictionary.h"
+#include <functional>
 #include <regex>
 
 typedef BinSearchTree<string, std::function<ID(const Array<ID>&, const Array<double>&)>> kek;

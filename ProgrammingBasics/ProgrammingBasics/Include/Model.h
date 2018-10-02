@@ -5,6 +5,7 @@
 #include "Primitives.h"
 #include "Optimizer.h"
 #include "DataController.h"
+#include "Compilator.h"
 
 class Model {
 private:
@@ -25,18 +26,28 @@ public:
 	#define SEARCHING_AREA 5.0
 	ID GetObjectByClick(double, double) const;
 
+	// with optimization
 	void ChangeRequirement(const ID&, const Array<double>&) const;
+	void ChangePrimitive(const ID&, const Array<double>&) const;
+	
 	void DeleteObject(const ID&) const;
+	void DeleteObjects(const Array<ID>&) const;
+
 	void OptimizeByID(const ID&) const;
 	void Scale(const Array<ID>&, const double) const;
 	void Move(const Array<ID>&, const Vector2&) const;
 	void Clear() const;
 
+	void Save(const std::string&) const;
+	void Download(const std::string&) const;
+
 	bool IsPrim(const ID&) const;
 	bool IsReq(const ID&) const;
 
-
 	Array<ID> GetObjectsByArea(double, double, double, double) const;
+	Array<ID> GetRelatedObjects(const ID&) const;
+
+
 	Component GetComponent(const ID&);
 
 	object_type GetObjType(const ID&) const;
