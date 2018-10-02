@@ -26,6 +26,7 @@ typedef BinSearchTree<ID, Requirement*> DataReq;
 class Model
 {
 private:
+	static Model* instance;
 
 	IDGenerator* idGen;
 
@@ -93,6 +94,8 @@ private:
 	SVGformat* workingWithReester;
 
 public:
+	static Model* GetInstance();
+
 	class infoObject
 	{
 	public:
@@ -109,7 +112,9 @@ public:
 	Model() { }
 
 	// Create destructor
-	~Model() { }
+	~Model() {
+		int i = 0;
+	}
 
 	bool NewComponent(const ID&, Array<ID>&, Array<ID>&);
 
@@ -123,6 +128,14 @@ public:
 
 	bool DeletePrimitive(const ID&);
 
+	void DeletePrimitives(const Array<ID>& primitiveID) {
+		for (int i = 0; i < primitiveID.GetSize(); ++i) {
+			if (!DeletePrimitive(primitiveID[i])) {
+				LOG(string("could not delete prim"), primitiveID[i], LEVEL_3);
+			}
+		}
+	}
+
 	bool DeleteRequirement(const ID&);
 
 	void Clear();
@@ -131,6 +144,10 @@ public:
 
 	//test
 	bool GetObjectsOnArea(double, double, double, double, Array<ID>&, Array<object_type>&);
+
+	void GetRequirementsByID(const ID&, Array<ID>&);
+
+	void GetPrimitivesByID(const ID&, Array<ID>&);
 
 	bool GetObjType(const ID&, object_type&);
 
@@ -143,7 +160,11 @@ public:
 	bool OptimizeByID(const ID&);
 	// new functon
 
-	void ChangeRequirement(const ID&, const double);
+	//void ChangeRequirement(const ID&, const double);
+
+	void ChangeRequirement(const ID&, Array<double>&);
+
+	void ChangePrimitive(const ID&, Array<double>&);
 
 	bool Scale(const Array<ID>&, const double);
 

@@ -1,4 +1,6 @@
-Create_segment()(50, 20, 20, 10)->seg_q;
-Move(seg_q)(200, 200);
+Create_segment()(20, 20, 400, 20)->seg_q;
+Create_segment()(20, 20, 210, 280)->seg_w;
+Create_segment()(210, 280, 400, 20)->seg_e;
 
-Create_point()(50, 50)->t;
+Equal_segment(seg_q, seg_w)();
+Equal_segment(seg_q, seg_e)();

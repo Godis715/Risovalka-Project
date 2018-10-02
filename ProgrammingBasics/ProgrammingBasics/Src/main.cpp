@@ -106,7 +106,7 @@ int main()
 	
 	LoggerInit();
 	try {
-		IView* view = new ViewFLTK();
+		IView* view = ViewFLTK::GetInstance();
 		return view->Run();
 	}
 	catch (...) {}

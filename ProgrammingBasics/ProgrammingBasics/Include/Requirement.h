@@ -75,7 +75,7 @@ public:
 		params = Array<double>(paramNum);
 	}
 	virtual double error() = 0;
-	virtual void Change(const double);
+	virtual void Change(const double);//may be delete?
 	virtual void ChangeParams(const Array<double>& newParams) {
 		if (newParams.GetSize() != params.GetSize()) {
             throw std::invalid_argument("Invalid requirement parameters!");
@@ -232,7 +232,7 @@ public:
 
 	double error() {
 		Vector2 vector(*arguments[0] - params[0], *arguments[1] - params[1]);
-		return Vector2::Dot(vector, vector);
+		return 5000 * (Vector2::Dot(vector, vector));
 	}
 };
 

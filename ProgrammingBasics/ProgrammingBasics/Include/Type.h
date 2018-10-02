@@ -25,4 +25,7 @@ enum object_type {
 	ot_correctNsAngle
 };
 
+using std::string;
+
+
 #endif

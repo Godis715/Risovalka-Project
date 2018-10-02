@@ -4,7 +4,7 @@
 #include "Requirement.h"
 #include <fstream>
 
-using std::string;
+
 
 #define LEVEL_1 1
 #define LEVEL_2 2

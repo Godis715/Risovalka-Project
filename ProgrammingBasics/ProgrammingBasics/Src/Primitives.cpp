@@ -1,6 +1,8 @@
 #include "Primitives.h"
 #include <stdexcept>
 
+#define min_size_arc 0.5
+
 ID Primitive::GetID() const {
 	return id;
 }
@@ -223,6 +225,10 @@ void Arc::RestoreCenter() {
 	Vector2 point2Pos = point2->GetPosition();
 
 	Vector2 base = point2Pos - point1Pos;
+	if (base.GetLength() < min_size_arc) {
+		center = (point1Pos + point2Pos) / 2;
+		return;
+	}
 	double baseLength = base.GetLength();
 
 	double H = (baseLength / 2.0) / tan(angle / 2.0);
