@@ -51,6 +51,6 @@ int main()
 {
 
 	LoggerInit();
-	IView* view = new ViewFLTK;
+	IView* view = ViewFLTK::GetInstance();
 	view->Run();
 }

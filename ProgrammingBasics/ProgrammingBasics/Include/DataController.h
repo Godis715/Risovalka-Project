@@ -84,12 +84,14 @@ public:
 	void AddObject(const ID&);
 	void Connect(const ID&, const Array<ID>&);
 	void DeleteObject(const ID&);
-
+	void Clear();
 	ID GetObjectInCircle(double, double, double);
 
 	Component GetComponent(const ID&);
 
 	BinSearchTree<ID, ID>::bst_iterator GetPrimIterator();
+
+	Array<ID> GetRelatedObjects(const ID&);
 };
 
 #endif

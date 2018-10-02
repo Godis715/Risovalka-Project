@@ -47,7 +47,6 @@ public:
 	Array<ID> GetObjectsByArea(double, double, double, double) const;
 	Array<ID> GetRelatedObjects(const ID&) const;
 
-
 	Component GetComponent(const ID&);
 
 	object_type GetObjType(const ID&) const;

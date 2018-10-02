@@ -47,6 +47,31 @@ void Model::DeleteObject(const ID& obj) const {
 
 void Model::ChangeRequirement(const ID& req, const Array<double>& params) const {
 	reqCtrl->SetReqParams(req, params);
+	OptimizeByID(req);
+}
+
+void Model::ChangePrimitive(const ID& prim, const Array<double>& params) const {
+	primCtrl->SetPrimitiveParams(prim, params);
+	OptimizeByID(prim);
+}
+
+void Model::DeleteObjects(const Array<ID>& objs) const {
+	for (int i = 0; i < objs.GetSize(); ++i) {
+		DeleteObject(objs[i]);
+	}
+}
+
+void Model::Save(const std::string& path) const {
+	SVGformat downloader;
+	downloader.Save(path, true);
+}
+void Model::Download(const std::string& path) const {
+	SVGformat downloader;
+	downloader.Download(path);
+}
+
+Array<ID> Model::GetRelatedObjects(const ID& obj) const {
+	return dataCtrl->GetRelatedObjects(obj);
 }
 
 void Model::OptimizeByID(const ID& obj) const {
@@ -92,7 +117,9 @@ Array<ID> Model::GetObjectsByArea(double, double, double, double) const {
 
 void Model::Scale(const Array<ID>&, const double) const { } 
 void Model::Move(const Array<ID>&, const Vector2&) const { } 
-void Model::Clear() const { }
+void Model::Clear() const { 
+	dataCtrl->Clear();
+}
 
 Component Model::GetComponent(const ID& obj) {
 	return dataCtrl->GetComponent(obj);

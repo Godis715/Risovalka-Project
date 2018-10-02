@@ -72,7 +72,7 @@ protected:
 	Mode* UnexpectedEvent(const Event e);
 
 	IView* view;
-	Model* modelNew;
+	Model* model;
 public:
 	Mode();
 	virtual ~Mode() {}
@@ -177,6 +177,11 @@ private:
 	State state;
 	Array<double> arcParameters;
 	Vector2 infoMode;
+
+	Vector2 center;
+	Vector2 point1;
+	Vector2 point2;
+	double radius;
 public:
 	CreatingArc();
 	~CreatingArc();

@@ -55,7 +55,7 @@ ID IDGenerator::GetNullID() {
 	return ID(0);
 }
 
-bool IDGenerator::IsNullID(const ID& id) const {
+bool IDGenerator::IsNullID(const ID& id) {
 	return (id.object == nullptr);
 }
 

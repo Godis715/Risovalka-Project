@@ -50,7 +50,7 @@ public:
 	ID* generateID(unsigned long long) const;
 	static ID GetNullID();
 
-	bool IsNullID(const ID&) const;
+	static bool IsNullID(const ID&);
 private:
 	IDGenerator() { }
 	static IDGenerator* _instance;

@@ -168,6 +168,16 @@ void DataController::DeleteObject(const ID& id) {
 		++objToDelete;
 	}
 }
+void DataController::Clear() {
+	auto linkIt = linkData.GetMarker();
+	while (linkIt.IsValid()) {
+		delete *linkIt;
+		++linkIt;
+	}
+	linkData.DeleteDict();
+	primData.DeleteDict();
+	reqData.DeleteDict();
+}
 
 Component DataController::GetComponent(const ID& id) {
 	Component component;
@@ -233,4 +243,27 @@ ID DataController::GetObjectInCircle(double x, double y, double r) {
 
 BinSearchTree<ID, ID>::bst_iterator DataController::GetPrimIterator() {
 	return primData.GetMarker();
+}
+
+Array<ID> DataController::GetRelatedObjects(const ID& obj) {
+	auto objType = objCtrl->GetType(obj);
+	auto compIt = linkData.Find(obj);
+	Array<ID> relatedObjects(0);
+	if (compIt.IsValid()) {
+		auto connectedObjects = *compIt;
+		auto connObjIt = connectedObjects->GetMarker();
+		while (connObjIt.IsValid()) {
+			
+			ID currObj = *connObjIt;
+			auto currObjType = objCtrl->GetType(currObj);
+
+			if (primCtrl->IsPrimitive(objType) && reqCtrl->IsReq(currObj) ||
+				primCtrl->IsPrimitive(currObj) && reqCtrl->IsReq(objType)) {
+				relatedObjects.PushBack(currObj);
+			}
+
+			++connObjIt;
+		}
+	}
+	return relatedObjects;
 }

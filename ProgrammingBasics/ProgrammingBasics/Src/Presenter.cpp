@@ -114,7 +114,7 @@ void Presenter::Initializer(IView* _view)
 void Presenter::CleareScene() {
 	Array<double> temp(0);
 	mode->HandleEvent(ev_escape, temp);
-	Model::GetInstance()->Clear();
+	model->Clear();
 	view->Update();
 }
 
@@ -155,8 +155,9 @@ void Presenter::DrawSelectedObjects(const Array<ID>& selectedObjects)
 {
 	for (int i = 0; i < selectedObjects.GetSize(); i++)
 	{
-		Array<double> params = model->GetObjParam(selectedObjects[i]);
+		Array<double> params = model->GetPrimParamsForDrawing(selectedObjects[i]);
 		object_type type = model->GetObjType(selectedObjects[i]);
+
 		switch (type)
 		{
 		case ot_point:
@@ -167,9 +168,9 @@ void Presenter::DrawSelectedObjects(const Array<ID>& selectedObjects)
 				Vector2(params[2], params[3]), line);
 			break;
 		case ot_arc:
-			GetView()->DrawArc(Vector2(params[0], params[1]),
-				Vector2(params[2], params[3]),
-				Vector2(params[4], params[5]), line);
+			GetView()->DrawArc(Vector2(params[5], params[6]),
+				Vector2(params[0], params[1]),
+				Vector2(params[2], params[3]), line);
 			break;
 		case ot_circle:
 			GetView()->DrawCircle(Vector2(params[0], params[1]),
@@ -181,11 +182,6 @@ void Presenter::DrawSelectedObjects(const Array<ID>& selectedObjects)
 
 void Presenter::DrawScene()
 {
-	view->SetColor(col_Red);
-	view->SetColor(col_White);
-	view->SetColor(col_White);
-	view->SetColor(col_White);
-
 	auto primCtrl = PrimController::GetInstance();
 	auto iter = model->GetPrimIterator();
 	while (iter.IsValid()) {

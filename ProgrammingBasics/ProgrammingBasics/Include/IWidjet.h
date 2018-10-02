@@ -1,6 +1,7 @@
 #ifndef __IWIDJET
 #define __IWIDJET
-
+#include <string>
+#include "Array.h"
 
 class IWidjet
 {

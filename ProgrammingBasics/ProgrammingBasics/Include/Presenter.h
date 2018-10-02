@@ -37,8 +37,6 @@ public:
 
 	//static ID CreateRequirement(object_type, const Array<ID>&, const Array<double>&);
 
-	static bool GetObject(double, double, ID&);
-
 	//static bool GetObjectsOnArea(double, double, double, double, Array<ID>&);
 
 	static void CleareScene();

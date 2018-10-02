@@ -128,8 +128,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\Src\Compilator.cpp" />
     <ClCompile Include="..\Src\DataController.cpp" />
     <ClCompile Include="..\Src\ID.cpp" />
+    <ClCompile Include="..\Src\IWidjet.cpp" />
     <ClCompile Include="..\Src\Logger.cpp" />
     <ClCompile Include="..\Src\main.cpp" />
     <ClCompile Include="..\Src\Mode.cpp" />
@@ -143,15 +145,26 @@
     <ClCompile Include="..\Src\Requirement.cpp" />
     <ClCompile Include="..\Src\SVGformat.cpp" />
     <ClCompile Include="..\Src\Vector2.cpp" />
+    <ClCompile Include="..\Src\ViewDisplay.cpp" />
+    <ClCompile Include="..\Src\ViewDrawWindow.cpp" />
+    <ClCompile Include="..\Src\ViewFile.cpp" />
+    <ClCompile Include="..\Src\ViewFLTK.cpp" />
+    <ClCompile Include="..\Src\ViewHeaders.cpp" />
+    <ClCompile Include="..\Src\ViewLog.cpp" />
+    <ClCompile Include="..\Src\ViewMainWindow.cpp" />
+    <ClCompile Include="..\Src\ViewToolbar.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Include\Array.h" />
+    <ClInclude Include="..\Include\Colors.h" />
+    <ClInclude Include="..\Include\Compilator.h" />
     <ClInclude Include="..\Include\DataController.h" />
     <ClInclude Include="..\Include\Dequeue.h" />
     <ClInclude Include="..\Include\Dictionary.h" />
     <ClInclude Include="..\Include\ID.h" />
     <ClInclude Include="..\Include\IDGenerator.h" />
     <ClInclude Include="..\Include\IView.h" />
+    <ClInclude Include="..\Include\IWidjet.h" />
     <ClInclude Include="..\Include\List.h" />
     <ClInclude Include="..\Include\Logger.h" />
     <ClInclude Include="..\Include\Mode.h" />
@@ -162,7 +175,14 @@
     <ClInclude Include="..\Include\Queue.h" />
     <ClInclude Include="..\Include\Requirement.h" />
     <ClInclude Include="..\Include\Vector2.h" />
+    <ClInclude Include="..\Include\ViewDisplay.h" />
+    <ClInclude Include="..\Include\ViewDrawWindow.h" />
+    <ClInclude Include="..\Include\ViewFile.h" />
     <ClInclude Include="..\Include\ViewFLTK.h" />
+    <ClInclude Include="..\Include\ViewHeaders.h" />
+    <ClInclude Include="..\Include\ViewLog.h" />
+    <ClInclude Include="..\Include\ViewMainWindow.h" />
+    <ClInclude Include="..\Include\ViewToolbar.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

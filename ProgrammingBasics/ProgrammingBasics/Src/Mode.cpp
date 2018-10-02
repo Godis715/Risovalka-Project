@@ -132,7 +132,7 @@ Mode* Mode::UnexpectedEvent(const Event e) {
 }
 
 Mode::Mode() {
-	modelNew = Model::GetInstance();
+	model = Model::GetInstance();
 	view = Presenter::GetView();
 }
 #pragma endregion
@@ -171,7 +171,7 @@ Mode* CreatingSegment::HandleEvent(const Event ev, Array<double>& params) {
 			segmentParameters[2] = params[0];
 			segmentParameters[3] = params[1];
 
-			ID id = modelNew->CreatePrimitive(ot_segment, segmentParameters);
+			ID id = model->CreatePrimitive(ot_segment, segmentParameters);
 
 			Array<ID> selectedObjects(1);
 			selectedObjects[0] = id;
@@ -220,7 +220,7 @@ Mode* CreatingPoint::HandleEvent(const Event ev, Array<double>& params) {
             throw std::invalid_argument("Bad number of parameters");
 		}
 
-		ID id = modelNew->CreatePrimitive(ot_point, params);
+		ID id = model->CreatePrimitive(ot_point, params);
 
 		Array<ID> selectedObjects(1);
 		selectedObjects[0] = id;
@@ -264,7 +264,7 @@ Mode* CreatingCircle::HandleEvent(const Event ev, Array<double>& params) {
 		if (state == oneClick) {
 			CircleParameters[2] = (Vector2(params[0], params[1]) - Vector2(CircleParameters[0], CircleParameters[1])).GetLength();
 			
-			ID id = modelNew->CreatePrimitive(ot_circle, CircleParameters);
+			ID id = model->CreatePrimitive(ot_circle, CircleParameters);
 
 			Array<ID> selectedObjects(1);
 			selectedObjects[0] = id;
@@ -305,22 +305,23 @@ CreatingCircle::~CreatingCircle() {
 #pragma endregion
 
 #pragma region CreatingArc
-CreatingArc::CreatingArc() : arcParameters(6) {
+
+CreatingArc::CreatingArc() {
 	state = noClick;
 }
 
 Mode* CreatingArc::HandleEvent(const Event ev, Array<double>& params) {
 	if (ev == ev_leftMouseDown) {
 		if (params.GetSize() != 2) {
-            throw std::invalid_argument("Bad number of parameters");
+			throw std::invalid_argument("Bad number of parameters");
 		}
 		// if it were no clicks
 		// then create one point and change the state
 		// to one click
 		if (state == noClick) {
 
-			arcParameters[0] = params[0];
-			arcParameters[1] = params[1];
+			center.x = params[0];
+			center.y = params[1];
 
 			state = oneClick;
 			//for draw mode
@@ -333,8 +334,10 @@ Mode* CreatingArc::HandleEvent(const Event ev, Array<double>& params) {
 		// to two click
 		if (state == oneClick) {
 
-			arcParameters[2] = params[0];
-			arcParameters[3] = params[1];
+			point1.x = params[0];
+			point1.y = params[1];
+
+			radius = (point1 - center).GetLength();
 
 			state = twoClick;
 			return nullptr;
@@ -345,10 +348,23 @@ Mode* CreatingArc::HandleEvent(const Event ev, Array<double>& params) {
 		// with selected arc
 		if (state == twoClick) {
 
-			arcParameters[4] = params[0];
-			arcParameters[5] = params[1];
+			point2.x = params[0];
+			point2.y = params[1];
 
-			ID id = modelNew->CreatePrimitive(ot_arc, arcParameters);
+			double radius2 = (point2 - center).GetLength();
+
+			if (abs(radius2) > DBL_EPSILON) {
+				point2 = center + (point2 - center) / radius2 * radius;
+			}
+			else {
+				point2 = center - (point1 - center);
+			}
+
+			double angle = Vector2::Angle(point1 - center, point2 - center);
+
+			Array<double> objParams = CreateArr(point1.x, point1.y, point2.x, point2.y, angle);
+
+			ID id = model->CreatePrimitive(ot_arc, objParams);
 
 			Array<ID> selectedObjects(1);
 			selectedObjects[0] = id;
@@ -358,7 +374,7 @@ Mode* CreatingArc::HandleEvent(const Event ev, Array<double>& params) {
 	if (ev == ev_mouseMove)
 	{
 		if (params.GetSize() != 2) {
-            throw std::invalid_argument("Bad number of parameters");
+			throw std::invalid_argument("Bad number of parameters");
 		}
 		if (state == noClick) {
 			return nullptr;
@@ -377,29 +393,28 @@ void CreatingArc::DrawMode() {
 	if (state == oneClick)
 	{
 		view->SetColor(col_Red);
-		view->DrawPoint(Vector2(arcParameters[0], arcParameters[1]));
+		Presenter::GetView()->DrawPoint(center);
 
 		view->SetColor(col_Bisque);
-		view->DrawCircle(Vector2(arcParameters[0], arcParameters[1]), infoMode, points);
+		Presenter::GetView()->DrawCircle(center, infoMode, points);
 	}
 	if (state == twoClick)
 	{
 		view->SetColor(col_Red);
-		view->DrawPoint(Vector2(arcParameters[0], arcParameters[1]));
+		Presenter::GetView()->DrawPoint(center);
 
 		view->SetColor(col_Bisque);
-		view->DrawCircle(Vector2(arcParameters[0], arcParameters[1]), Vector2(arcParameters[2], arcParameters[3]), points);
-		
+		Presenter::GetView()->DrawCircle(center, point1, points);
+
 		view->SetColor(col_Red);
-		view->DrawPoint(Vector2(arcParameters[2], arcParameters[3]));
-		
-		view->SetColor(col_Yellow);
-		view->DrawArc(Vector2(arcParameters[0], arcParameters[1]), Vector2(arcParameters[2], arcParameters[3]), infoMode, line);
+		Presenter::GetView()->DrawPoint(point1);
+
+		view->SetColor(col_Bisque);
+		Presenter::GetView()->DrawArc(center, point1, infoMode, line);
 	}
 }
 
 CreatingArc::~CreatingArc() {
-	arcParameters.Clear();
 }
 #pragma endregion
 
@@ -424,9 +439,9 @@ ChangingProperties::~ChangingProperties()
 }
 
 void ChangingProperties::SetWidjetParamPrim() {
-	object_type typePrim = modelNew->GetObjType(selectedObject);
+	object_type typePrim = model->GetObjType(selectedObject);
 
-	Array<double> params = modelNew->GetObjParam(selectedObject);
+	Array<double> params = model->GetObjParam(selectedObject);
 
 	Array<string> paramsString;
 	if (typePrim == ot_arc) {
@@ -447,12 +462,12 @@ void ChangingProperties::SetWidjetParamPrim() {
 	}
 
 	reqIDs.Clear();
-	modelNew->GetRelatedObjects(selectedObject);
+	model->GetRelatedObjects(selectedObject);
 
 	Array<string> nameReqs;
 	for (int i = 0; i < reqIDs.GetSize(); i++)
 	{
-		object_type typeReq = modelNew->GetObjType(reqIDs[i]);
+		object_type typeReq = model->GetObjType(reqIDs[i]);
 		nameReqs.PushBack(objTypeToString(typeReq) + '#' + reqIDs[i].GetHash());
 	}
 
@@ -460,18 +475,18 @@ void ChangingProperties::SetWidjetParamPrim() {
 }
 
 void ChangingProperties::SetWidjetParamReq() {
-	primiOfReqIDs = modelNew->GetRelatedObjects(reqID);
+	primiOfReqIDs = model->GetRelatedObjects(reqID);
 
 	widjetReq = static_cast<IDisplayParamReq*>(view->GetWidjet(displayParamReq));
 
-	Array<double> reqParams = modelNew->GetObjParam(reqID);
+	Array<double> reqParams = model->GetObjParam(reqID);
 
 	auto reqStringParams = Array<string>(reqParams.GetSize());
 	for (int i = 0; i < reqParams.GetSize(); ++i) {
 		reqStringParams[i] = ReverseParse(reqParams[i]);
 	}
 
-	object_type type = modelNew->GetObjType(reqID);
+	object_type type = model->GetObjType(reqID);
 
 	widjetReq->SetParam(reqStringParams, objTypeToString(type));
 }
@@ -488,20 +503,20 @@ Mode* ChangingProperties::HandleEvent(const Event e, Array<double>& params)
 	}
 	case ev_change_Prim:
 	{
-		modelNew->ChangePrimitive(selectedObject, params);
+		model->ChangePrimitive(selectedObject, params);
 		SetWidjetParamPrim();
 		return nullptr;
 	}
 	case ev_change_Req:
 	{
-		modelNew->ChangePrimitive(reqID, params);
+		model->ChangePrimitive(reqID, params);
 		SetWidjetParamReq();
 		SetWidjetParamPrim();
 		return nullptr;
 	}
 	case ev_delete_Req:
 	{
-		modelNew->DeleteObject(reqID);
+		model->DeleteObject(reqID);
 		SetWidjetParamPrim();
 		reqID = ID();
 		delete widjetReq;
@@ -510,9 +525,8 @@ Mode* ChangingProperties::HandleEvent(const Event e, Array<double>& params)
 	}
 	case ev_rightMouseDown:
 	{
-		ID obj = modelNew->GetObjectByClick(params[0], params[1]);
-		bool isFound = Presenter::GetObject(params[0], params[1], obj);
-		if (isFound)
+		ID obj = model->GetObjectByClick(params[0], params[1]);
+		if (!IDGenerator::IsNullID(obj))
 		{
 			isNew = false;
 			delete widjetPrim;
@@ -552,9 +566,6 @@ void ChangingProperties::DrawMode()
 
 #pragma region Selection
 Selection::Selection(Array<ID> _selObjects) : Mode(), selectedObjects(_selObjects) {
-	if (selectedObjects.GetSize() == 0) {
-		selectedObjects = Array<ID>(1);
-	}
 	state = single_selection;
 	widjet = static_cast<ICreatingToolbar*>(view->GetWidjet(creatingToolbar));
 	if (selectedObjects.GetSize() == 1) {
@@ -565,7 +576,7 @@ Selection::Selection(Array<ID> _selObjects) : Mode(), selectedObjects(_selObject
 	}
 }
 
-Selection::Selection() : Mode(), selectedObjects(1) {
+Selection::Selection() : Mode(), selectedObjects(0) {
 	widjet = static_cast<ICreatingToolbar*>(view->GetWidjet(creatingToolbar));
 	state = single_selection;
 	widjet->Clear();
@@ -600,7 +611,7 @@ Array<string> Selection::GetPossibleReqType() {
 	int circles = 0;
 	int arcs = 0;
 	for (int i = 0; i < selectedObjects.GetSize(); ++i) {
-		object_type typePrim = modelNew->GetObjType(selectedObjects[i]);
+		object_type typePrim = model->GetObjType(selectedObjects[i]);
 		switch (typePrim)
 		{
 		case ot_point: {
@@ -656,9 +667,8 @@ Mode* Selection::HandleEvent(const Event e, Array<double>& params) {
 	if (e == ev_rightMouseDown)
 	{
 		selectedObjects.Clear();
-		ID obj = modelNew->GetObjectByClick(params[0], params[1]);
-		bool isFound = Presenter::GetObject(params[0], params[1], obj);
-		if (isFound)
+		ID obj = model->GetObjectByClick(params[0], params[1]);
+		if (!IDGenerator::IsNullID(obj))
 		{
 			return new ChangingProperties(obj);
 		}
@@ -675,9 +685,8 @@ Mode* Selection::HandleEvent(const Event e, Array<double>& params) {
 		infoArea1.x = params[0];
 		infoArea1.y = params[1];
 
-		ID obj = modelNew->GetObjectByClick(params[0], params[1]);
-		bool isFound = Presenter::GetObject(params[0], params[1], obj);
-		if (isFound) {
+		ID obj = model->GetObjectByClick(params[0], params[1]);
+		if (!IDGenerator::IsNullID(obj)) {
 			if (state == single_selection) {
 				selectedObjects.Clear();
 				selectedObjects.PushBack(obj);
@@ -710,7 +719,7 @@ Mode* Selection::HandleEvent(const Event e, Array<double>& params) {
 		infoArea2.y = params[1];
 		selectedObjects.Clear();
 		lastEvent = e;
-		selectedObjects = modelNew->GetObjectsByArea(infoArea1.x, infoArea1.y, infoArea2.x, infoArea2.y);
+		selectedObjects = model->GetObjectsByArea(infoArea1.x, infoArea1.y, infoArea2.x, infoArea2.y);
 		//Presenter::GetObjectsOnArea(infoArea1.x, infoArea1.y, infoArea2.x, infoArea2.y, selectedObjects);
 		return nullptr;
 	}
@@ -755,7 +764,7 @@ Mode* Selection::HandleEvent(const Event e, Array<double>& params) {
 		return new Redaction(selectedObjects, ev_scaleObjects);
 	}
 	case ev_del: {
-		modelNew->DeleteObjects(selectedObjects);
+		model->DeleteObjects(selectedObjects);
 		return nullptr;
 	}
 	case ev_req_D_point: {
@@ -773,13 +782,13 @@ Mode* Selection::HandleEvent(const Event e, Array<double>& params) {
 	case ev_req_Eq_Segment: {
 		Array<double>param(0);
 
-		modelNew->CreateRequirement(ot_equalSegmentLen, selectedObjects, param);
+		model->CreateRequirement(ot_equalSegmentLen, selectedObjects, param);
 		return nullptr;
 	}
 	case ev_req_on_one_hand: {
 		Array<double>param(0);
 
-		modelNew->CreateRequirement(ot_pointsOnTheOneHand, selectedObjects, param);
+		model->CreateRequirement(ot_pointsOnTheOneHand, selectedObjects, param);
 		return nullptr;
 	}
 	default:
@@ -850,7 +859,7 @@ Mode* Redaction::HandleEvent(const Event e, Array<double>& params)
 			}
 			posEnd.x = params[0];
 			posEnd.y = params[1];
-			modelNew->Move(selectedObjects, posEnd - posStart);
+			model->Move(selectedObjects, posEnd - posStart);
 			posStart = posEnd;
 			return nullptr;
 		}
@@ -875,7 +884,7 @@ Mode* Redaction::HandleEvent(const Event e, Array<double>& params)
 			{
 				coef = 1.1;
 			}
-			modelNew->Scale(selectedObjects, coef);
+			model->Scale(selectedObjects, coef);
 			return nullptr;
 		}
 	}
@@ -893,7 +902,7 @@ Mode* Redaction::HandleEvent(const Event e, Array<double>& params)
 	}
 	if (e == ev_del)
 	{
-		modelNew->DeleteObjects(selectedObjects);
+		model->DeleteObjects(selectedObjects);
 		return new Selection();
 	}
 	return UnexpectedEvent(e);
@@ -968,7 +977,7 @@ Mode* CreateRequirementWithParam::HandleEvent(const Event ev, Array<double>& par
 			throw std::invalid_argument("Bad number of parameters");
 		}
 
-		modelNew->CreateRequirement(typeRequirement, selectedObjects, params);
+		model->CreateRequirement(typeRequirement, selectedObjects, params);
 
 		return new Selection(selectedObjects);
 
@@ -987,7 +996,7 @@ Mode* CreateRequirementWithParam::HandleEvent(const Event ev, Array<double>& par
 	}
 	case  ev_del:
 	{
-		modelNew->DeleteObjects(selectedObjects);
+		model->DeleteObjects(selectedObjects);
 		return new Selection();
 	}
 	default:
