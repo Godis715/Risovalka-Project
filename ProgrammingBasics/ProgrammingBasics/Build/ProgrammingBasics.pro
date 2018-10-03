@@ -5,9 +5,10 @@ CONFIG -= qt
 
 INCLUDEPATH += ../Include
 
+LIBS += -lfltk
+
 SOURCES += \
     ../Src/ID.cpp \
-    ../Src/Logger.cpp \
     ../Src/main.cpp \
     ../Src/Mode.cpp \
     ../Src/Model.cpp \
@@ -16,7 +17,18 @@ SOURCES += \
     ../Src/Requirement.cpp \
     ../Src/type.cpp \
     ../Src/Vector2.cpp \
-    ../Src/View.cpp
+    ../Src/Compilator.cpp \
+    ../Src/IWidjet.cpp \
+    ../Src/SVGformat.cpp \
+    ../Src/Logger.cpp \
+    ../Src/ViewDisplay.cpp \
+    ../Src/ViewDrawWindow.cpp \
+    ../Src/ViewFile.cpp \
+    ../Src/ViewFLTK.cpp \
+    ../Src/ViewHeaders.cpp \
+    ../Src/ViewLog.cpp \
+    ../Src/ViewMainWindow.cpp \
+    ../Src/ViewToolbar.cpp
 
 HEADERS += \
     ../Include/Array.h \

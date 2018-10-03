@@ -23,7 +23,7 @@ ID CreateCircle(const Array<ID>& obj, const Array<double>& params) {
 }
 ID Move(const Array<ID>& obj, const Array<double>& params) {
 	if (params.GetSize() != 2) {
-		throw std::exception("invalid arguments");
+        throw std::invalid_argument("invalid arguments");
 	}
 	ModelNew::GetInstance()->Move(obj, Vector2(params[0], params[1]));
 	Model::GetInstance()->Move(obj, Vector2(params[0], params[1]));
@@ -32,7 +32,7 @@ ID Move(const Array<ID>& obj, const Array<double>& params) {
 }
 ID Scale(const Array<ID>& obj, const Array<double>& params) {
 	if (params.GetSize() != 1) {
-		throw std::exception("invalid arguments");
+        throw std::invalid_argument("invalid arguments");
 	}
 	ModelNew::GetInstance()->Scale(obj, params[0]);
 	Model::GetInstance()->Scale(obj, params[0]);

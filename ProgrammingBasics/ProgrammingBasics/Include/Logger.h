@@ -67,8 +67,8 @@ public:
 	}
 };
 
-string operator + (int num, string str);
+string operator + (int num, const string &str);
 
-string operator + (string str, int num);
+string operator + (const string &str, int num);
 
 #endif
