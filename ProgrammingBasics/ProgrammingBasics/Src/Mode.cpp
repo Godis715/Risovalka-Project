@@ -126,6 +126,12 @@ Mode* Mode::UnexpectedEvent(const Event e) {
 		return nullptr;
 	case ev_ctrlUp:
 		return nullptr;
+	case ev_undo:
+		//model->Undo();
+		return new Selection();
+	case ev_redu:
+		//model->Redu();
+		return new Selection();
 	default:
 		return new Selection();
 	}

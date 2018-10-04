@@ -12,11 +12,17 @@ private:
 	const int positionY = 0;
 	const int indentX = 10;
 	const int indentY = 0;
+	const int hMenu = 30;
+	const int wMenu = 120;
+	const int countMenu = 3;
+	const int countBut = 2;
 	const int hBut = 30;
-	const int wBut = 120;
-	const int countBut = 3;
+	const int wBut = 30;
 
 	Fl_Group* group;
+
+	Fl_Button* b_Undo;
+	Fl_Button* b_Redu;
 
 	Fl_Menu_Item* objects;
 	Fl_Menu_Button* createObject_b;
@@ -32,6 +38,8 @@ private:
 	static void cl_Redaction(Fl_Widget*, void*);
 
 	static void cl_Requirement(Fl_Widget*, void*);
+
+	static void cl_Button(Fl_Widget*, void*);
 
 	void Initializer();
 public:
