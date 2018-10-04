@@ -100,9 +100,11 @@ Object::Object(object_type _type, const Array<double>& _params, const Array<ID>&
 Object::~Object() {
 	delete id;
 }
+
 object_type Object::GetType() const {
 	return type;
 }
+
 ID Object::GetID() const {
 	return *id;
 }

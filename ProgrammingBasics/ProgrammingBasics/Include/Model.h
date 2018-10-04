@@ -6,6 +6,7 @@
 #include "Optimizer.h"
 #include "DataController.h"
 #include "Compilator.h"
+#include "Undo-Redo.h"
 
 class Model {
 private:
