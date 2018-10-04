@@ -104,6 +104,10 @@ Array<double> Model::GetObjParam(const ID& obj) const {
 	
 }
 
+Array<double> Model::GetVariableObjParam(const ID& obj, int modifiers...) const {
+	return primCtrl->GetVariableObjParam(obj, &modifiers);
+}
+
 bool Model::IsPrim(const ID& obj) const {
 	return primCtrl->IsPrimitive(obj);
 }

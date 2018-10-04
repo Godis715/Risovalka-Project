@@ -22,7 +22,6 @@ private:
 	}
 
 public:
-
 	class ReadMarker {
 	private:
 		int index;

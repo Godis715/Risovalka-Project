@@ -51,6 +51,7 @@ public:
 
 	object_type GetObjType(const ID&) const;
 	Array<double> GetObjParam(const ID&) const;
+	Array<double> GetVariableObjParam(const ID&, int...) const;
 	Array<double> GetPrimParamsForDrawing(const ID&) const;
 
 	BinSearchTree<ID, ID>::bst_iterator GetPrimIterator();

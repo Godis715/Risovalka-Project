@@ -93,6 +93,110 @@ Array<double> PrimController::GetPrimitiveParamsAsValues(const ID& id) const {
 	return objCtrl->GetObjParam(id);
 }
 
+Array<double> PrimController::GetVariableObjParam(const ID& obj, int modifiers... ) const {
+	return GetVariableObjParam(obj, &modifiers);
+}
+
+/*
+support method
+takes mofidiers of expected parameters
+such as COORDS, CENTER...
+*/
+Array<double> PrimController::GetVariableObjParam(const ID& obj, int modifiers[]) const {
+	Array<double> params(0);
+	switch (objCtrl->GetType(obj)) {
+	case ot_point: {
+		for (int i = 0; modifiers[i] != 0; ++i) {
+			switch (modifiers[i]) {
+			case VERTEX: {
+				Point* point = dynamic_cast<Point*>(GetPrimitive(obj));
+				auto pos = point->GetPos();
+				params = params + CreateArr(pos.x, pos.y);
+				break;
+			}
+			default: {
+				LOGERROR("PrimController:GetVariableObjParam: not appropriate param modifier", LEVEL_1);
+			}
+			}
+		}
+		break;
+	}
+	case ot_segment: {
+		Segment* segment = dynamic_cast<Segment*>(GetPrimitive(obj));
+		for (int i = 0; modifiers[i] != 0; ++i) {
+			switch (modifiers[i]) {
+			case VERTEX: {
+				auto pos1 = segment->GetPointPos1();
+				auto pos2 = segment->GetPointPos2();
+				params = params + CreateArr(pos1.x, pos1.y, pos2.x, pos2.y);
+				break;
+			}
+			default: {
+				LOGERROR("PrimController:GetVariableObjParam: not appropriate param modifier", LEVEL_1);
+			}
+			}
+		}
+		break;
+	}
+	case ot_arc: {
+		Arc* arc = dynamic_cast<Arc*>(GetPrimitive(obj));
+		for (int i = 0; modifiers[i] != 0; ++i) {
+			switch (modifiers[i]) {
+			case VERTEX: {
+				auto pos1 = arc->GetPointPos1();
+				auto pos2 = arc->GetPointPos2();
+				params = params + CreateArr(pos1.x, pos1.y, pos2.x, pos2.y);
+				break;
+			}
+			case CENTER: {
+				auto center = arc->GetCenter();
+				params = params + CreateArr(center.x, center.y);
+				break;
+			}
+			case ANGLE: {
+				auto angle = arc->GetAngle();
+				params = params + CreateArr(angle);
+				break;
+			}
+			case RADIUS: {
+				// ...
+				break;
+			}
+			default: {
+				LOGERROR("PrimController:GetVariableObjParam: not appropriate param modifier", LEVEL_1);
+			}
+			}
+		}
+		break;
+	}
+	case ot_circle: {
+		Circle* circle = dynamic_cast<Circle*>(GetPrimitive(obj));
+		for (int i = 0; modifiers[i] != 0; ++i) {
+			switch (modifiers[i]) {
+			case CENTER: {
+				auto center = circle->GetCenter();
+				params = params + CreateArr(center.x, center.y);
+				break;
+			}
+			case RADIUS: {
+				auto radius = circle->GetRadius();
+				params = params + CreateArr(radius);
+				break;
+			}
+			default: {
+				LOGERROR("PrimController:GetVariableObjParam: not appropriate param modifier", LEVEL_1);
+			}
+			}
+		}
+		break;
+	}
+	default: {
+		LOGERROR("PrimController:GetVariableObjParam: unexpected type", LEVEL_1);
+	}
+	}
+	return params;
+}
+
 Array<double*> PrimController::GetPrimitiveParamsAsPointers(const ID& id) const {
 	object_type type = objCtrl->GetType(id);
 	switch (type) {

@@ -4,6 +4,13 @@
 #include "Vector2.h"
 #include "ID.h"
 
+#define VERTEX		1
+#define CENTER		2
+#define ANGLE		3
+#define RADIUS		4
+
+#define GETVARPARAMS(...) GetVariableObjParam(__VA_ARGS__, 0)
+
 class Primitive;
 class Arc;
 class Point;
@@ -29,6 +36,10 @@ public:
 
 	Array<double> GetPrimitiveParamsAsValues(const ID&) const;
 	Array<double> GetPrimParamsForDrawing(const ID&) const;
+
+	Array<double> GetVariableObjParam(const ID&, int...) const;
+	Array<double> GetVariableObjParam(const ID&, int[]) const;
+
 
 	Array<double*> GetPrimitiveParamsAsPointers(const ID&) const;
 	Array<double*> GetPrimitiveParamsAsPointers(const Array<ID>&, int) const;
