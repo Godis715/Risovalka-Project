@@ -103,12 +103,33 @@ void ViewToolbar::cl_Requirement(Fl_Widget* b_Req, void*)
 
 }
 
+void ViewToolbar::cl_Button(Fl_Widget* but, void*)
+{
+	Array<double> params(0);
+	const string nameBut = ((Fl_Button*)but)->label();
+	if (nameBut == "<--")Presenter::Set_event(ev_undo, params);
+	if (nameBut == "-->")Presenter::Set_event(ev_redu, params);
+}
+
 void ViewToolbar::Initializer()
 {
-	int hGroup = 2 * indentY + hBut;
-	int wGroup = countBut * wBut + (countBut + 1) * indentX;
-	int coordX = positionX + indentX;
+	int hGroup = 2 * indentY + hMenu;
+	int wGroup = (countMenu * wMenu + (countMenu + 1) * indentX) + (countBut * wBut + (countBut + 1) * indentX);
 	group = new Fl_Group(positionX, positionY, wGroup, hGroup);
+
+	int coordX = positionX + indentX;
+	b_Undo = new Fl_Button(coordX, positionY + indentY, wBut, hBut, "<--");
+	b_Undo->color(FL_RED);
+	b_Undo->callback(cl_Button);
+	b_Undo->clear_visible_focus();
+
+	coordX += (wBut + indentX);
+	b_Redu = new Fl_Button(coordX, positionY + indentY, wBut, hBut, "-->");
+	b_Redu->color(FL_GREEN);
+	b_Redu->callback(cl_Button);
+	b_Redu->clear_visible_focus();
+
+	coordX += (wBut + indentX);
 	{
 		objects = new Fl_Menu_Item[5];
 		objects[0] = { "Point", FL_ALT + 'z' };
@@ -116,13 +137,13 @@ void ViewToolbar::Initializer()
 		objects[2] = { "Arc", FL_ALT + 'c' };
 		objects[3] = { "Circle", FL_ALT + 'v' };
 		objects[4] = { 0 };
-		createObject_b = new  Fl_Menu_Button(coordX, indentY, wBut, hBut, "Object");
+		createObject_b = new  Fl_Menu_Button(coordX, positionY + indentY, wMenu, hMenu, "Object");
 		createObject_b->menu(objects);
 		createObject_b->callback(cl_Create);
 		createObject_b->clear_visible_focus();
 		createObject_b->color(FL_WHITE);
 	}
-	coordX += (wBut + indentX);
+	coordX += (wMenu + indentX);
 	{
 		toolingRed = new Fl_Menu_Item[6];
 		toolingRed[0] = { "Move selection" };
@@ -130,17 +151,17 @@ void ViewToolbar::Initializer()
 		toolingRed[2] = { "Delete selection" };
 		toolingRed[3] = { "Delete all scene" };
 		toolingRed[4] = { 0 };
-		redaction_b = new  Fl_Menu_Button(coordX, indentY, wBut, hBut, "Redaction");
+		redaction_b = new  Fl_Menu_Button(coordX, positionY + indentY, wMenu, hMenu, "Redaction");
 		redaction_b->menu(toolingRed);
 		redaction_b->callback(cl_Redaction);
 		redaction_b->clear_visible_focus();
 		redaction_b->color(FL_WHITE);
 	}
-	coordX += (wBut + indentX);
+	coordX += (wMenu + indentX);
 	{
 		requirements = new Fl_Menu_Item[1];
 		requirements[0] = { 0 };
-		createRequirement_b = new  Fl_Menu_Button(coordX, indentY, wBut, hBut, "Requirement");
+		createRequirement_b = new  Fl_Menu_Button(coordX, positionY + indentY, wMenu, hMenu, "Requirement");
 		createRequirement_b->menu(requirements);
 		createRequirement_b->callback(cl_Requirement);
 		createRequirement_b->clear_visible_focus();

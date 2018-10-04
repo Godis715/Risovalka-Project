@@ -34,6 +34,8 @@ enum Event
 	ev_moveObjects,
 	ev_scaleObjects,
 	ev_del,
+	ev_undo,
+	ev_redu,
 
 	// mouseEvent
 	ev_leftMouseClick,
