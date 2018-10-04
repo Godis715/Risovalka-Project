@@ -15,24 +15,28 @@ enum TypeOFCange {
 class Version {
 public:
 	const TypeOFCange type;
+	Version(const TypeOFCange);
 };
 
-class VersionChange : Version {
+class VersionChange : public Version {
 public:
-	Array<std::pair<ID, Array<double>>> version;
+	typedef Array<std::pair<ID, const Array<double>>> Data;
+	Data version;
 	~VersionChange();
-	VersionChange();
+	VersionChange(const TypeOFCange, Data&);
 };
 
 
-class VersionCre_tDet : Version {
+class VersionCreat_Del : public Version {
 public:
-	Array<std::pair<ID, BinSearchTree<ID, ID>>> version;
-	~VersionCre_tDet();
-	VersionCre_tDet();
+	typedef Array<std::pair<ID, const BinSearchTree<ID, ID>*>> Data;
+
+	Data version;
+	~VersionCreat_Del();
+	VersionCreat_Del(const TypeOFCange, Data&);
 private:
-	void deleteCreation();
-	void deleteDelete();
+	void DeleteCreation();
+	void DeleteDelete();
 };
 
 
@@ -41,13 +45,19 @@ class Undo_Redo
 public:
 	static Undo_Redo* GetInstance();
 
-	~Undo_Redo();
-
+	void AddVersion(const TypeOFCange, const Array<ID>&);
 private:
+	int index;
+
+	void AddChange(const Array<ID>&);
+
 	static Undo_Redo* instance;
 
-	Array<Version> versions;
+	List<Version*> versions;
+
 	Undo_Redo();
+
+	void DeleteLastVersion();
 };
 
 #endif

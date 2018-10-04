@@ -96,6 +96,9 @@
     <ClCompile Include="..\Src\ViewDrawWindow.cpp">
       <Filter>Исходные файлы\View</Filter>
     </ClCompile>
+    <ClCompile Include="..\Src\Undo-Redo.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Include\Array.h">
@@ -180,6 +183,9 @@
       <Filter>Файлы заголовков\View</Filter>
     </ClInclude>
     <ClInclude Include="..\Include\Compilator.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Include\Undo-Redo.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>

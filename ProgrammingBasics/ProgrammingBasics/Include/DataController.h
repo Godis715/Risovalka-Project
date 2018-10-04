@@ -92,6 +92,12 @@ public:
 	BinSearchTree<ID, ID>::bst_iterator GetPrimIterator();
 
 	Array<ID> GetRelatedObjects(const ID&);
+
+	Array<ID> GetPrimitiveFromComponent(const ID&);
+
+	Array<ID> GetPrimitiveFromComponents(const Array<ID>&);
+
+	const BinSearchTree<ID, ID>* GetLinks(const ID&);
 };
 
 #endif
