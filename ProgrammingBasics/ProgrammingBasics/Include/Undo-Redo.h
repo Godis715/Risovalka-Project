@@ -28,11 +28,12 @@ public:
 
 class VersionChange : public Version {
 public:
-	typedef Array<std::pair<ID, Array<double>>> Data;
-	Data data;
+	Array<ID> IDs;
+	Array<Array<double>> dataBefore;
+	Array<Array<double>> dataAfter;
 
 	~VersionChange();
-	VersionChange(const TypeOFCange, Data&);
+	VersionChange(const TypeOFCange, const Array<ID>&);
 
 	void Undo();
 	void Redo();
@@ -40,17 +41,18 @@ public:
 
 class VersionCreateReq : public Version {
 public:
-	typedef Array<std::pair<ID, Array<double>>> Data;
-	Data data;
+	const Array<ID> IDs;
+	Array<Array<double>> dataBefore;
+	Array<Array<double>> dataAfter;
 	const ID idReq;
+	const BinSearchTree<ID, ID>* link;
 
 	void Undo();
 	void Redo();
 
 	~VersionCreateReq();
-	VersionCreateReq(const TypeOFCange, const ID&, Data&);
+	VersionCreateReq(const TypeOFCange, const ID&, const Array<ID>&);
 };
-
 
 class VersionCreat_Del : public Version {
 public:

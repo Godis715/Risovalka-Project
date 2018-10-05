@@ -7,8 +7,27 @@ Version::Version(const TypeOFCange _type) : type(_type) {}
 #pragma endregion 
 
 #pragma region VersionChange
-VersionChange::VersionChange(const TypeOFCange _type, Data& _data) : Version(_type), data(_data) {}
+VersionChange::VersionChange(const TypeOFCange _type, const Array<ID>& _data) :
+	Version(_type), IDs(_data) {
+	dataBefore = Array<Array<double>>(IDs.GetSize());
+	dataAfter = Array<Array<double>>(IDs.GetSize());
+}
 
+void VersionChange::Undo() {
+	auto objectController = ObjectController::GetInstance();
+
+	for (int i = 0; i < IDs.GetSize(); ++i) {
+		objectController->SetObjParam(IDs[i], dataBefore[i]);
+	}
+}
+
+void VersionChange::Redo() {
+	auto objectController = ObjectController::GetInstance();
+
+	for (int i = 0; i < IDs.GetSize(); ++i) {
+		objectController->SetObjParam(IDs[i], dataAfter[i]);
+	}
+}
 
 VersionChange::~VersionChange() {
 
@@ -16,18 +35,48 @@ VersionChange::~VersionChange() {
 #pragma endregion 
 
 #pragma region VersionCreateReq
-VersionCreateReq::VersionCreateReq(const TypeOFCange _type, const ID& _id, Data& _data) :
-	Version(_type), idReq(_id), data(_data) {}
+VersionCreateReq::VersionCreateReq(const TypeOFCange _type, const ID& _id, const Array<ID>& _data) :
+	Version(_type), idReq(_id), IDs(_data) {
+	dataBefore = Array<Array<double>>(IDs.GetSize());
+	dataAfter = Array<Array<double>>(IDs.GetSize());
+}
+
+void VersionCreateReq::Undo() {
+	auto dataController = DataController::GetInstance();
+	auto objectController = ObjectController::GetInstance();
+	dataController->DeleteObject(idReq);
+
+	for (int i = 0; i < IDs.GetSize(); ++i) {
+		objectController->SetObjParam(IDs[i], dataBefore[i]);
+	}
+}
+
+void VersionCreateReq::Redo() {
+	auto dataController = DataController::GetInstance();
+	auto objectController = ObjectController::GetInstance();
+	dataController->AddObject(idReq);
+	dataController->Connect(idReq, link);
+
+	for (int i = 0; i < IDs.GetSize(); ++i) {
+		objectController->SetObjParam(IDs[i], dataAfter[i]);
+	}
+}
 
 VersionCreateReq::~VersionCreateReq() {
 
 }
-				 
 #pragma endregion
-
 
 #pragma region VersionCreat_Del
 VersionCreat_Del::VersionCreat_Del(const TypeOFCange _type, Data& _data) : Version(_type), version(_data){}
+
+void VersionCreat_Del::Undo() {
+
+}
+
+void VersionCreat_Del::Redo() {
+
+}
 
 VersionCreat_Del::~VersionCreat_Del() {
 	switch (type)
@@ -103,15 +152,13 @@ void Undo_Redo::AddChange(const Array<ID>& IDs) {
 	auto dataController = DataController::GetInstance();
 	auto componentIDs = dataController->GetPrimitiveFromComponents(IDs);
 
-	
+	auto version = new VersionChange(tfc_before_change, componentIDs);
+
 	Array<std::pair<ID, Array<double>>> data(componentIDs.GetSize());
 	for (int i = 0; i < componentIDs.GetSize(); ++i) {
-		std::pair<ID, const Array<double>> element(componentIDs[i],
-			objectController->GetObjParam(componentIDs[i]));
-		data.PushBack(element);
+		version->dataBefore[i] = objectController->GetObjParam(componentIDs[i]);
 	}
 
-	Version* version = new VersionChange(tfc_before_change, data);
 	if (versions.GetSize() == count_vers) {
 		DeleteLastVersion();
 	}
@@ -129,13 +176,8 @@ void Undo_Redo::CompleteAddChange() {
 		// $$$
 	}
 
-	for (int i = 0; i < version->data.GetSize(); ++i) {
-		auto currentParams = objectController->GetObjParam(version->data[i].first);
-
-		for (int j = 0; j < currentParams.GetSize(); ++j) {
-			double delta = currentParams[j] - version->data[i].second[j];
-			version->data[i].second.Replace(j, delta);
-		}
+	for (int i = 0; i < version->IDs.GetSize(); ++i) {
+		version->dataAfter[i] = objectController->GetObjParam(version->IDs[i]);
 	}
 }
 
@@ -144,15 +186,13 @@ void Undo_Redo::AddCreatingReq(const ID& idReq) {
 	auto dataController = DataController::GetInstance();
 	auto componentIDs = dataController->GetPrimitiveFromComponent(idReq);
 
+	auto version = new VersionCreateReq(tfc_before_creation_req, idReq, componentIDs);
 
-	Array<std::pair<ID, Array<double>>> data(componentIDs.GetSize());
 	for (int i = 0; i < componentIDs.GetSize(); ++i) {
-		std::pair<ID, Array<double>> element(componentIDs[i],
-			objectController->GetObjParam(componentIDs[i]));
-		data.PushBack(element);
+		version->dataBefore[i] = objectController->GetObjParam(componentIDs[i]);
 	}
 
-	Version* version = new VersionCreateReq(tfc_before_creation_req, idReq, data);
+	
 	if (versions.GetSize() == count_vers) {
 		DeleteLastVersion();
 	}
@@ -171,13 +211,8 @@ void Undo_Redo::CompleteAddCreatingReq() {
 		// $$$
 	}
 
-	for (int i = 0; i < version->data.GetSize(); ++i) {
-		auto currentParams = objectController->GetObjParam(version->data[i].first);
-
-		for (int j = 0; j < currentParams.GetSize(); ++j) {
-			double delta = currentParams[j] - version->data[i].second[j];
-			version->data[i].second.Replace(j, delta);
-		}
+	for (int i = 0; i < version->IDs.GetSize(); ++i) {
+		version->dataAfter[i] = objectController->GetObjParam(version->IDs[i]);
 	}
 }
 
