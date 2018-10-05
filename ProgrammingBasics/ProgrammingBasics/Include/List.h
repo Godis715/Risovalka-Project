@@ -46,8 +46,6 @@ public:
 			current = current->next;
 			return true;
 		}
-
-
 	public:
 		Marker(List* _list)
 		{
@@ -87,6 +85,14 @@ public:
 			this->current = marker.current;
 			this->prev = marker.prev;
 			this->list = marker.list;
+		}
+
+		bool operator==(const Marker& marker) {
+			return current == marker.current;
+		}
+
+		bool operator!=(const Marker& marker) {
+			return current != marker.current;
 		}
 
 		bool operator++() {
@@ -141,9 +147,18 @@ public:
 	size_t GetSize() const {
 		return size;
 	}
-	Marker GetMarker() {
+
+	Marker Begin() {
 		return Marker(this);
 	}
+
+	Marker End() {
+		marker = Marker(this);
+		while (++marker)
+		{}
+		return marker;
+	}
+
 	void PushTail(const T& val) {
 		if (size == 0)
 		{
@@ -168,6 +183,16 @@ public:
 		}
 	}
 
+	T GetHead() {
+		if (head != nullptr)
+		{
+			return head->value;
+		}
+		else {
+			// $$$
+		}
+	}	
+
 	Marker Find(const T& val) {
 		Marker marker(this);
 		for (marker; marker.IsValid(); ++marker) {
@@ -178,178 +203,4 @@ public:
 		return marker;
 	}
 };
-
-//
-//template <class T> class ListE
-//{
-//private:
-//	template <class T> class Element
-//	{
-//	public:
-//		Element() {
-//
-//		}
-//		Element(T& val) : value(val) {
-//		
-//		}
-//		Element* next = nullptr;
-//		Element* prev = nullptr;
-//		T value;
-//	};
-//	Element<T>* head;
-//	Element<T>* tail;
-//	Element<T>* current;
-//	int size = 0;
-//public:
-//	ListE() {
-//		head = nullptr;
-//		tail = nullptr;
-//		current = nullptr;
-//	}
-//
-//	int GetSize() const {
-//		return size;
-//	}
-//
-//	void PushHead(T& newValue) {
-//		Element<T>* newElement = new Element<T>(newValue);
-//		if (size != 0) {
-//			head->prev = newElement;
-//			newElement->next = head;
-//		}
-//		else {
-//			current = newElement;
-//			tail = newElement;
-//		}
-//		head = newElement;
-//		++size;
-//		return;
-//	}
-//
-//	void PushAfterCurrent(T& newValue) {
-//		if (size == 0) {
-//			PushHead(newValue);
-//			return;
-//		}
-//		if (current == tail) {
-//			PushTail(newValue);
-//			return;
-//		}
-//		Element<T>* newElement = new Element<T>(newValue);
-//		newElement->next = current->next;
-//		newElement->prev = current;
-//		current->next->prev = newElement;
-//		current->next = newElement;
-//		++size;
-//		return;
-//	}
-//
-//	void PushBeforeCurrent(T& newValue) {
-//		if (size == 0) {
-//			PushHead(newValue);
-//			return;
-//		}
-//		if (current == head) {
-//			PushHead(newValue);
-//			return;
-//		}
-//		MovePrev();
-//		PushAfterCurrent();
-//		MoveNext();
-//		MoveNext();
-//	}
-//
-//	void PushTail(T& newValue) {
-//		if (size == 0) {
-//			PushHead(newValue);
-//			return;
-//		}
-//		Element<T>* newElement = new Element<T>(newValue);
-//		newElement->prev = tail;
-//		tail->next = newElement;
-//		tail = newElement;
-//		++size;
-//		return;
-//	}
-//
-//	void DeleteCurrent() {
-//		if (size == 1) {
-//			head = nullptr;
-//			tail = nullptr;
-//			delete current;
-//			current = nullptr;
-//			--size;
-//			return;
-//		}
-//		if ((current->next == nullptr) || (current == tail)) {
-//			tail = current->prev;
-//		}
-//		else {
-//			current->next->prev = current->prev;
-//		}
-//		if ((current->prev == nullptr) || (current == head)) {
-//			head = current->next;
-//		}
-//		else {
-//			current->prev->next = current->next;
-//		}
-//		Element<T>* temp = current;
-//		if (!MoveNext()) {
-//			current = tail;
-//		}
-//		delete temp;
-//		--size;
-//		return;
-//	}
-//
-//	void DeleteList() {
-//		while (size != 0)
-//		{
-//			current = head;
-//			DeleteCurrent();
-//		}
-//		return;
-//	}
-//
-//	bool IsCurrent() {
-//		if (current == nullptr) {
-//			return false;
-//		}
-//		else {
-//			return true;
-//		}
-//	}
-//
-//	T GetCurrent() {
-//		return current->value;
-//	}
-//
-//	void MoveHead() {
-//		current = head;
-//	}
-//
-//	void MoveTail() {
-//		current =tail;
-//	}
-//
-//	bool MoveNext() {
-//		if (current->next == nullptr) {
-//			return false;
-//		}
-//		else {
-//			current = current->next;
-//			return true;
-//		}
-//	}
-//
-//	bool MovePrev() {
-//		if (current->prev == nullptr) {
-//			return false;
-//		}
-//		else {
-//			current = current->prev;
-//			return true;
-//		}
-//	}
-//};
 #endif

@@ -19,6 +19,11 @@ class Version {
 public:
 	const TypeOFCange type;
 	Version(const TypeOFCange);
+
+	virtual void Undo() = 0;
+	virtual void Redo() = 0;
+
+	virtual ~Version() = 0;
 };
 
 class VersionChange : public Version {
@@ -28,13 +33,19 @@ public:
 
 	~VersionChange();
 	VersionChange(const TypeOFCange, Data&);
+
+	void Undo();
+	void Redo();
 };
 
 class VersionCreateReq : public Version {
 public:
-	typedef Array<std::pair<ID, const Array<double>>> Data;
-	Data version;
+	typedef Array<std::pair<ID, Array<double>>> Data;
+	Data data;
 	const ID idReq;
+
+	void Undo();
+	void Redo();
 
 	~VersionCreateReq();
 	VersionCreateReq(const TypeOFCange, const ID&, Data&);
@@ -48,6 +59,10 @@ public:
 	Data version;
 	~VersionCreat_Del();
 	VersionCreat_Del(const TypeOFCange, Data&);
+
+	void Undo();
+	void Redo();
+
 private:
 	void DeleteCreation();
 	void DeleteDelete();
@@ -61,14 +76,18 @@ public:
 	void AddVersion(const TypeOFCange, const Array<ID>&);
 
 	void AddVersion(const TypeOFCange);
+
+	void AddCreatingReq(const ID&);
+
+	void Undo();
+
+	void Redo();
 private:
-	int index;
+	List<Version*>::Marker it;
 
 	void AddChange(const Array<ID>&);
 
 	void CompleteAddChange();
-
-	void AddCreatingReq(const Array<ID>&);
 
 	void CompleteAddCreatingReq();
 
