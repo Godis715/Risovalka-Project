@@ -300,7 +300,7 @@ public:
 		if (index < 0) {
 			throw std::invalid_argument("Negative index!");
 		}
-		_storage[i] = value;
+		_storage[index] = value;
 	}
 
 	void Erase(int index) {

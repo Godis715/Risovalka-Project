@@ -2,79 +2,18 @@
 <!-- DrawProject -->
 <svg width="1000" height="1000">
 	<drawProject:point
-		px="472.773"
-		py="229.603"
-		id="15"
+		px="0"
+		py="0"
+		id="1"
 	/>
-	<drawProject:point
-		px="474.161"
-		py="239.447"
-		id="16"
-	/>
-	<line
-		x1="472.773"
-		y1="229.603"
-		x2="474.161"
-		y2="239.447"
-		id="17"
-		childIds="15 16"
+	<circle
+		cx="0"
+		cy="0"
+		r="10"
+		id="2"
+		childIds="1"
 		stroke="red"
 		stroke-width="5"
+		fill="none"
 	/>
-	<drawProject:point
-		px="468.323"
-		py="253.064"
-		id="18"
-	/>
-	<drawProject:point
-		px="473.742"
-		py="241.885"
-		id="19"
-	/>
-	<line
-		x1="468.323"
-		y1="253.064"
-		x2="473.742"
-		y2="241.885"
-		id="20"
-		childIds="18 19"
-		stroke="red"
-		stroke-width="5"
-	/>
-	<drawProject:point
-		px="467.45"
-		py="179.116"
-		id="23"
-	/>
-	<drawProject:point
-		px="472.55"
-		py="177.884"
-		id="24"
-	/>
-	<line
-		x1="467.45"
-		y1="179.116"
-		x2="472.55"
-		y2="177.884"
-		id="25"
-		childIds="23 24"
-		stroke="red"
-		stroke-width="5"
-	/>
-	<drawProject:req>
-		<equalSegmentLen
-			id="21"
-			IDs="17 20"	/>
-		<distBetPoints
-			id="22"
-			IDs="16 19"
-			params="0"	/>
-		<equalSegmentLen
-			id="26"
-			IDs="17 25"	/>
-		<distBetPoints
-			id="27"
-			IDs="23 24"
-			params="0"	/>
-	</drawProject:req>
 </svg>

@@ -153,7 +153,7 @@ public:
 	}
 
 	Marker End() {
-		marker = Marker(this);
+		auto marker = Marker(this);
 		while (++marker)
 		{}
 		return marker;
