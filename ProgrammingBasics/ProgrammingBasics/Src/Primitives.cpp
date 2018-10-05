@@ -1,6 +1,7 @@
 #include "Primitives.h"
 #include <stdexcept>
 
+#pragma region Primitive
 Primitive::Primitive(object_type _type, const Array<double>& _params, const Array<ID>& _children)
 	: Object(_type, _params, children),
 	doubleParams(_params.GetSize())
@@ -30,7 +31,9 @@ void Primitive::ApplyDoubleParams() {
 		params[i] = *doubleParams[i];
 	}
 }
+#pragma endregion
 
+#pragma region Point
 Point::Point(const Vector2& pos) :
 	Primitive(ot_point, CreateArr(pos.x, pos.y), Array<ID>(0))
 {
@@ -64,7 +67,9 @@ void Point::SetPos(double _x, double _y) {
 	*x = _x;
 	*y = _y;
 }
+#pragma endregion
 
+#pragma region Segment
 Segment::Segment(Point* _p1, Point* _p2) :
 	Primitive(ot_segment, Array<double>(0), CreateArr(_p1->GetID(), _p2->GetID()))
 {
@@ -128,7 +133,9 @@ double Segment::GetDist(const Vector2& point) const {
 	}
 	return answer;
 }
+#pragma endregion
 
+#pragma region Arc
 Arc::Arc(Point* _p1, Point* _p2, double _angle) :
 	Primitive(ot_arc, CreateArr(_angle), CreateArr(_p1->GetID(), _p2->GetID()))
 {
@@ -232,7 +239,9 @@ void Arc::SetAngle(double newAngle) {
 		return;
 	}
 }
+#pragma endregion
 
+#pragma region Circle
 Circle::Circle(Point* _center,  double _radius) :
 	Primitive(ot_circle, CreateArr(_radius), CreateArr(_center->GetID()))
 {
@@ -273,4 +282,4 @@ void Circle::SetRadius(double _radius)
 {
 	*radius = _radius;
 }
-
+#pragma endregion

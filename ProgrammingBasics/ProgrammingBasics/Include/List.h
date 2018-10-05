@@ -158,6 +158,16 @@ public:
 		size++;
 	}
 
+	T GetTail() {
+		if (tail != nullptr)
+		{
+			return tail->value;
+		}
+		else {
+			// $$$
+		}
+	}
+
 	Marker Find(const T& val) {
 		Marker marker(this);
 		for (marker; marker.IsValid(); ++marker) {

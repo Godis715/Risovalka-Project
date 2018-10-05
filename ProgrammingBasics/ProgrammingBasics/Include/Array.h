@@ -293,6 +293,16 @@ public:
 		}
 	}
 
+	void Replace(int index, const T& value) {
+		if (index >= _size) {
+			throw std::out_of_range("Index out of range!");
+		}
+		if (index < 0) {
+			throw std::invalid_argument("Negative index!");
+		}
+		_storage[i] = value;
+	}
+
 	void Erase(int index) {
 		if (index >= _size) {
 			throw std::out_of_range("Index out of range!");

@@ -7,8 +7,11 @@
 
 enum TypeOFCange {
 	tfc_creation,
+	tfc_before_creation_req,
+	tfc_after_creation_req,
 	tfc_delete,
-	tfc_change
+	tfc_before_change,
+	tfc_after_change
 };
 
 
@@ -20,10 +23,21 @@ public:
 
 class VersionChange : public Version {
 public:
-	typedef Array<std::pair<ID, const Array<double>>> Data;
-	Data version;
+	typedef Array<std::pair<ID, Array<double>>> Data;
+	Data data;
+
 	~VersionChange();
 	VersionChange(const TypeOFCange, Data&);
+};
+
+class VersionCreateReq : public Version {
+public:
+	typedef Array<std::pair<ID, const Array<double>>> Data;
+	Data version;
+	const ID idReq;
+
+	~VersionCreateReq();
+	VersionCreateReq(const TypeOFCange, const ID&, Data&);
 };
 
 
@@ -39,17 +53,24 @@ private:
 	void DeleteDelete();
 };
 
-
 class Undo_Redo
 {
 public:
 	static Undo_Redo* GetInstance();
 
 	void AddVersion(const TypeOFCange, const Array<ID>&);
+
+	void AddVersion(const TypeOFCange);
 private:
 	int index;
 
 	void AddChange(const Array<ID>&);
+
+	void CompleteAddChange();
+
+	void AddCreatingReq(const Array<ID>&);
+
+	void CompleteAddCreatingReq();
 
 	static Undo_Redo* instance;
 
