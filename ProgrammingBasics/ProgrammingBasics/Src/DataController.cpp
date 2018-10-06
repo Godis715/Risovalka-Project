@@ -47,9 +47,9 @@ void DataController::AddObject(const ID& obj) {
 void DataController::Connect(const ID& head, const Array<ID>& nodes) {
 	LOG("Connect: creating a connection", LEVEL_2);
 	auto headIterator = linkData.Find(head);
-	BinSearchTree<ID, ID>* newNode;
+	Set<ID>* newNode;
 	if (!headIterator.IsValid()) {
-		newNode = new BinSearchTree<ID, ID>;
+		newNode = new Set<ID>;
 		linkData.Add(head, newNode);
 	}
 	else {
@@ -58,20 +58,20 @@ void DataController::Connect(const ID& head, const Array<ID>& nodes) {
 	for (int i = 0; i < nodes.GetSize(); ++i) {
 		auto repeatCheckIter = newNode->Find(nodes[i]);
 		if (!repeatCheckIter.IsValid()) {
-			newNode->Add(nodes[i], nodes[i]);
+			newNode->Add(nodes[i]);
 
 			auto nodeIterator = linkData.Find(nodes[i]);
-			BinSearchTree<ID, ID>* currentNode;
+			Set<ID>* currentNode;
 			if (nodeIterator.IsValid()) {
 				currentNode = (*nodeIterator);
 				auto currentNodeRepeatChecking = currentNode->Find(head);
 				if (!currentNodeRepeatChecking.IsValid()) {
-					currentNode->Add(head, head);
+					currentNode->Add(head);
 				}
 			}
 			else {
-				currentNode = new BinSearchTree<ID, ID>;
-				currentNode->Add(head, head);
+				currentNode = new Set<ID>;
+				currentNode->Add(head);
 
 				linkData.Add(nodes[i], currentNode);
 			}
@@ -86,41 +86,36 @@ void DataController::Connect(const ID& head, const Array<ID>& nodes) {
 
 }
 
-void DataController::Connect(const ID& head, BinSearchTree<ID, ID>* nodes) {
-	auto headIterator = linkData.Find(head);
-	if (headIterator.IsValid()) {
-		auto iterator = nodes->GetMarker();
-		auto node = *headIterator;
-		while (iterator.IsValid())
+void DataController::Connect(const ID& head, Component* headLink) {
+	auto linkDataIterator = linkData.Find(head);
+	if (linkDataIterator.IsValid()) {
+		auto linkIterator = headLink->GetMarker();
+		auto node = *linkDataIterator;
+		while (linkIterator.IsValid())
 		{
-			node->Add(*iterator, *iterator);
-			++iterator;
+			node->Add(*linkIterator);
+			++linkIterator;
 		}
 	}
 	else {
-		linkData.Add(head, nodes);
+		linkData.Add(head, headLink);
 	}
 
-	auto iterator = nodes->GetMarker();
-	auto node = *headIterator;
-	while (iterator.IsValid())
+	auto linkIterator = headLink->GetMarker();
+	while (linkIterator.IsValid())
 	{
-		auto nodeIterator = linkData.Find(*iterator);
-		BinSearchTree<ID, ID>* currentNode;
+		auto nodeIterator = linkData.Find(*linkIterator);
+		Set<ID>* currentNode;
 		if (nodeIterator.IsValid()) {
 			currentNode = (*nodeIterator);
-			auto currentNodeRepeatChecking = currentNode->Find(head);
-			if (!currentNodeRepeatChecking.IsValid()) {
-				currentNode->Add(head, head);
-			}
+			currentNode->Add(head);
 		}
 		else {
-			currentNode = new BinSearchTree<ID, ID>;
-			currentNode->Add(head, head);
+			currentNode = new Set<ID>;
+			currentNode->Add(head);
 
-			linkData.Add(nodes[i], currentNode);
+			linkData.Add(*linkIterator, currentNode);
 		}
-
 	}
 }
 
@@ -227,7 +222,7 @@ Component DataController::GetComponent(const ID& id) {
 		ID currID = queue.Pop();
 		auto componentIt = component.Find(currID);
 		if (!componentIt.IsValid()) {
-			component.Add(currID, currID);
+			component.Add(currID);
 
 			auto linkIt = linkData.Find(currID);
 			if (linkIt.IsValid()) {
@@ -358,7 +353,7 @@ Array<ID> DataController::GetPrimitiveFromComponents(const Array<ID>& IDs) {
 	}
 }
 
-const BinSearchTree<ID, ID>* DataController::GetLinks(const ID& id) {
+Set<ID>* DataController::GetLinks(const ID& id) {
 	auto iter = linkData.Find(id);
 	if (iter.IsValid()) {
 		return *iter;

@@ -500,7 +500,7 @@ bool SVGformat::Save(const std::string& path, bool withDrawProjectTags)
 				ID tempID = (*dataReqMarker);
 				Array<double> tempParams = reqCtrl->GetReqParamsAsValues(tempID);
 				object_type tempType = objCtrl->GetType(tempID);
-				BinSearchTree<ID, ID>* tempIDs = (*dataCtrl->linkData.Find(tempID));
+				Set<ID>* tempIDs = (*dataCtrl->linkData.Find(tempID));
 				switch (tempType) {
 				case ot_distBetPoints: {
 					file << "		<distBetPoints";

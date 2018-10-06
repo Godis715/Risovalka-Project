@@ -56,7 +56,6 @@ int main()
 	for (int i = 0; i < params.GetSize(); ++i) {
 		std::cout << params[i] << " ";
 	}
-
 	LoggerInit();
 	IView* view = ViewFLTK::GetInstance();
 	view->Run();

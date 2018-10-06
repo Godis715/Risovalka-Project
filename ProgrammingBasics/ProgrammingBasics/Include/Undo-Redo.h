@@ -21,7 +21,7 @@ public:
 	virtual void Undo() = 0;
 	virtual void Redo() = 0;
 
-	virtual ~Version() = 0;
+	virtual ~Version();
 };
 
 class VersionChange : public Version {
@@ -43,7 +43,7 @@ public:
 	Array<Array<double>> dataBefore;
 	Array<Array<double>> dataAfter;
 	ID idReq;
-	const BinSearchTree<ID, ID>* link;
+	Set<ID>* link;
 
 	void Undo();
 	void Redo();
@@ -54,11 +54,10 @@ public:
 
 class VersionCreat_Del : public Version {
 public:
-	typedef Array<std::pair<ID, const BinSearchTree<ID, ID>*>> Data;
-
-	Data data;
+	Array<ID> IDs;
+	const Array<Set<ID>*> links;
 	~VersionCreat_Del();
-	VersionCreat_Del(const TypeOFCange, Data&);
+	VersionCreat_Del(const TypeOFCange, const Array<ID>&, const Array<Set<ID>*>&);
 
 	void Undo();
 	void Redo();

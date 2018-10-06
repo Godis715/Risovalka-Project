@@ -54,7 +54,7 @@ public:
 	bool Save(const std::string&, bool);
 };
 
-typedef BinSearchTree<ID, ID> Component;
+typedef Set<ID> Component;
 
 class DataController {
 private:
@@ -62,7 +62,7 @@ private:
 	DataController();
 
 	typedef BinSearchTree<ID, ID> DataID;
-	typedef BinSearchTree<ID, BinSearchTree<ID, ID>* > DataLink;
+	typedef BinSearchTree<ID, Set<ID>* > DataLink;
 	typedef BinSearchTree<string, ID> DataName;
 
 	DataID primData;
@@ -74,7 +74,7 @@ private:
 	ReqController* reqCtrl;
 	ObjectController* objCtrl;
 
-	BinSearchTree<ID, ID>* currentComponent;
+	Set<ID>* currentComponent;
 
 	friend class SVGformat;
 
@@ -85,7 +85,7 @@ public:
 
 	void AddObject(const ID&);
 	void Connect(const ID&, const Array<ID>&);
-	void Connect(const ID&, BinSearchTree<ID, ID>*);
+	void Connect(const ID&, Component*);
 
 	void DeleteObject(const ID&);
 	void Clear();
@@ -101,7 +101,7 @@ public:
 
 	Array<ID> GetPrimitiveFromComponents(const Array<ID>&);
 
-	const BinSearchTree<ID, ID>* GetLinks(const ID&);
+	Component* GetLinks(const ID&);
 };
 
 #endif

@@ -39,7 +39,6 @@ public:
 
 		bool MoveNext() {
 			if (!isValid || current->next == nullptr) {
-				isValid = false;
 				return false;
 			}
 			prev = current;
@@ -47,6 +46,12 @@ public:
 			return true;
 		}
 	public:
+		Marker() {
+			list = nullptr;
+			current = nullptr;
+			isValid = false;
+		}
+
 		Marker(List* _list)
 		{
 			if (_list->head == nullptr) {
@@ -63,28 +68,36 @@ public:
 			this->current = marker->current;
 			this->prev = marker->prev;
 			this->list = marker->list;
+			this->isValid = marker.isValid;
 		}
 
 		Marker(Marker&& marker) {
 			this->current = marker.current;
 			this->prev = marker.prev;
 			this->list = marker.list;
+			this->isValid = marker.isValid;
 
 			marker.current = nullptr;
 			marker.prev = nullptr;
 			marker.list = nullptr;
 		}
 
-		Marker() {
-			list = nullptr;
-			current = nullptr;
-			isValid = false;
-		}
-
 		void operator=(const Marker& marker) {
 			this->current = marker.current;
 			this->prev = marker.prev;
 			this->list = marker.list;
+			this->isValid = marker.isValid;
+		}
+
+		void operator=(Marker&& marker) {
+			this->current = marker.current;
+			this->prev = marker.prev;
+			this->list = marker.list;
+			this->isValid = marker.isValid;
+
+			marker.current = nullptr;
+			marker.prev = nullptr;
+			marker.list = nullptr;
 		}
 
 		bool operator==(const Marker& marker) {

@@ -126,12 +126,16 @@ Mode* Mode::UnexpectedEvent(const Event e) {
 		return nullptr;
 	case ev_ctrlUp:
 		return nullptr;
-	case ev_undo:
-		//model->Undo();
+	case ev_undo: {
+		auto undo_redo = Undo_Redo::GetInstance();
+		undo_redo->Undo();
 		return new Selection();
-	case ev_redu:
-		//model->Redu();
+	}
+	case ev_redu: {
+		auto undo_redo = Undo_Redo::GetInstance();
+		undo_redo->Redo();
 		return new Selection();
+	}
 	default:
 		return new Selection();
 	}
@@ -178,6 +182,8 @@ Mode* CreatingSegment::HandleEvent(const Event ev, Array<double>& params) {
 			segmentParameters[3] = params[1];
 
 			ID id = model->CreatePrimitive(ot_segment, segmentParameters);
+			auto undo_redo = Undo_Redo::GetInstance();
+			undo_redo->AddVersion(tfc_creation, CreateArr(id));
 
 			Array<ID> selectedObjects(1);
 			selectedObjects[0] = id;

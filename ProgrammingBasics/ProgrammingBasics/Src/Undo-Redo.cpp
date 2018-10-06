@@ -4,6 +4,7 @@
 
 #pragma region Version
 Version::Version(const TypeOFCange _type) : type(_type) {}
+Version::~Version() {}
 #pragma endregion 
 
 #pragma region VersionChange
@@ -68,36 +69,37 @@ VersionCreateReq::~VersionCreateReq() {
 #pragma endregion
 
 #pragma region VersionCreat_Del
-VersionCreat_Del::VersionCreat_Del(const TypeOFCange _type, Data& _data) : Version(_type), data(_data){}
+VersionCreat_Del::VersionCreat_Del(const TypeOFCange _type, const Array<ID>& _IDs, const Array<Set<ID>*>& _links) :
+	Version(_type), IDs(_IDs), links(_links){}
 
 void VersionCreat_Del::Undo() {
 	auto dataController = DataController::GetInstance();
-	if (type == tfc_change) {
-		for (int i = 0; i < data.GetSize(); ++i) {
-			dataController->DeleteObject(data[i].first);
-			delete data[i].second;
+	if (type == tfc_creation) {
+		for (int i = 0; i < IDs.GetSize(); ++i) {
+			dataController->DeleteObject(IDs[i]);
+			//delete links[i];
 		}
 	}
 	else {
-		for (int i = 0; i < data.GetSize(); ++i) {
-			dataController->AddObject(data[i].first);
-			dataController->Connect(data[i].first, data[i].second);
+		for (int i = 0; i < IDs.GetSize(); ++i) {
+			dataController->AddObject(IDs[i]);
+			dataController->Connect(IDs[i], links[i]);
 		}
 	}
 }
 
 void VersionCreat_Del::Redo() {
 	auto dataController = DataController::GetInstance();
-	if (type == tfc_change) {
-		for (int i = 0; i < data.GetSize(); ++i) {
-			dataController->AddObject(data[i].first);
-			dataController->Connect(data[i].first, data[i].second);
+	if (type == tfc_creation) {
+		for (int i = 0; i < IDs.GetSize(); ++i) {
+			dataController->AddObject(IDs[i]);
+			dataController->Connect(IDs[i], links[i]);
 		}
 	}
 	else {
-		for (int i = 0; i < data.GetSize(); ++i) {
-			dataController->DeleteObject(data[i].first);
-			delete data[i].second;
+		for (int i = 0; i < IDs.GetSize(); ++i) {
+			dataController->DeleteObject(IDs[i]);
+			//delete links[i];
 		}
 	}
 }
@@ -106,9 +108,9 @@ VersionCreat_Del::~VersionCreat_Del() {
 	auto objectController = ObjectController::GetInstance();
 
 	if (type == tfc_delete) {
-		for (int i = 0; i < data.GetSize(); ++i) {
-			objectController->DeleteObj(data[i].first);
-			delete data[i].second;
+		for (int i = 0; i < IDs.GetSize(); ++i) {
+			objectController->DeleteObj(IDs[i]);
+			delete links[i];
 		}
 	}
 }
@@ -143,14 +145,12 @@ void Undo_Redo::AddVersion(const TypeOFCange type, const Array<ID>& IDs) {
 	}
 	auto dataController = DataController::GetInstance();
 
-	Array<std::pair<ID, const BinSearchTree<ID, ID>*>> data(IDs.GetSize());
+	Array<Set<ID>*> links(IDs.GetSize());
 	for (int i = 0; i < IDs.GetSize(); ++i) {
-		std::pair<ID, const BinSearchTree<ID, ID>*> element(IDs[i],
-			dataController->GetLinks(IDs[i]));
-		data.PushBack(element);
+		links[i] = dataController->GetLinks(IDs[i]);
 	}
 
-	Version* version = new VersionCreat_Del(type, data);
+	Version* version = new VersionCreat_Del(type, IDs, links);
 
 	versions.PushTail(version);
 	it = versions.End();
@@ -183,11 +183,15 @@ void Undo_Redo::CompleteAddChange() {
 	}
 	else {
 		// $$$
+		return;
 	}
-
+	
+	Array<Array<double>> dataAfter(version->IDs.GetSize());
 	for (int i = 0; i < version->IDs.GetSize(); ++i) {
-		version->dataAfter[i] = objectController->GetObjParam(version->IDs[i]);
+		dataAfter[i] = objectController->GetObjParam(version->IDs[i]);
+
 	}
+	version->dataAfter = dataAfter;
 }
 
 void Undo_Redo::AddCreatingReq(const Array<ID>& IDs) {
@@ -215,18 +219,21 @@ void Undo_Redo::CompleteAddCreatingReq(const ID& idReq) {
 	}
 	else {
 		// $$$
+		return;
 	}
 
+	Array<Array<double>> dataAfter(version->IDs.GetSize());
 	for (int i = 0; i < version->IDs.GetSize(); ++i) {
 		version->dataAfter[i] = objectController->GetObjParam(version->IDs[i]);
 	}
+	version->dataAfter = dataAfter;
 
 	version->link = dataController->GetLinks(idReq);
 	version->idReq = idReq;
 }
 
 void Undo_Redo::Undo() {
-	if ((it.IsValid()) && (it == versions.Begin())) {
+	if ((!it.IsValid()) && (it == versions.Begin())) {
 		return;
 	}
 	it.GetValue()->Undo();
@@ -242,7 +249,7 @@ void Undo_Redo::Undo() {
 }
 
 void Undo_Redo::Redo() {
-	if ((it.IsValid()) && (it == versions.End())) {
+	if ((!it.IsValid()) && (it == versions.End())) {
 		return;
 	}
 	++it;
