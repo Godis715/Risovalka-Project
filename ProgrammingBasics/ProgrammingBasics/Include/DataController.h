@@ -78,12 +78,15 @@ private:
 
 	friend class SVGformat;
 
+	Array<ID> GetPrimitiveFromComponent(Component&);
+
 public:
 	static DataController* GetInstance();
 
 	void AddObject(const ID&);
 	void Connect(const ID&, const Array<ID>&);
-	void Connect(const ID&, const BinSearchTree<ID, ID>*);
+	void Connect(const ID&, BinSearchTree<ID, ID>*);
+
 	void DeleteObject(const ID&);
 	void Clear();
 	ID GetObjectInCircle(double, double, double);

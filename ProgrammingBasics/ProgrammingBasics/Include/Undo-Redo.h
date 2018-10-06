@@ -7,11 +7,9 @@
 
 enum TypeOFCange {
 	tfc_creation,
-	tfc_before_creation_req,
-	tfc_after_creation_req,
+	tfc_creation_req,
 	tfc_delete,
-	tfc_before_change,
-	tfc_after_change
+	tfc_change
 };
 
 
@@ -44,30 +42,26 @@ public:
 	const Array<ID> IDs;
 	Array<Array<double>> dataBefore;
 	Array<Array<double>> dataAfter;
-	const ID idReq;
+	ID idReq;
 	const BinSearchTree<ID, ID>* link;
 
 	void Undo();
 	void Redo();
 
 	~VersionCreateReq();
-	VersionCreateReq(const TypeOFCange, const ID&, const Array<ID>&);
+	VersionCreateReq(const TypeOFCange, const Array<ID>&);
 };
 
 class VersionCreat_Del : public Version {
 public:
 	typedef Array<std::pair<ID, const BinSearchTree<ID, ID>*>> Data;
 
-	Data version;
+	Data data;
 	~VersionCreat_Del();
 	VersionCreat_Del(const TypeOFCange, Data&);
 
 	void Undo();
 	void Redo();
-
-private:
-	void DeleteCreation();
-	void DeleteDelete();
 };
 
 class Undo_Redo
@@ -77,9 +71,9 @@ public:
 
 	void AddVersion(const TypeOFCange, const Array<ID>&);
 
-	void AddVersion(const TypeOFCange);
+	void CompleteAddChange();
 
-	void AddCreatingReq(const ID&);
+	void CompleteAddCreatingReq(const ID&);
 
 	void Undo();
 
@@ -89,9 +83,7 @@ private:
 
 	void AddChange(const Array<ID>&);
 
-	void CompleteAddChange();
-
-	void CompleteAddCreatingReq();
+	void AddCreatingReq(const Array<ID>&);
 
 	static Undo_Redo* instance;
 
@@ -100,6 +92,8 @@ private:
 	Undo_Redo();
 
 	void DeleteLastVersion();
+
+	void DeleteVersionAfterIt();
 };
 
 #endif

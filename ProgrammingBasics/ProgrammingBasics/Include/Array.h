@@ -168,6 +168,22 @@ public:
 		return *this;
 	}
 
+	void operator+=(const Array& arr) {
+		this->_capacity += arr._capacity;
+		T* newStorage = new T[this->_capacity];
+
+		for (int i = 0; i < _size; ++i) {
+			newStorage[i] = this->_storage[i];
+		}
+		for (int i = 0; i < arr._size; ++i) {
+			newStorage[i + _size] = arr._storage[i];
+		}
+		delete[] this->_storage;
+
+		this->_size += arr._size;
+		this->_storage = newStorage;
+	}
+
 	Array<T>& operator+(const T& elem) {
 		_capacity = this->_capacity + 1;
 		T* newStorage = new T[_capacity];

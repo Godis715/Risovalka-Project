@@ -86,6 +86,44 @@ void DataController::Connect(const ID& head, const Array<ID>& nodes) {
 
 }
 
+void DataController::Connect(const ID& head, BinSearchTree<ID, ID>* nodes) {
+	auto headIterator = linkData.Find(head);
+	if (headIterator.IsValid()) {
+		auto iterator = nodes->GetMarker();
+		auto node = *headIterator;
+		while (iterator.IsValid())
+		{
+			node->Add(*iterator, *iterator);
+			++iterator;
+		}
+	}
+	else {
+		linkData.Add(head, nodes);
+	}
+
+	auto iterator = nodes->GetMarker();
+	auto node = *headIterator;
+	while (iterator.IsValid())
+	{
+		auto nodeIterator = linkData.Find(*iterator);
+		BinSearchTree<ID, ID>* currentNode;
+		if (nodeIterator.IsValid()) {
+			currentNode = (*nodeIterator);
+			auto currentNodeRepeatChecking = currentNode->Find(head);
+			if (!currentNodeRepeatChecking.IsValid()) {
+				currentNode->Add(head, head);
+			}
+		}
+		else {
+			currentNode = new BinSearchTree<ID, ID>;
+			currentNode->Add(head, head);
+
+			linkData.Add(nodes[i], currentNode);
+		}
+
+	}
+}
+
 void DataController::DeleteObject(const ID& id) {
 	BinSearchTree<ID, ID> objectsToDelete;
 	objectsToDelete.Add(id, id);
@@ -168,6 +206,7 @@ void DataController::DeleteObject(const ID& id) {
 		++objToDelete;
 	}
 }
+
 void DataController::Clear() {
 	auto linkIt = linkData.GetMarker();
 	while (linkIt.IsValid()) {
@@ -266,4 +305,66 @@ Array<ID> DataController::GetRelatedObjects(const ID& obj) {
 		}
 	}
 	return relatedObjects;
+}
+
+Array<ID> DataController::GetPrimitiveFromComponent(const ID& id) {
+	auto component = GetComponent(id);
+	return GetPrimitiveFromComponent(component);
+}
+
+Array<ID> DataController::GetPrimitiveFromComponent(Component& component) {
+	Array<ID> result;
+	auto iter = component.GetMarker();
+	while (iter.IsValid())
+	{
+		if (primCtrl->IsPrimitive(*iter)) {
+			result.PushBack(*iter);
+		}
+		++iter;
+	}
+
+	return result;
+}
+
+Array<ID> DataController::GetPrimitiveFromComponents(const Array<ID>& IDs) {
+	if (IDs.GetSize() == 0) {
+		return Array<ID>(0);
+	}
+
+	bool* matching = new bool[IDs.GetSize()];
+	for (int i = 0; i < IDs.GetSize(); ++i) {
+		matching[i] = true;
+	}
+
+	auto result = Array<ID>(0);
+	bool isComplete = false;
+	Component component;
+	while (!isComplete)
+	{
+		for (int i = 0; i < IDs.GetSize(); ++i) {
+			if (matching[i]) {
+				isComplete = false;
+				component = GetComponent(IDs[i]);
+				result += GetPrimitiveFromComponent(component);
+
+				for (int j = i; j < IDs.GetSize(); ++j) {
+					if ((matching[i]) && (component.Find(IDs[j]).IsValid())){
+						matching[i] = false;
+					}
+				}
+			}
+		}
+		isComplete = true;
+	}
+}
+
+const BinSearchTree<ID, ID>* DataController::GetLinks(const ID& id) {
+	auto iter = linkData.Find(id);
+	if (iter.IsValid()) {
+		return *iter;
+	}
+	else {
+		// $$$
+		return nullptr;
+	}
 }
