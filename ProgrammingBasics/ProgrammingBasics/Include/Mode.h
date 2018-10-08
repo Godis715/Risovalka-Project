@@ -175,13 +175,13 @@ private:
 	StateMode stateMode;
 	StateCreate stateCreate;
 
-	Vector2 pointRotate;
+	Vector2* pointRotate;
 
 	CreateObject* createObject;
 
 	Array<ID> selectionObjects;
 
-	void PointRotate(Vector2, Array<Vector2>&);
+	void PointRotate(const Vector2&, Array<Vector2>&, const Vector2&);
 public:
 	DrawingModes(Event);
 

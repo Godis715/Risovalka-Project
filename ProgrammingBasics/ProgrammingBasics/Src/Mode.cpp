@@ -607,6 +607,7 @@ Array<ID> CreatingSegment1::HandleEvent(const Event ev, Array<Vector2>& params) 
 			{
 				segmentStartPoints.PushBack(params[i]);
 			}
+			stateClick = oneClick;
 			return Array<ID>(0);
 		}
 		case oneClick:
@@ -641,6 +642,7 @@ Array<ID> CreatingSegment1::HandleEvent(const Event ev, Array<Vector2>& params) 
 			{
 				throw std::invalid_argument("Bad number of parameters");
 			}
+			imaginaryPoints.Clear();
 			for (int i = 0; i < params.GetSize(); i++)
 			{
 				imaginaryPoints.PushBack(params[i]);
@@ -655,11 +657,14 @@ Array<ID> CreatingSegment1::HandleEvent(const Event ev, Array<Vector2>& params) 
 void CreatingSegment1::DrawMode() {
 	if (stateClick == oneClick)
 	{
+		view->SetColor(col_Red);
 		for (int i = 0; i < segmentStartPoints.GetSize(); i++)
 		{
-			view->SetColor(col_Red);
 			view->DrawPoint(segmentStartPoints[i]);
-			view->SetColor(col_Yellow);
+		}
+		view->SetColor(col_Yellow);
+		for (int i = 0; i < imaginaryPoints.GetSize(); i++)
+		{
 			view->DrawLine(segmentStartPoints[i], imaginaryPoints[i], points);
 		}
 	}
@@ -672,8 +677,9 @@ CreatingSegment1::~CreatingSegment1() {
 #pragma endregion
 
 #pragma region DrawingModes
-DrawingModes::DrawingModes(Event e)
+DrawingModes::DrawingModes(Event e) : selectionObjects(0)
 {
+	pointRotate = nullptr;
 	stateCreate = createNone;
 	switch (e)
 	{
@@ -698,12 +704,12 @@ DrawingModes::DrawingModes(Event e)
 
 DrawingModes::~DrawingModes(){}
 
-void DrawingModes::PointRotate(Vector2 point, Array<Vector2>& resultPoints)
+void DrawingModes::PointRotate(const Vector2& point, Array<Vector2>& resultPoints, const Vector2& center)
 {
 	resultPoints.PushBack(point);
-	resultPoints.PushBack(Vector2(point.x * -1, point.y));
-	resultPoints.PushBack(Vector2(point.x, point.y * -1));
-	resultPoints.PushBack(Vector2(point.x * -1, point.y * -1));
+	resultPoints.PushBack(Vector2((point - center).x * -1, (point - center).y) + center);
+	resultPoints.PushBack(Vector2((point - center).x, (point - center).y * -1) + center);
+	resultPoints.PushBack(Vector2((point - center).x * -1, (point - center).y * -1) + center);
 }
 
 Mode* DrawingModes::HandleEvent(const Event ev, Array<double>& params)
@@ -721,28 +727,39 @@ Mode* DrawingModes::HandleEvent(const Event ev, Array<double>& params)
 			}
 			if (stateCreate == createNone)
 			{
-				pointRotate = Vector2(params[0], params[1]);
+				delete pointRotate;
+				pointRotate = new Vector2(params[0], params[1]);
 			}
-			else
+			else if (pointRotate != nullptr)
 			{
 				Array<Vector2>points;
-				PointRotate(Vector2(params[0], params[1]), points);
+				PointRotate(Vector2(params[0], params[1]), points, *pointRotate);
 				Array<ID> objIDs = createObject->HandleEvent(ev, points);
 				if (objIDs.GetSize() != 0)
 				{
 					selectionObjects += objIDs;
+					stateCreate = createNone;
+					delete createObject;
+					createObject = nullptr;
 				}
+			}
+			else
+			{
+				pointRotate = new Vector2(params[0], params[1]);
 			}
 			return nullptr;
 		}
 		case ev_mouseMove:
 		{
-			Array<Vector2>points;
-			PointRotate(Vector2(params[0], params[1]), points);
-			Array<ID> objIDs = createObject->HandleEvent(ev, points);
-			if (objIDs.GetSize() != 0)
+			if (stateCreate != createNone)
 			{
-				throw std::exception("Error!");
+				Array<Vector2>points;
+				PointRotate(Vector2(params[0], params[1]), points, *pointRotate);
+				Array<ID> objIDs = createObject->HandleEvent(ev, points);
+				if (objIDs.GetSize() != 0)
+				{
+					throw std::exception("Error!");
+				}
 			}
 			return nullptr;
 		}
@@ -767,18 +784,24 @@ Mode* DrawingModes::HandleEvent(const Event ev, Array<double>& params)
 				if (objIDs.GetSize() != 0)
 				{
 					selectionObjects += objIDs;
+					stateCreate = createNone;
+					delete createObject;
+					createObject = nullptr;
 				};
 			}
 			return nullptr;
 		}
 		case ev_mouseMove:
 		{
-			Array<Vector2>points;
-			points.PushBack(Vector2(params[0], params[1]));
-			Array<ID> objIDs = createObject->HandleEvent(ev, points);
-			if (objIDs.GetSize() != 0)
+			if (stateCreate != createNone)
 			{
-				throw std::exception("Error!");
+				Array<Vector2>points;
+				points.PushBack(Vector2(params[0], params[1]));
+				Array<ID> objIDs = createObject->HandleEvent(ev, points);
+				if (objIDs.GetSize() != 0)
+				{
+					throw std::exception("Error!");
+				}
 			}
 			return nullptr;
 		}
@@ -801,11 +824,23 @@ Mode* DrawingModes::HandleEvent(const Event ev, Array<double>& params)
 	}
 	case ev_createSegment:
 	{
+		stateCreate = createSegment;
 		createObject = new CreatingSegment1();
+		return nullptr;
 	}
 	case ev_createPoint:
 	{
 		//
+	}
+	case ev_symmetricalDraw:
+	{
+		stateMode = symmetricalDraw;
+	}
+	case ev_defualtDraw:
+	{
+		delete pointRotate;
+		pointRotate = nullptr;
+		stateMode = defualtDraw;
 	}
 	default:
 		break;
@@ -813,7 +848,23 @@ Mode* DrawingModes::HandleEvent(const Event ev, Array<double>& params)
 	return UnexpectedEvent(ev);
 }
 
-void DrawingModes::DrawMode(){}
+void DrawingModes::DrawMode()
+{
+	if (pointRotate != nullptr)
+	{
+		view->SetColor(col_Blue);
+		view->DrawPoint(Vector2(pointRotate->x, pointRotate->y));
+	}
+	if (createObject != nullptr)
+	{
+		createObject->DrawMode();
+	}
+	if (selectionObjects.GetSize() != 0)
+	{
+		view->SetColor(col_Green);
+		Presenter::DrawSelectedObjects(selectionObjects);
+	}
+}
 #pragma endregion
 
 #pragma region Selection

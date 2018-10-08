@@ -1,5 +1,21 @@
 #include "ViewToolbar.h"
 
+void ViewToolbar::cl_DrawingModes(Fl_Widget* o, void*)
+{
+	delete inventory->lastCursor;
+	inventory->lastCursor = new Fl_Cursor(FL_CURSOR_DEFAULT);
+	Array<double> params(0);
+	const string nameMode = ((Fl_Menu_Button*)o)->mvalue()->label();
+	if (nameMode == "Defualt")
+	{
+		Presenter::Set_event(ev_defualtDraw, params);
+	}
+	if (nameMode == "Symmetrical")
+	{
+		Presenter::Set_event(ev_symmetricalDraw, params);
+	}
+}
+
 void ViewToolbar::cl_Create(Fl_Widget* o, void*)
 {
 	delete inventory->lastCursor;
@@ -130,6 +146,18 @@ void ViewToolbar::Initializer()
 	b_Redu->clear_visible_focus();
 
 	coordX += (wBut + indentX);
+	{
+		drawingModes = new Fl_Menu_Item[3];
+		drawingModes[0] = { "Defualt" };
+		drawingModes[1] = { "Symmetrical" };
+		drawingModes[2] = { 0 };
+		drawingModes_b = new  Fl_Menu_Button(coordX, positionY + indentY, wMenu, hMenu, "DrawingModes");
+		drawingModes_b->menu(drawingModes);
+		drawingModes_b->callback(cl_DrawingModes);
+		drawingModes_b->clear_visible_focus();
+		drawingModes_b->color(FL_WHITE);
+	}
+	coordX += (wMenu + indentX);
 	{
 		objects = new Fl_Menu_Item[5];
 		objects[0] = { "Point", FL_ALT + 'z' };
