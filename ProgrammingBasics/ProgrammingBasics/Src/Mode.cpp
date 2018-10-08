@@ -330,12 +330,14 @@ DrawingModes::DrawingModes(Event e) : selectionObjects(0)
 		createObject = new CreatingCircle();
 		break;
 	}
-	case ev_symmetricalDraw:
+	case ev_symmetricalDraw: {
 		stateMode = symmetricalDraw;
 		break;
-	case ev_defualtDraw:
+	}
+	case ev_defualtDraw: {
 		stateMode = defualtDraw;
 		break;
+	}
 	default:
 		break;
 	}
@@ -366,6 +368,7 @@ Mode* DrawingModes::HandleEvent(const Event ev, Array<double>& params)
 			}
 			if (stateCreate == createNone)
 			{
+				selectionObjects.Clear();
 				delete pointRotate;
 				pointRotate = new Vector2(params[0], params[1]);
 			}

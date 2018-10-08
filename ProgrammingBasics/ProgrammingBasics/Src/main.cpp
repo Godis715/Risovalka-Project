@@ -49,13 +49,13 @@ public:
 
 int main()
 {
-	Model* model = Model::GetInstance();
-	ID circle = model->CreatePrimitive(ot_circle, CreateArr(0.0, 0.0, 10.0));
+	//Model* model = Model::GetInstance();
+	//ID circle = model->CreatePrimitive(ot_circle, CreateArr(0.0, 0.0, 10.0));
 
-	Array<double> params = model->GETVARPARAMS(circle, RADIUS, CENTER);
-	for (int i = 0; i < params.GetSize(); ++i) {
-		std::cout << params[i] << " ";
-	}
+	//Array<double> params = model->GETVARPARAMS(circle, RADIUS, CENTER);
+	//for (int i = 0; i < params.GetSize(); ++i) {
+	//	std::cout << params[i] << " ";
+	//}
 	LoggerInit();
 	IView* view = ViewFLTK::GetInstance();
 	view->Run();
