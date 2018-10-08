@@ -47,7 +47,9 @@ ID DistanceBetPointSegment(const Array<ID>& obj, const Array<double>& params) {
 	return id;
 }
 ID Delete(const Array<ID>& obj, const Array<double>& params) {
-	Model::GetInstance()->DeleteObjects(obj);
+	for (int i = 0; i < obj.GetSize(); ++i) {
+		DataController::GetInstance()->DeleteObject(obj[i]);
+	}
 	return ID();
 }
 
@@ -182,10 +184,15 @@ void Presenter::DrawSelectedObjects(const Array<ID>& selectedObjects)
 
 void Presenter::DrawScene()
 {
+	auto objCtrl = ObjectController::GetInstance();
 	auto primCtrl = PrimController::GetInstance();
 	auto iter = model->GetPrimIterator();
 	while (iter.IsValid()) {
 		ID obj = *iter;
+		++iter;
+		if (!objCtrl->IsValid(obj)) {
+			continue;
+		}
 		Array<double> params = model->GetPrimParamsForDrawing(obj);
 
 		if (model->GetObjType(obj) == ot_point) {
@@ -208,7 +215,7 @@ void Presenter::DrawScene()
 			view->DrawCircle(Vector2(params[0], params[1]),
 				Vector2(params[0] + params[2], params[1]), line);
 		}
-		++iter;
+
 	}
 
 	mode->DrawMode();

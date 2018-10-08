@@ -28,6 +28,7 @@ ID Model::CreatePrimitive(object_type type, const Array<double>& params) const {
 	}
 	return obj;
 }
+
 ID Model::CreateRequirement(object_type type, const Array<ID>& children, const Array<double>& params) const {
 	ID obj = reqCtrl->CreateReq(type, children, params);
 	dataCtrl->AddObject(obj);
@@ -37,12 +38,19 @@ ID Model::CreateRequirement(object_type type, const Array<ID>& children, const A
 
 	return obj;
 }
+
 ID Model::GetObjectByClick(double x, double y) const {
 	return dataCtrl->GetObjectInCircle(x, y, SEARCHING_AREA);
 }
 
-void Model::DeleteObject(const ID& obj) const {
-	dataCtrl->DeleteObject(obj);
+void Model::DeleteObject(ID& obj) const {
+	dataCtrl->MakeInValid(obj);
+}
+
+void Model::DeleteObjects(Array<ID>& objs) const {
+	for (int i = 0; i < objs.GetSize(); ++i) {
+		DeleteObject(objs[i]);
+	}
 }
 
 void Model::ChangeRequirement(const ID& req, const Array<double>& params) const {
@@ -55,16 +63,11 @@ void Model::ChangePrimitive(const ID& prim, const Array<double>& params) const {
 	OptimizeByID(prim);
 }
 
-void Model::DeleteObjects(const Array<ID>& objs) const {
-	for (int i = 0; i < objs.GetSize(); ++i) {
-		DeleteObject(objs[i]);
-	}
-}
-
 void Model::Save(const std::string& path) const {
 	SVGformat downloader;
 	downloader.Save(path, true);
 }
+
 void Model::Download(const std::string& path) const {
 	SVGformat downloader;
 	downloader.Download(path);
@@ -119,8 +122,10 @@ Array<ID> Model::GetObjectsByArea(double, double, double, double) const {
 	return Array<ID>(0);
 }
 
-void Model::Scale(const Array<ID>&, const double) const { } 
-void Model::Move(const Array<ID>&, const Vector2&) const { } 
+void Model::Scale(const Array<ID>&, const double) const { }
+
+void Model::Move(const Array<ID>&, const Vector2&) const { }
+
 void Model::Clear() const { 
 	dataCtrl->Clear();
 }
@@ -133,7 +138,7 @@ object_type Model::GetObjType(const ID& obj) const {
 	return objCtrl->GetType(obj);
 }
 
-BinSearchTree<ID, ID>::bst_iterator Model::GetPrimIterator() {
+Set<ID>::bst_iterator Model::GetPrimIterator() {
 	return dataCtrl->GetPrimIterator();
 }
 
