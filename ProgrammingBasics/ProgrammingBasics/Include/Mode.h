@@ -22,6 +22,9 @@ enum Event
 	ev_createSegment,
 	ev_createArc,
 	ev_createCircle,
+	// drawingMode
+	ev_symmetricalDraw,
+	ev_defualtDraw,
 	//create requirements
 	ev_req_D_point,
 	ev_req_Eq_Segment,
@@ -129,6 +132,62 @@ public:
 	~Selection();
 
 	Mode* HandleEvent(const Event e, Array<double>& params);
+
+	void DrawMode();
+};
+
+class CreateObject {
+protected:
+	IView* view;
+	Model* model;
+public:
+	CreateObject();
+	virtual ~CreateObject() {}
+	virtual void DrawMode() = 0;
+	virtual Array<ID> HandleEvent(const Event, Array<Vector2>&) = 0;
+};
+
+class CreatingSegment1: public CreateObject {
+private:
+	enum State {
+		noClick,
+		oneClick
+	};
+	State stateClick;
+	Array<Vector2> segmentStartPoints;
+	Array<Vector2> imaginaryPoints;
+	Vector2 infoMode;
+public:
+	CreatingSegment1();
+	~CreatingSegment1();
+
+	Array<ID> HandleEvent(const Event, Array<Vector2>&);
+
+	void DrawMode();
+};
+
+class DrawingModes : public Mode
+{
+private:
+	enum StateMode { defualtDraw, symmetricalDraw };
+	enum StateCreate { createNone, createSegment, createSircle, createArc, createPoint };
+
+	StateMode stateMode;
+	StateCreate stateCreate;
+
+	Vector2 pointRotate;
+
+	CreateObject* createObject;
+
+	Array<ID> selectionObjects;
+
+	void PointRotate(Vector2, Array<Vector2>&);
+public:
+	DrawingModes(Event);
+
+	~DrawingModes();
+
+	Mode* HandleEvent(const Event, Array<double>&);
 
 	void DrawMode();
 };
