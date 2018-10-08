@@ -14,7 +14,6 @@ const char* ReverseParse(const double, int&);
 const string ReverseParse(const double);
 
 const char* str_ch(const string);
-
 enum Event
 {
 	// create primitive
@@ -69,6 +68,85 @@ enum Event
 	// file work
 	ev_save
 };
+
+class CreateObject {
+protected:
+	IView* view;
+	Model* model;
+	Undo_Redo* undo_redo;
+public:
+	CreateObject();
+	virtual ~CreateObject() {}
+	virtual void DrawMode() = 0;
+	virtual Array<ID> HandleEvent(const Event, Array<Vector2>&) = 0;
+};
+
+class CreatingSegment : public CreateObject {
+private:
+	enum StateClick {
+		noClick,
+		oneClick
+	};
+	StateClick stateClick;
+	Array<Vector2> segmentStartPoints;
+	Array<Vector2> imaginaryPoints;
+public:
+	CreatingSegment();
+	~CreatingSegment();
+
+	Array<ID> HandleEvent(const Event, Array<Vector2>&);
+
+	void DrawMode();
+};
+
+class CreatingPoint : public CreateObject
+{
+private:
+
+public:
+	~CreatingPoint();
+
+	CreatingPoint();
+
+	Array<ID> HandleEvent(const Event, Array<Vector2>&);
+
+	void DrawMode();
+};
+
+class CreatingCircle : public CreateObject {
+private:
+	enum StateClick { noClick, oneClick };
+	StateClick stateClick;
+	Array<Vector2> centerPoints;
+	Array<Vector2> imaginaryPoints;
+public:
+	CreatingCircle();
+
+	~CreatingCircle();
+
+	Array<ID> HandleEvent(const Event, Array<Vector2>&);
+
+	void DrawMode();
+};
+
+class CreatingArc : public CreateObject {
+private:
+	enum StateClick { noClick, oneClick, twoClick };
+	StateClick stateClick;
+	Array<Vector2> centerPoints;
+	Array<Vector2> startPoints;
+	Array<Vector2> imaginaryPoints;
+public:
+	CreatingArc();
+	~CreatingArc();
+
+	Array<ID> HandleEvent(const Event, Array<Vector2>&);
+
+	void DrawMode();
+};
+
+
+//---------------------------------
 
 class Mode {
 protected:
@@ -136,41 +214,11 @@ public:
 	void DrawMode();
 };
 
-class CreateObject {
-protected:
-	IView* view;
-	Model* model;
-public:
-	CreateObject();
-	virtual ~CreateObject() {}
-	virtual void DrawMode() = 0;
-	virtual Array<ID> HandleEvent(const Event, Array<Vector2>&) = 0;
-};
-
-class CreatingSegment1: public CreateObject {
-private:
-	enum State {
-		noClick,
-		oneClick
-	};
-	State stateClick;
-	Array<Vector2> segmentStartPoints;
-	Array<Vector2> imaginaryPoints;
-	Vector2 infoMode;
-public:
-	CreatingSegment1();
-	~CreatingSegment1();
-
-	Array<ID> HandleEvent(const Event, Array<Vector2>&);
-
-	void DrawMode();
-};
-
 class DrawingModes : public Mode
 {
 private:
 	enum StateMode { defualtDraw, symmetricalDraw };
-	enum StateCreate { createNone, createSegment, createSircle, createArc, createPoint };
+	enum StateCreate { createNone, createSegment, createCircle, createArc, createPoint };
 
 	StateMode stateMode;
 	StateCreate stateCreate;
@@ -187,65 +235,6 @@ public:
 
 	~DrawingModes();
 
-	Mode* HandleEvent(const Event, Array<double>&);
-
-	void DrawMode();
-};
-
-class CreatingSegment : public Mode {
-private:
-	enum State {
-		noClick,
-		oneClick
-	};
-	State state;
-	Array<double> segmentParameters;
-	Vector2 infoMode;
-public:
-	CreatingSegment();
-	~CreatingSegment();
-
-	Mode* HandleEvent(const Event, Array<double>&);
-
-	void DrawMode();
-};
-
-class CreatingPoint : public Mode {
-public:
-	CreatingPoint() {}
-	Mode* HandleEvent(const Event, Array<double>&);
-
-	void DrawMode();
-};
-
-class CreatingCircle : public Mode {
-private:
-	enum State { noClick, oneClick };
-	State state;
-	Array<double> CircleParameters;
-	Vector2 infoMode;
-public:
-	CreatingCircle();
-	~CreatingCircle();
-
-	Mode* HandleEvent(const Event, Array<double>&);
-	void DrawMode();
-};
-
-class CreatingArc : public Mode {
-private:
-	enum State { noClick, oneClick, twoClick };
-	State state;
-	Array<double> arcParameters;
-	Vector2 infoMode;
-
-	Vector2 center;
-	Vector2 point1;
-	Vector2 point2;
-	double radius;
-public:
-	CreatingArc();
-	~CreatingArc();
 	Mode* HandleEvent(const Event, Array<double>&);
 
 	void DrawMode();
