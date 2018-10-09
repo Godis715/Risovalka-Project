@@ -90,7 +90,7 @@ PointsOnTheOneHand::PointsOnTheOneHand(const Array<ID>& _objects, const Array<do
 		_objects[1] + _objects[2];
 
 	for (int i = 0; i < objs.GetSize(); ++i) {
-		args = args + primCtrl->GetPrimitiveDoubleParamsAsPointers(objs[i]);
+		args += primCtrl->GetPrimitiveDoubleParamsAsPointers(objs[i]);
 	}
 }
 
@@ -143,11 +143,14 @@ Array<double> DistanceBetweenPointSegment::gradient() {
 #pragma region AngleBetweenSegments
 AngleBetweenSegments::AngleBetweenSegments(const Array<ID>& _objects,
 	const Array<double>& _params) :
-	Requirement(ot_distBetPointSeg, _params, _objects)
+	Requirement(ot_angleBetSeg, _params, _objects)
 {
+	Array<ID> objs = primCtrl->GetChildren(_objects[0]) +
+		_objects[1] + _objects[2];
 
-
-
+	for (int i = 0; i < objs.GetSize(); ++i) {
+		args = args + primCtrl->GetPrimitiveDoubleParamsAsPointers(objs[i]);
+	}
 }
 
 double AngleBetweenSegments::error() {
@@ -166,7 +169,7 @@ double AngleBetweenSegments::error() {
 		vec3 = (vec1 * -1) - vec2;
 	}
 	//
-	double length3 = sqrt(length1 * length1 + length2 * length2 - 2 * params[0] * length2* length1);
+	double length3 = sqrt(length1 * length1 + length2 * length2 - 2 * cosinus * length2 * length1);
 
 	double different = length3 - vec3.GetLength();
 	return different * different;
@@ -190,34 +193,22 @@ void AngleBetweenSegments::ChangeParams() {
 #pragma endregion
 
 #pragma region DistanceBetweenPointArc
-DistanceBetweenPointArc::DistanceBetweenPointArc(Arc* _arc, Point* _point, double _distance) :
-	arc(_arc),
-	point(_point),
-	Requirement(IDGenerator::getInstance()->generateID(), ot_distBetPointArc)
-{
-	args = Array<double*>(7);
-	params = Array<double>(1);
-
-	args[0] = &_arc->point1->pos.x;
-	args[1] = &_arc->point1->pos.y;
-	args[2] = &_arc->point2->pos.x;
-	args[3] = &_arc->point2->pos.y;
-	args[4] = &_arc->angle;
-	args[5] = &_point->pos.x;
-	args[6] = &_point->pos.y;
-
-	params[0] = _distance;
-}
+DistanceBetweenPointArc::DistanceBetweenPointArc(const Array<ID>& _objects,
+	const Array<double>& _params) :
+	Requirement(ot_distBetPointArc, _params, _objects)
+{}
 
 double DistanceBetweenPointArc::error() {
-	Vector2 vector(point->pos - arc->GetCenter());
+	/*Vector2 vector(point->pos - arc->GetCenter());
 	double modVector_inSquare = Vector2::Dot(vector, vector);
-	return modVector_inSquare - params[0] * (2 * sqrt(modVector_inSquare) - params[0]);
+	return modVector_inSquare - params[0] * (2 * sqrt(modVector_inSquare) - params[0]);*/
+	return 0;
 }
 #pragma endregion
 
 #pragma region SegmentTouchCircle
-SegmentTouchCircle::SegmentTouchCircle(const Array<ID>& _objects, const Array<double>& _params) :
+SegmentTouchCircle::SegmentTouchCircle(const Array<ID>& _objects,
+	const Array<double>& _params) :
 	Requirement(ot_segmentTouchCircle, _params, _objects)
 {
 	Array<ID> objs =
@@ -236,23 +227,14 @@ double SegmentTouchCircle::error() {
 #pragma endregion
 
 #pragma region PointInArc
-PointInArc::PointInArc(Arc* _arc, Point* _point) :
-	arc(_arc),
-	point(_point),
-	Requirement(IDGenerator::getInstance()->generateID(), ot_pointInArc)
-{
-	args[0] = &_arc->point1->pos.x;
-	args[1] = &_arc->point1->pos.y;
-	args[2] = &_arc->point2->pos.x;
-	args[3] = &_arc->point2->pos.y;
-	args[4] = &_arc->angle;
-	args[5] = &_point->pos.x;
-	args[6] = &_point->pos.y;
-}
+PointInArc::PointInArc(const Array<ID>& _objects,
+	const Array<double>& _params) :
+	Requirement(ot_pointInArc, _params, _objects)
+{}
 
 // return distance to arc and angle
 double PointInArc::error() {
-	Vector2 center = arc->GetCenter();
+	/*Vector2 center = arc->GetCenter();
 	Vector2 vec1 = arc->GetPointPos1() - center;
 	Vector2 vecPoint = point->GetPos() - center;
 	double angle = Vector2::Angle(vec1, vecPoint);
@@ -275,6 +257,7 @@ double PointInArc::error() {
 		else {
 			return point->GetDist(center);
 		}
-	}
+	}*/
+	return 0;
 }
 #pragma endregion

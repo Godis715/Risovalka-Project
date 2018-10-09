@@ -117,14 +117,14 @@ private:
 class DistanceBetweenPointArc : public Requirement
 {
 public:
-	DistanceBetweenPointArc(Arc* _arc, Point* _point, double _distance);
+	DistanceBetweenPointArc(const Array<ID>&, const Array<double>&);
 
 	double error();
 }; 
 
 class SegmentTouchCircle : public Requirement {
 public:
-	SegmentTouchCircle(const Array<ID>& _objects, const Array<double>& _params);
+	SegmentTouchCircle(const Array<ID>&, const Array<double>&);
 
 	double error();
 };
@@ -134,7 +134,7 @@ public:
 class PointInArc : public Requirement
 {
 public:
-	PointInArc(Arc* _arc, Point* _point);
+	PointInArc(const Array<ID>&, const Array<double>&);
 
 	// return distance to arc and angle
 	double error();
