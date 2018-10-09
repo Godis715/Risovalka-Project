@@ -40,7 +40,8 @@ DistBetPointsReq::DistBetPointsReq(const Array<ID>& _children, const Array<doubl
 	objects = _children;
 
 	for (int i = 0; i < _children.GetSize(); ++i) {
-		args = args + primCtrl->GetPrimitiveDoubleParamsAsPointers(objects[i]);
+		args += primCtrl->GetPrimitiveDoubleParamsAsPointers(objects[i]);
+	}
 }
 
 double DistBetPointsReq::error() {
@@ -51,14 +52,15 @@ double DistBetPointsReq::error() {
 #pragma endregion
 
 #pragma region EqualSegment
-EqualSegmentLenReq::EqualSegmentLenReq(const Array<ID>& _objects, const Array<double>& _params) :
+EqualSegmentLenReq::EqualSegmentLenReq(const Array<ID>& _objects,
+	const Array<double>& _params) :
 	Requirement(ot_equalSegmentLen, _params, _objects)
 {
-	Array<ID> allPoints = primCtrl->GetChildren(_objects[0]) +
+	objects = primCtrl->GetChildren(_objects[0]) +
 		primCtrl->GetChildren(_objects[1]);
 
-	for (int i = 0; i < allPoints.GetSize(); ++i) {
-		args += primCtrl->GetPrimitiveDoubleParamsAsPointers(allPoints[i]);
+	for (int i = 0; i < objects.GetSize(); ++i) {
+		args += primCtrl->GetPrimitiveDoubleParamsAsPointers(objects[i]);
 	}
 }
 
@@ -90,12 +92,12 @@ double PointPosReq::error() {
 PointsOnTheOneHand::PointsOnTheOneHand(const Array<ID>& _objects, const Array<double>& _params) :
 	Requirement(ot_pointsOnTheOneHand, _params, _objects)
 {
-	Array<ID> objs = primCtrl->GetChildren(_objects[0]);
-	objs.PushBack(_objects[1]);
-	objs.PushBack(_objects[2]);
+	objects = primCtrl->GetChildren(_objects[0]);
+	objects.PushBack(_objects[1]);
+	objects.PushBack(_objects[2]);
 
-	for (int i = 0; i < objs.GetSize(); ++i) {
-		args += primCtrl->GetPrimitiveDoubleParamsAsPointers(objs[i]);
+	for (int i = 0; i < objects.GetSize(); ++i) {
+		args += primCtrl->GetPrimitiveDoubleParamsAsPointers(objects[i]);
 	}
 }
 
@@ -113,10 +115,10 @@ double PointsOnTheOneHand::error() {
 	double distance1 = abs(Vector2::Cross((point1 * -1), segment - point1)) / length;
 	double distance2 = abs(Vector2::Cross((point2 * -1), segment - point2)) / length;
 	if (distance1 > distance2) {
-		return distance2;
+		return distance2 * distance2;
 	}
 	else {
-		return distance1;
+		return distance1 * distance1;
 	}
 }
 #pragma endregion
@@ -127,10 +129,11 @@ DistanceBetweenPointSegment::DistanceBetweenPointSegment(const Array<ID>& _objec
 	const Array<double>& _params) :
 	Requirement(ot_distBetPointSeg, _params, _objects)
 {
-	Array<ID> objs = primCtrl->GetChildren(_objects[0]);
-	objs.PushBack(_objects[1]);
-	for (int i = 0; i < objs.GetSize(); ++i) {
-		args += primCtrl->GetPrimitiveDoubleParamsAsPointers(objs[i]);
+	objects = primCtrl->GetChildren(_objects[0]);
+	objects.PushBack(_objects[1]);
+
+	for (int i = 0; i < objects.GetSize(); ++i) {
+		args += primCtrl->GetPrimitiveDoubleParamsAsPointers(objects[i]);
 	}
 }
 
@@ -171,11 +174,11 @@ AngleBetweenSegments::AngleBetweenSegments(const Array<ID>& _objects,
 	const Array<double>& _params) :
 	Requirement(ot_angleBetSeg, _params, _objects)
 {
-	Array<ID> objs = primCtrl->GetChildren(_objects[0]) +
+	objects = primCtrl->GetChildren(_objects[0]) +
 		primCtrl->GetChildren(_objects[1]);
 
-	for (int i = 0; i < objs.GetSize(); ++i) {
-		args += primCtrl->GetPrimitiveDoubleParamsAsPointers(objs[i]);
+	for (int i = 0; i < objects.GetSize(); ++i) {
+		args += primCtrl->GetPrimitiveDoubleParamsAsPointers(objects[i]);
 	}
 }
 

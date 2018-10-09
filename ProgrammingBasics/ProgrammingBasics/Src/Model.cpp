@@ -59,11 +59,6 @@ void Model::ChangeRequirement(const ID& req, const Array<double>& params) const 
 	OptimizeByID(req);
 }
 
-void Model::ChangePrimitive(const ID& prim, const Array<double>& params) const {
-	primCtrl->SetPrimitiveParams(prim, params);
-	OptimizeByID(prim);
-}
-
 void Model::Save(const std::string& path) const {
 	SVGformat downloader;
 	downloader.Save(path, true);
@@ -83,17 +78,28 @@ void Model::OptimizeByID(const ID& obj) const {
 	
 	Array<ID> req(0);
 
+	List<ID> arcs;
+
 	auto compIt = component.GetMarker();
 	while (compIt.IsValid()) {
 		ID currID = *compIt;
 		if (reqCtrl->IsReq(currID)) {
 			req.PushBack(currID);
 		}
+		if (objCtrl->GetType(currID) == ot_arc) {
+			arcs.Push(currID);
+		}
 		++compIt;
 	}
 	if (req.GetSize() != 0) {
 		Optimizer optimizer;
 		optimizer.OptimizeRequirements(req);
+
+	}
+
+	for (auto i = arcs.Begin(); i != arcs.AfterEnd(); ++i) {
+		auto arc = dynamic_cast<Arc*>(primCtrl->GetPrimitive(*i));
+		arc->RestoreCenter();
 	}
 }
 
@@ -106,6 +112,10 @@ Array<double> Model::GetObjParam(const ID& obj) const {
 	}
 	LOGERROR("GetObjParam: unknown type", LEVEL_1);
 	
+}
+
+void Model::SetVariableObjParam(const ID& obj, const Array<double>& params, int modifiers...) const {
+	primCtrl->SetVariableObjParam(obj, params, &modifiers);
 }
 
 Array<double> Model::GetVariableObjParam(const ID& obj, int modifiers...) const {
@@ -166,7 +176,6 @@ void Model::Move(const Array<ID>& objs, const Vector2& direction) const {
 		primCtrl->Activate(*it);
 		++it;
 	}
-
 }
 
 void Model::Clear() const { 

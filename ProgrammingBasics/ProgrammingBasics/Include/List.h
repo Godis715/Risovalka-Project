@@ -72,6 +72,23 @@ public:
 			list = _list;
 		}
 
+		Marker(List* _list, Node* _prev, Node* _current)
+		{
+			if ((_list->head == nullptr) || (_prev == nullptr) || (_current == nullptr)) {
+				isValid = false;
+				return;
+			}
+			prev = _prev;
+			current = _current;
+			list = _list;
+			if (current == list->guardTail) {
+				isValid = false;
+			}
+			else {
+				isValid = true;
+			}
+		}
+
 		Marker(const Marker& marker) {
 			this->current = marker->current;
 			this->prev = marker->prev;
@@ -181,7 +198,11 @@ public:
 	}
 
 	Marker Begin() {
-		return Marker(this);
+		auto marker = Marker(this);
+		if (!marker.IsValid()) {
+			marker = AfterEnd();
+		}
+		return marker;
 	}
 
 	Marker End() {
@@ -195,19 +216,16 @@ public:
 	}
 
 	Marker AfterEnd() {
-		auto marker = Marker(this);
-		while (++marker)
-		{
-		}
-		return marker;
+		return Marker(this, tail, guardTail);
 	}
 
 	void Push(const T& val) {
 		if (size == 0)
 		{
-			guardHead = head;
+			guardTail = new Node(nullptr, val);
 			head = tail = new Node(nullptr, val);
 			guardHead = new Node(head, val);
+			
 		}
 		else
 		{

@@ -155,9 +155,7 @@ Mode::Mode() {
 
 #pragma region Changing_Properties
 ChangingProperties::ChangingProperties() : Mode()
-{
-
-}
+{}
 
 ChangingProperties::ChangingProperties(const ID _selObject) : Mode(), selectedObject(_selObject)
 {
@@ -194,6 +192,7 @@ void ChangingProperties::SetWidjetParamPrim() {
 	case ot_arc:
 	{
 		params = model->GETVARPARAMS(selectedObject, VERTEX, ANGLE);
+		params[4] = params[4] * 180 / PI;
 		break;
 	}
 	case ot_circle:
@@ -250,7 +249,32 @@ Mode* ChangingProperties::HandleEvent(const Event e, Array<double>& params)
 	}
 	case ev_change_Prim:
 	{
-		model->ChangePrimitive(selectedObject, params);
+		switch (model->GetObjType(selectedObject))
+		{
+		case ot_point:
+		{
+			model->SETVARPARAMS(selectedObject, params, VERTEX);
+			break;
+		}
+		case ot_segment:
+		{
+			model->SETVARPARAMS(selectedObject, params, VERTEX);
+			break;
+		}
+		case ot_arc:
+		{
+			params[4] = params[4] * PI / 180;
+			model->SETVARPARAMS(selectedObject, params, VERTEX, ANGLE);
+			break;
+		}
+		case ot_circle:
+		{
+			model->SETVARPARAMS(selectedObject, params, CENTER, RADIUS);
+			break;
+		}
+		default:
+			break;
+		}
 		SetWidjetParamPrim();
 		return nullptr;
 	}

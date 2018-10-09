@@ -97,11 +97,17 @@ Vector2 Segment::GetPointPos1() const {
 Vector2 Segment::GetPointPos2() const {
 	return point2->GetPos();
 }
-void Segment::SetPointPos1(Vector2 _pos) {
+void Segment::SetPointPos1(const Vector2& _pos) {
 	point1->SetPos(_pos);
 }
-void Segment::SetPointPos2(Vector2 _pos) {
+void Segment::SetPointPos2(const Vector2& _pos) {
 	point2->SetPos(_pos);
+}
+void Segment::SetPointPos1(const double x, const double y) {
+	point1->SetPos(x, y);
+}
+void Segment::SetPointPos2(const double x, const double y) {
+	point2->SetPos(x, y);
 }
 ID Segment::GetPointID1() const {
 	return point1->GetID();
@@ -227,11 +233,17 @@ Vector2 Arc::GetPointPos1() const {
 Vector2 Arc::GetPointPos2() const {
 	return point2->GetPos();
 }
-void Arc::SetPointPos1(Vector2 _pos) {
+void Arc::SetPointPos1(const Vector2& _pos) {
 	point1->SetPos(_pos);
 }
-void Arc::SetPointPos2(Vector2 _pos) {
+void Arc::SetPointPos2(const Vector2& _pos) {
 	point2->SetPos(_pos);
+}
+void Arc::SetPointPos1(const double x, const double y) {
+	point1->SetPos(x, y);
+}
+void Arc::SetPointPos2(const double x, const double y) {
+	point2->SetPos(x, y);
 }
 double Arc::GetAngle() const {
 	return *angle;
@@ -246,6 +258,7 @@ void Arc::SetAngle(double newAngle) {
 		*angle = newAngle + ((double)((int)(abs(newAngle) / (2 * PI)) + 1) * 2 * PI);
 		return;
 	}
+	*angle = newAngle;
 }
 #pragma endregion
 
@@ -278,15 +291,18 @@ ID Circle::GetCenterID() const {
 	return children[0];
 }
 
-void Circle::SetCenterPos(Vector2 _pos) {
+void Circle::SetCenterPos(const Vector2& _pos) {
 	center->SetPos(_pos);
+}
+void Circle::SetCenterPos(const double x, const double y) {
+	center->SetPos(x, y);
 }
 
 double Circle::GetRadius() const {
 	return *radius;
 }
 
-void Circle::SetRadius(double _radius)
+void Circle::SetRadius(const double _radius)
 {
 	*radius = _radius;
 }

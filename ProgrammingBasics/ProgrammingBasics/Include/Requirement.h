@@ -69,24 +69,9 @@ public:
 class EqualSegmentLenReq : public Requirement {
 private:
 public:
-	EqualSegmentLenReq(const Array<ID>& _objects, const Array<double>& _params) :
-		Requirement(ot_equalSegmentLen, _params, _objects)
-	{
-		objects = primCtrl->GetChildren(_objects[0]) +
-			primCtrl->GetChildren(_objects[1]);
+	EqualSegmentLenReq(const Array<ID>& _objects, const Array<double>& _params);
 
-		for (int i = 0; i < objects.GetSize(); ++i) {
-			args = args + primCtrl->GetPrimitiveDoubleParamsAsPointers(objects[i]);
-		}
-	}
-
-	double error() {
-		Vector2 vec1(*(args[3]) - *(args[1]), *(args[2]) - *(args[0]));
-		Vector2 vec2(*(args[7]) - *(args[5]), *(args[6]) - *(args[4]));
-
-		double divergence = vec2.GetLength() - vec1.GetLength();
-		return divergence * divergence;
-	}
+	double error();
 };
 
 class PointPosReq : public Requirement {

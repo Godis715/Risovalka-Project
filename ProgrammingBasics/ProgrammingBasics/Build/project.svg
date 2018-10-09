@@ -2,28 +2,43 @@
 <!-- DrawProject -->
 <svg width="1000" height="1000">
 	<drawProject:point
-		px="7"
-		py="50"
+		px="174"
+		py="110"
 		id="1"
 	/>
 	<drawProject:point
-		px="227"
-		py="49"
+		px="382"
+		py="261"
 		id="2"
 	/>
 	<line
-		x1="7"
-		y1="50"
-		x2="227"
-		y2="49"
+		x1="174"
+		y1="110"
+		x2="382"
+		y2="261"
 		id="3"
 		childIds="1 2"
 		stroke="red"
 		stroke-width="5"
 	/>
 	<drawProject:point
-		px="175"
-		py="25"
+		px="216"
+		py="198"
 		id="4"
+	/>
+	<drawProject:point
+		px="479"
+		py="215"
+		id="5"
+	/>
+	<line
+		x1="216"
+		y1="198"
+		x2="479"
+		y2="215"
+		id="6"
+		childIds="4 5"
+		stroke="red"
+		stroke-width="5"
 	/>
 </svg>

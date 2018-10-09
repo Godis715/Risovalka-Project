@@ -10,6 +10,7 @@
 #define RADIUS		4
 
 #define GETVARPARAMS(...) GetVariableObjParam(__VA_ARGS__, 0)
+#define SETVARPARAMS(...) SetVariableObjParam(__VA_ARGS__, 0)
 
 class Primitive;
 class Arc;
@@ -41,6 +42,9 @@ public:
 
 	Array<double> GetVariableObjParam(const ID&, int...) const;
 	Array<double> GetVariableObjParam(const ID&, int[]) const;
+
+	void SetVariableObjParam(const ID&, const Array<double>&, int...) const;
+	void SetVariableObjParam(const ID&, const Array<double>&, int[]) const;
 
 
 	Array<double*> GetPrimitiveParamsAsPointers(const ID&) const;
@@ -131,8 +135,10 @@ public:
 	ID GetPointID2() const;
 	Vector2 GetPointPos1() const;
 	Vector2 GetPointPos2() const;
-	void SetPointPos1(Vector2);
-	void SetPointPos2(Vector2);
+	void SetPointPos1(const Vector2&);
+	void SetPointPos2(const Vector2&);
+	void SetPointPos1(const double, const double);
+	void SetPointPos2(const double, const double);
 	//
 
 	// move to requirement!!!
@@ -161,8 +167,10 @@ public:
 	ID GetPointID2() const;
 	Vector2 GetPointPos1() const;
 	Vector2 GetPointPos2() const;
-	void SetPointPos1(Vector2);
-	void SetPointPos2(Vector2);
+	void SetPointPos1(const Vector2&);
+	void SetPointPos2(const Vector2&);
+	void SetPointPos1(const double, const double);
+	void SetPointPos2(const double, const double);
 	double GetAngle() const;
 	void SetAngle(double);
 	//
@@ -184,9 +192,10 @@ public:
 
 	// temp functions
 	ID GetCenterID() const;
-	void SetCenterPos(Vector2);
+	void SetCenterPos(const Vector2&);
+	void SetCenterPos(const double, const double);
 	double GetRadius() const;
-	void SetRadius(double);
+	void SetRadius(const double);
 	//
 };
 

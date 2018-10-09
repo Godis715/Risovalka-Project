@@ -29,7 +29,6 @@ public:
 
 	// with optimization
 	void ChangeRequirement(const ID&, const Array<double>&) const;
-	void ChangePrimitive(const ID&, const Array<double>&) const;
 	
 	void DeleteObject(ID&) const;
 	void DeleteObjects(Array<ID>&) const;
@@ -53,6 +52,7 @@ public:
 
 	object_type GetObjType(const ID&) const;
 	Array<double> GetObjParam(const ID&) const;
+	void SetVariableObjParam(const ID&, const Array<double>&, int...) const;
 	Array<double> GetVariableObjParam(const ID&, int...) const;
 	Array<double> GetPrimParamsForDrawing(const ID&) const;
 
