@@ -144,7 +144,7 @@ void Undo_Redo::AddVersion(const TypeOFCange type, const Array<ID>& IDs) {
 	for (int i = 0; i < IDs.GetSize(); ++i) {
 		auto children = primController->GetChildren(IDs[i]);
 		for (int j = 0; j < children.GetSize(); ++j) {
-			AllChildren.PushTail(children[j]);
+			AllChildren.Push(children[j]);
 		}
 	}
 	Array<ID> data(IDs.GetSize() + AllChildren.GetSize());
@@ -164,7 +164,7 @@ void Undo_Redo::AddVersion(const TypeOFCange type, const Array<ID>& IDs) {
 	}
 	Version* version = new VersionCreat_Del(type, data);
 
-	versions.PushTail(version);
+	versions.Push(version);
 	it = versions.End();
 }
 
@@ -207,7 +207,7 @@ void Undo_Redo::AddDeleting(const Array<ID>& IDs) {
 
 	Version* version = new VersionCreat_Del(tfc_delete, deletedIDs);
 
-	versions.PushTail(version);
+	versions.Push(version);
 	it = versions.End();
 }
 
@@ -227,7 +227,7 @@ void Undo_Redo::AddChange(const Array<ID>& IDs) {
 		version->dataBefore[i] = objectController->GetObjParam(componentIDs[i]);
 	}
 
-	versions.PushTail(version);
+	versions.Push(version);
 	it = versions.End();
 }
 
@@ -262,7 +262,7 @@ void Undo_Redo::AddCreatingReq(const Array<ID>& IDs) {
 		version->dataBefore[i] = objectController->GetObjParam(componentIDs[i]);
 	}
 
-	versions.PushTail(version);
+	versions.Push(version);
 	it = versions.End();
 }
 
@@ -301,7 +301,7 @@ void Undo_Redo::Undo() {
 }
 
 void Undo_Redo::Redo() {
-	if ((!it.IsValid()) && (it == versions.End())) {
+	if ((!it.IsValid()) || (it == versions.End())) {
 		return;
 	}
 	++it;
@@ -312,13 +312,13 @@ Undo_Redo::Undo_Redo() {}
 
 void Undo_Redo::DeleteLastVersion() {
 	delete versions.GetHead();
-	versions.Begin().DeleteCurrent();
+	versions.Begin().Delete();
 }
 
 void Undo_Redo::DeleteVersionAfterIt() {
 	while ((it.IsValid()) && (versions.End() != it) && (versions.GetSize() != 0)) {
 		delete versions.GetTail();
-		versions.End().DeleteCurrent();
+		versions.End().Delete();
 	}
 }
 

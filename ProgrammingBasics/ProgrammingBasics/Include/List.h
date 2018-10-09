@@ -19,17 +19,20 @@ private:
 		}
 	};
 
-	Node* guard;
+	Node* guardHead;
+	Node* guardTail;
 	Node* head;
 	Node* tail;
 	int size;
 public:
 	List() {
-		guard = nullptr;
+		guardHead = nullptr;
+		guardTail = nullptr;
 		head = nullptr;
 		tail = nullptr;
 		size = 0;
 	}
+
 	class Marker
 	{
 	private:
@@ -40,11 +43,14 @@ public:
 		bool isValid;
 
 		bool MoveNext() {
-			if (!isValid || current->next == nullptr) {
+			if (!isValid) {
 				return false;
 			}
 			prev = current;
 			current = current->next;
+			if (current == list->guardTail) {
+				return false;
+			}
 			return true;
 		}
 	public:
@@ -114,7 +120,7 @@ public:
 			return MoveNext();
 		}
 
-		void DeleteCurrent() {
+		void Delete() {
 			if (!isValid) {
 				return;
 			}
@@ -122,13 +128,14 @@ public:
 
 			if (list->head == current) {
 				list->head = current->next;
-				list->guard->next = list->head;
+				list->guardHead->next = list->head;
 			}
 			else {
 				prev->next = current->next;
 			}
-			if (current->next == nullptr) {
+			if (list->tail == current) {
 				list->tail = prev;
+				prev->next = list->guardTail;
 			}
 
 			list->size--;
@@ -165,10 +172,10 @@ public:
 	}
 
 	Marker BeforeBegin() {
-		head = guard;
+		head = guardHead;
 		auto marker = Marker(this);
 		if (head != nullptr) {
-			head = guard->next;
+			head = guardHead->next;
 		}
 		return marker;
 	}
@@ -178,18 +185,29 @@ public:
 	}
 
 	Marker End() {
-		auto marker = Marker(this);
-		while (++marker)
-		{}
+		auto marker = Begin();
+		auto temp = Begin();
+		while (++temp)
+		{
+			++marker;
+		}
 		return marker;
 	}
 
-	void PushTail(const T& val) {
+	Marker AfterEnd() {
+		auto marker = Marker(this);
+		while (++marker)
+		{
+		}
+		return marker;
+	}
+
+	void Push(const T& val) {
 		if (size == 0)
 		{
-			guard = head;
+			guardHead = head;
 			head = tail = new Node(nullptr, val);
-			guard = new Node(head, val);
+			guardHead = new Node(head, val);
 		}
 		else
 		{
@@ -197,6 +215,7 @@ public:
 			tail->next = newNode;
 			tail = newNode;
 		}
+		tail->next = guardTail;
 		size++;
 	}
 
