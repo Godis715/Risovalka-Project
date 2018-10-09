@@ -19,54 +19,33 @@
     <Filter Include="Исходные файлы\View">
       <UniqueIdentifier>{e66e65d2-1982-46c3-9dd4-cbe39ecd17a4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Файлы заголовков\Model">
+      <UniqueIdentifier>{334dbc68-4d8c-428c-9d5a-04739e133d0a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Файлы заголовков\Presenter">
+      <UniqueIdentifier>{ed7f178f-90b2-401b-8074-3dbc1663ae94}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Файлы заголовков\Support">
+      <UniqueIdentifier>{f0559d4b-9408-46bf-82ca-99c76b72b3be}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Исходные файлы\Model">
+      <UniqueIdentifier>{bec8a112-e6ae-436a-b44f-4377fa783023}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Исходные файлы\Presenter">
+      <UniqueIdentifier>{0f546f4f-2460-4862-afa2-2e3badd5d3bb}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\Src\ID.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
     <ClCompile Include="..\Src\Vector2.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
     <ClCompile Include="..\Src\Logger.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="..\Src\Primitives.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Src\PrimController.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
     <ClCompile Include="..\Src\main.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="..\Src\ReqController.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Src\Requirement.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Src\DataController.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
     <ClCompile Include="..\Src\SVGformat.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Src\ObjectController.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Src\Model.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Src\Presenter.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Src\Mode.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Src\Optimizer.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Src\Compilator.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
     <ClCompile Include="..\Src\IWidjet.cpp">
@@ -96,59 +75,47 @@
     <ClCompile Include="..\Src\ViewDrawWindow.cpp">
       <Filter>Исходные файлы\View</Filter>
     </ClCompile>
+    <ClCompile Include="..\Src\Compilator.cpp">
+      <Filter>Исходные файлы\Presenter</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Src\DataController.cpp">
+      <Filter>Исходные файлы\Model</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Src\Mode.cpp">
+      <Filter>Исходные файлы\Presenter</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Src\Model.cpp">
+      <Filter>Исходные файлы\Model</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Src\ObjectController.cpp">
+      <Filter>Исходные файлы\Model</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Src\Optimizer.cpp">
+      <Filter>Исходные файлы\Model</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Src\Presenter.cpp">
+      <Filter>Исходные файлы\Presenter</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Src\PrimController.cpp">
+      <Filter>Исходные файлы\Model</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Src\Primitives.cpp">
+      <Filter>Исходные файлы\Model</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Src\ReqController.cpp">
+      <Filter>Исходные файлы\Model</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Src\Requirement.cpp">
+      <Filter>Исходные файлы\Model</Filter>
+    </ClCompile>
     <ClCompile Include="..\Src\Undo-Redo.cpp">
-      <Filter>Исходные файлы</Filter>
+      <Filter>Исходные файлы\Model</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Src\ID.cpp">
+      <Filter>Исходные файлы\Model</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\Include\Array.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Include\Dictionary.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Include\ID.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Include\IDGenerator.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Include\Vector2.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Include\Dequeue.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Include\Logger.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Include\Primitives.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Include\Requirement.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Include\DataController.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Include\List.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Include\Queue.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Include\Model.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Include\Presenter.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Include\Mode.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Include\Optimizer.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
     <ClInclude Include="..\Include\ViewFLTK.h">
       <Filter>Файлы заголовков\View</Filter>
     </ClInclude>
@@ -182,11 +149,59 @@
     <ClInclude Include="..\Include\Colors.h">
       <Filter>Файлы заголовков\View</Filter>
     </ClInclude>
-    <ClInclude Include="..\Include\Compilator.h">
-      <Filter>Файлы заголовков</Filter>
+    <ClInclude Include="..\Include\DataController.h">
+      <Filter>Файлы заголовков\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Include\ID.h">
+      <Filter>Файлы заголовков\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Include\IDGenerator.h">
+      <Filter>Файлы заголовков\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Include\Optimizer.h">
+      <Filter>Файлы заголовков\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Include\Model.h">
+      <Filter>Файлы заголовков\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Include\Primitives.h">
+      <Filter>Файлы заголовков\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Include\Requirement.h">
+      <Filter>Файлы заголовков\Model</Filter>
     </ClInclude>
     <ClInclude Include="..\Include\Undo-Redo.h">
-      <Filter>Файлы заголовков</Filter>
+      <Filter>Файлы заголовков\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Include\Array.h">
+      <Filter>Файлы заголовков\Support</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Include\Compilator.h">
+      <Filter>Файлы заголовков\Presenter</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Include\Dequeue.h">
+      <Filter>Файлы заголовков\Support</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Include\Dictionary.h">
+      <Filter>Файлы заголовков\Support</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Include\List.h">
+      <Filter>Файлы заголовков\Support</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Include\Logger.h">
+      <Filter>Файлы заголовков\Support</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Include\Mode.h">
+      <Filter>Файлы заголовков\Presenter</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Include\Presenter.h">
+      <Filter>Файлы заголовков\Presenter</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Include\Queue.h">
+      <Filter>Файлы заголовков\Support</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Include\Vector2.h">
+      <Filter>Файлы заголовков\Support</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

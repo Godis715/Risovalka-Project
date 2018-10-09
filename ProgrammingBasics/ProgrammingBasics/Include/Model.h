@@ -46,6 +46,7 @@ public:
 	bool IsReq(const ID&) const;
 
 	Array<ID> GetObjectsByArea(double, double, double, double) const;
+
 	Array<ID> GetRelatedObjects(const ID&) const;
 
 	Component GetComponent(const ID&);
