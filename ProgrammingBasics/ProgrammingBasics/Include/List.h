@@ -184,7 +184,7 @@ public:
 		return marker;
 	}
 
-	void Add(const T& val) {
+	void Push(const T& val) {
 		if (size == 0)
 		{
 			guard = head;
