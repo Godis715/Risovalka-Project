@@ -400,6 +400,74 @@ Array<ID> DataController::GetPrimitiveFromComponents(const Array<ID>& IDs) {
 	}
 }
 
+bool DataController::PointInArea(double point_x, double point_y, double x1, double y1, double x2, double y2) const {
+	if ((point_y >= y1 && point_x >= x1 && point_y <= y2 && point_x <= x2) ||
+		(point_y >= y1 && point_x <= x1 && point_y <= y2 && point_x >= x2) ||
+		(point_y <= y1 && point_x >= x1 && point_y >= y2 && point_x <= x2) ||
+		(point_y <= y1 && point_x <= x1 && point_y >= y2 && point_x >= x2))
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
+Array<ID> DataController::GetObjectsByArea(double x1, double y1, double x2, double y2) {
+	Array<ID> obj_id;
+	Primitive* obj = nullptr;
+	for (auto i = primData.GetMarker(); i.IsValid(); ++i) {
+		obj = primCtrl->GetPrimitive(*i);
+		switch (obj->GetType())
+		{
+		case ot_point: {
+			Point* point = dynamic_cast<Point*>(obj);
+			if (PointInArea(point->GetPos().x, point->GetPos().y, x1, y1, x2, y2))
+			{
+				obj_id.PushBack(point->GetID());
+			}
+			break;
+		}
+		case ot_segment: {
+			Segment* segment = dynamic_cast<Segment*>(obj);
+			if (PointInArea(segment->GetPointPos1().x, segment->GetPointPos1().y, x1, y1, x2, y2) &&
+				PointInArea(segment->GetPointPos2().x, segment->GetPointPos2().y, x1, y1, x2, y2)
+				)
+			{
+				obj_id.PushBack(segment->GetID());
+			}
+			break;
+		}
+		case ot_arc: {
+			Arc* arc = dynamic_cast<Arc*>(obj);
+			if (PointInArea(arc->GetPointPos1().x, arc->GetPointPos1().y, x1, y1, x2, y2) &&
+				PointInArea(arc->GetPointPos2().x, arc->GetPointPos2().y, x1, y1, x2, y2)
+				)
+			{
+				obj_id.PushBack(arc->GetID());
+			}
+			break;
+		}
+		case ot_circle: {
+			Circle* circle = dynamic_cast<Circle*>(obj);
+			if (PointInArea(circle->GetCenter().x - circle->GetRadius(), circle->GetCenter().y, x1, y1, x2, y2) &&
+				PointInArea(circle->GetCenter().x + circle->GetRadius(), circle->GetCenter().y, x1, y1, x2, y2) &&
+				PointInArea(circle->GetCenter().x, circle->GetCenter().y - circle->GetRadius(), x1, y1, x2, y2) &&
+				PointInArea(circle->GetCenter().x, circle->GetCenter().y + circle->GetRadius(), x1, y1, x2, y2))
+			{
+				obj_id.PushBack(circle->GetID());
+			}
+			break;
+		}
+		default: {
+			break;
+		}
+		}
+	}
+	return obj_id;
+}
+
 Set<ID>* DataController::GetLinks(const ID& id) {
 	auto iter = linkData.Find(id);
 	if (iter.IsValid()) {

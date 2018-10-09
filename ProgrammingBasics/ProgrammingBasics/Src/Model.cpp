@@ -119,8 +119,8 @@ bool Model::IsReq(const ID& obj) const {
 	return reqCtrl->IsReq(obj);
 }
 
-Array<ID> Model::GetObjectsByArea(double, double, double, double) const { 
-	return Array<ID>(0);
+Array<ID> Model::GetObjectsByArea(double x1, double y1, double x2, double y2) const { 
+	return dataCtrl->GetObjectsByArea(x1, y1, x2, y2);
 }
 
 void Model::Scale(const Array<ID>&, const double) const { } 
