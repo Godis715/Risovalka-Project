@@ -149,7 +149,7 @@ void Model::Move(const Array<ID>& objs, const Vector2& direction) const {
 		params[1] += direction.y;
 
 		primCtrl->SetPrimitiveParams(*point, params);
-
+		
 		pointPosReqs.push_back(CreateRequirement(ot_pointPosReq, CreateArr(*point), params));
 
 		++point;

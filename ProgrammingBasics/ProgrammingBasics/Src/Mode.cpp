@@ -819,7 +819,15 @@ Mode* Redaction::HandleEvent(const Event e, Array<double>& params)
 			}
 			posEnd.x = params[0];
 			posEnd.y = params[1];
-			model->Move(selectedObjects, posEnd - posStart);
+
+			shifBuffer = shifBuffer + (posEnd - posStart);
+
+			if (Vector2::Dot(shifBuffer, shifBuffer) > 25.0) {
+				model->Move(selectedObjects, shifBuffer);
+				shifBuffer.x = 0.0;
+				shifBuffer.y = 0.0;
+			}
+
 			posStart = posEnd;
 			return nullptr;
 		}
@@ -850,14 +858,17 @@ Mode* Redaction::HandleEvent(const Event e, Array<double>& params)
 	}
 	if (e == ev_escape)
 	{
+		model->Move(selectedObjects, shifBuffer);
 		return new Selection(selectedObjects);
 	}
 	if (e == ev_scaleObjects)
 	{
+		model->Move(selectedObjects, shifBuffer);
 		return new Redaction(selectedObjects, ev_scaleObjects);
 	}
 	if (e == ev_moveObjects)
 	{
+		model->Move(selectedObjects, shifBuffer);
 		return new Redaction(selectedObjects, ev_moveObjects);
 	}
 	if (e == ev_del)

@@ -9,7 +9,7 @@
 #include "ViewFLTK.h"
 
 void LoggerInit() {
-	Logger::InitLogger(&std::cout, LEVEL_1);
+	Logger::InitLogger(&std::cout, 4);
 }
 
 Array<double> PointParams(double x, double y) {

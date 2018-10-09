@@ -260,6 +260,7 @@ private:
 	Array<ID> selectedObjects;
 	Vector2 posStart;
 	Vector2 posEnd;
+	Vector2 shifBuffer;
 	State state;
 	StatusRedaction status;
 public:
