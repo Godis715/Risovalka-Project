@@ -2,49 +2,33 @@
 <!-- DrawProject -->
 <svg width="1000" height="1000">
 	<drawProject:point
-		px="415.956"
-		py="127.516"
+		px="3"
+		py="116"
 		id="1"
 	/>
 	<drawProject:point
-		px="285"
-		py="307"
+		px="227"
+		py="117"
 		id="2"
 	/>
 	<line
-		x1="415.956"
-		y1="127.516"
-		x2="285"
-		y2="307"
+		x1="3"
+		y1="116"
+		x2="227"
+		y2="117"
 		id="3"
 		childIds="1 2"
 		stroke="red"
 		stroke-width="5"
 	/>
 	<drawProject:point
-		px="416.044"
-		py="127.484"
+		px="138"
+		py="81"
 		id="4"
 	/>
 	<drawProject:point
-		px="498"
-		py="327"
+		px="130"
+		py="161"
 		id="5"
 	/>
-	<line
-		x1="416.044"
-		y1="127.484"
-		x2="498"
-		y2="327"
-		id="6"
-		childIds="4 5"
-		stroke="red"
-		stroke-width="5"
-	/>
-	<drawProject:req>
-		<distBetPoints
-			id="7"
-			IDs="1 4"
-			params="0"	/>
-	</drawProject:req>
 </svg>

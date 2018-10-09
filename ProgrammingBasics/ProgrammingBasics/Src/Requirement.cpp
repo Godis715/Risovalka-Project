@@ -84,10 +84,11 @@ double PointPosReq::error() {
 
 #pragma region PointsOnTheOneHand
 PointsOnTheOneHand::PointsOnTheOneHand(const Array<ID>& _objects, const Array<double>& _params) :
-	Requirement(ot_pointsOnTheOneHand, params, _objects)
+	Requirement(ot_pointsOnTheOneHand, _params, _objects)
 {
-	Array<ID> objs = primCtrl->GetChildren(_objects[0]) +
-		_objects[1] + _objects[2];
+	Array<ID> objs = primCtrl->GetChildren(_objects[0]);
+	objs.PushBack(_objects[1]);
+	objs.PushBack(_objects[2]);
 
 	for (int i = 0; i < objs.GetSize(); ++i) {
 		args += primCtrl->GetPrimitiveDoubleParamsAsPointers(objs[i]);
@@ -95,25 +96,24 @@ PointsOnTheOneHand::PointsOnTheOneHand(const Array<ID>& _objects, const Array<do
 }
 
 double PointsOnTheOneHand::error() {
-	Vector2 pointPos1 = Vector2(*args[4], *args[5]);
-	Vector2 pointPos2 = Vector2(*args[6], *args[7]);
+	Vector2 segment = Vector2(*(args[2]) - *(args[0]), *(args[3]) - *(args[1]));
+	Vector2 point1 = Vector2(*(args[4]) - *(args[0]), *(args[5]) - *(args[1]));
+	Vector2 point2 = Vector2(*(args[6]) - *(args[0]), *(args[7]) - *(args[1]));
 
-	double Fx1 = /*segment->Inequality(pointPos1)*/0; // FIX
-	double Fx2 =/* segment->Inequality(pointPos2)*/0; // FIX
-	if ((Fx1 > 0 && Fx2 < 0) || (Fx1 < 0 && Fx2 > 0)) {
-		Fx1 = abs(Fx1);
-		Fx2 = abs(Fx2);
-
-		if (Fx1 > Fx2) {
-			double distance = /*segment->GetDist(pointPos2)*/0;
-			return distance * distance;
-		}
-		else {
-			double distance = /*segment->GetDist(pointPos1)*/0;
-			return distance * distance;
-		}
+	if (Vector2::Cross(segment, point1) * Vector2::Cross(segment, point2) >= 0) {
+		return 0;
 	}
-	return 0;
+
+	double length = segment.GetLength();
+
+	double distance1 = abs(Vector2::Cross((point1 * -1), segment - point1)) / length;
+	double distance2 = abs(Vector2::Cross((point2 * -1), segment - point2)) / length;
+	if (distance1 > distance2) {
+		return distance2;
+	}
+	else {
+		return distance1;
+	}
 }
 #pragma endregion
 
@@ -146,10 +146,10 @@ AngleBetweenSegments::AngleBetweenSegments(const Array<ID>& _objects,
 	Requirement(ot_angleBetSeg, _params, _objects)
 {
 	Array<ID> objs = primCtrl->GetChildren(_objects[0]) +
-		_objects[1] + _objects[2];
+		primCtrl->GetChildren(_objects[1]);
 
 	for (int i = 0; i < objs.GetSize(); ++i) {
-		args = args + primCtrl->GetPrimitiveDoubleParamsAsPointers(objs[i]);
+		args += primCtrl->GetPrimitiveDoubleParamsAsPointers(objs[i]);
 	}
 }
 
