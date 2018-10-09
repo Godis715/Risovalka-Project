@@ -176,41 +176,28 @@ ChangingProperties::~ChangingProperties()
 void ChangingProperties::SetWidjetParamPrim() {
 	object_type typePrim = model->GetObjType(selectedObject);
 
-	Array<double> params;
+	Array<double> params = model->GetObjParam(selectedObject);
 
 	Array<string> paramsString;
-	switch (typePrim)
-	{
-	case ot_point:
-	{
-		params = model->GETVARPARAMS(selectedObject, VERTEX);
-		break;
+	if (typePrim == ot_arc) {
+		paramsString = Array<string>(params.GetSize() - 1);
+		Vector2 vector1 = Vector2(params[2], params[3]) - Vector2(params[0], params[1]);
+		Vector2 vector2 = Vector2(params[4], params[5]) - Vector2(params[0], params[1]);
+		double angle = (Vector2::Angle(vector1, vector2) * 180) / PI;
+		for (int i = 2; i < params.GetSize(); ++i) {
+			paramsString[i - 2] = ReverseParse(params[i]);
+		}
+		paramsString[params.GetSize() - 2] = ReverseParse(angle);
 	}
-	case ot_segment:
-	{
-		params = model->GETVARPARAMS(selectedObject, VERTEX);
-		break;
-	}
-	case ot_arc:
-	{
-		params = model->GETVARPARAMS(selectedObject, VERTEX, ANGLE);
-		break;
-	}
-	case ot_circle:
-	{
-		params = model->GETVARPARAMS(selectedObject, CENTER, RADIUS);
-		break;
-	}
-	default:
-		break;
-	}
-	paramsString = Array<string>(params.GetSize());
-	for (int i = 0; i < params.GetSize(); ++i) {
-		paramsString[i] = ReverseParse(params[i]);
+	else {
+		paramsString = Array<string>(params.GetSize());
+		for (int i = 0; i < params.GetSize(); ++i) {
+			paramsString[i] = ReverseParse(params[i]);
+		}
 	}
 
 	reqIDs.Clear();
-	reqIDs = model->GetRelatedObjects(selectedObject);
+	model->GetRelatedObjects(selectedObject);
 
 	Array<string> nameReqs;
 	for (int i = 0; i < reqIDs.GetSize(); i++)
@@ -224,6 +211,8 @@ void ChangingProperties::SetWidjetParamPrim() {
 
 void ChangingProperties::SetWidjetParamReq() {
 	primiOfReqIDs = model->GetRelatedObjects(reqID);
+
+	widjetReq = static_cast<IDisplayParamReq*>(view->GetWidjet(displayParamReq));
 
 	Array<double> reqParams = model->GetObjParam(reqID);
 
@@ -244,7 +233,6 @@ Mode* ChangingProperties::HandleEvent(const Event e, Array<double>& params)
 	case ev_click_Req:
 	{
 		reqID = reqIDs[int(params[0])];
-		widjetReq = static_cast<IDisplayParamReq*>(view->GetWidjet(displayParamReq));
 		SetWidjetParamReq();
 		return nullptr;
 	}
@@ -256,7 +244,7 @@ Mode* ChangingProperties::HandleEvent(const Event e, Array<double>& params)
 	}
 	case ev_change_Req:
 	{
-		model->ChangeRequirement(reqID, params);
+		model->ChangePrimitive(reqID, params);
 		SetWidjetParamReq();
 		SetWidjetParamPrim();
 		return nullptr;
@@ -736,7 +724,6 @@ Mode* Selection::HandleEvent(const Event e, Array<double>& params) {
 	}
 	case ev_del: {
 		model->DeleteObjects(selectedObjects);
-		selectedObjects.Clear();
 		return nullptr;
 	}
 	case ev_req_D_point: {
