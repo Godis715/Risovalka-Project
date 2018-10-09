@@ -60,13 +60,14 @@ private:
 
 class Object {
 protected:
+	friend class ObjectController;
 	ID* id;
 	object_type type;
 
 	Array<double> params;
 	Array<ID> children;
 
-
+	bool isValid;
 public:
 	Object(object_type, const Array<double>&, const Array<ID>&);
 	Object(object_type, const Array<double>&, const Array<ID>&, unsigned long long);
@@ -96,6 +97,9 @@ public:
 	void SetObjParam(const ID&, const Array<double>&);
 	Array<double> GetObjParam(const ID&);
 	Array<ID> GetObjChildren(const ID&);
+	bool IsValid(ID&);
+	void MakeInValid(ID&);
+	void MakeValid(ID&);
 };
 
 class ID {

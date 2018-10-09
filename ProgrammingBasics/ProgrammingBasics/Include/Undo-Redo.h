@@ -43,7 +43,6 @@ public:
 	Array<Array<double>> dataBefore;
 	Array<Array<double>> dataAfter;
 	ID idReq;
-	Set<ID>* link;
 
 	void Undo();
 	void Redo();
@@ -55,9 +54,8 @@ public:
 class VersionCreat_Del : public Version {
 public:
 	Array<ID> IDs;
-	const Array<Set<ID>*> links;
 	~VersionCreat_Del();
-	VersionCreat_Del(const TypeOFCange, const Array<ID>&, const Array<Set<ID>*>&);
+	VersionCreat_Del(const TypeOFCange, const Array<ID>&);
 
 	void Undo();
 	void Redo();
@@ -79,6 +77,8 @@ public:
 	void Redo();
 private:
 	List<Version*>::Marker it;
+
+	void AddDeleting(const Array<ID>&);
 
 	void AddChange(const Array<ID>&);
 

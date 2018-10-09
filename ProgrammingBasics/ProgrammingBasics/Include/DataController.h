@@ -61,7 +61,7 @@ private:
 	static DataController* instance;
 	DataController();
 
-	typedef BinSearchTree<ID, ID> DataID;
+	typedef Set<ID> DataID;
 	typedef BinSearchTree<ID, Set<ID>* > DataLink;
 	typedef BinSearchTree<string, ID> DataName;
 
@@ -88,12 +88,14 @@ public:
 	void Connect(const ID&, Component*);
 
 	void DeleteObject(const ID&);
+
+	void MakeInValid(ID&);
 	void Clear();
 	ID GetObjectInCircle(double, double, double);
 
 	Component GetComponent(const ID&);
 
-	BinSearchTree<ID, ID>::bst_iterator GetPrimIterator();
+	DataID::bst_iterator GetPrimIterator();
 
 	Array<ID> GetRelatedObjects(const ID&);
 

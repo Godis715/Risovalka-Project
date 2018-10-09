@@ -86,6 +86,7 @@ Object::Object(object_type _type, const Array<double>& _params, const Array<ID>&
 {
 	id = IDGenerator::getInstance()->generateID();
 	id->object = this;
+	isValid = true;
 }
 
 Object::Object(object_type _type, const Array<double>& _params, const Array<ID>& _children, unsigned long long _hash) :
@@ -95,6 +96,7 @@ Object::Object(object_type _type, const Array<double>& _params, const Array<ID>&
 {
 	id = IDGenerator::getInstance()->generateID(_hash);
 	id->object = this;
+	isValid = true;
 }
 
 Object::~Object() {
