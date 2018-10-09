@@ -123,16 +123,38 @@ DistanceBetweenPointSegment::DistanceBetweenPointSegment(const Array<ID>& _objec
 	const Array<double>& _params) :
 	Requirement(ot_distBetPointSeg, _params, _objects)
 {
-	Array<ID> objs = primCtrl->GetChildren(_objects[0]) + _objects[1];
+	Array<ID> objs = primCtrl->GetChildren(_objects[0]);
+	objs.PushBack(_objects[1]);
 	for (int i = 0; i < objs.GetSize(); ++i) {
-		args = args + primCtrl->GetPrimitiveDoubleParamsAsPointers(objs[i]);
+		args += primCtrl->GetPrimitiveDoubleParamsAsPointers(objs[i]);
 	}
 }
 
 double DistanceBetweenPointSegment::error() {
-	Vector2 point(*args[4], *args[5]);
-	double distance = /*segment->GetDist(point)*/ -params[0]; //FIX
-	return distance * distance;
+	Vector2 segment = Vector2(*(args[2]) - *(args[0]), *(args[3]) - *(args[1]));
+	Vector2 point = Vector2(*(args[4]) - *(args[0]), *(args[5]) - *(args[1]));
+	Vector2 segToPoint = Vector2(*(args[4]) - *(args[2]), *(args[5]) - *(args[3]));
+
+
+	
+	double dotProduct1 = Vector2::Dot(point, segment);
+	double dotProduct2 = Vector2::Dot(segToPoint, segment);
+	dotProduct2 *= -1;
+
+	if (dotProduct1 * dotProduct2 >= 0) {
+		double distance = abs(Vector2::Cross((point * -1), segment - point)) / segment.GetLength();
+
+		return distance * distance - 2 *params[0] * distance + params[0] * params[0];
+	}
+	else {
+		double answer = Vector2::Dot(point, point);
+		if (answer > Vector2::Dot(segToPoint, segToPoint)) {
+			answer = Vector2::Dot(segToPoint, segToPoint);
+		}
+		return answer - 2 * sqrt(answer) * params[0] + params[0] * params[0];
+	}
+	
+	
 }
 
 Array<double> DistanceBetweenPointSegment::gradient() {
