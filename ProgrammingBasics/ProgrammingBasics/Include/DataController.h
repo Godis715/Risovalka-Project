@@ -80,6 +80,7 @@ private:
 
 	Array<ID> GetPrimitiveFromComponent(Component&);
 
+	bool PointInArea(double, double, double, double, double, double) const;
 public:
 	static DataController* GetInstance();
 
@@ -102,6 +103,8 @@ public:
 	Array<ID> GetPrimitiveFromComponent(const ID&);
 
 	Array<ID> GetPrimitiveFromComponents(const Array<ID>&);
+
+	Array<ID> GetObjectsByArea(double, double, double, double) ;
 
 	Component* GetLinks(const ID&);
 };

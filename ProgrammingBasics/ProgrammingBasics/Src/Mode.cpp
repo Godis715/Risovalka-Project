@@ -680,7 +680,6 @@ Mode* Selection::HandleEvent(const Event e, Array<double>& params) {
 		selectedObjects.Clear();
 		lastEvent = e;
 		selectedObjects = model->GetObjectsByArea(infoArea1.x, infoArea1.y, infoArea2.x, infoArea2.y);
-		//Presenter::GetObjectsOnArea(infoArea1.x, infoArea1.y, infoArea2.x, infoArea2.y, selectedObjects);
 		return nullptr;
 	}
 	if (e == ev_leftMouseUp)

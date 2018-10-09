@@ -1,391 +1,44 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- DrawProject -->
 <svg width="1000" height="1000">
-  <drawProject:point
-		px="316.32"
-		py="244.534"
+	<drawProject:point
+		px="417"
+		py="172"
 		id="1"
 	/>
-  <drawProject:point
-		px="307.925"
-		py="322.388"
+	<drawProject:point
+		px="307"
+		py="307"
 		id="2"
 	/>
-  <path
-		d="M316.32,244.534 A39.2557,39.2557 0 0,0 307.925,322.388"
+	<line
+		x1="417"
+		y1="172"
+		x2="307"
+		y2="307"
 		id="3"
 		childIds="1 2"
 		stroke="red"
 		stroke-width="5"
-		fill="none"
 	/>
-  <drawProject:arc
-		x1="316.32"
-		y1="244.534"
-		x2="307.925"
-		y2="322.388"
-		angle="2.99678"
-		id="3"
-		childIds="1 2"
+	<drawProject:point
+		px="494"
+		py="75"
+		id="4"
 	/>
-  <drawProject:point
-		px="307.925"
-		py="322.388"
+	<drawProject:point
+		px="540"
+		py="389"
 		id="5"
 	/>
-  <drawProject:point
-		px="469.987"
-		py="298.382"
+	<line
+		x1="494"
+		y1="75"
+		x2="540"
+		y2="389"
 		id="6"
-	/>
-  <path
-		d="M307.925,322.388 A93.5964,93.5964 0 0,0 469.987,298.382"
-		id="7"
-		childIds="5 6"
+		childIds="4 5"
 		stroke="red"
 		stroke-width="5"
-		fill="none"
 	/>
-  <drawProject:arc
-		x1="307.925"
-		y1="322.388"
-		x2="469.987"
-		y2="298.382"
-		angle="2.13167"
-		id="7"
-		childIds="5 6"
-	/>
-  <drawProject:point
-		px="469.987"
-		py="298.382"
-		id="9"
-	/>
-  <drawProject:point
-		px="344.404"
-		py="220.739"
-		id="10"
-	/>
-  <path
-		d="M469.987,298.382 A76.9415,76.9415 0 1,0 344.404,220.739"
-		id="11"
-		childIds="9 10"
-		stroke="red"
-		stroke-width="5"
-		fill="none"
-	/>
-  <drawProject:arc
-		x1="469.987"
-		y1="298.382"
-		x2="344.404"
-		y2="220.739"
-		angle="3.7129"
-		id="11"
-		childIds="9 10"
-	/>
-  <drawProject:point
-		px="344.401"
-		py="220.736"
-		id="16"
-	/>
-  <drawProject:point
-		px="317.211"
-		py="244.58"
-		id="17"
-	/>
-  <path
-		d="M344.401,220.736 A18.2667,18.2667 0 0,0 317.211,244.58"
-		id="18"
-		childIds="16 17"
-		stroke="red"
-		stroke-width="5"
-		fill="none"
-	/>
-  <drawProject:arc
-		x1="344.401"
-		y1="220.736"
-		x2="317.211"
-		y2="244.58"
-		angle="2.85699"
-		id="18"
-		childIds="16 17"
-	/>
-  <drawProject:point
-		px="377.472"
-		py="205.056"
-		id="24"
-	/>
-  <circle
-		cx="377.472"
-		cy="205.056"
-		r="16.2788"
-		id="25"
-		childIds="24"
-		stroke="red"
-		stroke-width="5"
-		fill="none"
-	/>
-  <drawProject:point
-		px="433.38"
-		py="233.239"
-		id="49"
-	/>
-  <circle
-		cx="433.38"
-		cy="233.239"
-		r="19.2094"
-		id="50"
-		childIds="49"
-		stroke="red"
-		stroke-width="5"
-		fill="none"
-	/>
-  <drawProject:point
-		px="327.064"
-		py="310.76"
-		id="52"
-	/>
-  <drawProject:point
-		px="452.2"
-		py="296.923"
-		id="53"
-	/>
-  <path
-		d="M327.064,310.76 A70.6079,70.6079 0 0,0 452.2,296.923"
-		id="54"
-		childIds="52 53"
-		stroke="red"
-		stroke-width="5"
-		fill="none"
-	/>
-  <drawProject:arc
-		x1="327.064"
-		y1="310.76"
-		x2="452.2"
-		y2="296.923"
-		angle="2.20145"
-		id="54"
-		childIds="52 53"
-	/>
-  <drawProject:point
-		px="378"
-		py="228"
-		id="56"
-	/>
-  <drawProject:point
-		px="407.796"
-		py="245.79"
-		id="57"
-	/>
-  <path
-		d="M378,228 A22.2036,22.2036 0 0,0 407.796,245.79"
-		id="58"
-		childIds="56 57"
-		stroke="red"
-		stroke-width="5"
-		fill="none"
-	/>
-  <drawProject:arc
-		x1="378"
-		y1="228"
-		x2="407.796"
-		y2="245.79"
-		angle="1.79404"
-		id="58"
-		childIds="56 57"
-	/>
-  <drawProject:point
-		px="377"
-		py="272"
-		id="108"
-	/>
-  <drawProject:point
-		px="408.16"
-		py="282.133"
-		id="109"
-	/>
-  <path
-		d="M377,272 A18.3848,18.3848 0 1,0 408.16,282.133"
-		id="110"
-		childIds="108 109"
-		stroke="red"
-		stroke-width="5"
-		fill="none"
-	/>
-  <drawProject:arc
-		x1="377"
-		y1="272"
-		x2="408.16"
-		y2="282.133"
-		angle="4.08359"
-		id="110"
-		childIds="108 109"
-	/>
-  <drawProject:point
-		px="433.62"
-		py="232.761"
-		id="112"
-	/>
-  <circle
-		cx="433.62"
-		cy="232.761"
-		r="12.6491"
-		id="113"
-		childIds="112"
-		stroke="red"
-		stroke-width="5"
-		fill="none"
-	/>
-  <drawProject:point
-		px="377.528"
-		py="204.944"
-		id="115"
-	/>
-  <circle
-		cx="377.528"
-		cy="204.944"
-		r="9"
-		id="116"
-		childIds="115"
-		stroke="red"
-		stroke-width="5"
-		fill="none"
-	/>
-  <drawProject:point
-		px="453"
-		py="295"
-		id="375"
-	/>
-  <drawProject:point
-		px="466.675"
-		py="181.239"
-		id="376"
-	/>
-  <path
-		d="M453,295 A67.4611,67.4611 0 0,0 466.675,181.239"
-		id="377"
-		childIds="375 376"
-		stroke="red"
-		stroke-width="5"
-		fill="none"
-	/>
-  <drawProject:arc
-		x1="453"
-		y1="295"
-		x2="466.675"
-		y2="181.239"
-		angle="2.02906"
-		id="377"
-		childIds="375 376"
-	/>
-  <drawProject:point
-		px="276"
-		py="275"
-		id="485"
-	/>
-  <drawProject:point
-		px="327.592"
-		py="310.63"
-		id="486"
-	/>
-  <path
-		d="M276,275 A41.8566,41.8566 0 0,0 327.592,310.63"
-		id="487"
-		childIds="485 486"
-		stroke="red"
-		stroke-width="5"
-		fill="none"
-	/>
-  <drawProject:arc
-		x1="276"
-		y1="275"
-		x2="327.592"
-		y2="310.63"
-		angle="1.69303"
-		id="487"
-		childIds="485 486"
-	/>
-  <drawProject:point
-		px="431.901"
-		py="176.399"
-		id="1470"
-	/>
-  <drawProject:point
-		px="406.341"
-		py="200.181"
-		id="1471"
-	/>
-  <path
-		d="M431.901,176.399 A96.134,96.134 0 0,0 406.341,200.181"
-		id="1472"
-		childIds="1470 1471"
-		stroke="red"
-		stroke-width="5"
-		fill="none"
-	/>
-  <drawProject:arc
-		x1="431.901"
-		y1="176.399"
-		x2="406.341"
-		y2="200.181"
-		angle="0.36519"
-		id="1472"
-		childIds="1470 1471"
-	/>
-  <drawProject:point
-		px="424.961"
-		py="196.03"
-		id="1728"
-	/>
-  <drawProject:point
-		px="404.363"
-		py="185.043"
-		id="1729"
-	/>
-  <path
-		d="M424.961,196.03 A56.0332,56.0332 0 0,0 404.363,185.043"
-		id="1730"
-		childIds="1728 1729"
-		stroke="red"
-		stroke-width="5"
-		fill="none"
-	/>
-  <drawProject:arc
-		x1="424.961"
-		y1="196.03"
-		x2="404.363"
-		y2="185.043"
-		angle="0.419713"
-		id="1730"
-		childIds="1728 1729"
-	/>
-  <drawProject:req>
-    <distBetPoints
-			id="20"
-			IDs="2 5"
-			params="0"	/>
-    <distBetPoints
-			id="21"
-			IDs="6 9"
-			params="0"	/>
-    <distBetPoints
-			id="22"
-			IDs="16 10"
-			params="0"	/>
-    <distBetPoints
-			id="23"
-			IDs="17 1"
-			params="0"	/>
-    <distBetPoints
-			id="126"
-			IDs="49 112"
-			params="0"	/>
-    <distBetPoints
-			id="127"
-			IDs="24 115"
-			params="0"	/>
-    <distBetPoints
-			id="489"
-			IDs="52 486"
-			params="0"	/>
-  </drawProject:req>
 </svg>
