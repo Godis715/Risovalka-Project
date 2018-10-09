@@ -1,6 +1,6 @@
 #include "Optimizer.h"
 
-#define OPTIM_GRAD_EPS 1e-3
+#define OPTIM_GRAD_EPS 1e-2
 #define OPTIM_EPS 1e-2
 
 
@@ -10,17 +10,20 @@ Optimizer::Optimizer() {
 
 void Optimizer::OptimizeRequirements(const Array<ID>& requirments) {
 	// get parameters number
-	Array<double*> params;
+	Array<double*> params(0);
 	for (int i = 0; i < requirments.GetSize(); ++i) {
 		params = params + reqCtrl->GetReqArgsAsPointers(requirments[i]);
 	}
 
 	// anti gradient
-	Array<double> aGradient(params.GetSize(), 0.0);
+	Array<double> aGradient(0);
 
 	//filling anti gradient
 	double err = reqCtrl->GetReqError(requirments);
 	int optimization_iter = 0;
+
+	double lastError = INFINITY;
+
 	while (err > OPTIM_EPS) {
 
 		int match_array_iterator = 0;
@@ -29,22 +32,17 @@ void Optimizer::OptimizeRequirements(const Array<ID>& requirments) {
 
 			Array<double> currentGradient = reqCtrl->GetGradient(requirments[i]);
 
-			for (int j = 0; j < currentGradient.GetSize(); ++j) {
-
-				aGradient[match_array_iterator] -= 
-					currentGradient[j] / requirments.GetSize();
-
-				++match_array_iterator;
-			}
+			aGradient = aGradient + currentGradient;
 		}
 
 		OptimizeByGradient(requirments, params, aGradient);
-		aGradient.FillDefault(0.0);
+		aGradient = Array<double>(0);
+		lastError = err;
 		err = reqCtrl->GetReqError(requirments);
 
 		optimization_iter++;
 		// temp
-		if (optimization_iter >= 200) {
+		if (optimization_iter >= 10 || (abs(lastError - err) < OPTIM_EPS)) {
 			break;
 		}
 	}
@@ -64,7 +62,7 @@ void Optimizer::OptimizeByGradient
 
 	double error = reqCtrl->GetReqError(reqs);
 
-	double left = 0.0;
+	double left = -0.1;
 	double right = 0.1;
 
 	double leftValue = ErrorByAlpha(reqs, args, agrad, left);
@@ -76,7 +74,7 @@ void Optimizer::OptimizeByGradient
 	double x1_Value = ErrorByAlpha(reqs, args, agrad, x1);
 	double x2_Value = ErrorByAlpha(reqs, args, agrad, x2);
 
-	while (abs(leftValue - rightValue) > OPTIM_GRAD_EPS * error) {
+	while (abs(leftValue - rightValue) > OPTIM_GRAD_EPS) {
 
 		if (x1_Value > x2_Value) {
 			left = x1;

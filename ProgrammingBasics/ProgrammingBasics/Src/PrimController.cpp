@@ -6,9 +6,29 @@ PrimController::PrimController() {
 	objCtrl = ObjectController::GetInstance();
 }
 
-Array<double*> PrimController::GetPrimitiveDoubleParamsAsPointers(const ID& obj) const {
+void PrimController::Activate(const ID& obj) const {
 	Primitive* prim = GetPrimitive(obj);
-	return prim->GetDoubleParamsAsPointers();
+	prim->Activate();
+}
+
+void PrimController::Deactivate(const ID& obj) const {
+	Primitive* prim = GetPrimitive(obj);
+	prim->Activate();
+}
+
+bool PrimController::IsActivated(const ID& obj) const {
+	Primitive* prim = GetPrimitive(obj);
+	return prim->IsActivated();
+}
+
+Array<double*> PrimController::GetPrimitiveDoubleParamsAsPointers(const ID& obj) const {
+	if (IsActivated(obj)) {
+		Primitive* prim = GetPrimitive(obj);
+		return prim->GetDoubleParamsAsPointers();
+	}
+	else {
+		return Array<double*>(0);
+	}
 }
 
 bool PrimController::IsPrimitive(object_type type) const {
@@ -198,37 +218,42 @@ Array<double> PrimController::GetVariableObjParam(const ID& obj, int modifiers[]
 }
 
 Array<double*> PrimController::GetPrimitiveParamsAsPointers(const ID& id) const {
-	object_type type = objCtrl->GetType(id);
-	switch (type) {
-	case ot_point: {
+	if (IsActivated(id)) {
+		object_type type = objCtrl->GetType(id);
+		switch (type) {
+		case ot_point: {
 
-		Object* obj = objCtrl->GetObject(id);
-		Point* point = static_cast<Point*>(obj);
+			Object* obj = objCtrl->GetObject(id);
+			Point* point = static_cast<Point*>(obj);
 
-		Array<double*> params = CreateArr(point->x, point->y);
+			Array<double*> params = CreateArr(point->x, point->y);
 
-		return params;
-	}
-	case ot_segment: {
+			return params;
+		}
+		case ot_segment: {
+			return Array<double*>(0);
+		}
+		case ot_arc: {
+			return Array<double*>(0);
+		}
+		case ot_circle: {
+			Object* obj = objCtrl->GetObject(id);
+			Circle* circle = static_cast<Circle*>(obj);
+
+			Array<double*> params = CreateArr(circle->radius);
+
+			return params;
+			break;
+		}
+		default: {
+			LOGERROR("GetPrimitiveParamsAsPointers: object is not primitive", LEVEL_1);
+		}
+		}
 		return Array<double*>(0);
 	}
-	case ot_arc: {
+	else {
 		return Array<double*>(0);
 	}
-	case ot_circle: {
-		Object* obj = objCtrl->GetObject(id);
-		Circle* circle = static_cast<Circle*>(obj);
-
-		Array<double*> params = CreateArr(circle->radius);
-		
-		return params;
-		break;
-	}
-	default: {
-		LOGERROR("GetPrimitiveParamsAsPointers: object is not primitive", LEVEL_1);
-	}
-	}
-	return Array<double*>(0);
 }
 
 Array<double*> PrimController::GetPrimitiveParamsAsPointers(const Array<ID>& ids, int paramsNumber) const {
@@ -247,13 +272,14 @@ Array<double*> PrimController::GetPrimitiveParamsAsPointers(const Array<ID>& ids
 }
 
 void PrimController::SetPrimitiveParams(const ID& obj, const Array<double>& params) const {
-	auto paramsPointers = GetPrimitiveParamsAsPointers(obj);
+	auto paramsPointers = GetPrimitiveDoubleParamsAsPointers(obj);
 	if (paramsPointers.GetSize() != params.GetSize()) {
 		LOG("SetPrimitiveParams: incorrect number of params", LEVEL_1);
 	}
 	for (int i = 0; i < params.GetSize(); ++i) {
 		*paramsPointers[i] = params[i];
 	}
+	ApplyPrimitiveDoubleParams(obj);
 }
 
 void PrimController::ApplyPrimitiveDoubleParams(const ID& obj) const {

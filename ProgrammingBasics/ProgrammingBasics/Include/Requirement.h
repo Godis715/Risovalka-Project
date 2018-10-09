@@ -46,6 +46,8 @@ protected:
 	Array<double*> args;
 
 	PrimController* primCtrl;
+
+	Array<ID> objects;
 	
 	friend class ReqController;
 public:
@@ -70,11 +72,11 @@ public:
 	EqualSegmentLenReq(const Array<ID>& _objects, const Array<double>& _params) :
 		Requirement(ot_equalSegmentLen, _params, _objects)
 	{
-		Array<ID> allPoints = primCtrl->GetChildren(_objects[0]) +
+		objects = primCtrl->GetChildren(_objects[0]) +
 			primCtrl->GetChildren(_objects[1]);
 
-		for (int i = 0; i < allPoints.GetSize(); ++i) {
-			args = args + primCtrl->GetPrimitiveDoubleParamsAsPointers(allPoints[i]);
+		for (int i = 0; i < objects.GetSize(); ++i) {
+			args = args + primCtrl->GetPrimitiveDoubleParamsAsPointers(objects[i]);
 		}
 	}
 

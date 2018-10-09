@@ -4,10 +4,11 @@
 #pragma region Primitive
 Primitive::Primitive(object_type _type, const Array<double>& _params, const Array<ID>& _children)
 	: Object(_type, _params, children),
-	doubleParams(_params.GetSize())
+	doubleParams(_params.GetSize()),
+	isActivated(true)
 {
 	for (int i = 0; i < doubleParams.GetSize(); ++i) {
-		doubleParams[i] = new double(0.0);
+		doubleParams[i] = new double(params[i]);
 	}
 }
 
@@ -18,11 +19,7 @@ Primitive::~Primitive() {
 
 }
 
-
 Array<double*> Primitive::GetDoubleParamsAsPointers() {
-	for (int i = 0; i < params.GetSize(); ++i) {
-		*doubleParams[i] = params[i];
-	}
 	return doubleParams;
 }
 
@@ -31,6 +28,17 @@ void Primitive::ApplyDoubleParams() {
 		params[i] = *doubleParams[i];
 	}
 }
+
+bool Primitive::IsActivated() {
+	return isActivated;
+}
+void Primitive::Activate() {
+	isActivated = true;
+}
+void Primitive::Deactivate() {
+	isActivated = false;
+}
+
 #pragma endregion
 
 #pragma region Point
