@@ -1,4 +1,5 @@
 ﻿#include "Model.h"
+#include <list>
 
 Model* Model::instance = nullptr;
 
@@ -122,9 +123,46 @@ Array<ID> Model::GetObjectsByArea(double, double, double, double) const {
 	return Array<ID>(0);
 }
 
-void Model::Scale(const Array<ID>&, const double) const { }
+void Model::Scale(const Array<ID>&, const double) const { } 
 
-void Model::Move(const Array<ID>&, const Vector2&) const { }
+void Model::Move(const Array<ID>& objs, const Vector2& direction) const {
+	Set<ID> points;
+	for (int i = 0; i < objs.GetSize(); ++i) {
+		if (objCtrl->GetType(objs[i]) == ot_point) {
+				points.Add(objs[i]);
+		}
+		else {
+			Array<ID> children = primCtrl->GetChildren(objs[i]);
+			for (int j = 0; j < children.GetSize(); ++j) {
+				points.Add(children[j]);
+			}
+		}
+	}
+
+	std::list<ID> pointPosReqs;
+
+	auto point = points.GetMarker();
+	while (point.IsValid()) {
+		auto params = primCtrl->GETVARPARAMS(*point, VERTEX);
+
+		params[0] += direction.x;
+		params[1] += direction.y;
+
+		primCtrl->SetPrimitiveParams(*point, params);
+
+		pointPosReqs.push_back(CreateRequirement(ot_pointPosReq, CreateArr(*point), params));
+
+		++point;
+	}
+
+	for (auto it = pointPosReqs.begin(); it != pointPosReqs.end(); ++it) {
+		OptimizeByID(*it);
+	}
+
+	for (auto it = pointPosReqs.begin(); it != pointPosReqs.end(); ++it) {
+		dataCtrl->DeleteObject(*it);
+	}
+}
 
 void Model::Clear() const { 
 	dataCtrl->Clear();

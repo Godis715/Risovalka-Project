@@ -247,7 +247,13 @@ Array<double*> PrimController::GetPrimitiveParamsAsPointers(const Array<ID>& ids
 }
 
 void PrimController::SetPrimitiveParams(const ID& obj, const Array<double>& params) const {
-	
+	auto paramsPointers = GetPrimitiveParamsAsPointers(obj);
+	if (paramsPointers.GetSize() != params.GetSize()) {
+		LOG("SetPrimitiveParams: incorrect number of params", LEVEL_1);
+	}
+	for (int i = 0; i < params.GetSize(); ++i) {
+		*paramsPointers[i] = params[i];
+	}
 }
 
 void PrimController::ApplyPrimitiveDoubleParams(const ID& obj) const {

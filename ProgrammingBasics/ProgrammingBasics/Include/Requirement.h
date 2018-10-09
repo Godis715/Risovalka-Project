@@ -86,29 +86,13 @@ public:
 		return divergence * divergence;
 	}
 };
-//
-////class ConnectionReq : public Requirement {
-////
-////private:
-////public:
-////	ConnectionReq() :
-////		Requirement(IDGenerator::getInstance()->generateID(), ot_connection)
-////	{
-////		args = Array<double*>(0);
-////		params = Array<double>(0);
-////	}
-////	~ConnectionReq() { }
-////	double error() {
-////		return 0;
-////	}
-////};
-//
+
 class PointPosReq : public Requirement {
 private:
 
 public:
 	PointPosReq(const Array<ID>& _objects, const Array<double>& _params) :
-		Requirement(ot_pointPosReq, params, _objects) {
+		Requirement(ot_pointPosReq, _params, _objects) {
 
 		for (int i = 0; i < _objects.GetSize(); ++i) {
 			args = args + primCtrl->GetPrimitiveDoubleParamsAsPointers(_objects[i]);
