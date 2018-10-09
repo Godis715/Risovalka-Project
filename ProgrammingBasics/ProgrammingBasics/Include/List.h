@@ -120,11 +120,12 @@ public:
 			}
 			Node* temp = current;
 
-			if (prev != nullptr) {
-				prev->next = current->next;
+			if (list->head == current) {
+				list->head = current->next;
+				list->guard->next = list->head;
 			}
 			else {
-				list->head = current->next;
+				prev->next = current->next;
 			}
 			if (current->next == nullptr) {
 				list->tail = prev;
