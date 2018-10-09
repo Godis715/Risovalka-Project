@@ -418,7 +418,12 @@ Mode* DrawingModes::HandleEvent(const Event ev, Array<double>& params)
 			if (params.GetSize() != 2) {
 				throw std::invalid_argument("Bad number of parameters");
 			}
-			if (stateCreate != createNone)
+			if (stateCreate == createNone)
+			{
+				selectionObjects.Clear();
+				return new Selection();
+			}
+			else
 			{
 				Array<Vector2>points;
 				points.PushBack(Vector2(params[0], params[1]));
