@@ -40,7 +40,7 @@ void ViewFile::cl_execute_script_b(Fl_Widget* o, void*)
 void ViewFile::cl_SaveProject(Fl_Widget* o, void*)
 {
 	viewLog->Push("Log:Save file");
-	Presenter::SaveProject("way");
+	Presenter::SaveProject("project.svg");
 	((Fl_Button*)o)->deactivate();
 	((Fl_Button*)o)->activate();
 }
@@ -48,7 +48,7 @@ void ViewFile::cl_SaveProject(Fl_Widget* o, void*)
 void ViewFile::cl_DownloadFile(Fl_Widget* o, void*)
 {
 	viewLog->Push("Log:Download file");
-	Presenter::DownloadFile("nameFile");
+	Presenter::DownloadFile("project.svg");
 	((Fl_Button*)o)->deactivate();
 	((Fl_Button*)o)->activate();
 }
