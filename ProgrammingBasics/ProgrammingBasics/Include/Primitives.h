@@ -34,6 +34,8 @@ public:
 
 	bool IsPrimitive(const ID&) const;
 
+	bool IsActivated(const ID&) const;
+
 	Array<double> GetPrimitiveParamsAsValues(const ID&) const;
 	Array<double> GetPrimParamsForDrawing(const ID&) const;
 
@@ -51,6 +53,10 @@ public:
 
 	void SetPrimitiveParams(const ID&, const Array<double>&) const;
 
+	void Activate(const ID&) const;
+
+	void Deactivate(const ID&) const;
+
 	ID CreatePrimitive(object_type, const Array<ID>&, const Array<double>&) const;
 	Array<ID> GetChildren(const ID&) const;
 
@@ -60,11 +66,15 @@ public:
 class Primitive : public Object {
 private:
 	Array<double*> doubleParams;
+
+	bool isActivated;
 public:
 	Primitive(object_type, const Array<double>&, const Array<ID>&);
 	virtual ~Primitive();
 	virtual double GetDist(const Vector2&) const = 0;
-
+	bool IsActivated();
+	void Activate();
+	void Deactivate();
 	Array<double*> GetDoubleParamsAsPointers();
 
 	void ApplyDoubleParams();

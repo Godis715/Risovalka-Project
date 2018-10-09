@@ -12,31 +12,35 @@ Array<double*> Requirement::GetArgs() const {
 }
 
 Array<double> Requirement::Gradient() {
-	Array<double> grad(args.GetSize());
+	Array<double> grad(0);
 	double err = error();
-	for (int i = 0; i < args.GetSize(); ++i) {
-		double test = *args[i];
-		(*args[i]) += DELTA_X;
-		double delta_error_right = error();
-		(*args[i]) -= DELTA_X;
-		//(*arguments[i]) -= 2 * DELTA_X;
-		//double delta_error_left = error();
+	for (int i = 0; i < objects.GetSize(); ++i) {
+		Array<double*> activeArgs = primCtrl->GetPrimitiveDoubleParamsAsPointers(objects[i]);
+		for (int j = 0; j < activeArgs.GetSize(); ++j) {
+			double test = *activeArgs[j];
+			(*activeArgs[j]) += DELTA_X;
+			double delta_error_right = error();
+			(*activeArgs[j]) -= DELTA_X;
+			//(*arguments[i]) -= 2 * DELTA_X;
+			//double delta_error_left = error();
 
-		test = (delta_error_right - err) / (DELTA_X);
-		//test = (delta_error_right - delta_error_left) / (DELTA_X * 2);
-		grad[i] = test;
+			test = (delta_error_right - err) / (DELTA_X);
+			//test = (delta_error_right - delta_error_left) / (DELTA_X * 2);
+			grad = grad + test;
+		}
 	}
 	return grad;
 }
 #pragma endregion
 
 #pragma region DistBetPointsReq
-DistBetPointsReq::DistBetPointsReq(const Array<ID>& _objects, const Array<double>& _params) :
-	Requirement(ot_distBetPoints, _params, _objects)
+DistBetPointsReq::DistBetPointsReq(const Array<ID>& _children, const Array<double>& _params) :
+	Requirement(ot_distBetPoints, _params, _children)
 {
-	for (int i = 0; i < _objects.GetSize(); ++i) {
-		args += primCtrl->GetPrimitiveDoubleParamsAsPointers(_objects[i]);
-	}
+	objects = _children;
+
+	for (int i = 0; i < _children.GetSize(); ++i) {
+		args = args + primCtrl->GetPrimitiveDoubleParamsAsPointers(objects[i]);
 }
 
 double DistBetPointsReq::error() {

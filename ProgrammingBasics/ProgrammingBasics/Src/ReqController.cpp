@@ -56,7 +56,11 @@ Array<double*> GetReqArgsValues(const ID&);
 
 Array<double*> ReqController::GetReqArgsAsPointers(const ID& obj) const {
 	Requirement* req = GetReq(obj);
-	return req->args;
+	Array<double*> activeArgs(0);
+	for (int i = 0; i < req->objects.GetSize(); ++i) {
+		activeArgs = activeArgs + primCtrl->GetPrimitiveDoubleParamsAsPointers(req->objects[i]);
+	}
+	return activeArgs;
 }
 
 double ReqController::GetReqError(const ID& obj) const {
@@ -79,13 +83,9 @@ void ReqController::SetReqParams(const ID& obj, const Array<double>& params) con
 
 void ReqController::ApplyChanges(const ID& obj) const {
 	Requirement* req = GetReq(obj);
-	auto children = req->GetChildren();
+	auto children = req->objects;
 	for (int i = 0; i < children.GetSize(); ++i) {
 		primCtrl->ApplyPrimitiveDoubleParams(children[i]);
-		auto points = primCtrl->GetChildren(children[i]);
-		for (int j = 0; j < points.GetSize(); ++j) {
-			primCtrl->ApplyPrimitiveDoubleParams(points[j]);
-		}
 	}
 }
 
