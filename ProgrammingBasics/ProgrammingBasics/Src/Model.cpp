@@ -139,8 +139,6 @@ void Model::Move(const Array<ID>& objs, const Vector2& direction) const {
 		}
 	}
 
-	std::list<ID> pointPosReqs;
-
 	auto point = points.GetMarker();
 	while (point.IsValid()) {
 		auto params = primCtrl->GETVARPARAMS(*point, VERTEX);
@@ -150,18 +148,25 @@ void Model::Move(const Array<ID>& objs, const Vector2& direction) const {
 
 		primCtrl->SetPrimitiveParams(*point, params);
 		
-		pointPosReqs.push_back(CreateRequirement(ot_pointPosReq, CreateArr(*point), params));
+		primCtrl->Deactivate(*point);
 
 		++point;
 	}
 
-	for (auto it = pointPosReqs.begin(); it != pointPosReqs.end(); ++it) {
+	auto it = points.GetMarker();
+	
+	while (it.IsValid()) {
 		OptimizeByID(*it);
+		++it;
 	}
 
-	for (auto it = pointPosReqs.begin(); it != pointPosReqs.end(); ++it) {
-		dataCtrl->DeleteObject(*it);
+	it = points.GetMarker();
+
+	while (it.IsValid()) {
+		primCtrl->Activate(*it);
+		++it;
 	}
+
 }
 
 void Model::Clear() const { 
