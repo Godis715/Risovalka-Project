@@ -31,8 +31,8 @@ public:
 	void ChangeRequirement(const ID&, const Array<double>&) const;
 	void ChangePrimitive(const ID&, const Array<double>&) const;
 	
-	void DeleteObject(const ID&) const;
-	void DeleteObjects(const Array<ID>&) const;
+	void DeleteObject(ID&) const;
+	void DeleteObjects(Array<ID>&) const;
 
 	void OptimizeByID(const ID&) const;
 	void Scale(const Array<ID>&, const double) const;
@@ -55,7 +55,7 @@ public:
 	Array<double> GetVariableObjParam(const ID&, int...) const;
 	Array<double> GetPrimParamsForDrawing(const ID&) const;
 
-	BinSearchTree<ID, ID>::bst_iterator GetPrimIterator();
+	Set<ID>::bst_iterator GetPrimIterator();
 };
 
 #endif

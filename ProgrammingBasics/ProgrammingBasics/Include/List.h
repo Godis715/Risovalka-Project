@@ -19,11 +19,13 @@ private:
 		}
 	};
 
+	Node* guard;
 	Node* head;
 	Node* tail;
 	int size;
 public:
 	List() {
+		guard = nullptr;
 		head = nullptr;
 		tail = nullptr;
 		size = 0;
@@ -118,11 +120,12 @@ public:
 			}
 			Node* temp = current;
 
-			if (prev != nullptr) {
-				prev->next = current->next;
+			if (list->head == current) {
+				list->head = current->next;
+				list->guard->next = list->head;
 			}
 			else {
-				list->head = current->next;
+				prev->next = current->next;
 			}
 			if (current->next == nullptr) {
 				list->tail = prev;
@@ -132,7 +135,7 @@ public:
 			delete temp;
 		}
 
-		T GetValue() const {
+		T operator*() const {
 			if (!isValid) {
 				throw std::exception("Marker was not valid");
 			}
@@ -161,6 +164,15 @@ public:
 		return size;
 	}
 
+	Marker BeforeBegin() {
+		head = guard;
+		auto marker = Marker(this);
+		if (head != nullptr) {
+			head = guard->next;
+		}
+		return marker;
+	}
+
 	Marker Begin() {
 		return Marker(this);
 	}
@@ -175,7 +187,9 @@ public:
 	void Add(const T& val) {
 		if (size == 0)
 		{
+			guard = head;
 			head = tail = new Node(nullptr, val);
+			guard = new Node(head, val);
 		}
 		else
 		{

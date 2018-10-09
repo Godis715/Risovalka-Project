@@ -47,3 +47,17 @@ void ObjectController::DeleteObj(ID& id) const {
 		id.hash = 0;
 	}
 }
+
+bool ObjectController::IsValid(ID& id) {
+	return ((id.hash > 0) && (id.object->isValid));
+}
+
+void ObjectController::MakeInValid(ID& id) {
+	id.object->isValid = false;
+}
+
+void ObjectController::MakeValid(ID& id) {
+	if (id.hash > 0) {
+		id.object->isValid = true;
+	}
+}

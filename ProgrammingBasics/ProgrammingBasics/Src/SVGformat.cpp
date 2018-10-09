@@ -409,6 +409,10 @@ bool SVGformat::Save(const std::string& path, bool withDrawProjectTags)
 	auto primDataMarker = dataCtrl->primData.GetMarker();
 	while(primDataMarker.IsValid()) {
 		ID tempID = (*primDataMarker);
+		++primDataMarker;
+		if (!objCtrl->IsValid(tempID)) {
+			continue;
+		}
 		Array<double> tempParams = primCtrl->GetPrimitiveParamsAsValues(tempID);
 		object_type tempType = objCtrl->GetType(tempID);
 		Array<ID> children = primCtrl->GetChildren(tempID);
@@ -490,7 +494,7 @@ bool SVGformat::Save(const std::string& path, bool withDrawProjectTags)
 			file << "\n		fill=" << '"' << "none" << '"';
 			file << "\n	/>";
 		}
-		++primDataMarker;
+		
 	}
 	if (dataCtrl->reqData.GetSize() != 0) {
 		if (withDrawProjectTags) {
@@ -498,6 +502,12 @@ bool SVGformat::Save(const std::string& path, bool withDrawProjectTags)
 			auto dataReqMarker = dataCtrl->reqData.GetMarker();
 			while (dataReqMarker.IsValid()) {
 				ID tempID = (*dataReqMarker);
+				++dataReqMarker;
+
+				if (!objCtrl->IsValid(tempID)) {
+					continue;
+				}
+
 				Array<double> tempParams = reqCtrl->GetReqParamsAsValues(tempID);
 				object_type tempType = objCtrl->GetType(tempID);
 				Set<ID>* tempIDs = (*dataCtrl->linkData.Find(tempID));
@@ -563,7 +573,7 @@ bool SVGformat::Save(const std::string& path, bool withDrawProjectTags)
 					else file << " ";
 				}
 				file << "	/>\n";
-				++dataReqMarker;
+		
 			}
 			file << "	</drawProject:req>";
 		}

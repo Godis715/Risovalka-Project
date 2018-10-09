@@ -30,7 +30,7 @@ void DataController::AddObject(const ID& obj) {
 			LOG("AddObject: primitive already added", LEVEL_2);
 			return;
 		}
-		primData.Add(obj, obj);
+		primData.Add(obj);
 		LOG("AddObject: primitive successfully added", LEVEL_2);
 	}
 	else {
@@ -39,7 +39,7 @@ void DataController::AddObject(const ID& obj) {
 			LOG("AddObject: requirement already added", LEVEL_2);
 			return;
 		}
-		reqData.Add(obj, obj);
+		reqData.Add(obj);
 		LOG("AddObject: requirement successfully added", LEVEL_2);
 	}
 }
@@ -120,8 +120,8 @@ void DataController::Connect(const ID& head, Component* headLink) {
 }
 
 void DataController::DeleteObject(const ID& id) {
-	BinSearchTree<ID, ID> objectsToDelete;
-	objectsToDelete.Add(id, id);
+	DataID objectsToDelete;
+	objectsToDelete.Add(id);
 	bool isObjPrim = primCtrl->IsPrimitive(id);
 
 	Queue<ID> queue;
@@ -145,7 +145,7 @@ void DataController::DeleteObject(const ID& id) {
 					bool isDel = objectsToDelete.Find(currConnNode).IsValid();
 					if (!isDel) {
 						queue.Push(currConnNode);
-						objectsToDelete.Add(currConnNode, currConnNode);
+						objectsToDelete.Add(currConnNode);
 					}
 				}
 
@@ -202,6 +202,43 @@ void DataController::DeleteObject(const ID& id) {
 	}
 }
 
+void DataController::MakeInValid(ID& id) {
+	if ((reqCtrl->IsReq(id)) || (!objCtrl->IsValid(id))) {
+		objCtrl->MakeInValid(id);
+		return;
+	}
+
+	Queue<ID> queue;
+	objCtrl->MakeInValid(id);
+	queue.Push(id);
+
+
+	while (!queue.IsEmpty()) {
+		ID currID = queue.Pop();
+		
+		auto linkIt = linkData.Find(currID);
+		if (linkIt.IsValid()) {
+			auto connectedNodes = (*linkIt);
+			auto connNodesIt = connectedNodes->GetMarker();
+
+			while (connNodesIt.IsValid()) {
+
+				auto currIDLink = (*connNodesIt);
+				++connNodesIt;
+				if (!objCtrl->IsValid(currIDLink)) {
+					continue;
+				}
+				objCtrl->MakeInValid(currIDLink);
+
+				if (reqCtrl->IsReq(currIDLink)) {
+					continue;
+				}
+				queue.Push(currIDLink);
+			}
+		}
+	}
+}
+
 void DataController::Clear() {
 	auto linkIt = linkData.GetMarker();
 	while (linkIt.IsValid()) {
@@ -209,8 +246,8 @@ void DataController::Clear() {
 		++linkIt;
 	}
 	linkData.DeleteDict();
-	primData.DeleteDict();
-	reqData.DeleteDict();
+	primData.DeleteSet();
+	reqData.DeleteSet();
 }
 
 Component DataController::GetComponent(const ID& id) {
@@ -220,6 +257,9 @@ Component DataController::GetComponent(const ID& id) {
 
 	while (!queue.IsEmpty()) {
 		ID currID = queue.Pop();
+		if (!objCtrl->IsValid(currID)) {
+			continue;
+		}
 		auto componentIt = component.Find(currID);
 		if (!componentIt.IsValid()) {
 			component.Add(currID);
@@ -246,6 +286,10 @@ ID DataController::GetObjectInCircle(double x, double y, double r) {
 	auto primIt = primData.GetMarker();
 	while (primIt.IsValid()) {
 		ID obj = *primIt;
+		++primIt;
+		if (!objCtrl->IsValid(obj)) {
+			continue;
+		}
 		double dist = primCtrl->GetDistanceToPoint(obj, x, y);
 		if (dist <= r) {
 			if (objCtrl->GetType(obj) == ot_point) {
@@ -269,13 +313,12 @@ ID DataController::GetObjectInCircle(double x, double y, double r) {
 				}
 			}
 		}
-		++primIt;
 	}
 
 	return currentObject;
 }
 
-BinSearchTree<ID, ID>::bst_iterator DataController::GetPrimIterator() {
+Set<ID>::bst_iterator DataController::GetPrimIterator() {
 	return primData.GetMarker();
 }
 
@@ -289,6 +332,10 @@ Array<ID> DataController::GetRelatedObjects(const ID& obj) {
 		while (connObjIt.IsValid()) {
 			
 			ID currObj = *connObjIt;
+			++connObjIt;
+			if (!objCtrl->IsValid(currObj)) {
+				continue;
+			}
 			auto currObjType = objCtrl->GetType(currObj);
 
 			if (primCtrl->IsPrimitive(objType) && reqCtrl->IsReq(currObj) ||
@@ -296,7 +343,7 @@ Array<ID> DataController::GetRelatedObjects(const ID& obj) {
 				relatedObjects.PushBack(currObj);
 			}
 
-			++connObjIt;
+		
 		}
 	}
 	return relatedObjects;
