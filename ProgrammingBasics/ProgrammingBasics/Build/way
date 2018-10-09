@@ -16,4 +16,50 @@
 		stroke-width="5"
 		fill="none"
 	/>
+	<drawProject:point
+		px="340"
+		py="141"
+		id="3"
+	/>
+	<drawProject:point
+		px="505.51"
+		py="171.034"
+		id="4"
+	/>
+	<line
+		x1="340"
+		y1="141"
+		x2="505.51"
+		y2="171.034"
+		id="5"
+		childIds="3 4"
+		stroke="red"
+		stroke-width="5"
+	/>
+	<drawProject:point
+		px="350"
+		py="216"
+		id="6"
+	/>
+	<drawProject:point
+		px="505.49"
+		py="170.966"
+		id="7"
+	/>
+	<line
+		x1="350"
+		y1="216"
+		x2="505.49"
+		y2="170.966"
+		id="8"
+		childIds="6 7"
+		stroke="red"
+		stroke-width="5"
+	/>
+	<drawProject:req>
+		<distBetPoints
+			id="9"
+			IDs="4 7"
+			params="0"	/>
+	</drawProject:req>
 </svg>

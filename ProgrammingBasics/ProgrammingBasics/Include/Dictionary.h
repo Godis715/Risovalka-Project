@@ -733,8 +733,7 @@ private:
 					return node->right;
 				}
 			}
-			else
-			{
+			else if (value < node->value) {
 				if (node->left != nullptr)
 				{
 					node = node->left;
@@ -747,6 +746,9 @@ private:
 					RestoreHigh(node);
 					return node->left;
 				}
+			}
+			else {
+				return nullptr;
 			}
 		}
 	}

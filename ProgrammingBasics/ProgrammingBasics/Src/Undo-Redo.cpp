@@ -152,7 +152,7 @@ void Undo_Redo::AddVersion(const TypeOFCange type, const Array<ID>& IDs) {
 
 	Version* version = new VersionCreat_Del(type, IDs, links);
 
-	versions.PushTail(version);
+	versions.Add(version);
 	it = versions.End();
 }
 
@@ -171,7 +171,7 @@ void Undo_Redo::AddChange(const Array<ID>& IDs) {
 	for (int i = 0; i < componentIDs.GetSize(); ++i) {
 		version->dataBefore[i] = objectController->GetObjParam(componentIDs[i]);
 	}
-	versions.PushTail(version);
+	versions.Add(version);
 }
 
 void Undo_Redo::CompleteAddChange() {
@@ -205,7 +205,7 @@ void Undo_Redo::AddCreatingReq(const Array<ID>& IDs) {
 		version->dataBefore[i] = objectController->GetObjParam(componentIDs[i]);
 	}
 
-	versions.PushTail(version);
+	versions.Add(version);
 	it = versions.End();
 }
 

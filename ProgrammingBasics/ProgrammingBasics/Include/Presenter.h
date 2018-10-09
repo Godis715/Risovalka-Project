@@ -47,7 +47,7 @@ public:
 
 	//static void ScaleObjects(const Array<ID>&, const double);
 
-	//static void MoveObject(const Array<ID>&, const Vector2&);
+	static void MoveObject(const Array<ID>&, const Vector2&);
 
 	/*static void ChangeObject(){}*/
 

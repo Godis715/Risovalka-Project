@@ -172,7 +172,7 @@ public:
 		return marker;
 	}
 
-	void PushTail(const T& val) {
+	void Add(const T& val) {
 		if (size == 0)
 		{
 			head = tail = new Node(nullptr, val);

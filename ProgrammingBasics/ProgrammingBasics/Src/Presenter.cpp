@@ -133,12 +133,10 @@ void Presenter::CleareScene() {
 //	}
 //}
 //
-//void Presenter::MoveObject(const Array<ID>& primitiveID,const Vector2& vector) {
-//	if (!Model::GetInstance()->Move(primitiveID, vector)) {
-//		LOG(string("could not move prim"), LEVEL_3);
-//	}
-//}
-//
+void Presenter::MoveObject(const Array<ID>& primitiveID,const Vector2& vector) {
+	model->Move(primitiveID, vector);
+}
+
 //void Presenter::GetComponent(const ID& id, Array<ID>& primID, Array<ID>& reqID) {
 //	if (!Model::GetInstance()->NewComponent(id, primID, reqID)) {
 //		LOG(string("could not get new component"), LEVEL_3);
