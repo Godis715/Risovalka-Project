@@ -16,6 +16,19 @@ void ViewToolbar::cl_DrawingModes(Fl_Widget* o, void*)
 	}
 }
 
+void ViewToolbar::cl_FastRequirement(Fl_Widget* o, void*) {
+	delete inventory->lastCursor;
+	inventory->lastCursor = new Fl_Cursor(FL_CURSOR_DEFAULT);
+	Array<double> params(0);
+	const string nameMode = ((Fl_Menu_Button*)o)->mvalue()->label();
+	if (nameMode == "Points distance") {
+		Presenter::Set_event(ev_req_D_point_fast, params);
+	}
+	if (nameMode == "Merge points") {
+		Presenter::Set_event(ev_req_Eq_point_fast, params);
+	}
+}
+
 void ViewToolbar::cl_Create(Fl_Widget* o, void*)
 {
 	delete inventory->lastCursor;
@@ -194,6 +207,18 @@ void ViewToolbar::Initializer()
 		createRequirement_b->callback(cl_Requirement);
 		createRequirement_b->clear_visible_focus();
 		createRequirement_b->color(FL_WHITE);
+	}
+	coordX += (wMenu + indentX);
+	{
+		fastRequirements = new Fl_Menu_Item[3];
+		fastRequirements[0] = { "Points distance" };
+		fastRequirements[1] = { "Merge points" };
+		fastRequirements[2] = { 0 };
+		createFastRequirement_b = new Fl_Menu_Button(coordX, positionY + indentY, wMenu, hMenu, "FastTool");
+		createFastRequirement_b->menu(fastRequirements);
+		createFastRequirement_b->callback(cl_FastRequirement);
+		createFastRequirement_b->clear_visible_focus();
+		createFastRequirement_b->color(FL_WHITE);
 	}
 	group->box(FL_UP_BOX);
 	group->color(fl_rgb_color(0, 140, 240)); // цвет "Аква"

@@ -14,7 +14,7 @@ private:
 	const int indentY = 0;
 	const int hMenu = 30;
 	const int wMenu = 120;
-	const int countMenu = 4;
+	const int countMenu = 5;
 	const int countBut = 2;
 	const int hBut = 30;
 	const int wBut = 30;
@@ -36,6 +36,9 @@ private:
 	Fl_Menu_Item* requirements;
 	Fl_Menu_Button* createRequirement_b;
 
+	Fl_Menu_Item* fastRequirements;
+	Fl_Menu_Button* createFastRequirement_b;
+
 	static void cl_DrawingModes(Fl_Widget*, void*);
 
 	static void cl_Create(Fl_Widget*, void*);
@@ -43,6 +46,8 @@ private:
 	static void cl_Redaction(Fl_Widget*, void*);
 
 	static void cl_Requirement(Fl_Widget*, void*);
+
+	static void cl_FastRequirement(Fl_Widget*, void*);
 
 	static void cl_Button(Fl_Widget*, void*);
 

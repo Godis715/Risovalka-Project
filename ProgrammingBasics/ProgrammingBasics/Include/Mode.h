@@ -32,6 +32,9 @@ enum Event
 	ev_req_D_point_arc,
 	ev_req_angle_segment,
 	ev_input,
+	//fase create requirements
+	ev_req_D_point_fast,
+	ev_req_Eq_point_fast,
 	// redaction
 	ev_moveObjects,
 	ev_scaleObjects,
@@ -307,15 +310,22 @@ public:
 };
 
 class CreateDistBetPointsReq : public Mode {
+public:
+	enum ModeType { pointDist, equalPointPos };
 private:
 	enum State { firstPointSelected, pointNotSelected, secondPointSelected };
-
 	State state;
+	ModeType type;
+
 	ID firstPoint;
 	ID secondPoint;
+	Vector2 currentCursorPos;
 	IRequirementInput* inputWidjet;
 public:
-	CreateDistBetPointsReq();
+
+
+	CreateDistBetPointsReq(ModeType);
+
 	~CreateDistBetPointsReq();
 	Mode * HandleEvent(const Event, Array<double>&);
 	void DrawMode();

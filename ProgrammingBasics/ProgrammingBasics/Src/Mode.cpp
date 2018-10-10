@@ -787,9 +787,16 @@ Mode* Selection::HandleEvent(const Event e, Array<double>& params) {
 		model->CreateRequirement(ot_pointsOnTheOneHand, selectedObjects, param);
 		return nullptr;
 	}
+	case ev_req_D_point_fast: {
+		return new CreateDistBetPointsReq(CreateDistBetPointsReq::ModeType::pointDist);
+	}
+	case ev_req_Eq_point_fast: {
+		return new CreateDistBetPointsReq(CreateDistBetPointsReq::ModeType::equalPointPos);
+	}
 	default:
 		return UnexpectedEvent(e);
 	}
+
 }
 
 void Selection::DrawMode()
@@ -1021,18 +1028,24 @@ void CreateRequirementWithParam::DrawMode() {
 #pragma endregion
 
 #pragma region CreateDistBetPointsReq
-CreateDistBetPointsReq::CreateDistBetPointsReq() {
-	state = pointNotSelected;
+
+CreateDistBetPointsReq::CreateDistBetPointsReq(ModeType _type) :
+	type(_type),
+	state(pointNotSelected)
+{
+
 }
+
 CreateDistBetPointsReq::~CreateDistBetPointsReq() {
-	
+	delete inputWidjet;
 }
 
 Mode * CreateDistBetPointsReq::HandleEvent(const Event e, Array<double>& params) {
 	if (e == ev_escape) {
-		
+		state = pointNotSelected;
+		return new Selection();
 	}
-	if (e == ev_leftMouseClick) {
+	if (e == ev_leftMouseDown) {
 		if (state == pointNotSelected) {
 			ID obj = model->GetObjectByClick(params[0], params[1]);
 			if (!IDGenerator::IsNullID(obj) && model->GetObjType(obj) == ot_point) {
@@ -1042,20 +1055,83 @@ Mode * CreateDistBetPointsReq::HandleEvent(const Event e, Array<double>& params)
 			else {
 				state = pointNotSelected;
 			}
+			return nullptr;
 		}
 		if (state == firstPointSelected) {
 			ID obj = model->GetObjectByClick(params[0], params[1]);
 			if (!IDGenerator::IsNullID(obj) && model->GetObjType(obj) == ot_point) {
 				secondPoint = obj;
-				state = secondPointSelected;
+				if (type == pointDist) {
+					state = secondPointSelected;
+
+					inputWidjet = static_cast<IRequirementInput*>(view->GetWidjet(requirementInput));
+				}
+				else if(type == equalPointPos) {
+					model->CreateRequirement(ot_distBetPoints, CreateArr(firstPoint, secondPoint), CreateArr(0.0));
+					state = pointNotSelected;
+				}
 			}
 			else {
 				state = pointNotSelected;
 			}
+			return nullptr;
 		}
 	}
+	if (e == ev_input) {
+		if (params.GetSize() != 1) {
+			throw std::invalid_argument("Bad number of parameters");
+		}
+
+
+		model->CreateRequirement(ot_distBetPoints, CreateArr(firstPoint, secondPoint), params);
+
+		delete inputWidjet;
+		inputWidjet = nullptr;
+		state = pointNotSelected;
+
+		return nullptr;
+	}
+	if (e == ev_mouseMove) {
+		currentCursorPos.x = params[0];
+		currentCursorPos.y = params[1];
+
+		return nullptr;
+	}
+	if (e == ev_req_Eq_point_fast) {
+		if (type == pointDist) {
+			state = pointNotSelected;
+			type = equalPointPos;
+		}
+		return nullptr;
+	}
+	if (e == ev_req_Eq_point_fast) {
+		if (type == equalPointPos) {
+			state = pointNotSelected;
+			type = pointDist;
+		}
+		return nullptr;
+	}
+	return nullptr;
 }
-void CreateDistBetPointsReq::DrawMode() {}
+
+void CreateDistBetPointsReq::DrawMode() {
+	if (state == firstPointSelected) {
+		Array<double> pos1 = model->GETVARPARAMS(firstPoint, VERTEX);
+		Vector2 pointPos1 = Vector2(pos1[0], pos1[1]);
+		view->DrawCircle(pointPos1, Vector2(pos1[0], pos1[1] + 5), points);
+		view->DrawLine(pointPos1, currentCursorPos, points);
+	}
+	if (state == secondPointSelected) {
+		Array<double> pos1 = model->GETVARPARAMS(firstPoint, VERTEX);
+		Array<double> pos2 = model->GETVARPARAMS(secondPoint, VERTEX);
+		Vector2 pointPos1 = Vector2(pos1[0], pos1[1]);
+		Vector2 pointPos2 = Vector2(pos2[0], pos2[1]);
+
+		view->DrawCircle(pointPos1, Vector2(pos1[0], pos1[1] + 5), points);
+		view->DrawLine(pointPos1, pointPos2, points);
+		view->DrawCircle(pointPos2, Vector2(pos2[0], pos2[1] + 5), points);
+	}
+}
 #pragma endregion 
 
 #pragma region NavigationOnScene
