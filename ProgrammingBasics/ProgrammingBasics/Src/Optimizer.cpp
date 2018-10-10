@@ -24,7 +24,7 @@ void Optimizer::OptimizeRequirements(const Array<ID>& requirments) {
 
 	double lastError = INFINITY;
 
-	while (err > OPTIM_EPS) {
+	while (err / requirments.GetSize() > OPTIM_EPS) {
 
 		int match_array_iterator = 0;
 

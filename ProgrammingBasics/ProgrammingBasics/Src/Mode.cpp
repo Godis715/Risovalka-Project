@@ -1020,6 +1020,44 @@ void CreateRequirementWithParam::DrawMode() {
 }
 #pragma endregion
 
+#pragma region CreateDistBetPointsReq
+CreateDistBetPointsReq::CreateDistBetPointsReq() {
+	state = pointNotSelected;
+}
+CreateDistBetPointsReq::~CreateDistBetPointsReq() {
+	
+}
+
+Mode * CreateDistBetPointsReq::HandleEvent(const Event e, Array<double>& params) {
+	if (e == ev_escape) {
+		
+	}
+	if (e == ev_leftMouseClick) {
+		if (state == pointNotSelected) {
+			ID obj = model->GetObjectByClick(params[0], params[1]);
+			if (!IDGenerator::IsNullID(obj) && model->GetObjType(obj) == ot_point) {
+				firstPoint = obj;
+				state = firstPointSelected;
+			}
+			else {
+				state = pointNotSelected;
+			}
+		}
+		if (state == firstPointSelected) {
+			ID obj = model->GetObjectByClick(params[0], params[1]);
+			if (!IDGenerator::IsNullID(obj) && model->GetObjType(obj) == ot_point) {
+				secondPoint = obj;
+				state = secondPointSelected;
+			}
+			else {
+				state = pointNotSelected;
+			}
+		}
+	}
+}
+void CreateDistBetPointsReq::DrawMode() {}
+#pragma endregion 
+
 #pragma region NavigationOnScene
 NavigationOnScene::NavigationOnScene(Array<ID> _selecObj) : selectedPrim(_selecObj) { 
 	stateMove =  noClick;

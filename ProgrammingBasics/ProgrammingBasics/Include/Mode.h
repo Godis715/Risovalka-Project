@@ -306,6 +306,21 @@ public:
 	void DrawMode();
 };
 
+class CreateDistBetPointsReq : public Mode {
+private:
+	enum State { firstPointSelected, pointNotSelected, secondPointSelected };
+
+	State state;
+	ID firstPoint;
+	ID secondPoint;
+	IRequirementInput* inputWidjet;
+public:
+	CreateDistBetPointsReq();
+	~CreateDistBetPointsReq();
+	Mode * HandleEvent(const Event, Array<double>&);
+	void DrawMode();
+};
+
 class NavigationOnScene : public Mode {
 private:
 	enum State	{noClick, click};

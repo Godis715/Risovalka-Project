@@ -13,7 +13,7 @@ void PrimController::Activate(const ID& obj) const {
 
 void PrimController::Deactivate(const ID& obj) const {
 	Primitive* prim = GetPrimitive(obj);
-	prim->Activate();
+	prim->Deactivate();
 }
 
 bool PrimController::IsActivated(const ID& obj) const {
