@@ -1104,7 +1104,7 @@ Mode * CreateDistBetPointsReq::HandleEvent(const Event e, Array<double>& params)
 		}
 		return nullptr;
 	}
-	if (e == ev_req_Eq_point_fast) {
+	if (e == ev_req_D_point_fast) {
 		if (type == equalPointPos) {
 			state = pointNotSelected;
 			type = pointDist;
