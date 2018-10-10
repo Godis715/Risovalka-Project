@@ -853,18 +853,20 @@ Mode* Redaction::HandleEvent(const Event e, Array<double>& params)
 			if (params.GetSize() != 2) {
                 throw std::invalid_argument("Bad number of parameters");
 			}
+
+			Vector2 last = posEnd;
+
 			posEnd.x = params[0];
 			posEnd.y = params[1];
 
-			shifBuffer = shifBuffer + (posEnd - posStart);
+			shiftBuffer = shiftBuffer + Vector2::Dot(posEnd - last, posEnd - last);
 
-			if (Vector2::Dot(shifBuffer, shifBuffer) > 25.0) {
-				model->Move(selectedObjects, shifBuffer);
-				shifBuffer.x = 0.0;
-				shifBuffer.y = 0.0;
+			if (shiftBuffer > 4.0) {
+				model->Move(selectedObjects, posEnd - posStart);
+				shiftBuffer = 0.0;
+
+				posStart = posEnd;
 			}
-
-			posStart = posEnd;
 			return nullptr;
 		}
 		if (e == ev_leftMouseUp) {
@@ -894,17 +896,17 @@ Mode* Redaction::HandleEvent(const Event e, Array<double>& params)
 	}
 	if (e == ev_escape)
 	{
-		model->Move(selectedObjects, shifBuffer);
+		model->Move(selectedObjects, posEnd - posStart);
 		return new Selection(selectedObjects);
 	}
 	if (e == ev_scaleObjects)
 	{
-		model->Move(selectedObjects, shifBuffer);
+		model->Move(selectedObjects, posEnd - posStart);
 		return new Redaction(selectedObjects, ev_scaleObjects);
 	}
 	if (e == ev_moveObjects)
 	{
-		model->Move(selectedObjects, shifBuffer);
+		model->Move(selectedObjects, posEnd - posStart);
 		return new Redaction(selectedObjects, ev_moveObjects);
 	}
 	if (e == ev_del)

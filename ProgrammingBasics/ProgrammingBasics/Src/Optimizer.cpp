@@ -42,7 +42,7 @@ void Optimizer::OptimizeRequirements(const Array<ID>& requirments) {
 
 		optimization_iter++;
 		// temp
-		if (optimization_iter >= 10 || (abs(lastError - err) < OPTIM_EPS)) {
+		if (optimization_iter >= 30 || (abs(lastError - err) < OPTIM_EPS)) {
 			break;
 		}
 	}

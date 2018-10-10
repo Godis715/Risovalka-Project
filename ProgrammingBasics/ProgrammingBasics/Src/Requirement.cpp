@@ -84,7 +84,7 @@ PointPosReq::PointPosReq(const Array<ID>& _objects, const Array<double>& _params
 
 double PointPosReq::error() {
 	Vector2 vector(*args[0] - params[0], *args[1] - params[1]);
-	return Vector2::Dot(vector, vector);
+	return 100*Vector2::Dot(vector, vector);
 }
 #pragma endregion
 
