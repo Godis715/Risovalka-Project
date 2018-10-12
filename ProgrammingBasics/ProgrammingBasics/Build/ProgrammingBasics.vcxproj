@@ -154,6 +154,7 @@
     <ClCompile Include="..\Src\ViewLog.cpp" />
     <ClCompile Include="..\Src\ViewMainWindow.cpp" />
     <ClCompile Include="..\Src\ViewToolbar.cpp" />
+    <ClCompile Include="Source.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Include\Array.h" />

@@ -62,14 +62,22 @@ class DistBetPointsReq : public Requirement
 private:
 public:
 	DistBetPointsReq(const Array<ID>&, const Array<double>&);
+	virtual Array<double> Gradient() override;
+	double error();
+};
 
+class EqualPointsPositionReq : public Requirement {
+private:
+public:
+	EqualPointsPositionReq(const Array<ID>&, const Array<double>&);
+	virtual Array<double> Gradient() override;
 	double error();
 };
 
 class EqualSegmentLenReq : public Requirement {
 private:
 public:
-	EqualSegmentLenReq(const Array<ID>& _objects, const Array<double>& _params);
+	EqualSegmentLenReq(const Array<ID>&, const Array<double>&);
 
 	double error();
 };

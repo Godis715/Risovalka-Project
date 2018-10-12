@@ -24,6 +24,7 @@ enum object_type {
 	ot_connection,
 	ot_distBetPoints,
 	ot_equalSegmentLen,
+	ot_equalPointPosReq,
 	ot_pointPosReq,
 	ot_pointsOnTheOneHand,
 	ot_distBetPointSeg,

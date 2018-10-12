@@ -45,9 +45,130 @@ DistBetPointsReq::DistBetPointsReq(const Array<ID>& _children, const Array<doubl
 }
 
 double DistBetPointsReq::error() {
-	Vector2 vectorAB(*(args[2]) - *(args[0]), *(args[3]) - *(args[1]));
+	Vector2 vectorAB(*(args[0]) - *(args[2]), *(args[1]) - *(args[3]));
 	double modAB_inSquare = Vector2::Dot(vectorAB, vectorAB);
 	return modAB_inSquare - params[0] * (2 * sqrt(modAB_inSquare) - params[0]);
+}
+
+Array<double> DistBetPointsReq::Gradient() {
+	int gradSize = 0;
+
+	double x1;
+	double y1;
+	double x2;
+	double y2;
+
+	double ABx = *args[0] - *args[2];
+	double ABy = *args[1] - *args[3];
+
+	double root = sqrt(ABx * ABx + ABy * ABy);
+	double k;
+	if (root < DBL_EPSILON) {
+		k = - 2.0 * params[0];
+
+		x1 = k;
+		x2 = -x1;
+		y1 = k;
+		y2 = -y1;
+	}
+	else {
+		k = 2.0 - 2.0 * params[0] / root;
+
+		x1 = ABx * k;
+		x2 = -x1;
+		y1 = ABy * k;
+		y2 = -y1;
+	}
+
+	
+
+	if (primCtrl->IsActivated(objects[0])) {
+		if (primCtrl->IsActivated(objects[1])) {
+			Array<double> grad(4);
+			grad[0] = x1;
+			grad[1] = y1;
+			grad[2] = x2;
+			grad[3] = y2;
+			return grad;
+		}
+		else {
+			Array<double> grad(2);
+			grad[0] = x1;
+			grad[1] = y1;
+			return grad;
+		}
+	}
+	else {
+		if (primCtrl->IsActivated(objects[1])) {
+			Array<double> grad(2);
+			grad[0] = x2;
+			grad[1] = y2;
+			return grad;
+		}
+		else {
+			return Array<double>(0);
+		}
+	}
+}
+#pragma endregion
+
+#pragma region EqualPoints
+EqualPointsPositionReq::EqualPointsPositionReq(const Array<ID>& _children, const Array<double>& _params) :
+	Requirement(ot_equalPointPosReq, _params, _children)
+{
+	objects = _children;
+
+	for (int i = 0; i < _children.GetSize(); ++i) {
+		args += primCtrl->GetPrimitiveDoubleParamsAsPointers(objects[i]);
+	}
+}
+
+Array<double> EqualPointsPositionReq::Gradient() {
+	double x1;
+	double y1;
+	double x2;
+	double y2;
+
+	double ABx = 2 * (*(args[0]) - *(args[2]));
+	double ABy = 2 * (*(args[1]) - *(args[3]));
+
+	x1 = ABx;
+	x2 = -x1;
+	y1 = ABy;
+	y2 = -y1;
+
+	if (primCtrl->IsActivated(objects[0])) {
+		if (primCtrl->IsActivated(objects[1])) {
+			Array<double> grad(4);
+			grad[0] = x1;
+			grad[1] = y1;
+			grad[2] = x2;
+			grad[3] = y2;
+			return grad;
+		}
+		else {
+			Array<double> grad(2);
+			grad[0] = x1;
+			grad[1] = y1;
+			return grad;
+		}
+	}
+	else {
+		if (primCtrl->IsActivated(objects[1])) {
+			Array<double> grad(2);
+			grad[0] = x2;
+			grad[1] = y2;
+			return grad;
+		}
+		else {
+			return Array<double>(0);
+		}
+	}
+}
+double EqualPointsPositionReq::error() {
+	double AB = *(args[0]) - *(args[2]);
+	double CD = *(args[1]) - *(args[3]);
+	return AB * AB + CD * CD;
 }
 #pragma endregion
 

@@ -47,6 +47,7 @@ public:
 	}
 };
 
+
 int main()
 {
 	//Model* model = Model::GetInstance();

@@ -1067,7 +1067,7 @@ Mode * CreateDistBetPointsReq::HandleEvent(const Event e, Array<double>& params)
 					inputWidjet = static_cast<IRequirementInput*>(view->GetWidjet(requirementInput));
 				}
 				else if(type == equalPointPos) {
-					model->CreateRequirement(ot_distBetPoints, CreateArr(firstPoint, secondPoint), CreateArr(0.0));
+					model->CreateRequirement(ot_equalPointPosReq, CreateArr(firstPoint, secondPoint), Array<double>(0));
 					state = pointNotSelected;
 				}
 			}

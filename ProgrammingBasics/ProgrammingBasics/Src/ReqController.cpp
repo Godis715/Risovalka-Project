@@ -28,7 +28,8 @@ bool ReqController::IsReq(object_type type) const {
 		type == ot_pointsOnTheOneHand ||
 		type == ot_distBetPointSeg ||
 		type == ot_distBetPointArc ||
-		type == ot_angleBetSeg;
+		type == ot_angleBetSeg ||
+		type ==  ot_equalPointPosReq;
 }
 
 bool ReqController::IsReq(const ID& obj) const {
@@ -110,6 +111,22 @@ ID ReqController::CreateReq
 		}
 		obj = dynamic_cast<Object*>(new DistBetPointsReq(objects, params));
 		LOG("CreateReq: created DistBetPointsReq", LEVEL_2);
+		break;
+	}
+	case ot_equalPointPosReq: {
+		LOG("CreateReq: started creating equalPointPosReq", LEVEL_3);
+		if (params.GetSize() != 0) {
+			LOGERROR("CreateReq: bad size of params", LEVEL_1);
+		}
+		if (objects.GetSize() != 2) {
+			LOGERROR("CreateReq: bad size of objects", LEVEL_1);
+		}
+		if (objCtrl->GetType(objects[0]) != ot_point ||
+			objCtrl->GetType(objects[1]) != ot_point) {
+			LOGERROR("CreateReq: bad type of one object", LEVEL_1);
+		}
+		obj = dynamic_cast<Object*>(new EqualPointsPositionReq(objects, params));
+		LOG("CreateReq: created equalPointPosReq", LEVEL_2);
 		break;
 	}
 	case ot_segmentTouchCircle: {

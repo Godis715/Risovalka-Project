@@ -114,6 +114,9 @@
     <ClCompile Include="..\Src\ID.cpp">
       <Filter>Исходные файлы\Model</Filter>
     </ClCompile>
+    <ClCompile Include="Source.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Include\ViewFLTK.h">
