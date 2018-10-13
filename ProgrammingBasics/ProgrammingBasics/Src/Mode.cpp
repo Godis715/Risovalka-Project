@@ -104,10 +104,13 @@ const char* str_ch(const string str) {
 #pragma endregion
 
 #pragma region Mode
-Mode* Mode::UnexpectedEvent(const Event e) {
+Mode* Mode::UnexpectedEvent(const Event e, const Array<double>& params) {
 	switch (e) {
-	case ev_symmetricalDraw:{
+	case ev_symmetricalDraw: {
 		return new DrawingModes(e);
+	}
+	case ev_rotationDraw:{
+		return new DMSectorSymmetrical(e, params);
 	}
 	case ev_defualtDraw: {
 		return new DrawingModes(e);
@@ -236,7 +239,7 @@ void ChangingProperties::SetWidjetParamReq() {
 	widjetReq->SetParam(reqStringParams, objTypeToString(type));
 }
 
-Mode* ChangingProperties::HandleEvent(const Event e, Array<double>& params)
+Mode* ChangingProperties::HandleEvent(const Event e, const Array<double>& params)
 {
 	switch (e)
 	{
@@ -263,8 +266,10 @@ Mode* ChangingProperties::HandleEvent(const Event e, Array<double>& params)
 		}
 		case ot_arc:
 		{
-			params[4] = params[4] * PI / 180;
-			model->SETVARPARAMS(selectedObject, params, VERTEX, ANGLE);
+			
+			auto newParams = params;
+			newParams[4] = params[4] * PI / 180;
+			model->SETVARPARAMS(selectedObject, newParams, VERTEX, ANGLE);
 			break;
 		}
 		case ot_circle:
@@ -319,7 +324,7 @@ Mode* ChangingProperties::HandleEvent(const Event e, Array<double>& params)
 		return new Selection(selectedObject);
 	}
 	default:
-		return UnexpectedEvent(e);
+		return UnexpectedEvent(e, params);;
 	}
 }
 
@@ -379,7 +384,10 @@ DrawingModes::DrawingModes(Event e) : selectionObjects(0)
 	}
 }
 
-DrawingModes::~DrawingModes(){}
+DrawingModes::~DrawingModes(){
+	delete pointRotate;
+	delete createObject;
+}
 
 void DrawingModes::PointRotate(const Vector2& point, Array<Vector2>& resultPoints, const Vector2& center)
 {
@@ -389,7 +397,7 @@ void DrawingModes::PointRotate(const Vector2& point, Array<Vector2>& resultPoint
 	resultPoints.PushBack(Vector2((point - center).x * -1, (point - center).y * -1) + center);
 }
 
-Mode* DrawingModes::HandleEvent(const Event ev, Array<double>& params)
+Mode* DrawingModes::HandleEvent(const Event ev, const Array<double>& params)
 {
 	switch (stateMode)
 	{
@@ -456,7 +464,7 @@ Mode* DrawingModes::HandleEvent(const Event ev, Array<double>& params)
 			}
 			if (stateCreate == createNone)
 			{
-				selectionObjects.Clear();
+				//selectionObjects.Clear();
 				return new Selection();
 			}
 			else
@@ -466,7 +474,7 @@ Mode* DrawingModes::HandleEvent(const Event ev, Array<double>& params)
 				Array<ID> objIDs = createObject->HandleEvent(ev, points);
 				if (objIDs.GetSize() != 0)
 				{
-					selectionObjects += objIDs;
+					//selectionObjects += objIDs;
 					stateCreate = createNone;
 					delete createObject;
 					createObject = nullptr;
@@ -538,7 +546,7 @@ Mode* DrawingModes::HandleEvent(const Event ev, Array<double>& params)
 	default:
 		break;
 	}
-	return UnexpectedEvent(ev);
+	return UnexpectedEvent(ev, params);;
 }
 
 void DrawingModes::DrawMode()
@@ -556,6 +564,141 @@ void DrawingModes::DrawMode()
 	{
 		view->SetColor(col_Green);
 		Presenter::DrawSelectedObjects(selectionObjects);
+	}
+}
+#pragma endregion
+
+#pragma region DrawingModeSegmentSymmetrical
+DMSectorSymmetrical::DMSectorSymmetrical(const Event ev, const Array<double>& params) : selectionObjects(0)
+{
+	if (params.GetSize() != 1) {
+		throw std::invalid_argument("Bad number of parameters");
+	}
+	countSector = params[0];
+	cosinus = cos(2 * PI / countSector);
+	sinus = sin(2 * PI / countSector);
+	pointRotate = nullptr;
+	createObject = nullptr;
+	stateCreate = createNone;
+}
+
+void DMSectorSymmetrical::DrawMode()
+{
+	if (pointRotate != nullptr)
+	{
+		view->SetColor(col_Blue);
+		view->DrawPoint(Vector2(pointRotate->x, pointRotate->y));
+	}
+	if (createObject != nullptr)
+	{
+		createObject->DrawMode();
+	}
+	if (selectionObjects.GetSize() != 0)
+	{
+		view->SetColor(col_Green);
+		Presenter::DrawSelectedObjects(selectionObjects);
+	}
+}
+
+DMSectorSymmetrical::~DMSectorSymmetrical() {
+	delete pointRotate;
+	delete createObject;
+}
+
+Array<Vector2>&  DMSectorSymmetrical::PointRotate(const Vector2& point, const Vector2& center)
+{
+	auto resultPoints = Array<Vector2>(countSector);
+	resultPoints[0] = point - center;
+	for (int i = 1; i < countSector; ++i) {
+		resultPoints[i].x = cosinus * resultPoints[i - 1].x + sinus * resultPoints[i - 1].y;
+		resultPoints[i].y = sinus * resultPoints[i - 1].x - cosinus * resultPoints[i - 1].y;
+	}
+	for (int i = 0; i < countSector; ++i) {
+		resultPoints[i] += center;
+	}
+	return resultPoints;
+}
+
+Mode* DMSectorSymmetrical::HandleEvent(const Event ev, const Array<double>& params)
+{
+	switch (ev)
+	{
+	case ev_leftMouseDown:
+	{
+		if (params.GetSize() != 2) {
+			throw std::invalid_argument("Bad number of parameters");
+		}
+		if (stateCreate == createNone)
+		{
+			selectionObjects.Clear();
+			delete pointRotate;
+			pointRotate = new Vector2(params[0], params[1]);
+		}
+		else if (pointRotate != nullptr)
+		{
+			Array<Vector2>points;
+			PointRotate(Vector2(params[0], params[1]), *pointRotate);
+			Array<ID> objIDs = createObject->HandleEvent(ev, points);
+			if (objIDs.GetSize() != 0)
+			{
+				selectionObjects += objIDs;
+				stateCreate = createNone;
+				delete createObject;
+				createObject = nullptr;
+			}
+		}
+		else
+		{
+			pointRotate = new Vector2(params[0], params[1]);
+		}
+		return nullptr;
+	}
+	case ev_mouseMove:
+	{
+		if (stateCreate != createNone)
+		{
+			Array<Vector2>points;
+			PointRotate(Vector2(params[0], params[1]), *pointRotate);
+			Array<ID> objIDs = createObject->HandleEvent(ev, points);
+			if (objIDs.GetSize() != 0)
+			{
+				throw std::exception("Error!");
+			}
+		}
+		return nullptr;
+	}
+	case ev_createArc:
+	{
+		stateCreate = createArc;
+		delete createObject;
+		createObject = new CreatingArc();
+		return nullptr;
+	}
+	case ev_createCircle:
+	{
+		stateCreate = createCircle;
+		delete createObject;
+		createObject = new CreatingCircle();
+		return nullptr;
+	}
+	case ev_createSegment:
+	{
+		stateCreate = createSegment;
+		delete createObject;
+		createObject = new CreatingSegment();
+		return nullptr;
+	}
+	case ev_createPoint:
+	{
+		stateCreate = createPoint;
+		delete createObject;
+		createObject = new CreatingPoint();
+		return nullptr;
+	}
+	case ev_escape:
+		return new Selection(selectionObjects);
+	default:
+		return UnexpectedEvent(ev, params);;
 	}
 }
 #pragma endregion
@@ -659,7 +802,7 @@ Array<string> Selection::GetPossibleReqType() {
 	return nameTypeReqs;
 }
 
-Mode* Selection::HandleEvent(const Event e, Array<double>& params) {
+Mode* Selection::HandleEvent(const Event e, const Array<double>& params) {
 	if (e == ev_rightMouseDown)
 	{
 		selectedObjects.Clear();
@@ -794,7 +937,7 @@ Mode* Selection::HandleEvent(const Event e, Array<double>& params) {
 		return new CreateDistBetPointsReq(CreateDistBetPointsReq::ModeType::equalPointPos);
 	}
 	default:
-		return UnexpectedEvent(e);
+		return UnexpectedEvent(e, params);;
 	}
 
 }
@@ -841,7 +984,7 @@ Redaction::~Redaction() {
 	selectedObjects.Clear();
 }
 
-Mode* Redaction::HandleEvent(const Event e, Array<double>& params)
+Mode* Redaction::HandleEvent(const Event e, const Array<double>& params)
 {
 	if (status == move)
 	{
@@ -921,7 +1064,7 @@ Mode* Redaction::HandleEvent(const Event e, Array<double>& params)
 		model->DeleteObjects(selectedObjects);
 		return new Selection();
 	}
-	return UnexpectedEvent(e);
+	return UnexpectedEvent(e, params);;
 }
 
 void Redaction::DrawMode() {
@@ -942,7 +1085,7 @@ void Redaction::DrawMode() {
 //	objectsOfreq.Clear();
 //}
 //
-//Mode* RedactionReq::HandleEvent(const Event ev, Array<double>& param) {
+//Mode* RedactionReq::HandleEvent(const Event ev, const Array<double>& param) {
 //	return nullptr;
 //}
 //
@@ -985,7 +1128,7 @@ CreateRequirementWithParam::~CreateRequirementWithParam() {
 	delete inputWidjet;
 }
 
-Mode* CreateRequirementWithParam::HandleEvent(const Event ev, Array<double>& params) {
+Mode* CreateRequirementWithParam::HandleEvent(const Event ev, const Array<double>& params) {
 	switch (ev) {
 	case ev_input:
 	{
@@ -1016,7 +1159,7 @@ Mode* CreateRequirementWithParam::HandleEvent(const Event ev, Array<double>& par
 		return new Selection();
 	}
 	default:
-		return UnexpectedEvent(ev);
+		return UnexpectedEvent(ev, params);;
 	}
 }
 	
@@ -1028,7 +1171,6 @@ void CreateRequirementWithParam::DrawMode() {
 #pragma endregion
 
 #pragma region CreateDistBetPointsReq
-
 CreateDistBetPointsReq::CreateDistBetPointsReq(ModeType _type) :
 	type(_type),
 	state(pointNotSelected)
@@ -1040,7 +1182,7 @@ CreateDistBetPointsReq::~CreateDistBetPointsReq() {
 	delete inputWidjet;
 }
 
-Mode * CreateDistBetPointsReq::HandleEvent(const Event e, Array<double>& params) {
+Mode * CreateDistBetPointsReq::HandleEvent(const Event e, const Array<double>& params) {
 	if (e == ev_escape) {
 		state = pointNotSelected;
 		return new Selection();
@@ -1144,7 +1286,7 @@ NavigationOnScene::NavigationOnScene() { }
 
 NavigationOnScene::~NavigationOnScene() { }
 
-Mode* NavigationOnScene::HandleEvent(const Event ev, Array<double>& params) {
+Mode* NavigationOnScene::HandleEvent(const Event ev, const Array<double>& params) {
 	//for translate 
 	if (ev == ev_leftMouseDown) {
 		if (params.GetSize() != 2) {
@@ -1221,7 +1363,7 @@ Mode* NavigationOnScene::HandleEvent(const Event ev, Array<double>& params) {
 		return new Selection(selectedPrim);
 	}
 
-	return UnexpectedEvent(ev);
+	return UnexpectedEvent(ev, params);;
 }
 
 void NavigationOnScene::DrawMode() {

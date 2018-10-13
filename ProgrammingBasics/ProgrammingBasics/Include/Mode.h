@@ -24,6 +24,7 @@ enum Event
 	// drawingMode
 	ev_symmetricalDraw,
 	ev_defualtDraw,
+	ev_rotationDraw,
 	//create requirements
 	ev_req_D_point,
 	ev_req_Eq_Segment,
@@ -155,14 +156,14 @@ class Mode {
 protected:
 	Event lastEvent;
 
-	Mode* UnexpectedEvent(const Event e);
+	Mode* UnexpectedEvent(const Event e, const Array<double>&);
 
 	IView* view;
 	Model* model;
 public:
 	Mode();
 	virtual ~Mode() {}
-	virtual Mode* HandleEvent(const Event, Array<double>&) = 0;
+	virtual Mode* HandleEvent(const Event, const Array<double>&) = 0;
 	virtual void DrawMode() { }
 };
 
@@ -186,7 +187,7 @@ public:
 	ChangingProperties(const ID _selObjects);
 	~ChangingProperties();
 
-	Mode* HandleEvent(const Event e, Array<double>& params);
+	Mode* HandleEvent(const Event e, const Array<double>& params);
 
 	void DrawMode();
 };
@@ -212,7 +213,7 @@ public:
 	Selection(Array<ID>);
 	~Selection();
 
-	Mode* HandleEvent(const Event e, Array<double>& params);
+	Mode* HandleEvent(const Event e, const Array<double>& params);
 
 	void DrawMode();
 };
@@ -238,7 +239,32 @@ public:
 
 	~DrawingModes();
 
-	Mode* HandleEvent(const Event, Array<double>&);
+	Mode* HandleEvent(const Event, const Array<double>&);
+
+	void DrawMode();
+};
+
+class DMSectorSymmetrical : public Mode
+{
+private:
+	enum StateCreate { createNone, createSegment, createCircle, createArc, createPoint };
+
+	StateCreate stateCreate;
+	Vector2* pointRotate;
+	CreateObject* createObject;
+	Array<ID> selectionObjects;
+	
+	unsigned int countSector;
+	double sinus;
+	double cosinus;
+
+	Array<Vector2>&  PointRotate(const Vector2&, const Vector2&);
+public:
+	DMSectorSymmetrical(const Event, const Array<double>&);
+
+	~DMSectorSymmetrical();
+
+	Mode* HandleEvent(const Event, const Array<double>&);
 
 	void DrawMode();
 };
@@ -272,7 +298,7 @@ public:
 	Redaction(Array<ID>, Event);
 	~Redaction();
 
-	Mode* HandleEvent(const Event, Array<double>&);
+	Mode* HandleEvent(const Event, const Array<double>&);
 
 	void DrawMode();
 };
@@ -304,7 +330,7 @@ public:
 	CreateRequirementWithParam();
 	~CreateRequirementWithParam();
 
-	Mode* HandleEvent(const Event, Array<double>&);
+	Mode* HandleEvent(const Event, const Array<double>&);
 
 	void DrawMode();
 };
@@ -327,7 +353,7 @@ public:
 	CreateDistBetPointsReq(ModeType);
 
 	~CreateDistBetPointsReq();
-	Mode * HandleEvent(const Event, Array<double>&);
+	Mode * HandleEvent(const Event, const Array<double>&);
 	void DrawMode();
 };
 
@@ -344,7 +370,7 @@ public:
 	NavigationOnScene();
 	~NavigationOnScene();
 
-	Mode* HandleEvent(const Event, Array<double>&);
+	Mode* HandleEvent(const Event, const Array<double>&);
 
 	void DrawMode();
 };
