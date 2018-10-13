@@ -301,7 +301,7 @@ void Undo_Redo::Undo() {
 }
 
 void Undo_Redo::Redo() {
-	if ((!it.IsValid()) || (it == versions.End())) {
+	if ((!it.IsValid()) && (it == versions.End())) {
 		return;
 	}
 	++it;
@@ -312,13 +312,13 @@ Undo_Redo::Undo_Redo() {}
 
 void Undo_Redo::DeleteLastVersion() {
 	delete versions.GetHead();
-	versions.Begin().Delete();
+	versions.Begin().DeleteCurrent();
 }
 
 void Undo_Redo::DeleteVersionAfterIt() {
 	while ((it.IsValid()) && (versions.End() != it) && (versions.GetSize() != 0)) {
 		delete versions.GetTail();
-		versions.End().Delete();
+		versions.End().DeleteCurrent();
 	}
 }
 

@@ -32,7 +32,6 @@ public:
 		tail = nullptr;
 		size = 0;
 	}
-
 	class Marker
 	{
 	private:
@@ -43,15 +42,19 @@ public:
 		bool isValid;
 
 		bool MoveNext() {
-			if (!isValid) {
+			if (!isValid || current == list->guardTail) {
+				isValid = false;
 				return false;
 			}
+			
 			prev = current;
 			current = current->next;
 			if (current == list->guardTail) {
 				return false;
 			}
-			return true;
+			else {
+				return true;
+			}
 		}
 	public:
 		Marker() {
@@ -74,13 +77,12 @@ public:
 
 		Marker(List* _list, Node* _prev, Node* _current)
 		{
-			if ((_list->head == nullptr) || (_prev == nullptr) || (_current == nullptr)) {
+			if (_list->head == nullptr || _prev == nullptr || _current == nullptr) {
 				isValid = false;
-				return;
 			}
 			prev = _prev;
 			current = _current;
-			list = _list;
+			list = _list;	prev = _prev;
 			if (current == list->guardTail) {
 				isValid = false;
 			}
@@ -137,7 +139,7 @@ public:
 			return MoveNext();
 		}
 
-		void Delete() {
+		void DeleteCurrent() {
 			if (!isValid) {
 				return;
 			}
@@ -150,9 +152,8 @@ public:
 			else {
 				prev->next = current->next;
 			}
-			if (list->tail == current) {
+			if (current->next == nullptr) {
 				list->tail = prev;
-				prev->next = list->guardTail;
 			}
 
 			list->size--;
@@ -199,15 +200,17 @@ public:
 
 	Marker Begin() {
 		auto marker = Marker(this);
-		if (!marker.IsValid()) {
-			marker = AfterEnd();
+		if (marker.IsValid()) {
+			return marker;
 		}
-		return marker;
+		else {
+			return AfterEnd();
+		}
 	}
 
 	Marker End() {
-		auto marker = Begin();
-		auto temp = Begin();
+		auto marker = Marker(this);
+		auto temp = Marker(this);
 		while (++temp)
 		{
 			++marker;
@@ -222,10 +225,9 @@ public:
 	void Push(const T& val) {
 		if (size == 0)
 		{
-			guardTail = new Node(nullptr, val);
+			guardHead = head;
 			head = tail = new Node(nullptr, val);
 			guardHead = new Node(head, val);
-			
 		}
 		else
 		{
