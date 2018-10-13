@@ -258,7 +258,7 @@ private:
 	double sinus;
 	double cosinus;
 
-	Array<Vector2>&  PointRotate(const Vector2&, const Vector2&);
+	Array<Vector2> PointRotate(const Vector2&, const Vector2&);
 public:
 	DMSectorSymmetrical(const Event, const Array<double>&);
 

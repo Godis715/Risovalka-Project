@@ -605,16 +605,17 @@ DMSectorSymmetrical::~DMSectorSymmetrical() {
 	delete createObject;
 }
 
-Array<Vector2>&  DMSectorSymmetrical::PointRotate(const Vector2& point, const Vector2& center)
+Array<Vector2>  DMSectorSymmetrical::PointRotate(const Vector2& point, const Vector2& center)
 {
 	auto resultPoints = Array<Vector2>(countSector);
 	resultPoints[0] = point - center;
 	for (int i = 1; i < countSector; ++i) {
 		resultPoints[i].x = cosinus * resultPoints[i - 1].x + sinus * resultPoints[i - 1].y;
-		resultPoints[i].y = sinus * resultPoints[i - 1].x - cosinus * resultPoints[i - 1].y;
+		resultPoints[i].y = cosinus * resultPoints[i - 1].y - sinus * resultPoints[i - 1].x;
 	}
 	for (int i = 0; i < countSector; ++i) {
-		resultPoints[i] += center;
+		auto vec = resultPoints[i] + center;
+		resultPoints[i] = vec;
 	}
 	return resultPoints;
 }
@@ -636,8 +637,7 @@ Mode* DMSectorSymmetrical::HandleEvent(const Event ev, const Array<double>& para
 		}
 		else if (pointRotate != nullptr)
 		{
-			Array<Vector2>points;
-			PointRotate(Vector2(params[0], params[1]), *pointRotate);
+			auto points = PointRotate(Vector2(params[0], params[1]), *pointRotate);
 			Array<ID> objIDs = createObject->HandleEvent(ev, points);
 			if (objIDs.GetSize() != 0)
 			{
@@ -657,8 +657,7 @@ Mode* DMSectorSymmetrical::HandleEvent(const Event ev, const Array<double>& para
 	{
 		if (stateCreate != createNone)
 		{
-			Array<Vector2>points;
-			PointRotate(Vector2(params[0], params[1]), *pointRotate);
+			auto points = PointRotate(Vector2(params[0], params[1]), *pointRotate);
 			Array<ID> objIDs = createObject->HandleEvent(ev, points);
 			if (objIDs.GetSize() != 0)
 			{
