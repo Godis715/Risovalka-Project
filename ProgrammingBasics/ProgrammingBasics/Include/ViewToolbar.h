@@ -41,6 +41,8 @@ private:
 
 	static void cl_DrawingModes(Fl_Widget*, void*);
 
+	static void cl_xRotateDrawMode(Fl_Widget*, void*);
+
 	static void cl_Create(Fl_Widget*, void*);
 
 	static void cl_Redaction(Fl_Widget*, void*);
