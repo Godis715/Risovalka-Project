@@ -99,6 +99,7 @@ public:
 	Array<double> GetObjParam(const ID&);
 	Array<ID> GetObjChildren(const ID&);
 	bool IsValid(ID&);
+	bool IsDeleted(ID&);
 	void MakeInValid(ID&);
 	void MakeValid(ID&);
 };

@@ -187,7 +187,7 @@ void ViewToolbar::Initializer()
 			drawingModes[7] = { "x6", 0, cl_xRotateDrawMode, 0, 0 };
 			drawingModes[8] = { "x8", 0, cl_xRotateDrawMode, 0, 0 };
 			drawingModes[9] = { "x9", 0, cl_xRotateDrawMode, 0, 0 };
-			drawingModes[10] = { "x10" };
+			drawingModes[10] = { "x10", 0, cl_xRotateDrawMode, 0, 0 };
 		drawingModes[11] = { 0 };
 		drawingModes[12] = { 0 };
 		drawingModes_b = new  Fl_Menu_Button(coordX, positionY + indentY, wMenu, hMenu, "DrawingModes");

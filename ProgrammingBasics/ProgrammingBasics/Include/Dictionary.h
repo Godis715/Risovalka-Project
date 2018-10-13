@@ -748,6 +748,7 @@ private:
 				}
 			}
 			else {
+				--size;
 				return nullptr;
 			}
 		}

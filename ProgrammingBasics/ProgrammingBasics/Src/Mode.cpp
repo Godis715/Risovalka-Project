@@ -901,8 +901,12 @@ Mode* Selection::HandleEvent(const Event e, const Array<double>& params) {
 		return new Redaction(selectedObjects, ev_scaleObjects);
 	}
 	case ev_del: {
-		model->DeleteObjects(selectedObjects);
-		selectedObjects.Clear();
+		if (selectedObjects.GetSize() != 0) {
+			model->DeleteObjects(selectedObjects);
+			auto undo_redu = Undo_Redo::GetInstance();
+			undo_redu->AddVersion(tfc_delete, selectedObjects);
+			selectedObjects.Clear();
+		}
 		return nullptr;
 	}
 	case ev_req_D_point: {

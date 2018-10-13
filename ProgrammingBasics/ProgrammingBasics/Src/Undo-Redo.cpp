@@ -99,10 +99,12 @@ void VersionCreat_Del::Redo() {
 
 VersionCreat_Del::~VersionCreat_Del() {
 	auto dataController = DataController::GetInstance();
+	auto objectController = ObjectController::GetInstance();
 
-	if (type == tfc_delete) {
+	if (!objectController->IsValid(IDs[0])) {
 		for (int i = 0; i < IDs.GetSize(); ++i) {
 			dataController->DeleteObject(IDs[i]);
+			objectController->DeleteObj(IDs[i]);
 		}
 	}
 }
@@ -119,6 +121,7 @@ Undo_Redo* Undo_Redo::GetInstance() {
 void Undo_Redo::AddVersion(const TypeOFCange type, const Array<ID>& IDs) {
 
 	if (IDs.GetSize() == 0) {
+		return;
 		// $$$
 	}
 	if (versions.GetSize() == count_vers) {
@@ -177,12 +180,15 @@ void Undo_Redo::AddDeleting(const Array<ID>& IDs) {
 	Queue<ID> queue;
 	for (int i = 0; i < IDs.GetSize(); ++i) {
 		queue.Push(IDs[i]);
+		set.Add(IDs[i]);
 	}
 
 	while (!queue.IsEmpty())
 	{
 		ID currentID = queue.Pop();
 		set.Add(currentID);
+
+		
 		if (reqController->IsReq(currentID)) {
 			continue;
 		}
@@ -193,7 +199,9 @@ void Undo_Redo::AddDeleting(const Array<ID>& IDs) {
 		auto linkIter = links->GetMarker();
 		while (linkIter.IsValid())
 		{
-			queue.Push(*linkIter);
+			if (!set.Find(*linkIter).IsValid()) {
+				queue.Push(*linkIter);
+			}
 			++linkIter;
 		}
 	}
@@ -301,7 +309,7 @@ void Undo_Redo::Undo() {
 }
 
 void Undo_Redo::Redo() {
-	if ((!it.IsValid()) && (it == versions.End())) {
+	if ((!it.IsValid()) || (it == versions.End())) {
 		return;
 	}
 	++it;

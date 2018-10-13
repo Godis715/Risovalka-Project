@@ -196,7 +196,7 @@ void DataController::DeleteObject(const ID& id) {
 			LOGERROR("DeleteObject: unknown type", LEVEL_1);
 		}
 		
-		objCtrl->DeleteObj(currID);
+		//objCtrl->DeleteObj(currID);
 
 		++objToDelete;
 	}
