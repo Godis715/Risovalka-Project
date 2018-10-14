@@ -293,6 +293,8 @@ Mode* ChangingProperties::HandleEvent(const Event e, const Array<double>& params
 	case ev_delete_Req:
 	{
 		model->DeleteObject(reqID);
+		auto undo_redu = Undo_Redo::GetInstance();
+		undo_redu->AddVersion(tfc_delete, CreateArr(reqID));
 		SetWidjetParamPrim();
 		reqID = ID();
 		delete widjetReq;
@@ -965,7 +967,8 @@ void Selection::DrawMode()
 #pragma endregion
 
 #pragma region Redaction
-Redaction::Redaction(Array<ID> _selecObj, Event _ev) : selectedObjects(_selecObj){
+Redaction::Redaction(Array<ID> _selecObj, Event _ev) : selectedObjects(_selecObj) {
+	isChanged = false;
 	state = noClick;
 	switch (_ev)
 	{
@@ -984,6 +987,10 @@ Redaction::Redaction(Array<ID> _selecObj, Event _ev) : selectedObjects(_selecObj
 }
 
 Redaction::~Redaction() {
+	if (isChanged) {
+		auto undo_redo = Undo_Redo::GetInstance();
+		undo_redo->CompleteAddChange();
+	}
 	selectedObjects.Clear();
 }
 
@@ -991,51 +998,80 @@ Mode* Redaction::HandleEvent(const Event e, const Array<double>& params)
 {
 	if (status == move)
 	{
-		if (e == ev_leftMouseDown) {
-			if (params.GetSize() != 2) {
-                throw std::invalid_argument("Bad number of parameters");
-			}
-			posStart.x = params[0];
-			posStart.y = params[1];
-			state = click;
-			posEnd = posStart;
-			return nullptr;
-		}
-		if (e == ev_mouseMove && state == click)
+		switch (e)
 		{
-			if (params.GetSize() != 2) {
-                throw std::invalid_argument("Bad number of parameters");
-			}
-
-			Vector2 last = posEnd;
-
-			posEnd.x = params[0];
-			posEnd.y = params[1];
-
-			shiftBuffer = shiftBuffer + Vector2::Dot(posEnd - last, posEnd - last);
-
-			if (shiftBuffer > 4.0) {
-				model->Move(selectedObjects, posEnd - posStart);
-				shiftBuffer = 0.0;
-
-				posStart = posEnd;
-			}
-			return nullptr;
+		case  ev_leftMouseDown: {
+				if (params.GetSize() != 2) {
+					throw std::invalid_argument("Bad number of parameters");
+				}
+				posStart.x = params[0];
+				posStart.y = params[1];
+				state = click;
+				posEnd = posStart;
+				return nullptr;
 		}
-		if (e == ev_leftMouseUp) {
+		case ev_mouseMove: {
+			if (state == click)
+			{
+				if (params.GetSize() != 2) {
+					throw std::invalid_argument("Bad number of parameters");
+				}
+
+				Vector2 last = posEnd;
+
+				posEnd.x = params[0];
+				posEnd.y = params[1];
+
+				shiftBuffer = shiftBuffer + Vector2::Dot(posEnd - last, posEnd - last);
+
+				if (shiftBuffer > 4.0) {
+					if (!isChanged) {
+						auto undo_redo = Undo_Redo::GetInstance();
+						undo_redo->AddVersion(tfc_change, selectedObjects);
+						isChanged = true;
+					}
+					model->Move(selectedObjects, posEnd - posStart);
+					shiftBuffer = 0.0;
+
+					posStart = posEnd;
+				}
+				return nullptr;
+			}
+		}
+		case ev_leftMouseUp: {
 			state = noClick;
 			return nullptr;
+		}
+		case ev_escape: {
+			if (isChanged) {
+				model->Move(selectedObjects, posEnd - posStart);
+			}
+
+			return new Selection(selectedObjects);
+		}
+		case ev_scaleObjects: {
+			if (isChanged) {
+				model->Move(selectedObjects, posEnd - posStart);
+			}
+			return new Redaction(selectedObjects, ev_scaleObjects);
+		}
+		case ev_moveObjects: {
+			return nullptr;
+		}
+		default:
+			break;
 		}
 	}
 	if (status == scale)
 	{
-		if (e == ev_scroll)
+		switch (e)
 		{
+		case ev_scroll: {
 			if (params.GetSize() != 1) {
-                throw std::invalid_argument("Bad number of parameters");
+				throw std::invalid_argument("Bad number of parameters");
 			}
 			double coef;
-			if (params[0] > 0 )
+			if (params[0] > 0)
 			{
 				coef = 0.9;
 			}
@@ -1043,28 +1079,38 @@ Mode* Redaction::HandleEvent(const Event e, const Array<double>& params)
 			{
 				coef = 1.1;
 			}
+			if (!isChanged) {
+				auto undo_redo = Undo_Redo::GetInstance();
+				undo_redo->AddVersion(tfc_change, selectedObjects);
+				isChanged = true;
+			}
 			model->Scale(selectedObjects, coef);
+
 			return nullptr;
 		}
+		case ev_escape: {
+			return new Selection(selectedObjects);
+		}
+		case ev_scaleObjects: {
+			return nullptr;
+		}
+		case ev_moveObjects: {
+			return new Redaction(selectedObjects, ev_moveObjects);
+		}
+		default:
+			break;
+		}
+
 	}
-	if (e == ev_escape)
-	{
-		model->Move(selectedObjects, posEnd - posStart);
-		return new Selection(selectedObjects);
-	}
-	if (e == ev_scaleObjects)
-	{
-		model->Move(selectedObjects, posEnd - posStart);
-		return new Redaction(selectedObjects, ev_scaleObjects);
-	}
-	if (e == ev_moveObjects)
-	{
-		model->Move(selectedObjects, posEnd - posStart);
-		return new Redaction(selectedObjects, ev_moveObjects);
-	}
+
 	if (e == ev_del)
 	{
-		model->DeleteObjects(selectedObjects);
+		if (selectedObjects.GetSize() != 0) {
+			model->DeleteObjects(selectedObjects);
+			auto undo_redu = Undo_Redo::GetInstance();
+			undo_redu->AddVersion(tfc_delete, selectedObjects);
+			selectedObjects.Clear();
+		}
 		return new Selection();
 	}
 	return UnexpectedEvent(e, params);;
@@ -1158,7 +1204,12 @@ Mode* CreateRequirementWithParam::HandleEvent(const Event ev, const Array<double
 	}
 	case  ev_del:
 	{
-		model->DeleteObjects(selectedObjects);
+		if (selectedObjects.GetSize() != 0) {
+			model->DeleteObjects(selectedObjects);
+			auto undo_redu = Undo_Redo::GetInstance();
+			undo_redu->AddVersion(tfc_delete, selectedObjects);
+			selectedObjects.Clear();
+		}
 		return new Selection();
 	}
 	default:

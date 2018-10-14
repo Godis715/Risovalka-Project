@@ -34,20 +34,11 @@
     <Filter Include="Исходные файлы\Presenter">
       <UniqueIdentifier>{0f546f4f-2460-4862-afa2-2e3badd5d3bb}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Исходные файлы\Support">
+      <UniqueIdentifier>{78ad9026-04cc-4330-a48f-ae23dffc17c4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\Src\Vector2.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Src\Logger.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Src\main.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Src\SVGformat.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
     <ClCompile Include="..\Src\IWidjet.cpp">
       <Filter>Исходные файлы\View</Filter>
     </ClCompile>
@@ -114,8 +105,20 @@
     <ClCompile Include="..\Src\ID.cpp">
       <Filter>Исходные файлы\Model</Filter>
     </ClCompile>
+    <ClCompile Include="..\Src\Logger.cpp">
+      <Filter>Исходные файлы\Support</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Src\main.cpp">
+      <Filter>Исходные файлы\Support</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Src\SVGformat.cpp">
+      <Filter>Исходные файлы\Support</Filter>
+    </ClCompile>
     <ClCompile Include="Source.cpp">
-      <Filter>Исходные файлы</Filter>
+      <Filter>Исходные файлы\Support</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Src\Vector2.cpp">
+      <Filter>Исходные файлы\Support</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

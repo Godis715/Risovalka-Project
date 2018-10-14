@@ -293,6 +293,8 @@ private:
 	double shiftBuffer;
 	State state;
 	StatusRedaction status;
+
+	bool isChanged;
 public:
 	// must take containers in constructor
 	Redaction(Array<ID>, Event);

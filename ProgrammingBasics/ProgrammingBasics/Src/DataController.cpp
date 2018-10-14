@@ -383,21 +383,23 @@ Array<ID> DataController::GetPrimitiveFromComponents(const Array<ID>& IDs) {
 	Component component;
 	while (!isComplete)
 	{
+		isComplete = true;
 		for (int i = 0; i < IDs.GetSize(); ++i) {
 			if (matching[i]) {
+				matching[i] = false;
 				isComplete = false;
 				component = GetComponent(IDs[i]);
 				result += GetPrimitiveFromComponent(component);
 
-				for (int j = i; j < IDs.GetSize(); ++j) {
-					if ((matching[i]) && (component.Find(IDs[j]).IsValid())){
-						matching[i] = false;
+				for (int j = i + 1; j < IDs.GetSize(); ++j) {
+					if ((matching[j]) && (component.Find(IDs[j]).IsValid())){
+						matching[j] = false;
 					}
 				}
 			}
 		}
-		isComplete = true;
 	}
+	return result;
 }
 
 bool DataController::PointInArea(double point_x, double point_y, double x1, double y1, double x2, double y2) const {

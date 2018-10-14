@@ -74,7 +74,7 @@ private:
 	ReqController* reqCtrl;
 	ObjectController* objCtrl;
 
-	Set<ID>* currentComponent;
+	Component* currentComponent;
 
 	friend class SVGformat;
 
