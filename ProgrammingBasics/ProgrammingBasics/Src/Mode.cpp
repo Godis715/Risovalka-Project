@@ -252,6 +252,8 @@ Mode* ChangingProperties::HandleEvent(const Event e, const Array<double>& params
 	}
 	case ev_change_Prim:
 	{
+		auto undo_redo = Undo_Redo::GetInstance();
+		undo_redo->AddVersion(tfc_change, CreateArr(selectedObject));
 		switch (model->GetObjType(selectedObject))
 		{
 		case ot_point:
@@ -280,12 +282,16 @@ Mode* ChangingProperties::HandleEvent(const Event e, const Array<double>& params
 		default:
 			break;
 		}
+		undo_redo->CompleteAddChange();
 		SetWidjetParamPrim();
 		return nullptr;
 	}
 	case ev_change_Req:
 	{
+		auto undo_redo = Undo_Redo::GetInstance();
+		undo_redo->AddVersion(tfc_change, CreateArr(reqID));
 		model->ChangeRequirement(reqID, params);
+		undo_redo->CompleteAddChange();
 		SetWidjetParamReq();
 		SetWidjetParamPrim();
 		return nullptr;

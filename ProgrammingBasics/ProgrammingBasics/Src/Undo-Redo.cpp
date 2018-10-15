@@ -61,7 +61,13 @@ void VersionCreateReq::Redo() {
 }
 
 VersionCreateReq::~VersionCreateReq() {
+	auto dataController = DataController::GetInstance();
+	auto objectController = ObjectController::GetInstance();
 
+	if (!objectController->IsValid(idReq)) {
+		dataController->DeleteObject(idReq);
+
+	}
 }
 #pragma endregion
 
@@ -104,7 +110,6 @@ VersionCreat_Del::~VersionCreat_Del() {
 	if (!objectController->IsValid(IDs[0])) {
 		for (int i = 0; i < IDs.GetSize(); ++i) {
 			dataController->DeleteObject(IDs[i]);
-			objectController->DeleteObj(IDs[i]);
 		}
 	}
 }

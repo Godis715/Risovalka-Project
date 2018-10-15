@@ -20,28 +20,28 @@ DataController* DataController::GetInstance() {
 void DataController::AddObject(const ID& obj) {
 	LOG("AddObject: adding object to data", LEVEL_2);
 	bool isPrim = primCtrl->IsPrimitive(obj);
-	bool isReq = reqCtrl->IsReq(obj);
-	if (!(isPrim || isReq)) {
-		LOGERROR("AddObject: object has a bad type", LEVEL_1);
+bool isReq = reqCtrl->IsReq(obj);
+if (!(isPrim || isReq)) {
+	LOGERROR("AddObject: object has a bad type", LEVEL_1);
+}
+if (isPrim) {
+	auto it = primData.Find(obj);
+	if (it.IsValid()) {
+		LOG("AddObject: primitive already added", LEVEL_2);
+		return;
 	}
-	if (isPrim) {
-		auto it = primData.Find(obj);
-		if (it.IsValid()) {
-			LOG("AddObject: primitive already added", LEVEL_2);
-			return;
-		}
-		primData.Add(obj);
-		LOG("AddObject: primitive successfully added", LEVEL_2);
+	primData.Add(obj);
+	LOG("AddObject: primitive successfully added", LEVEL_2);
+}
+else {
+	auto it = reqData.Find(obj);
+	if (it.IsValid()) {
+		LOG("AddObject: requirement already added", LEVEL_2);
+		return;
 	}
-	else {
-		auto it = reqData.Find(obj);
-		if (it.IsValid()) {
-			LOG("AddObject: requirement already added", LEVEL_2);
-			return;
-		}
-		reqData.Add(obj);
-		LOG("AddObject: requirement successfully added", LEVEL_2);
-	}
+	reqData.Add(obj);
+	LOG("AddObject: requirement successfully added", LEVEL_2);
+}
 }
 
 void DataController::Connect(const ID& head, const Array<ID>& nodes) {
@@ -120,6 +120,9 @@ void DataController::Connect(const ID& head, Component* headLink) {
 }
 
 void DataController::DeleteObject(const ID& id) {
+	if ((!primData.Find(id).IsValid()) || (!reqData.Find(id).IsValid())){
+		return;
+	}
 	DataID objectsToDelete;
 	objectsToDelete.Add(id);
 	bool isObjPrim = primCtrl->IsPrimitive(id);
@@ -196,7 +199,7 @@ void DataController::DeleteObject(const ID& id) {
 			LOGERROR("DeleteObject: unknown type", LEVEL_1);
 		}
 		
-		//objCtrl->DeleteObj(currID);
+		objCtrl->DeleteObj(currID);
 
 		++objToDelete;
 	}
