@@ -19,6 +19,8 @@ enum Event
 	// create primitive
 	ev_createPoint = 1,
 	ev_createSegment,
+	ev_createStar,
+	ev_createBrokenLine,
 	ev_createArc,
 	ev_createCircle,
 	// drawingMode
@@ -97,6 +99,46 @@ private:
 public:
 	CreatingSegment();
 	~CreatingSegment();
+
+	Array<ID> HandleEvent(const Event, Array<Vector2>&);
+
+	void DrawMode();
+};
+
+class CreatingStar : public CreateObject {
+private:
+	enum StateClick {
+		noClick,
+		oneClick
+	};
+	StateClick stateClick;
+	Array<ID> createdSegments;
+	Array<ID> pointsToConnect;
+	Array<Vector2> segmentStartPoints;
+	Array<Vector2> imaginaryPoints;
+public:
+	CreatingStar();
+	~CreatingStar();
+
+	Array<ID> HandleEvent(const Event, Array<Vector2>&);
+
+	void DrawMode();
+};
+
+class CreatingBrokenLine : public CreateObject {
+private:
+	enum StateClick {
+		noClick,
+		oneClick
+	};
+	StateClick stateClick;
+	Array<ID> createdSegments;
+	Array<ID> pointsToConnect;
+	Array<Vector2> segmentStartPoints;
+	Array<Vector2> imaginaryPoints;
+public:
+	CreatingBrokenLine();
+	~CreatingBrokenLine();
 
 	Array<ID> HandleEvent(const Event, Array<Vector2>&);
 
@@ -222,7 +264,7 @@ class DrawingModes : public Mode
 {
 private:
 	enum StateMode { defualtDraw, symmetricalDraw };
-	enum StateCreate { createNone, createSegment, createCircle, createArc, createPoint };
+	enum StateCreate { none, create};
 
 	StateMode stateMode;
 	StateCreate stateCreate;
@@ -247,7 +289,7 @@ public:
 class DMSectorSymmetrical : public Mode
 {
 private:
-	enum StateCreate { createNone, createSegment, createCircle, createArc, createPoint };
+	enum StateCreate { none, create};
 
 	StateCreate stateCreate;
 	Vector2* pointRotate;

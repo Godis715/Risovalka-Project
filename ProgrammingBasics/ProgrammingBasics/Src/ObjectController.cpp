@@ -48,11 +48,8 @@ void ObjectController::DeleteObj(ID& id) const {
 	}
 }
 
-bool ObjectController::IsDeleted(ID& id) {
-	return true;
-}
 
-bool ObjectController::IsValid(ID& id) {
+bool ObjectController::IsValid(const ID& id) {
 	return ((id.hash > 0) && (id.object->isValid));
 }
 

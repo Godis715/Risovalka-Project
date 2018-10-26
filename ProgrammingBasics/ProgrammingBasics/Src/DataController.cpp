@@ -423,6 +423,9 @@ Array<ID> DataController::GetObjectsByArea(double x1, double y1, double x2, doub
 	Array<ID> obj_id;
 	Primitive* obj = nullptr;
 	for (auto i = primData.GetMarker(); i.IsValid(); ++i) {
+		if (!objCtrl->IsValid(*i)) {
+			continue;
+		}
 		obj = primCtrl->GetPrimitive(*i);
 		switch (obj->GetType())
 		{

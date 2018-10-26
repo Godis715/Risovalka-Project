@@ -98,8 +98,7 @@ public:
 	void SetObjParam(const ID&, const Array<double>&);
 	Array<double> GetObjParam(const ID&);
 	Array<ID> GetObjChildren(const ID&);
-	bool IsValid(ID&);
-	bool IsDeleted(ID&);
+	bool IsValid(const ID&);
 	void MakeInValid(ID&);
 	void MakeValid(ID&);
 };

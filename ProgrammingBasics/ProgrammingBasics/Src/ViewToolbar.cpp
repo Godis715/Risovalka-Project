@@ -62,6 +62,18 @@ void ViewToolbar::cl_Create(Fl_Widget* o, void*)
 		Presenter::Set_event(ev_createSegment, params);
 		inventory->lastEvent = ev_createSegment;
 	}
+	if (((Fl_Menu_Button*)o)->mvalue()->label() == "Star")
+	{
+		viewLog->Push("Log::Create Star line");
+		Presenter::Set_event(ev_createStar, params);
+		inventory->lastEvent = ev_createStar;
+	}
+	if (((Fl_Menu_Button*)o)->mvalue()->label() == "Broken")
+	{
+		viewLog->Push("Log::Create broken line");
+		Presenter::Set_event(ev_createBrokenLine, params);
+		inventory->lastEvent = ev_createBrokenLine;
+	}
 	if (((Fl_Menu_Button*)o)->mvalue()->label() == "Arc")
 	{
 		viewLog->Push("Log::Create arc");
@@ -198,12 +210,14 @@ void ViewToolbar::Initializer()
 	}
 	coordX += (wMenu + indentX);
 	{
-		objects = new Fl_Menu_Item[5];
+		objects = new Fl_Menu_Item[7];
 		objects[0] = { "Point", FL_ALT + 'z' };
 		objects[1] = { "Segment", FL_ALT + 'x' };
-		objects[2] = { "Arc", FL_ALT + 'c' };
-		objects[3] = { "Circle", FL_ALT + 'v' };
-		objects[4] = { 0 };
+		objects[2] = { "Star", FL_ALT + 's' };
+		objects[3] = { "Broken", FL_ALT + 'b' };
+		objects[4] = { "Arc", FL_ALT + 'c' };
+		objects[5] = { "Circle", FL_ALT + 'v' };
+		objects[6] = { 0 };
 		createObject_b = new  Fl_Menu_Button(coordX, positionY + indentY, wMenu, hMenu, "Object");
 		createObject_b->menu(objects);
 		createObject_b->callback(cl_Create);

@@ -118,6 +118,12 @@ Mode* Mode::UnexpectedEvent(const Event e, const Array<double>& params) {
 	case ev_createPoint: {
 		return new DrawingModes(e);
 	}
+	case ev_createStar: {
+		return new DrawingModes(e);
+	}
+	case ev_createBrokenLine: {
+		return new DrawingModes(e);
+	}
 	case ev_createArc: {
 		return new DrawingModes(e);
 	}
@@ -352,30 +358,40 @@ void ChangingProperties::DrawMode()
 DrawingModes::DrawingModes(Event e) : selectionObjects(0)
 {
 	pointRotate = nullptr;
-	stateCreate = createNone;
+	stateCreate = none;
+	stateMode = defualtDraw;
 	switch (e)
 	{
 	case ev_createPoint: {
-		stateMode = defualtDraw;
-		stateCreate = createPoint;
+		stateCreate = create;
 		createObject = new CreatingPoint();
 		break;
 	}
 	case ev_createSegment: {
-		stateMode = defualtDraw;
-		stateCreate = createSegment;
+		stateCreate = create;
 		createObject = new CreatingSegment();
 		break;
 	}
+	case ev_createStar:
+	{
+		stateCreate = create;
+		createObject = new CreatingStar();
+		break;
+	}
+	case ev_createBrokenLine:
+	{
+		stateCreate = create;
+		createObject = new CreatingBrokenLine();
+		break;
+	}
 	case ev_createArc: {
-		stateMode = defualtDraw;
-		stateCreate = createArc;
+
+		stateCreate = create;
 		createObject = new CreatingArc();
 		break;
 	}
 	case ev_createCircle: {
-		stateMode = defualtDraw;
-		stateCreate = createCircle;
+		stateCreate = create;
 		createObject = new CreatingCircle();
 		break;
 	}
@@ -384,7 +400,6 @@ DrawingModes::DrawingModes(Event e) : selectionObjects(0)
 		break;
 	}
 	case ev_defualtDraw: {
-		stateMode = defualtDraw;
 		break;
 	}
 	default:
@@ -418,7 +433,7 @@ Mode* DrawingModes::HandleEvent(const Event ev, const Array<double>& params)
 			if (params.GetSize() != 2) {
 				throw std::invalid_argument("Bad number of parameters");
 			}
-			if (stateCreate == createNone)
+			if (stateCreate == none)
 			{
 				selectionObjects.Clear();
 				delete pointRotate;
@@ -432,7 +447,7 @@ Mode* DrawingModes::HandleEvent(const Event ev, const Array<double>& params)
 				if (objIDs.GetSize() != 0)
 				{
 					selectionObjects += objIDs;
-					stateCreate = createNone;
+					stateCreate = none;
 					delete createObject;
 					createObject = nullptr;
 				}
@@ -445,7 +460,7 @@ Mode* DrawingModes::HandleEvent(const Event ev, const Array<double>& params)
 		}
 		case ev_mouseMove:
 		{
-			if (stateCreate != createNone)
+			if (stateCreate != none)
 			{
 				Array<Vector2>points;
 				PointRotate(Vector2(params[0], params[1]), points, *pointRotate);
@@ -470,7 +485,7 @@ Mode* DrawingModes::HandleEvent(const Event ev, const Array<double>& params)
 			if (params.GetSize() != 2) {
 				throw std::invalid_argument("Bad number of parameters");
 			}
-			if (stateCreate == createNone)
+			if (stateCreate == none)
 			{
 				//selectionObjects.Clear();
 				return new Selection();
@@ -483,7 +498,7 @@ Mode* DrawingModes::HandleEvent(const Event ev, const Array<double>& params)
 				if (objIDs.GetSize() != 0)
 				{
 					//selectionObjects += objIDs;
-					stateCreate = createNone;
+					stateCreate = none;
 					delete createObject;
 					createObject = nullptr;
 				};
@@ -492,7 +507,7 @@ Mode* DrawingModes::HandleEvent(const Event ev, const Array<double>& params)
 		}
 		case ev_mouseMove:
 		{
-			if (stateCreate != createNone)
+			if (stateCreate != none)
 			{
 				Array<Vector2>points;
 				points.PushBack(Vector2(params[0], params[1]));
@@ -515,25 +530,37 @@ Mode* DrawingModes::HandleEvent(const Event ev, const Array<double>& params)
 	{
 	case ev_createArc:
 	{
-		stateCreate = createArc;
+		stateCreate = create;
 		createObject = new CreatingArc();
 		return nullptr;
 	}
 	case ev_createCircle:
 	{
-		stateCreate = createCircle;
+		stateCreate = create;
 		createObject = new CreatingCircle();
 		return nullptr;
 	}
 	case ev_createSegment:
 	{
-		stateCreate = createSegment;
+		stateCreate = create;
 		createObject = new CreatingSegment();
+		return nullptr;
+	}
+	case ev_createStar:
+	{
+		stateCreate = create;
+		createObject = new CreatingStar();
+		return nullptr;
+	}
+	case ev_createBrokenLine:
+	{
+		stateCreate = create;
+		createObject = new CreatingBrokenLine();
 		return nullptr;
 	}
 	case ev_createPoint:
 	{
-		stateCreate = createPoint;
+		stateCreate = create;
 		createObject = new CreatingPoint();
 		return nullptr;
 	}
@@ -568,9 +595,10 @@ void DrawingModes::DrawMode()
 	{
 		createObject->DrawMode();
 	}
+	view->SetColor(col_Green);
 	if (selectionObjects.GetSize() != 0)
 	{
-		view->SetColor(col_Green);
+		
 		Presenter::DrawSelectedObjects(selectionObjects);
 	}
 }
@@ -587,7 +615,7 @@ DMSectorSymmetrical::DMSectorSymmetrical(const Event ev, const Array<double>& pa
 	sinus = sin(2 * PI / countSector);
 	pointRotate = nullptr;
 	createObject = nullptr;
-	stateCreate = createNone;
+	stateCreate = none;
 }
 
 void DMSectorSymmetrical::DrawMode()
@@ -601,9 +629,9 @@ void DMSectorSymmetrical::DrawMode()
 	{
 		createObject->DrawMode();
 	}
+	view->SetColor(col_Green);
 	if (selectionObjects.GetSize() != 0)
 	{
-		view->SetColor(col_Green);
 		Presenter::DrawSelectedObjects(selectionObjects);
 	}
 }
@@ -637,7 +665,7 @@ Mode* DMSectorSymmetrical::HandleEvent(const Event ev, const Array<double>& para
 		if (params.GetSize() != 2) {
 			throw std::invalid_argument("Bad number of parameters");
 		}
-		if (stateCreate == createNone)
+		if (stateCreate == none)
 		{
 			selectionObjects.Clear();
 			delete pointRotate;
@@ -650,7 +678,7 @@ Mode* DMSectorSymmetrical::HandleEvent(const Event ev, const Array<double>& para
 			if (objIDs.GetSize() != 0)
 			{
 				selectionObjects += objIDs;
-				stateCreate = createNone;
+				stateCreate = none;
 				delete createObject;
 				createObject = nullptr;
 			}
@@ -663,7 +691,7 @@ Mode* DMSectorSymmetrical::HandleEvent(const Event ev, const Array<double>& para
 	}
 	case ev_mouseMove:
 	{
-		if (stateCreate != createNone)
+		if (stateCreate != none)
 		{
 			auto points = PointRotate(Vector2(params[0], params[1]), *pointRotate);
 			Array<ID> objIDs = createObject->HandleEvent(ev, points);
@@ -676,28 +704,42 @@ Mode* DMSectorSymmetrical::HandleEvent(const Event ev, const Array<double>& para
 	}
 	case ev_createArc:
 	{
-		stateCreate = createArc;
+		stateCreate = create;
 		delete createObject;
 		createObject = new CreatingArc();
 		return nullptr;
 	}
 	case ev_createCircle:
 	{
-		stateCreate = createCircle;
+		stateCreate = create;
 		delete createObject;
 		createObject = new CreatingCircle();
 		return nullptr;
 	}
 	case ev_createSegment:
 	{
-		stateCreate = createSegment;
+		stateCreate = create;
 		delete createObject;
 		createObject = new CreatingSegment();
 		return nullptr;
 	}
+	case ev_createStar:
+	{
+		stateCreate = create;
+		delete createObject;
+		createObject = new CreatingStar();
+		return nullptr;
+	}
+	case ev_createBrokenLine:
+	{
+		stateCreate = create;
+		delete createObject;
+		createObject = new CreatingBrokenLine();
+		return nullptr;
+	}
 	case ev_createPoint:
 	{
-		stateCreate = createPoint;
+		stateCreate = create;
 		delete createObject;
 		createObject = new CreatingPoint();
 		return nullptr;
@@ -1521,6 +1563,234 @@ void CreatingSegment::DrawMode() {
 }
 
 CreatingSegment::~CreatingSegment() {
+	segmentStartPoints.Clear();
+	imaginaryPoints.Clear();
+}
+#pragma endregion
+
+#pragma region CreatingStar
+CreatingStar::CreatingStar() {
+	stateClick = noClick;
+}
+
+Array<ID> CreatingStar::HandleEvent(const Event ev, Array<Vector2>& params) {
+	switch (ev)
+	{
+	case ev_leftMouseDown:
+	{
+		switch (stateClick)
+		{
+		case noClick:
+		{
+			for (int i = 0; i < params.GetSize(); i++)
+			{
+				segmentStartPoints.PushBack(params[i]);
+			}
+			stateClick = oneClick;
+			return Array<ID>(0);
+		}
+		case oneClick:
+		{
+			if (params.GetSize() != segmentStartPoints.GetSize())
+			{
+				throw std::invalid_argument("Bad number of parameters");
+			}
+			Array<ID> segIDs(segmentStartPoints.GetSize());
+			for (int i = 0; i < params.GetSize(); i++)
+			{
+				Array<double> segmentParameters(4);
+				segmentParameters[0] = segmentStartPoints[i].x;
+				segmentParameters[1] = segmentStartPoints[i].y;
+				segmentParameters[2] = params[i].x;
+				segmentParameters[3] = params[i].y;
+				ID id = model->CreatePrimitive(ot_segment, segmentParameters);
+				segIDs[i] = id;
+			}
+			createdSegments += segIDs;
+			if (pointsToConnect.GetSize() == 0) {
+				pointsToConnect = Array<ID>(segmentStartPoints.GetSize());
+				for (int i = 0; i < params.GetSize(); i++)
+				{
+					auto children = PrimController::GetInstance()->GetChildren(segIDs[i]);
+					pointsToConnect[i] = children[0];
+				}
+				undo_redo->AddVersion(tfc_creation, segIDs);
+			}
+			else {
+				Array<ID> req(segmentStartPoints.GetSize());
+				for (int i = 0; i < params.GetSize(); i++)
+				{
+					auto children = PrimController::GetInstance()->GetChildren(segIDs[i]);
+					req[i] = model->CreateRequirement(ot_distBetPoints, CreateArr(children[0], pointsToConnect[i]), CreateArr(0.0));
+				}
+				undo_redo->AddVersion(tfc_creation, segIDs + req);
+				
+			}
+			
+			return Array<ID>(0);
+		}
+		}
+		break;
+	}
+	case ev_mouseMove:
+	{
+		if (stateClick == oneClick)
+		{
+			if (params.GetSize() != segmentStartPoints.GetSize())
+			{
+				throw std::invalid_argument("Bad number of parameters");
+			}
+			imaginaryPoints.Clear();
+			for (int i = 0; i < params.GetSize(); i++)
+			{
+				imaginaryPoints.PushBack(params[i]);
+			}
+		}
+		return Array<ID>(0);
+	}
+	}
+	return Array<ID>(0);
+}
+
+void CreatingStar::DrawMode() {
+	if (stateClick == oneClick)
+	{
+		view->SetColor(col_Red);
+		for (int i = 0; i < segmentStartPoints.GetSize(); i++)
+		{
+			view->DrawPoint(segmentStartPoints[i]);
+		}
+		view->SetColor(col_Yellow);
+		for (int i = 0; i < imaginaryPoints.GetSize(); i++)
+		{
+			view->DrawLine(segmentStartPoints[i], imaginaryPoints[i], points);
+		}
+		view->SetColor(col_Green);
+		if (createdSegments.GetSize() != 0)
+		{
+			Presenter::DrawSelectedObjects(createdSegments);
+		}
+	}
+}
+
+CreatingStar::~CreatingStar() {
+	createdSegments.Clear();
+	pointsToConnect.Clear();
+	segmentStartPoints.Clear();
+	imaginaryPoints.Clear();
+}
+#pragma endregion
+
+#pragma region CreatingBrokenLine
+CreatingBrokenLine::CreatingBrokenLine() {
+	stateClick = noClick;
+}
+
+Array<ID> CreatingBrokenLine::HandleEvent(const Event ev, Array<Vector2>& params) {
+	switch (ev)
+	{
+	case ev_leftMouseDown:
+	{
+		switch (stateClick)
+		{
+		case noClick:
+		{
+			for (int i = 0; i < params.GetSize(); i++)
+			{
+				segmentStartPoints.PushBack(params[i]);
+			}
+			stateClick = oneClick;
+			return Array<ID>(0);
+		}
+		case oneClick:
+		{
+			if (params.GetSize() != segmentStartPoints.GetSize())
+			{
+				throw std::invalid_argument("Bad number of parameters");
+			}
+			Array<ID> segIDs(segmentStartPoints.GetSize());
+			for (int i = 0; i < params.GetSize(); i++)
+			{
+				Array<double> segmentParameters(4);
+				segmentParameters[0] = segmentStartPoints[i].x;
+				segmentParameters[1] = segmentStartPoints[i].y;
+				segmentParameters[2] = params[i].x;
+				segmentParameters[3] = params[i].y;
+				segmentStartPoints[i] = params[i];
+				ID id = model->CreatePrimitive(ot_segment, segmentParameters);
+				segIDs[i] = id;
+			}
+			createdSegments += segIDs;
+			if (pointsToConnect.GetSize() == 0) {
+				pointsToConnect = Array<ID>(segmentStartPoints.GetSize());
+				for (int i = 0; i < params.GetSize(); i++)
+				{
+					auto children = PrimController::GetInstance()->GetChildren(segIDs[i]);
+					pointsToConnect[i] = children[1];
+				}
+				undo_redo->AddVersion(tfc_creation, segIDs);
+			}
+			else {
+				Array<ID> req(segmentStartPoints.GetSize());
+				for (int i = 0; i < params.GetSize(); i++)
+				{
+					auto children = PrimController::GetInstance()->GetChildren(segIDs[i]);
+					req[i] = model->CreateRequirement(ot_distBetPoints, CreateArr(children[0], pointsToConnect[i]), CreateArr(0.0));
+					pointsToConnect[i] = children[1];
+				}
+				undo_redo->AddVersion(tfc_creation, segIDs + req);
+				
+			}
+			
+			return Array<ID>(0);
+		}
+		}
+		break;
+	}
+	case ev_mouseMove:
+	{
+		if (stateClick == oneClick)
+		{
+			if (params.GetSize() != segmentStartPoints.GetSize())
+			{
+				throw std::invalid_argument("Bad number of parameters");
+			}
+			imaginaryPoints.Clear();
+			for (int i = 0; i < params.GetSize(); i++)
+			{
+				imaginaryPoints.PushBack(params[i]);
+			}
+		}
+		return Array<ID>(0);
+	}
+	}
+	return Array<ID>(0);
+}
+
+void CreatingBrokenLine::DrawMode() {
+	if (stateClick == oneClick)
+	{
+		view->SetColor(col_Red);
+		for (int i = 0; i < segmentStartPoints.GetSize(); i++)
+		{
+			view->DrawPoint(segmentStartPoints[i]);
+		}
+		view->SetColor(col_Yellow);
+		for (int i = 0; i < imaginaryPoints.GetSize(); i++)
+		{
+			view->DrawLine(segmentStartPoints[i], imaginaryPoints[i], points);
+		}
+		view->SetColor(col_Green);
+		if (createdSegments.GetSize() != 0)
+		{
+			Presenter::DrawSelectedObjects(createdSegments);
+		}
+	}
+}
+
+CreatingBrokenLine::~CreatingBrokenLine() {
+	createdSegments.Clear();
+	pointsToConnect.Clear();
 	segmentStartPoints.Clear();
 	imaginaryPoints.Clear();
 }
