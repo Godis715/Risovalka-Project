@@ -141,6 +141,8 @@ Mode* Mode::UnexpectedEvent(const Event e, const Array<double>& params) {
 		return nullptr;
 	case ev_ctrlUp:
 		return nullptr;
+	case ev_enter:
+		return nullptr;
 	case ev_undo: {
 		auto undo_redo = Undo_Redo::GetInstance();
 		undo_redo->Undo();
@@ -412,12 +414,14 @@ DrawingModes::~DrawingModes(){
 	delete createObject;
 }
 
-void DrawingModes::PointRotate(const Vector2& point, Array<Vector2>& resultPoints, const Vector2& center)
+Array<Vector2> DrawingModes::PointRotate(const Vector2& point, const Vector2& center)
 {
-	resultPoints.PushBack(point);
-	resultPoints.PushBack(Vector2((point - center).x * -1, (point - center).y) + center);
-	resultPoints.PushBack(Vector2((point - center).x, (point - center).y * -1) + center);
-	resultPoints.PushBack(Vector2((point - center).x * -1, (point - center).y * -1) + center);
+	auto resultPoints = Array<Vector2>(4);
+	resultPoints[0] = point;
+	resultPoints[1] = Vector2((point - center).x * -1, (point - center).y) + center;
+	resultPoints[2] = Vector2((point - center).x, (point - center).y * -1) + center;
+	resultPoints[3] = Vector2((point - center).x * -1, (point - center).y * -1) + center;
+	return resultPoints;
 }
 
 Mode* DrawingModes::HandleEvent(const Event ev, const Array<double>& params)
@@ -441,15 +445,17 @@ Mode* DrawingModes::HandleEvent(const Event ev, const Array<double>& params)
 			}
 			else if (pointRotate != nullptr)
 			{
-				Array<Vector2>points;
-				PointRotate(Vector2(params[0], params[1]), points, *pointRotate);
+				Array<Vector2> points = PointRotate(Vector2(params[0], params[1]), *pointRotate);
 				Array<ID> objIDs = createObject->HandleEvent(ev, points);
 				if (objIDs.GetSize() != 0)
 				{
 					selectionObjects += objIDs;
-					stateCreate = none;
-					delete createObject;
-					createObject = nullptr;
+					if (createObject->IsCreationFinish())
+					{
+						stateCreate = none;
+						delete createObject;
+						createObject = nullptr;
+					}
 				}
 			}
 			else
@@ -462,8 +468,7 @@ Mode* DrawingModes::HandleEvent(const Event ev, const Array<double>& params)
 		{
 			if (stateCreate != none)
 			{
-				Array<Vector2>points;
-				PointRotate(Vector2(params[0], params[1]), points, *pointRotate);
+				Array<Vector2> points = PointRotate(Vector2(params[0], params[1]), *pointRotate);
 				Array<ID> objIDs = createObject->HandleEvent(ev, points);
 				if (objIDs.GetSize() != 0)
 				{
@@ -497,11 +502,14 @@ Mode* DrawingModes::HandleEvent(const Event ev, const Array<double>& params)
 				Array<ID> objIDs = createObject->HandleEvent(ev, points);
 				if (objIDs.GetSize() != 0)
 				{
-					//selectionObjects += objIDs;
-					stateCreate = none;
-					delete createObject;
-					createObject = nullptr;
-				};
+					selectionObjects += objIDs;
+					if (createObject->IsCreationFinish())
+					{
+						stateCreate = none;
+						delete createObject;
+						createObject = nullptr;
+					}
+				}
 			}
 			return nullptr;
 		}
@@ -530,50 +538,71 @@ Mode* DrawingModes::HandleEvent(const Event ev, const Array<double>& params)
 	{
 	case ev_createArc:
 	{
+		selectionObjects.Clear();
 		stateCreate = create;
 		createObject = new CreatingArc();
 		return nullptr;
 	}
 	case ev_createCircle:
 	{
+		selectionObjects.Clear();
 		stateCreate = create;
 		createObject = new CreatingCircle();
 		return nullptr;
 	}
 	case ev_createSegment:
 	{
+		selectionObjects.Clear();
 		stateCreate = create;
 		createObject = new CreatingSegment();
 		return nullptr;
 	}
 	case ev_createStar:
 	{
+		selectionObjects.Clear();
 		stateCreate = create;
 		createObject = new CreatingStar();
 		return nullptr;
 	}
 	case ev_createBrokenLine:
 	{
+		selectionObjects.Clear();
 		stateCreate = create;
 		createObject = new CreatingBrokenLine();
 		return nullptr;
 	}
 	case ev_createPoint:
 	{
+		selectionObjects.Clear();
 		stateCreate = create;
 		createObject = new CreatingPoint();
 		return nullptr;
 	}
 	case ev_symmetricalDraw:
 	{
+		delete createObject;
+		createObject = nullptr;
+		stateCreate = none;
+		selectionObjects.Clear();
 		stateMode = symmetricalDraw;
 		return nullptr;
 	}
 	case ev_defualtDraw:
 	{
+		selectionObjects.Clear();
+		delete createObject;
+		createObject = nullptr;
+		stateCreate = none;
 		delete pointRotate;
 		pointRotate = nullptr;
 		stateMode = defualtDraw;
+		return nullptr;
+	}
+	case ev_enter:
+	{
+		delete createObject;
+		createObject = nullptr;
+		stateCreate = none;
 		return nullptr;
 	}
 	case ev_escape:
@@ -604,7 +633,7 @@ void DrawingModes::DrawMode()
 }
 #pragma endregion
 
-#pragma region DrawingModeSegmentSymmetrical
+#pragma region DrawingModeSectorSymmetrical
 DMSectorSymmetrical::DMSectorSymmetrical(const Event ev, const Array<double>& params) : selectionObjects(0)
 {
 	if (params.GetSize() != 1) {
@@ -678,9 +707,12 @@ Mode* DMSectorSymmetrical::HandleEvent(const Event ev, const Array<double>& para
 			if (objIDs.GetSize() != 0)
 			{
 				selectionObjects += objIDs;
-				stateCreate = none;
-				delete createObject;
-				createObject = nullptr;
+				if (createObject->IsCreationFinish())
+				{
+					stateCreate = none;
+					delete createObject;
+					createObject = nullptr;
+				}
 			}
 		}
 		else
@@ -704,44 +736,51 @@ Mode* DMSectorSymmetrical::HandleEvent(const Event ev, const Array<double>& para
 	}
 	case ev_createArc:
 	{
+		selectionObjects.Clear();
 		stateCreate = create;
-		delete createObject;
 		createObject = new CreatingArc();
 		return nullptr;
 	}
 	case ev_createCircle:
 	{
+		selectionObjects.Clear();
 		stateCreate = create;
-		delete createObject;
 		createObject = new CreatingCircle();
 		return nullptr;
 	}
 	case ev_createSegment:
 	{
+		selectionObjects.Clear();
 		stateCreate = create;
-		delete createObject;
 		createObject = new CreatingSegment();
 		return nullptr;
 	}
 	case ev_createStar:
 	{
+		selectionObjects.Clear();
 		stateCreate = create;
-		delete createObject;
 		createObject = new CreatingStar();
 		return nullptr;
 	}
 	case ev_createBrokenLine:
 	{
+		selectionObjects.Clear();
 		stateCreate = create;
-		delete createObject;
 		createObject = new CreatingBrokenLine();
 		return nullptr;
 	}
 	case ev_createPoint:
 	{
+		selectionObjects.Clear();
 		stateCreate = create;
-		delete createObject;
 		createObject = new CreatingPoint();
+		return nullptr;
+	}
+	case ev_enter:
+	{
+		delete createObject;
+		createObject = nullptr;
+		stateCreate = none;
 		return nullptr;
 	}
 	case ev_escape:
@@ -1480,6 +1519,10 @@ CreateObject::CreateObject() {
 	view = Presenter::GetView();
 	undo_redo = Undo_Redo::GetInstance();
 }
+bool CreateObject::IsCreationFinish()
+{
+	return isCreationFinish;
+}
 #pragma endregion
 
 #pragma region CreatingSegment
@@ -1521,6 +1564,7 @@ Array<ID> CreatingSegment::HandleEvent(const Event ev, Array<Vector2>& params) {
 				segIDs[i] = id;
 			}
 			undo_redo->AddVersion(tfc_creation, segIDs);
+			isCreationFinish = true;
 			return segIDs;
 		}
 		}
@@ -1627,7 +1671,7 @@ Array<ID> CreatingStar::HandleEvent(const Event ev, Array<Vector2>& params) {
 				
 			}
 			
-			return Array<ID>(0);
+			return segIDs;
 		}
 		}
 		break;
@@ -1665,11 +1709,11 @@ void CreatingStar::DrawMode() {
 		{
 			view->DrawLine(segmentStartPoints[i], imaginaryPoints[i], points);
 		}
-		view->SetColor(col_Green);
+		/*view->SetColor(col_Green);
 		if (createdSegments.GetSize() != 0)
 		{
 			Presenter::DrawSelectedObjects(createdSegments);
-		}
+		}*/
 	}
 }
 
@@ -1742,7 +1786,7 @@ Array<ID> CreatingBrokenLine::HandleEvent(const Event ev, Array<Vector2>& params
 				
 			}
 			
-			return Array<ID>(0);
+			return segIDs;
 		}
 		}
 		break;
@@ -1780,11 +1824,11 @@ void CreatingBrokenLine::DrawMode() {
 		{
 			view->DrawLine(segmentStartPoints[i], imaginaryPoints[i], points);
 		}
-		view->SetColor(col_Green);
+		/*view->SetColor(col_Green);
 		if (createdSegments.GetSize() != 0)
 		{
 			Presenter::DrawSelectedObjects(createdSegments);
-		}
+		}*/
 	}
 }
 
@@ -1813,6 +1857,7 @@ Array<ID> CreatingPoint::HandleEvent(const Event ev, Array<Vector2>& params) {
 			pointIDs[i] = id;
 		}
 		undo_redo->AddVersion(tfc_creation, pointIDs);
+		isCreationFinish = true;
 		return pointIDs;
 	}
 	return Array<ID>(0);
@@ -1852,6 +1897,7 @@ Array<ID> CreatingCircle::HandleEvent(const Event ev, Array<Vector2>& params) {
 				circleIDs[i] = id;
 			}
 			undo_redo->AddVersion(tfc_creation, circleIDs);
+			isCreationFinish = true;
 			return circleIDs;
 		}
 	}
@@ -1946,6 +1992,7 @@ Array<ID> CreatingArc::HandleEvent(const Event ev, Array<Vector2>& params) {
 				arcIDs[i] = id;
 			}
 			undo_redo->AddVersion(tfc_creation, arcIDs);
+			isCreationFinish = true;
 			return arcIDs;
 		}
 	}

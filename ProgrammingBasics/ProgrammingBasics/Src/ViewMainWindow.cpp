@@ -49,6 +49,13 @@ int MainWindow::handle(int e)
 			inventory->lastEvent = ev_ctrlUp;
 			Presenter::Set_event(ev_escape, params);
 		}
+		if (Fl::event_key() == FL_Enter)
+		{
+			delete inventory->lastCursor;
+			inventory->lastCursor = new Fl_Cursor(FL_CURSOR_DEFAULT);
+			inventory->lastEvent = ev_ctrlUp;
+			Presenter::Set_event(ev_enter, params);
+		}
 		if (Fl::event_key() == FL_Shift_L && inventory->lastEvent != ev_ctrlDown)
 		{
 			Presenter::Set_event(inventory->lastEvent, params);

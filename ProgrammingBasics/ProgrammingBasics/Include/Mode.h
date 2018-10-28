@@ -64,6 +64,7 @@ enum Event
 	ev_arrowLeft,
 	ev_arrowRight,
 	ev_escape,
+	ev_enter,
 	// Widjets
 	ev_click_Req,
 	ev_change_Prim,
@@ -77,10 +78,13 @@ enum Event
 
 class CreateObject {
 protected:
+	//enum TypeCreate { tCreate_segment, tCreate_point, tCreate_arc, tCreate_circle, tCreate };
 	IView* view;
 	Model* model;
 	Undo_Redo* undo_redo;
+	bool isCreationFinish = false;
 public:
+	bool IsCreationFinish();
 	CreateObject();
 	virtual ~CreateObject() {}
 	virtual void DrawMode() = 0;
@@ -275,7 +279,7 @@ private:
 
 	Array<ID> selectionObjects;
 
-	void PointRotate(const Vector2&, Array<Vector2>&, const Vector2&);
+	Array<Vector2> PointRotate(const Vector2&, const Vector2&);
 public:
 	DrawingModes(Event);
 
