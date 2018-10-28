@@ -149,7 +149,7 @@ void ViewFLTK::DrawArc(const Vector2& center, const Vector2& start, const Vector
 void ViewFLTK::DrawPoint(const Vector2& pos)
 {
 	int size = 2;
-	fl_begin_line();
+	/*fl_begin_line();
 	fl_vertex(pos.x - size, pos.y - size);
 	fl_vertex(pos.x + size, pos.y + size);
 	fl_end_line();
@@ -157,7 +157,10 @@ void ViewFLTK::DrawPoint(const Vector2& pos)
 	fl_begin_line();
 	fl_vertex(pos.x + size, pos.y - size);
 	fl_vertex(pos.x - size, pos.y + size);
-	fl_end_line();
+	fl_end_line();*/
+	fl_begin_polygon();
+	fl_arc(pos.x, pos.y, size, 0.0, 360.0);
+	fl_end_polygon();
 }
 
 void ViewFLTK::SetColor(int r, int g, int b)
