@@ -96,6 +96,10 @@ public:
 
 	Component GetComponent(const ID&);
 
+	void CashComponent(const Array<ID>&);
+
+	Component* GetComponent();
+
 	DataID::bst_iterator GetPrimIterator();
 
 	Array<ID> GetRelatedObjects(const ID&);

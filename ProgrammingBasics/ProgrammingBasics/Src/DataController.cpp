@@ -7,6 +7,7 @@ DataController::DataController() {
 	primCtrl = PrimController::GetInstance();
 	reqCtrl = ReqController::GetInstance();
 	objCtrl = ObjectController::GetInstance();
+	currentComponent = nullptr;
 }
 
 DataController* DataController::GetInstance() {
@@ -280,6 +281,45 @@ Component DataController::GetComponent(const ID& id) {
 		}
 	}
 	return component;
+}
+
+void DataController::CashComponent(const Array<ID>& IDs) {
+	delete currentComponent;
+	currentComponent = new Component;
+
+	bool* matching = new bool[IDs.GetSize()];
+	for (int i = 0; i < IDs.GetSize(); ++i) {
+		matching[i] = true;
+	}
+
+	bool isComplete = false;
+	while (!isComplete)
+	{
+		isComplete = true;
+		for (int i = 0; i < IDs.GetSize(); ++i) {
+			if (matching[i]) {
+				matching[i] = false;
+				isComplete = false;
+				auto component = GetComponent(IDs[i]);
+				auto it = component.GetMarker();
+				while (it.IsValid())
+				{
+					currentComponent->Add(*it);
+					++it;
+				}
+
+				for (int j = i + 1; j < IDs.GetSize(); ++j) {
+					if ((matching[j]) && (component.Find(IDs[j]).IsValid())) {
+						matching[j] = false;
+					}
+				}
+			}
+		}
+	}
+}
+
+Component* DataController::GetComponent() {
+	return currentComponent;
 }
 
 ID DataController::GetObjectInCircle(double x, double y, double r) {

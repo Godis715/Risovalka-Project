@@ -1068,9 +1068,10 @@ Redaction::Redaction(Array<ID> _selecObj, Event _ev) : selectedObjects(_selecObj
 		break;
 	}
 	default:
-        std::invalid_argument("Redaction : not valid status");
+		std::invalid_argument("Redaction : not valid status");
 		break;
 	}
+	model->CashNewComponent(selectedObjects);
 }
 
 Redaction::~Redaction() {

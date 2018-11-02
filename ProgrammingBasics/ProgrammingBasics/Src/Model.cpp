@@ -103,6 +103,36 @@ void Model::OptimizeByID(const ID& obj) const {
 	}
 }
 
+void Model::Optimize() const {
+	auto component = dataCtrl->GetComponent();
+
+	Array<ID> req(0);
+
+	List<ID> arcs;
+
+	auto compIt = component->GetMarker();
+	while (compIt.IsValid()) {
+		ID currID = *compIt;
+		if (reqCtrl->IsReq(currID)) {
+			req.PushBack(currID);
+		}
+		if (objCtrl->GetType(currID) == ot_arc) {
+			arcs.Push(currID);
+		}
+		++compIt;
+	}
+	if (req.GetSize() != 0) {
+		Optimizer optimizer;
+		optimizer.OptimizeRequirements(req);
+
+	}
+
+	for (auto i = arcs.Begin(); i != arcs.AfterEnd(); ++i) {
+		auto arc = dynamic_cast<Arc*>(primCtrl->GetPrimitive(*i));
+		arc->RestoreCenter();
+	}
+}
+
 Array<double> Model::GetObjParam(const ID& obj) const {
 	if (primCtrl->IsPrimitive(obj)) {
 		return primCtrl->GetPrimitiveParamsAsValues(obj);
@@ -131,6 +161,10 @@ bool Model::IsReq(const ID& obj) const {
 
 Array<ID> Model::GetObjectsByArea(double x1, double y1, double x2, double y2) const { 
 	return dataCtrl->GetObjectsByArea(x1, y1, x2, y2);
+}
+
+void Model::CashNewComponent(const Array<ID>& IDs) const {
+	dataCtrl->CashComponent(IDs);
 }
 
 void Model::Scale(const Array<ID>&, const double) const { } 
@@ -163,14 +197,16 @@ void Model::Move(const Array<ID>& objs, const Vector2& direction) const {
 		++point;
 	}
 
-	auto it = points.GetMarker();
+	/*auto it = points.GetMarker();
 	
 	while (it.IsValid()) {
 		OptimizeByID(*it);
 		++it;
-	}
+	}*/
 
-	it = points.GetMarker();
+	Optimize();
+
+	auto it = points.GetMarker();
 
 	while (it.IsValid()) {
 		primCtrl->Activate(*it);

@@ -34,6 +34,8 @@ public:
 	void DeleteObjects(Array<ID>&) const;
 
 	void OptimizeByID(const ID&) const;
+	void Optimize() const;
+	void CashNewComponent(const Array<ID>&) const;
 	void Scale(const Array<ID>&, const double) const;
 	void Move(const Array<ID>&, const Vector2&) const;
 	void Clear() const;
