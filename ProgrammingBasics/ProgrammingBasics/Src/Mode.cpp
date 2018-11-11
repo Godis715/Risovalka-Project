@@ -94,7 +94,7 @@ const string ReverseParse(const double dig) {
 
 const char* str_ch(const string str) {
 	char* charDig = new char[str.length() + 1];
-	for (int i = 0; i < str.length(); i++)
+	for (size_t i = 0; i < str.length(); i++)
 	{
 		charDig[i] = str[i];
 	}
@@ -231,7 +231,7 @@ void ChangingProperties::SetWidjetParamPrim() {
 	for (int i = 0; i < reqIDs.GetSize(); i++)
 	{
 		object_type typeReq = model->GetObjType(reqIDs[i]);
-		nameReqs.PushBack(objTypeToString(typeReq) + '#' + reqIDs[i].GetHash());
+		nameReqs.PushBack(objTypeToString(typeReq) + '#' + int(reqIDs[i].GetHash()));
 	}
 
 	widjetPrim->SetParam(paramsString, nameReqs);
@@ -531,7 +531,7 @@ Mode* DMDefualt::HandleEvent(const Event ev, const Array<double>& params)
 	default:
 		break;
 	}
-	return UnexpectedEvent(ev, params);;
+	return UnexpectedEvent(ev, params);
 }
 
 void DMDefualt::DrawMode()
@@ -852,7 +852,7 @@ DMSectorSymmetrical::DMSectorSymmetrical(const Event ev, const Array<double>& pa
 	if (params.GetSize() != 1) {
 		throw std::invalid_argument("Bad number of parameters");
 	}
-	countSector = params[0];
+	countSector = int(params[0]);
 	cosinus = cos(2 * PI / countSector);
 	sinus = sin(2 * PI / countSector);
 	pointRotate = nullptr;
@@ -864,7 +864,7 @@ void DMSectorSymmetrical::DrawMode()
 {
 	if (pointRotate != nullptr)
 	{
-		view->SetColor(col_Blue);
+		view->SetColor(col_Aqua);
 		view->DrawPoint(Vector2(pointRotate->x, pointRotate->y));
 	}
 	if (createObject != nullptr)
@@ -887,11 +887,11 @@ Array<Vector2>  DMSectorSymmetrical::PointRotate(const Vector2& point, const Vec
 {
 	auto resultPoints = Array<Vector2>(countSector);
 	resultPoints[0] = point - center;
-	for (int i = 1; i < countSector; ++i) {
+	for (size_t i = 1; i < countSector; ++i) {
 		resultPoints[i].x = cosinus * resultPoints[i - 1].x + sinus * resultPoints[i - 1].y;
 		resultPoints[i].y = cosinus * resultPoints[i - 1].y - sinus * resultPoints[i - 1].x;
 	}
-	for (int i = 0; i < countSector; ++i) {
+	for (size_t i = 0; i < countSector; ++i) {
 		auto vec = resultPoints[i] + center;
 		resultPoints[i] = vec;
 	}
@@ -2183,7 +2183,7 @@ Array<ID> CreatingCircle::HandleEvent(const Event ev, Array<Vector2>& params) {
 		}
 		return Array<ID>(0);
 	}
-	
+	return Array<ID>(0);
 }
 
 void CreatingCircle::DrawMode() {
