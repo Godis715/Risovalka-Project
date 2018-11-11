@@ -90,8 +90,9 @@ void ViewToolbar::cl_Redaction(Fl_Widget* o, void*)
 	delete inventory->lastCursor;
 	inventory->lastCursor = new Fl_Cursor(FL_CURSOR_DEFAULT);
 	Array<double> params(0);
+	auto name = ((Fl_Menu_Button*)o)->mvalue()->label();
 
-	if (((Fl_Menu_Button*)o)->mvalue()->label() == "Move selection")
+	if (name == "Move selection")
 	{
 		viewLog->Push("Log::Move selection");
 		delete inventory->lastCursor;
@@ -99,19 +100,25 @@ void ViewToolbar::cl_Redaction(Fl_Widget* o, void*)
 		Presenter::Set_event(ev_moveObjects, params);
 	}
 
-	if (((Fl_Menu_Button*)o)->mvalue()->label() == "Scale selection")
+	if (name == "Scale selection")
 	{
 		viewLog->Push("Log::Scale selection");
 		Presenter::Set_event(ev_scaleObjects, params);
 	}
 
-	if (((Fl_Menu_Button*)o)->mvalue()->label() == "Delete selection")
+	if (name == "Rotate selection")
+	{
+		viewLog->Push("Log::Scale selection");
+		Presenter::Set_event(ev_rotateObjects, params);
+	}
+
+	if (name == "Delete selection")
 	{
 		viewLog->Push("Log::Delete selection");
 		Presenter::Set_event(ev_del, params);
 	}
 
-	if (((Fl_Menu_Button*)o)->mvalue()->label() == "Delete all scene")
+	if (name == "Delete all scene")
 	{
 		viewLog->Push("Log::Delete all scene");
 		Presenter::Set_event(ev_delAll, params);
@@ -231,9 +238,10 @@ void ViewToolbar::Initializer()
 		toolingRed = new Fl_Menu_Item[6];
 		toolingRed[0] = { "Move selection" };
 		toolingRed[1] = { "Scale selection" };
-		toolingRed[2] = { "Delete selection" };
-		toolingRed[3] = { "Delete all scene" };
-		toolingRed[4] = { 0 };
+		toolingRed[2] = { "Rotate selection" };
+		toolingRed[3] = { "Delete selection" };
+		toolingRed[4] = { "Delete all scene" };
+		toolingRed[5] = { 0 };
 		redaction_b = new  Fl_Menu_Button(coordX, positionY + indentY, wMenu, hMenu, "Redaction");
 		redaction_b->menu(toolingRed);
 		redaction_b->callback(cl_Redaction);

@@ -41,6 +41,7 @@ enum Event
 	// redaction
 	ev_moveObjects,
 	ev_scaleObjects,
+	ev_rotateObjects,
 	ev_del,
 	ev_delAll,
 	ev_undo,
@@ -356,11 +357,12 @@ public:
 class Redaction : public Mode {
 private:
 	enum State { noClick, click };
-	enum StatusRedaction { move, scale };
+	enum StatusRedaction { move, scale, rotate };
 	Array<ID> selectedObjects;
 	Vector2 posStart;
 	Vector2 posEnd;
 	Vector2 posLast;
+	Vector2* pointRotate;
 	double shiftBuffer;
 	State state;
 	StatusRedaction status;

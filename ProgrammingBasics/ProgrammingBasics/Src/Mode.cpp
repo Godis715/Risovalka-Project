@@ -528,6 +528,27 @@ Mode* DMDefualt::HandleEvent(const Event ev, const Array<double>& params)
 		selectionObjects.Clear();
 		return nullptr;
 	}
+	case ev_moveObjects:
+	{
+		if (selectionObjects.GetSize() != 0) {
+			return new Redaction(selectionObjects, ev);
+		}
+		break;
+	}
+	case ev_scaleObjects:
+	{
+		if (selectionObjects.GetSize() != 0) {
+			return new Redaction(selectionObjects, ev);
+		}
+		break;
+	}
+	case ev_rotateObjects:
+	{
+		if (selectionObjects.GetSize() != 0) {
+			return new Redaction(selectionObjects, ev);
+		}
+		break;
+	}
 	default:
 		break;
 	}
@@ -553,7 +574,7 @@ void DMDefualt::DrawMode()
 DMSymmetrical::DMSymmetrical(Event e, const Array<double>& params) : selectionObjects(0)
 {
 	outputWidjet = static_cast<IDrawMode*>(view->GetWidjet(drawMode));
-	pointRotate = nullptr;
+	pointRotate = new Vector2(400, 400);
 	stateCreate = none;
 	nameMode = "Mode: DrawingModes::Symmetrical";
 	switch (int(params[0]))
@@ -790,6 +811,27 @@ Mode* DMSymmetrical::HandleEvent(const Event ev, const Array<double>& params)
 		selectionObjects.Clear();
 		return nullptr;
 	}
+	case ev_moveObjects:
+	{
+		if (selectionObjects.GetSize() != 0) {
+			return new Redaction(selectionObjects, ev);
+		}
+		break;
+	}
+	case ev_scaleObjects:
+	{
+		if (selectionObjects.GetSize() != 0) {
+			return new Redaction(selectionObjects, ev);
+		}
+		break;
+	}
+	case ev_rotateObjects:
+	{
+		if (selectionObjects.GetSize() != 0) {
+			return new Redaction(selectionObjects, ev);
+		}
+		break;
+	}
 	default:
 		break;
 	}
@@ -855,7 +897,7 @@ DMSectorSymmetrical::DMSectorSymmetrical(const Event ev, const Array<double>& pa
 	countSector = params[0];
 	cosinus = cos(2 * PI / countSector);
 	sinus = sin(2 * PI / countSector);
-	pointRotate = nullptr;
+	pointRotate = new Vector2(400, 400);
 	createObject = nullptr;
 	stateCreate = none;
 }
@@ -1005,11 +1047,34 @@ Mode* DMSectorSymmetrical::HandleEvent(const Event ev, const Array<double>& para
 		return nullptr;
 	}
 	case ev_escape:
+	{
 		return new Selection(selectionObjects);
+	}
 	case  ev_delAll:
 	{
 		selectionObjects.Clear();
 		return nullptr;
+	}
+	case ev_moveObjects:
+	{
+		if (selectionObjects.GetSize() != 0) {
+			return new Redaction(selectionObjects, ev);
+		}
+		break;
+	}
+	case ev_scaleObjects:
+	{
+		if (selectionObjects.GetSize() != 0) {
+			return new Redaction(selectionObjects, ev);
+		}
+		break;
+	}
+	case ev_rotateObjects:
+	{
+		if (selectionObjects.GetSize() != 0) {
+			return new Redaction(selectionObjects, ev);
+		}
+		break;
 	}
 	default:
 		return UnexpectedEvent(ev, params);;
@@ -1211,13 +1276,19 @@ Mode* Selection::HandleEvent(const Event e, const Array<double>& params) {
 		if (selectedObjects.GetSize() == 0) {
 			return nullptr;
 		}
-		return new Redaction(selectedObjects, ev_moveObjects);
+		return new Redaction(selectedObjects, e);
 	}
 	case ev_scaleObjects: {
 		if (selectedObjects.GetSize() == 0) {
 			return nullptr;
 		}
-		return new Redaction(selectedObjects, ev_scaleObjects);
+		return new Redaction(selectedObjects, e);
+	}
+	case ev_rotateObjects: {
+		if (selectedObjects.GetSize() == 0) {
+			return nullptr;
+		}
+		return new Redaction(selectedObjects, e);
 	}
 	case ev_del: {
 		if (selectedObjects.GetSize() != 0) {
@@ -1292,6 +1363,7 @@ Redaction::Redaction(Array<ID> _selecObj, Event _ev) : selectedObjects(_selecObj
 	IDrawMode* outputWidjet = static_cast<IDrawMode*>(view->GetWidjet(drawMode));
 	isChanged = false;
 	state = noClick;
+	pointRotate = nullptr;
 	switch (_ev)
 	{
 	case ev_moveObjects:
@@ -1304,6 +1376,12 @@ Redaction::Redaction(Array<ID> _selecObj, Event _ev) : selectedObjects(_selecObj
 	{
 		outputWidjet->SetName("Mode: Redaction::Scale");
 		status = scale;
+		break;
+	}
+	case ev_rotateObjects:
+	{
+		outputWidjet->SetName("Mode: Redaction::Rotate");
+		status = rotate;
 		break;
 	}
 	default:
@@ -1319,6 +1397,7 @@ Redaction::~Redaction() {
 		undo_redo->CompleteAddChange();
 	}
 	selectedObjects.Clear();
+	delete pointRotate;
 }
 
 Mode* Redaction::HandleEvent(const Event e, const Array<double>& params)
@@ -1429,8 +1508,66 @@ Mode* Redaction::HandleEvent(const Event e, const Array<double>& params)
 		}
 
 	}
+	if (status == rotate)
+	{
+		if (e == ev_leftMouseDown) {
 
-	if (e == ev_del)
+			if (params.GetSize() != 2) {
+				throw std::invalid_argument("Bad number of parameters");
+			}
+			delete pointRotate;
+			pointRotate = new Vector2(params[0], params[1]);
+			return nullptr;
+		}
+		switch (e)
+		{
+		case ev_scroll:
+		{
+			if (params.GetSize() != 1) {
+				throw std::invalid_argument("Bad number of parameters");
+			}
+			double coef = 0;
+			if (params[0] > 0)
+			{
+				coef += PI / 30;
+			}
+			if (params[0] < 0)
+			{
+				coef -= PI / 30;
+			}
+			if (!isChanged) {
+				auto undo_redo = Undo_Redo::GetInstance();
+				undo_redo->AddVersion(tfc_change, selectedObjects);
+				isChanged = true;
+			}
+			if (pointRotate == nullptr) {
+				model->Rotate(selectedObjects, coef);
+			}
+			else {
+				model->Rotate(selectedObjects, *pointRotate, coef);
+			}
+			return nullptr;
+		}
+		case ev_escape:
+		{
+			return new Selection(selectedObjects);
+		}
+		case ev_scaleObjects:
+		{
+			return nullptr;
+		}
+		case ev_moveObjects:
+		{
+			return new Redaction(selectedObjects, ev_moveObjects);
+		}
+		default:
+			break;
+		}
+	}
+
+	switch (e)
+	{
+	case ev_del:
 	{
 		if (selectedObjects.GetSize() != 0) {
 			model->DeleteObjects(selectedObjects);
@@ -1440,15 +1577,39 @@ Mode* Redaction::HandleEvent(const Event e, const Array<double>& params)
 		}
 		return new Selection();
 	}
-	if (e == ev_delAll)
+	case ev_delAll:
 	{
 		selectedObjects.Clear();
 		return new Selection();
+	}
+	case ev_undo:
+	{
+		if (isChanged) {
+			auto undo_redo = Undo_Redo::GetInstance();
+			undo_redo->CompleteAddChange();
+		}
+		isChanged = false;
+	}
+	case ev_redu:
+	{
+		if (isChanged) {
+			auto undo_redo = Undo_Redo::GetInstance();
+			undo_redo->CompleteAddChange();
+		}
+		isChanged = false;
+	}
+	default:
+		break;
 	}
 	return UnexpectedEvent(e, params);;
 }
 
 void Redaction::DrawMode() {
+	if (pointRotate != nullptr)
+	{
+		view->SetColor(col_Blue);
+		view->DrawPoint(Vector2(pointRotate->x, pointRotate->y));
+	}
 	view->SetColor(col_Green);
 	Presenter::DrawSelectedObjects(selectedObjects);
 }
@@ -1530,11 +1691,15 @@ Mode* CreateRequirementWithParam::HandleEvent(const Event ev, const Array<double
 	}
 	case ev_moveObjects:
 	{
-		return new Redaction(selectedObjects, ev_moveObjects);
+		return new Redaction(selectedObjects, ev);
 	}
 	case ev_scaleObjects:
 	{
-		return new Redaction(selectedObjects, ev_scaleObjects);
+		return new Redaction(selectedObjects, ev);
+	}
+	case ev_rotateObjects:
+	{
+		return new Redaction(selectedObjects, ev);
 	}
 	case  ev_del:
 	{

@@ -38,6 +38,8 @@ public:
 	void CashNewComponent(const Array<ID>&) const;
 	void Scale(const Array<ID>&, const double) const;
 	void Move(const Array<ID>&, const Vector2&) const;
+	void Rotate(const Array<ID>& objs, const double) const;
+	void Rotate(const Array<ID>& objs, const Vector2&, const double) const;
 	void Clear() const;
 
 	void Save(const std::string&) const;

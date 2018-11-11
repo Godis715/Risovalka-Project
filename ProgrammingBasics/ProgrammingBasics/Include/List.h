@@ -50,6 +50,7 @@ public:
 			prev = current;
 			current = current->next;
 			if (current == list->guardTail) {
+				isValid = false;
 				return false;
 			}
 			else {
