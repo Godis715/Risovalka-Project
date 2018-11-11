@@ -1,26 +1,11 @@
 #include "ViewToolbar.h"
 
-void ViewToolbar::cl_DrawingModes(Fl_Widget* o, void*)
+void ViewToolbar::cl_DefualtDrawMode(Fl_Widget* o, void*)
 {
 	delete inventory->lastCursor;
 	inventory->lastCursor = new Fl_Cursor(FL_CURSOR_DEFAULT);
 	Array<double> params(0);
-	const string nameMode = ((Fl_Menu_Button*)o)->mvalue()->label();
-	if (nameMode == "Defualt")
-	{
-		Presenter::Set_event(ev_defualtDraw, params);
-	}
-	if (nameMode == "Symmetrical")
-	{
-		Presenter::Set_event(ev_symmetricalDraw, params);
-	}
-	//int i = ((Fl_Menu_Button*)o)->mvalue()->me
-	//std::cout << i;
-	if (nameMode == "Rotation")
-	{
-		//Presenter::Set_event(ev_rotationDraw, params);
-		std::cout << "q";
-	}
+	Presenter::Set_event(ev_defualtDraw, params);
 }
 
 void ViewToolbar::cl_xSymmetricDrawMode(Fl_Widget* o, void*)
@@ -129,6 +114,7 @@ void ViewToolbar::cl_Redaction(Fl_Widget* o, void*)
 	if (((Fl_Menu_Button*)o)->mvalue()->label() == "Delete all scene")
 	{
 		viewLog->Push("Log::Delete all scene");
+		Presenter::Set_event(ev_delAll, params);
 		Presenter::CleareScene();
 	}
 }
@@ -201,7 +187,7 @@ void ViewToolbar::Initializer()
 	coordX += (wBut + indentX);
 	{
 		drawingModes = new Fl_Menu_Item[18];
-		drawingModes[0] = { "Defualt" };
+		drawingModes[0] = { "Defualt", 0, cl_DefualtDrawMode, 0 , 0 };
 		drawingModes[1] = { "Symmetrical", 0, 0, 0, FL_SUBMENU };
 			drawingModes[2] = { "y2", 0, cl_xSymmetricDrawMode, 0, 0 };
 			drawingModes[3] = { "x2", 0, cl_xSymmetricDrawMode, 0, 0 };
@@ -221,7 +207,6 @@ void ViewToolbar::Initializer()
 		drawingModes[17] = { 0 };
 		drawingModes_b = new  Fl_Menu_Button(coordX, positionY + indentY, wMenu, hMenu, "DrawingModes");
 		drawingModes_b->menu(drawingModes);
-		drawingModes_b->callback(cl_DrawingModes);
 		drawingModes_b->clear_visible_focus();
 		drawingModes_b->color(FL_WHITE);
 	}

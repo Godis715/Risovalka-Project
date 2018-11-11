@@ -113,25 +113,25 @@ Mode* Mode::UnexpectedEvent(const Event e, const Array<double>& params) {
 		return new DMSectorSymmetrical(e, params);
 	}
 	case ev_defualtDraw: {
-		return new DrawingModes(e);
+		return new DMDefualt(e);
 	}
 	case ev_createPoint: {
-		return new DrawingModes(e);
+		return new DMDefualt(e);
 	}
 	case ev_createStar: {
-		return new DrawingModes(e);
+		return new DMDefualt(e);
 	}
 	case ev_createBrokenLine: {
-		return new DrawingModes(e);
+		return new DMDefualt(e);
 	}
 	case ev_createArc: {
-		return new DrawingModes(e);
+		return new DMDefualt(e);
 	}
 	case ev_createSegment: {
-		return new DrawingModes(e);
+		return new DMDefualt(e);
 	}
 	case ev_createCircle: {
-		return new DrawingModes(e);
+		return new DMDefualt(e);
 	}
 	case ev_mouseMove:
 		return nullptr;
@@ -361,12 +361,12 @@ void ChangingProperties::DrawMode()
 }
 #pragma endregion
 
-#pragma region DrawingModes
-DrawingModes::DrawingModes(Event e) : selectionObjects(0)
+#pragma region DMDefualt
+DMDefualt::DMDefualt(Event e) : selectionObjects(0)
 {
 	outputWidjet = static_cast<IDrawMode*>(view->GetWidjet(drawMode));
 	stateCreate = none;
-	nameMode = "Mode: DrawingModes::DefualtDraw";
+	nameMode = "Mode: DrawingModes::Defualt";
 	switch (e)
 	{
 	case ev_createPoint: {
@@ -408,21 +408,16 @@ DrawingModes::DrawingModes(Event e) : selectionObjects(0)
 		createObject = new CreatingCircle();
 		break;
 	}
-	case ev_defualtDraw: {
-		nameMode = "Mode: DrawingModes::DefualtDraw";
-		outputWidjet->SetName(nameMode);
-		break;
-	}
 	default:
 		break;
 	}
 }
 
-DrawingModes::~DrawingModes(){
+DMDefualt::~DMDefualt(){
 	delete createObject;
 }
 
-Mode* DrawingModes::HandleEvent(const Event ev, const Array<double>& params)
+Mode* DMDefualt::HandleEvent(const Event ev, const Array<double>& params)
 {
 	switch (ev)
 	{
@@ -528,13 +523,18 @@ Mode* DrawingModes::HandleEvent(const Event ev, const Array<double>& params)
 	{
 		return new Selection(selectionObjects);
 	}
+	case  ev_delAll:
+	{
+		selectionObjects.Clear();
+		return nullptr;
+	}
 	default:
 		break;
 	}
 	return UnexpectedEvent(ev, params);;
 }
 
-void DrawingModes::DrawMode()
+void DMDefualt::DrawMode()
 {
 	if (createObject != nullptr)
 	{
@@ -555,7 +555,7 @@ DMSymmetrical::DMSymmetrical(Event e, const Array<double>& params) : selectionOb
 	outputWidjet = static_cast<IDrawMode*>(view->GetWidjet(drawMode));
 	pointRotate = nullptr;
 	stateCreate = none;
-	nameMode = "Mode: DrawingModes::DefualtDraw";
+	nameMode = "Mode: DrawingModes::Symmetrical";
 	switch (int(params[0]))
 	{
 		case 1:
@@ -618,11 +618,6 @@ DMSymmetrical::DMSymmetrical(Event e, const Array<double>& params) : selectionOb
 		stateCreate = create;
 		outputWidjet->SetName(nameMode + "::CreatingCircle");
 		createObject = new CreatingCircle();
-		break;
-	}
-	case ev_symmetricalDraw: {
-		nameMode = "Mode: DrawingModes::SymmetricalDraw";
-		outputWidjet->SetName(nameMode);
 		break;
 	}
 	default:
@@ -790,6 +785,11 @@ Mode* DMSymmetrical::HandleEvent(const Event ev, const Array<double>& params)
 	}
 	case ev_escape:
 		return new Selection(selectionObjects);
+	case  ev_delAll:
+	{
+		selectionObjects.Clear();
+		return nullptr;
+	}
 	default:
 		break;
 	}
@@ -800,11 +800,38 @@ void DMSymmetrical::DrawMode()
 {
 	if (pointRotate != nullptr)
 	{
-		view->SetColor(col_Blue);
-		view->DrawPoint(Vector2(pointRotate->x, pointRotate->y));
+		view->SetColor(col_Aqua);
+		switch (stateMode)
+		{
+		case ox2:
+		{
+			view->DrawLine(Vector2(-1000, pointRotate->y), Vector2(1000, pointRotate->y), line);
+			break;
+		}
+		case oy2:
+		{
+			view->DrawLine(Vector2(pointRotate->x, -1000), Vector2(pointRotate->x, 1000), line);
+			break;	
+		}
+		case o4:
+		{
+			view->DrawLine(Vector2(-1000, pointRotate->y), Vector2(1000, pointRotate->y), line);
+			view->DrawLine(Vector2(pointRotate->x, -1000), Vector2(pointRotate->x, 1000), line);
+			break;		
+		}
+		case o8:
+		{
+			view->DrawLine(Vector2(pointRotate->x-1000, pointRotate->y-1000), 
+				Vector2(pointRotate->x+1000, pointRotate->y+1000), line);
+			view->DrawLine(Vector2(pointRotate->x + 1000, pointRotate->y - 1000),
+				Vector2(pointRotate->x - 1000, pointRotate->y + 1000), line);
+			break;
+		}
+		}
 	}
 	if (createObject != nullptr)
 	{
+
 		createObject->DrawMode();
 	}
 	view->SetColor(col_Green);
@@ -816,7 +843,7 @@ void DMSymmetrical::DrawMode()
 }
 #pragma endregion
 
-#pragma region DrawingModeSectorSymmetrical
+#pragma region DMSectorSymmetrical
 DMSectorSymmetrical::DMSectorSymmetrical(const Event ev, const Array<double>& params) : selectionObjects(0)
 {
 	outputWidjet = static_cast<IDrawMode*>(view->GetWidjet(drawMode));
@@ -979,6 +1006,11 @@ Mode* DMSectorSymmetrical::HandleEvent(const Event ev, const Array<double>& para
 	}
 	case ev_escape:
 		return new Selection(selectionObjects);
+	case  ev_delAll:
+	{
+		selectionObjects.Clear();
+		return nullptr;
+	}
 	default:
 		return UnexpectedEvent(ev, params);;
 	}
@@ -1196,6 +1228,10 @@ Mode* Selection::HandleEvent(const Event e, const Array<double>& params) {
 		}
 		return nullptr;
 	}
+	case ev_delAll: {
+		selectedObjects.Clear();
+		return nullptr;
+	}
 	case ev_req_D_point: {
 		return new CreateRequirementWithParam(selectedObjects, e);
 	}
@@ -1404,6 +1440,11 @@ Mode* Redaction::HandleEvent(const Event e, const Array<double>& params)
 		}
 		return new Selection();
 	}
+	if (e == ev_delAll)
+	{
+		selectedObjects.Clear();
+		return new Selection();
+	}
 	return UnexpectedEvent(e, params);;
 }
 
@@ -1503,6 +1544,11 @@ Mode* CreateRequirementWithParam::HandleEvent(const Event ev, const Array<double
 			undo_redu->AddVersion(tfc_delete, selectedObjects);
 			selectedObjects.Clear();
 		}
+		return new Selection();
+	}
+	case  ev_delAll:
+	{
+		selectedObjects.Clear();
 		return new Selection();
 	}
 	default:

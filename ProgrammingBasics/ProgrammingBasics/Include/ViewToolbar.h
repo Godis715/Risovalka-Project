@@ -39,7 +39,7 @@ private:
 	Fl_Menu_Item* fastRequirements;
 	Fl_Menu_Button* createFastRequirement_b;
 
-	static void cl_DrawingModes(Fl_Widget*, void*);
+	static void cl_DefualtDrawMode(Fl_Widget*, void*);
 
 	static void cl_xRotateDrawMode(Fl_Widget*, void*);
 

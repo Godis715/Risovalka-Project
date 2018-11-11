@@ -42,6 +42,7 @@ enum Event
 	ev_moveObjects,
 	ev_scaleObjects,
 	ev_del,
+	ev_delAll,
 	ev_undo,
 	ev_redu,
 
@@ -264,7 +265,7 @@ public:
 	void DrawMode();
 };
 
-class DrawingModes : public Mode
+class DMDefualt : public Mode
 {
 private:
 	enum StateCreate { none, create};
@@ -276,9 +277,9 @@ private:
 
 	Array<ID> selectionObjects;
 public:
-	DrawingModes(Event);
+	DMDefualt(Event);
 
-	~DrawingModes();
+	~DMDefualt();
 
 	Mode* HandleEvent(const Event, const Array<double>&);
 
