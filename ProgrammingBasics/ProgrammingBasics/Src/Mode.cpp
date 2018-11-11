@@ -561,7 +561,7 @@ void DMDefualt::DrawMode()
 	{
 		createObject->DrawMode();
 	}
-	view->SetColor(col_Green);
+	view->SetColor(col_ForestGreen);
 	if (selectionObjects.GetSize() != 0)
 	{
 		
@@ -876,7 +876,7 @@ void DMSymmetrical::DrawMode()
 
 		createObject->DrawMode();
 	}
-	view->SetColor(col_Green);
+	view->SetColor(col_ForestGreen);
 	if (selectionObjects.GetSize() != 0)
 	{
 
@@ -913,7 +913,7 @@ void DMSectorSymmetrical::DrawMode()
 	{
 		createObject->DrawMode();
 	}
-	view->SetColor(col_Green);
+	view->SetColor(col_ForestGreen);
 	if (selectionObjects.GetSize() != 0)
 	{
 		Presenter::DrawSelectedObjects(selectionObjects);
@@ -1341,7 +1341,7 @@ Mode* Selection::HandleEvent(const Event e, const Array<double>& params) {
 
 void Selection::DrawMode()
 {
-	view->SetColor(col_Green);
+	view->SetColor(col_ForestGreen);
 	Presenter::DrawSelectedObjects(selectedObjects);
 
 	if (state == area_selection)
@@ -1610,7 +1610,7 @@ void Redaction::DrawMode() {
 		view->SetColor(col_Blue);
 		view->DrawPoint(Vector2(pointRotate->x, pointRotate->y));
 	}
-	view->SetColor(col_Green);
+	view->SetColor(col_ForestGreen);
 	Presenter::DrawSelectedObjects(selectedObjects);
 }
 #pragma endregion
@@ -1723,7 +1723,7 @@ Mode* CreateRequirementWithParam::HandleEvent(const Event ev, const Array<double
 	
 
 void CreateRequirementWithParam::DrawMode() {
-	view->SetColor(col_Green);
+	view->SetColor(col_ForestGreen);
 	Presenter::DrawSelectedObjects(selectedObjects);
 }
 #pragma endregion
@@ -1943,7 +1943,7 @@ Mode* NavigationOnScene::HandleEvent(const Event ev, const Array<double>& params
 }
 
 void NavigationOnScene::DrawMode() {
-	view->SetColor(col_Green);
+	view->SetColor(col_ForestGreen);
 	Presenter::DrawSelectedObjects(selectedPrim);
 }
 #pragma endregion
@@ -2144,7 +2144,7 @@ void CreatingStar::DrawMode() {
 		{
 			view->DrawLine(segmentStartPoints[i], imaginaryPoints[i], points);
 		}
-		/*view->SetColor(col_Green);
+		/*view->SetColor(col_ForestGreen);
 		if (createdSegments.GetSize() != 0)
 		{
 			Presenter::DrawSelectedObjects(createdSegments);
@@ -2259,7 +2259,7 @@ void CreatingBrokenLine::DrawMode() {
 		{
 			view->DrawLine(segmentStartPoints[i], imaginaryPoints[i], points);
 		}
-		/*view->SetColor(col_Green);
+		/*view->SetColor(col_ForestGreen);
 		if (createdSegments.GetSize() != 0)
 		{
 			Presenter::DrawSelectedObjects(createdSegments);
@@ -2453,7 +2453,7 @@ void CreatingArc::DrawMode() {
 		{
 			view->DrawPoint(centerPoints[i]);
 		}
-		view->SetColor(col_Bisque);
+		view->SetColor(col_Yellow);
 		for (int i = 0; i < imaginaryPoints.GetSize(); i++)
 		{
 			view->DrawCircle(centerPoints[i], imaginaryPoints[i], points);
@@ -2467,7 +2467,7 @@ void CreatingArc::DrawMode() {
 			view->DrawPoint(centerPoints[i]);
 		}
 
-		view->SetColor(col_Bisque);
+		view->SetColor(col_White);
 		for (int i = 0; i < startPoints.GetSize(); i++)
 		{
 			view->DrawCircle(centerPoints[i], startPoints[i], points);
@@ -2479,7 +2479,7 @@ void CreatingArc::DrawMode() {
 			view->DrawPoint(startPoints[i]);
 		}
 
-		view->SetColor(col_Bisque);
+		view->SetColor(col_Yellow);
 		for (int i = 0; i < imaginaryPoints.GetSize(); i++)
 		{
 			view->DrawArc(centerPoints[i], startPoints[i], imaginaryPoints[i], line);

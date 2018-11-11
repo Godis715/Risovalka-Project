@@ -82,9 +82,9 @@
 #define col_Red	255, 0, 0
 #define col_Maroon 128, 0, 0
 #define col_Olive 240, 128, 128
-#define col_Aqua 205, 92, 92
+#define col_Aqua 102, 217, 255
 #define col_Tea	240, 128, 128
-#define col_Blue 250, 128, 114
+#define col_Blue 66, 170, 255
 #define col_Navy 233, 150, 122
 //«елЄные тона :
 #define col_Green 233, 150, 122
