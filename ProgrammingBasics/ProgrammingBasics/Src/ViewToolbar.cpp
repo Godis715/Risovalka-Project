@@ -23,6 +23,18 @@ void ViewToolbar::cl_DrawingModes(Fl_Widget* o, void*)
 	}
 }
 
+void ViewToolbar::cl_xSymmetricDrawMode(Fl_Widget* o, void*)
+{
+	Array<double> params(0);
+	string nameMode = ((Fl_Menu_Button*)o)->mvalue()->label();
+	if (nameMode[0] == 'y') {
+		nameMode[1] = '1';
+	}
+	nameMode[0] = '0';
+	params.PushBack(std::stod(nameMode));
+	Presenter::Set_event(ev_symmetricalDraw, params);
+}
+
 void ViewToolbar::cl_xRotateDrawMode(Fl_Widget* o, void*)
 {
 	Array<double> params(0);
@@ -188,20 +200,25 @@ void ViewToolbar::Initializer()
 
 	coordX += (wBut + indentX);
 	{
-		drawingModes = new Fl_Menu_Item[13];
+		drawingModes = new Fl_Menu_Item[18];
 		drawingModes[0] = { "Defualt" };
-		drawingModes[1] = { "Symmetrical" };
-		drawingModes[2] = { "Rotation", 0, 0, 0, FL_SUBMENU };
-			drawingModes[3] = { "x2", 0, cl_xRotateDrawMode, 0, 0 };
-			drawingModes[4] = { "x3", 0, cl_xRotateDrawMode, 0, 0 };
-			drawingModes[5] = { "x4", 0, cl_xRotateDrawMode, 0, 0 };
-			drawingModes[6] = { "x5", 0, cl_xRotateDrawMode, 0, 0 };
-			drawingModes[7] = { "x6", 0, cl_xRotateDrawMode, 0, 0 };
-			drawingModes[8] = { "x8", 0, cl_xRotateDrawMode, 0, 0 };
-			drawingModes[9] = { "x9", 0, cl_xRotateDrawMode, 0, 0 };
-			drawingModes[10] = { "x10", 0, cl_xRotateDrawMode, 0, 0 };
-		drawingModes[11] = { 0 };
-		drawingModes[12] = { 0 };
+		drawingModes[1] = { "Symmetrical", 0, 0, 0, FL_SUBMENU };
+			drawingModes[2] = { "y2", 0, cl_xSymmetricDrawMode, 0, 0 };
+			drawingModes[3] = { "x2", 0, cl_xSymmetricDrawMode, 0, 0 };
+			drawingModes[4] = { "x4", 0, cl_xSymmetricDrawMode, 0, 0 };
+			drawingModes[5] = { "x8", 0, cl_xSymmetricDrawMode, 0, 0 };
+			drawingModes[6] = { 0 };
+		drawingModes[7] = { "Rotation", 0, 0, 0, FL_SUBMENU };
+			drawingModes[8] = { "x2", 0, cl_xRotateDrawMode, 0, 0 };
+			drawingModes[9] = { "x3", 0, cl_xRotateDrawMode, 0, 0 };
+			drawingModes[10] = { "x4", 0, cl_xRotateDrawMode, 0, 0 };
+			drawingModes[11] = { "x5", 0, cl_xRotateDrawMode, 0, 0 };
+			drawingModes[12] = { "x6", 0, cl_xRotateDrawMode, 0, 0 };
+			drawingModes[13] = { "x8", 0, cl_xRotateDrawMode, 0, 0 };
+			drawingModes[14] = { "x9", 0, cl_xRotateDrawMode, 0, 0 };
+			drawingModes[15] = { "x10", 0, cl_xRotateDrawMode, 0, 0 };
+		drawingModes[16] = { 0 };
+		drawingModes[17] = { 0 };
 		drawingModes_b = new  Fl_Menu_Button(coordX, positionY + indentY, wMenu, hMenu, "DrawingModes");
 		drawingModes_b->menu(drawingModes);
 		drawingModes_b->callback(cl_DrawingModes);

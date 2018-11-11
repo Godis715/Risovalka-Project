@@ -267,8 +267,29 @@ public:
 class DrawingModes : public Mode
 {
 private:
-	enum StateMode { defualtDraw, symmetricalDraw };
 	enum StateCreate { none, create};
+	IDrawMode* outputWidjet;
+	std::string nameMode;
+	StateCreate stateCreate;
+
+	CreateObject* createObject;
+
+	Array<ID> selectionObjects;
+public:
+	DrawingModes(Event);
+
+	~DrawingModes();
+
+	Mode* HandleEvent(const Event, const Array<double>&);
+
+	void DrawMode();
+};
+
+class DMSymmetrical : public Mode
+{
+private:
+	enum StateMode { ox2, oy2, o4, o8 };
+	enum StateCreate { none, create };
 
 	IDrawMode* outputWidjet;
 	std::string nameMode;
@@ -283,9 +304,9 @@ private:
 
 	Array<Vector2> PointRotate(const Vector2&, const Vector2&);
 public:
-	DrawingModes(Event);
+	DMSymmetrical(Event, const Array<double>&);
 
-	~DrawingModes();
+	~DMSymmetrical();
 
 	Mode* HandleEvent(const Event, const Array<double>&);
 

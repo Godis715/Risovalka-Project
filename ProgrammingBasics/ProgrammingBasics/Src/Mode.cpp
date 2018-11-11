@@ -107,7 +107,7 @@ const char* str_ch(const string str) {
 Mode* Mode::UnexpectedEvent(const Event e, const Array<double>& params) {
 	switch (e) {
 	case ev_symmetricalDraw: {
-		return new DrawingModes(e);
+		return new DMSymmetrical(e, params);
 	}
 	case ev_rotationDraw:{
 		return new DMSectorSymmetrical(e, params);
@@ -365,9 +365,7 @@ void ChangingProperties::DrawMode()
 DrawingModes::DrawingModes(Event e) : selectionObjects(0)
 {
 	outputWidjet = static_cast<IDrawMode*>(view->GetWidjet(drawMode));
-	pointRotate = nullptr;
 	stateCreate = none;
-	stateMode = defualtDraw;
 	nameMode = "Mode: DrawingModes::DefualtDraw";
 	switch (e)
 	{
@@ -410,16 +408,9 @@ DrawingModes::DrawingModes(Event e) : selectionObjects(0)
 		createObject = new CreatingCircle();
 		break;
 	}
-	case ev_symmetricalDraw: {
-		nameMode = "Mode: DrawingModes::SymmetricalDraw";
-		outputWidjet->SetName(nameMode);
-		stateMode = symmetricalDraw;
-		break;
-	}
 	case ev_defualtDraw: {
 		nameMode = "Mode: DrawingModes::DefualtDraw";
 		outputWidjet->SetName(nameMode);
-		stateMode = defualtDraw;
 		break;
 	}
 	default:
@@ -428,133 +419,55 @@ DrawingModes::DrawingModes(Event e) : selectionObjects(0)
 }
 
 DrawingModes::~DrawingModes(){
-	delete pointRotate;
 	delete createObject;
-}
-
-Array<Vector2> DrawingModes::PointRotate(const Vector2& point, const Vector2& center)
-{
-	auto resultPoints = Array<Vector2>(4);
-	resultPoints[0] = point;
-	resultPoints[1] = Vector2((point - center).x * -1, (point - center).y) + center;
-	resultPoints[2] = Vector2((point - center).x, (point - center).y * -1) + center;
-	resultPoints[3] = Vector2((point - center).x * -1, (point - center).y * -1) + center;
-	return resultPoints;
 }
 
 Mode* DrawingModes::HandleEvent(const Event ev, const Array<double>& params)
 {
-	switch (stateMode)
-	{
-	case symmetricalDraw:
-	{
-		switch (ev)
-		{
-		case ev_leftMouseDown:
-		{
-			if (params.GetSize() != 2) {
-				throw std::invalid_argument("Bad number of parameters");
-			}
-			if (stateCreate == none)
-			{
-				outputWidjet->SetName(nameMode);
-				selectionObjects.Clear();
-				delete pointRotate;
-				pointRotate = new Vector2(params[0], params[1]);
-			}
-			else if (pointRotate != nullptr)
-			{
-				Array<Vector2> points = PointRotate(Vector2(params[0], params[1]), *pointRotate);
-				Array<ID> objIDs = createObject->HandleEvent(ev, points);
-				if (objIDs.GetSize() != 0)
-				{
-					selectionObjects += objIDs;
-					if (createObject->IsCreationFinish())
-					{
-						stateCreate = none;
-						delete createObject;
-						createObject = nullptr;
-					}
-				}
-			}
-			else
-			{
-				pointRotate = new Vector2(params[0], params[1]);
-			}
-			return nullptr;
-		}
-		case ev_mouseMove:
-		{
-			if (stateCreate != none)
-			{
-				Array<Vector2> points = PointRotate(Vector2(params[0], params[1]), *pointRotate);
-				Array<ID> objIDs = createObject->HandleEvent(ev, points);
-				if (objIDs.GetSize() != 0)
-				{
-					throw std::exception("Error!");
-				}
-			}
-			return nullptr;
-		}
-		default:
-			break;
-		}
-	}
-	case defualtDraw:
-	{
-		switch (ev)
-		{
-		case ev_leftMouseDown:
-		{
-			if (params.GetSize() != 2) {
-				throw std::invalid_argument("Bad number of parameters");
-			}
-			if (stateCreate == none)
-			{
-				outputWidjet->SetName(nameMode);
-				return new Selection();
-			}
-			else
-			{
-				Array<Vector2>points;
-				points.PushBack(Vector2(params[0], params[1]));
-				Array<ID> objIDs = createObject->HandleEvent(ev, points);
-				if (objIDs.GetSize() != 0)
-				{
-					selectionObjects += objIDs;
-					if (createObject->IsCreationFinish())
-					{
-						stateCreate = none;
-						delete createObject;
-						createObject = nullptr;
-					}
-				}
-			}
-			return nullptr;
-		}
-		case ev_mouseMove:
-		{
-			if (stateCreate != none)
-			{
-				Array<Vector2>points;
-				points.PushBack(Vector2(params[0], params[1]));
-				Array<ID> objIDs = createObject->HandleEvent(ev, points);
-				if (objIDs.GetSize() != 0)
-				{
-					throw std::exception("Error!");
-				}
-			}
-			return nullptr;
-		}
-		default:
-			break;
-		}
-	}
-	default:
-		break;
-	}
 	switch (ev)
 	{
+	case ev_leftMouseDown:
+	{
+		if (params.GetSize() != 2) {
+			throw std::invalid_argument("Bad number of parameters");
+		}
+		if (stateCreate == none)
+		{
+			outputWidjet->SetName(nameMode);
+			return new Selection();
+		}
+		else
+		{
+			Array<Vector2>points;
+			points.PushBack(Vector2(params[0], params[1]));
+			Array<ID> objIDs = createObject->HandleEvent(ev, points);
+			if (objIDs.GetSize() != 0)
+			{
+				selectionObjects += objIDs;
+				if (createObject->IsCreationFinish())
+				{
+					stateCreate = none;
+					delete createObject;
+					createObject = nullptr;
+				}
+			}
+		}
+		return nullptr;
+	}
+	case ev_mouseMove:
+	{
+		if (stateCreate != none)
+		{
+			Array<Vector2>points;
+			points.PushBack(Vector2(params[0], params[1]));
+			Array<ID> objIDs = createObject->HandleEvent(ev, points);
+			if (objIDs.GetSize() != 0)
+			{
+				throw std::exception("Error!");
+			}
+		}
+		return nullptr;
+	}
 	case ev_createArc:
 	{
 		outputWidjet->SetName(nameMode + "::CreatingArc");
@@ -603,28 +516,268 @@ Mode* DrawingModes::HandleEvent(const Event ev, const Array<double>& params)
 		createObject = new CreatingPoint();
 		return nullptr;
 	}
-	case ev_symmetricalDraw:
+	case ev_enter:
 	{
-		nameMode = "Mode: DrawingModes::SymmetricalDraw";
 		outputWidjet->SetName(nameMode);
 		delete createObject;
 		createObject = nullptr;
 		stateCreate = none;
-		selectionObjects.Clear();
-		stateMode = symmetricalDraw;
 		return nullptr;
 	}
-	case ev_defualtDraw:
+	case ev_escape:
 	{
-		nameMode = "Mode: DrawingModes::DefualtDraw";
+		return new Selection(selectionObjects);
+	}
+	default:
+		break;
+	}
+	return UnexpectedEvent(ev, params);;
+}
+
+void DrawingModes::DrawMode()
+{
+	if (createObject != nullptr)
+	{
+		createObject->DrawMode();
+	}
+	view->SetColor(col_Green);
+	if (selectionObjects.GetSize() != 0)
+	{
+		
+		Presenter::DrawSelectedObjects(selectionObjects);
+	}
+}
+#pragma endregion
+
+#pragma region DMSymmetrical
+DMSymmetrical::DMSymmetrical(Event e, const Array<double>& params) : selectionObjects(0)
+{
+	outputWidjet = static_cast<IDrawMode*>(view->GetWidjet(drawMode));
+	pointRotate = nullptr;
+	stateCreate = none;
+	nameMode = "Mode: DrawingModes::DefualtDraw";
+	switch (int(params[0]))
+	{
+		case 1:
+		{
+			stateMode = oy2;
+			break;
+		}
+		case 2:
+		{
+			stateMode = ox2;
+			break;
+		}
+		case 4:
+		{
+			stateMode = o4;
+			break;
+		}
+		case 8:
+		{
+			stateMode = o8;
+			break;
+		}
+	}
+	switch (e)
+	{
+	case ev_createPoint: {
+		stateCreate = create;
+		outputWidjet->SetName(nameMode + "::CreatingPoint");
+		createObject = new CreatingPoint();
+		break;
+	}
+	case ev_createSegment: {
+		stateCreate = create;
+		outputWidjet->SetName(nameMode + "::CreatingSegment");
+		createObject = new CreatingSegment();
+		break;
+	}
+	case ev_createStar:
+	{
+		stateCreate = create;
+		outputWidjet->SetName(nameMode + "::CreatingStar");
+		createObject = new CreatingStar();
+		break;
+	}
+	case ev_createBrokenLine:
+	{
+		stateCreate = create;
+		outputWidjet->SetName(nameMode + "::CreatingBrokenLine");
+		createObject = new CreatingBrokenLine();
+		break;
+	}
+	case ev_createArc: {
+
+		stateCreate = create;
+		outputWidjet->SetName(nameMode + "::CreatingArc");
+		createObject = new CreatingArc();
+		break;
+	}
+	case ev_createCircle: {
+		stateCreate = create;
+		outputWidjet->SetName(nameMode + "::CreatingCircle");
+		createObject = new CreatingCircle();
+		break;
+	}
+	case ev_symmetricalDraw: {
+		nameMode = "Mode: DrawingModes::SymmetricalDraw";
 		outputWidjet->SetName(nameMode);
+		break;
+	}
+	default:
+		break;
+	}
+}
+
+DMSymmetrical::~DMSymmetrical() {
+	delete pointRotate;
+	delete createObject;
+}
+
+Array<Vector2> DMSymmetrical::PointRotate(const Vector2& point, const Vector2& center)
+{
+	auto vector = point - center;
+	switch (stateMode)
+	{
+	case ox2:
+	{
+		auto resultPoints = Array<Vector2>(2);
+		resultPoints[0] = point;
+		resultPoints[1] = Vector2(vector.x, vector.y * -1) + center;
+		return resultPoints;
+	}
+	case oy2:
+	{
+		auto resultPoints = Array<Vector2>(2);
+		resultPoints[0] = point;
+		resultPoints[1] = Vector2(vector.x * -1, vector.y) + center;
+		return resultPoints;
+	}
+	case o4:
+	{
+		auto resultPoints = Array<Vector2>(4);
+		resultPoints[0] = point;
+		resultPoints[1] = Vector2(vector.x * -1, vector.y) + center;
+		resultPoints[2] = Vector2(vector.x, vector.y * -1) + center;
+		resultPoints[3] = Vector2(vector.x * -1, vector.y * -1) + center;
+		return resultPoints;
+	}
+	case o8:
+	{
+		auto resultPoints = Array<Vector2>(8);
+		resultPoints[0] = point;
+		resultPoints[1] = Vector2(vector.y, vector.x) + center;
+		resultPoints[2] = Vector2(vector.x * -1, vector.y) + center;
+		resultPoints[3] = Vector2(vector.y * -1, vector.x) + center;
+		resultPoints[4] = Vector2(vector.x, vector.y * -1) + center;
+		resultPoints[5] = Vector2(vector.y, vector.x * -1) + center;
+		resultPoints[6] = Vector2(vector.x * -1, vector.y * -1) + center;
+		resultPoints[7] = Vector2(vector.y * -1, vector.x * -1) + center;
+		return resultPoints;
+	}
+	default:
+		return Array<Vector2>(0);;
+	}
+	
+}
+
+Mode* DMSymmetrical::HandleEvent(const Event ev, const Array<double>& params)
+{
+	switch (ev)
+	{
+	case ev_leftMouseDown:
+	{
+		if (params.GetSize() != 2) {
+			throw std::invalid_argument("Bad number of parameters");
+		}
+		if (stateCreate == none)
+		{
+			outputWidjet->SetName(nameMode);
+			selectionObjects.Clear();
+			delete pointRotate;
+			pointRotate = new Vector2(params[0], params[1]);
+		}
+		else if (pointRotate != nullptr)
+		{
+			Array<Vector2> points = PointRotate(Vector2(params[0], params[1]), *pointRotate);
+			Array<ID> objIDs = createObject->HandleEvent(ev, points);
+			if (objIDs.GetSize() != 0)
+			{
+				selectionObjects += objIDs;
+				if (createObject->IsCreationFinish())
+				{
+					stateCreate = none;
+					delete createObject;
+					createObject = nullptr;
+				}
+			}
+		}
+		else
+		{
+			pointRotate = new Vector2(params[0], params[1]);
+		}
+		return nullptr;
+	}
+	case ev_mouseMove:
+	{
+		if (stateCreate != none)
+		{
+			Array<Vector2> points = PointRotate(Vector2(params[0], params[1]), *pointRotate);
+			Array<ID> objIDs = createObject->HandleEvent(ev, points);
+			if (objIDs.GetSize() != 0)
+			{
+				throw std::exception("Error!");
+			}
+		}
+		return nullptr;
+	}
+	case ev_createArc:
+	{
+		outputWidjet->SetName(nameMode + "::CreatingArc");
 		selectionObjects.Clear();
-		delete createObject;
-		createObject = nullptr;
-		stateCreate = none;
-		delete pointRotate;
-		pointRotate = nullptr;
-		stateMode = defualtDraw;
+		stateCreate = create;
+		createObject = new CreatingArc();
+		return nullptr;
+	}
+	case ev_createCircle:
+	{
+		outputWidjet->SetName(nameMode + "::CreatingCircle");
+		selectionObjects.Clear();
+		stateCreate = create;
+		createObject = new CreatingCircle();
+		return nullptr;
+	}
+	case ev_createSegment:
+	{
+		outputWidjet->SetName(nameMode + "::CreatingSegment");
+		selectionObjects.Clear();
+		stateCreate = create;
+		createObject = new CreatingSegment();
+		return nullptr;
+	}
+	case ev_createStar:
+	{
+		outputWidjet->SetName(nameMode + "::CreatingStar");
+		selectionObjects.Clear();
+		stateCreate = create;
+		createObject = new CreatingStar();
+		return nullptr;
+	}
+	case ev_createBrokenLine:
+	{
+		outputWidjet->SetName(nameMode + "::CreatingBrokenLine");
+		selectionObjects.Clear();
+		stateCreate = create;
+		createObject = new CreatingBrokenLine();
+		return nullptr;
+	}
+	case ev_createPoint:
+	{
+		outputWidjet->SetName(nameMode + "::CreatingPoint");
+		selectionObjects.Clear();
+		stateCreate = create;
+		createObject = new CreatingPoint();
 		return nullptr;
 	}
 	case ev_enter:
@@ -643,7 +796,7 @@ Mode* DrawingModes::HandleEvent(const Event ev, const Array<double>& params)
 	return UnexpectedEvent(ev, params);;
 }
 
-void DrawingModes::DrawMode()
+void DMSymmetrical::DrawMode()
 {
 	if (pointRotate != nullptr)
 	{
@@ -657,7 +810,7 @@ void DrawingModes::DrawMode()
 	view->SetColor(col_Green);
 	if (selectionObjects.GetSize() != 0)
 	{
-		
+
 		Presenter::DrawSelectedObjects(selectionObjects);
 	}
 }
