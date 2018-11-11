@@ -1,0 +1,4 @@
+Create_segment()(34, 56, 100, 100)->(seg, p1, p2);
+Move(p1)(100, 100);
+Create_segment()(34, 56, 167, 300)->(s);
+Delete(s)();

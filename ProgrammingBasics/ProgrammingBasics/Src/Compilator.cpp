@@ -1,12 +1,12 @@
 #include "Compilator.h"
 
-Compiler::Compiler(kek* _Tree) : Tree(_Tree) {}
+Compiler::Compiler(treeFunc* _Tree) : Tree(_Tree) {}
 
 Compiler::~Compiler() {
 	delete Tree;
 }
 
-void Compiler::Initializer(kek* _Tree) {
+void Compiler::Initializer(treeFunc* _Tree) {
 	if (_instance != nullptr) {
 		delete _instance;
 	}
@@ -63,9 +63,10 @@ bool Compiler::IsRight(const string& str) {
 		"\\("
 		"(([0-9.])*,)*"
 		"(([0-9.])*\\))"
-		"->"
-		"[a-z]"
-		"([a-z0-9_])*"
+		"->\\("
+		""
+		"([a-z]([a-z0-9_])*,)*"
+		"([a-z]([a-z0-9_])*\\))*"
 		";"
 	);
 	if (regex_match(str.c_str(), result, regul2)) {
@@ -153,8 +154,7 @@ Array<double> Compiler::GetPararms(string& input, bool& flag) {
 	return result;
 }
 
-ID Compiler::Complete(const string& func, const Array<string>& variables, const Array<double>& params, bool& flag) {
-	ID id;
+Array<ID> Compiler::Complete(const string& func, const Array<string>& variables, const Array<double>& params, bool& flag) {
 	double param;
 
 	Array<ID> ids(variables.GetSize());
@@ -165,7 +165,7 @@ ID Compiler::Complete(const string& func, const Array<string>& variables, const 
 		}
 		else {
 			flag = false;
-			return id;
+			return Array<ID>(0);
 		}
 	}
 
@@ -174,7 +174,7 @@ ID Compiler::Complete(const string& func, const Array<string>& variables, const 
 		return marker.operator*()(ids, params);
 	}
 	else {
-		return id;
+		return Array<ID>(0);
 	}
 }
 
@@ -188,20 +188,22 @@ bool Compiler::Command(string& input) {
 	if (!flag) {
 		return flag;
 	}
-	ID id = Complete(func, varibles, params, flag);
+	Array<ID> IDs = Complete(func, varibles, params, flag);
 
 	if (!flag) {
 		return flag;
 	}
 
-	if (input[0] == '-') {
-		int x = input.length() - 3;
+	if (input[0] == '-' && IDs.GetSize()) {
 		input = input.substr(2, input.length() - 3);
-		auto marker = varible.Find(input);
-		if (marker.IsValid()) {
-			marker.Delete();
+		varibles = GetVaribles(input);
+		for (int i = 0; i < varibles.GetSize(); ++i) {
+			auto marker = varible.Find(varibles[i]);
+			if (marker.IsValid()) {
+				marker.Delete();
+			}
+			varible.Add(input, IDs[i]);
 		}
-		varible.Add(input, id);
 	}
 	return flag;
 }

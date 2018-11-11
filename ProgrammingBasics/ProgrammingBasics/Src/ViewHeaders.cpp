@@ -21,5 +21,3 @@ Inventory* Inventory::GetInstance()
 }
 
 Inventory* Inventory::instance = nullptr;
-
-

@@ -7,13 +7,13 @@
 #include <functional>
 #include <regex>
 
-typedef BinSearchTree<string, std::function<ID(const Array<ID>&, const Array<double>&)>> kek;
+typedef BinSearchTree<string, std::function<Array<ID>(const Array<ID>&, const Array<double>&)>> treeFunc;
 typedef void(*kik)(const Array<ID>&, const Array<double>&);
 
 
 class Compiler {
 public:
-	static void Initializer(kek*);
+	static void Initializer(treeFunc*);
 
 	static Compiler* GetInstance();
 
@@ -23,7 +23,7 @@ public:
 private:
 	static Compiler* _instance;
 
-	Compiler(kek* _Tree);
+	Compiler(treeFunc* _Tree);
 
 	bool IsRight(const string& str);
 
@@ -37,11 +37,11 @@ private:
 
 	Array<double> GetPararms(string& input, bool& flag);
 
-	ID Complete(const string& func, const Array<string>& variables, const Array<double>& params, bool& flag);
+	Array<ID> Complete(const string& func, const Array<string>& variables, const Array<double>& params, bool& flag);
 
 	bool Command(string& input);
 
-	kek* Tree;
+	treeFunc* Tree;
 
 	BinSearchTree<string, ID> varible;
 };
