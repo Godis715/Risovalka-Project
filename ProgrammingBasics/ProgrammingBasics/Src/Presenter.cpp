@@ -14,7 +14,7 @@ Array<ID> CreateSegment(const Array<ID>& obj, const Array<double>& params) {
 	}
 	ID id = Model::GetInstance()->CreatePrimitive(ot_segment, params);
 	auto res = CreateArr(id);
-	res += ObjectController::GetInstance()->GetObjChildren(id);
+	res += PrimController::GetInstance()->GetChildren(id);
 	return res;
 }
 Array<ID> CreateArc(const Array<ID>& obj, const Array<double>& params) {
@@ -23,7 +23,7 @@ Array<ID> CreateArc(const Array<ID>& obj, const Array<double>& params) {
 	}
 	ID id = Model::GetInstance()->CreatePrimitive(ot_arc, params);
 	auto res = CreateArr(id);
-	res += ObjectController::GetInstance()->GetObjChildren(id);
+	res += PrimController::GetInstance()->GetChildren(id);
 	return res;
 }
 Array<ID> CreateCircle(const Array<ID>& obj, const Array<double>& params) {
@@ -32,7 +32,7 @@ Array<ID> CreateCircle(const Array<ID>& obj, const Array<double>& params) {
 	}
 	ID id = Model::GetInstance()->CreatePrimitive(ot_circle, params);
 	auto res = CreateArr(id);
-	res += ObjectController::GetInstance()->GetObjChildren(id);
+	res += PrimController::GetInstance()->GetChildren(id);
 	return res;
 }
 Array<ID> Move(const Array<ID>& obj, const Array<double>& params) {

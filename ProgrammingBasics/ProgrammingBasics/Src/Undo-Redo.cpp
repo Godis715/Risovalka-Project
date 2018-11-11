@@ -15,19 +15,31 @@ VersionChange::VersionChange(const TypeOFCange _type, const Array<ID>& _data) :
 }
 
 void VersionChange::Undo() {
-	auto objectController = ObjectController::GetInstance();
+	auto primCtrl = PrimController::GetInstance();
 
 	for (int i = 0; i < IDs.GetSize(); ++i) {
-		objectController->SetObjParam(IDs[i], dataBefore[i]);
+		if (primCtrl->IsPrimitive(IDs[i])) {
+			primCtrl->SetPrimitiveParams(IDs[i], dataBefore[i]);
+		} else {
+			auto reqCtrl = ReqController::GetInstance();
+			reqCtrl->SetReqParams(IDs[i], dataBefore[i]);
+		}
 	}
 }
 
 void VersionChange::Redo() {
-	auto objectController = ObjectController::GetInstance();
+	auto primCtrl = PrimController::GetInstance();
 
 	for (int i = 0; i < IDs.GetSize(); ++i) {
-		objectController->SetObjParam(IDs[i], dataAfter[i]);
+		if (primCtrl->IsPrimitive(IDs[i])) {
+			primCtrl->SetPrimitiveParams(IDs[i], dataAfter[i]);
+		}
+		else {
+			auto reqCtrl = ReqController::GetInstance();
+			reqCtrl->SetReqParams(IDs[i], dataAfter[i]);
+		}
 	}
+	
 }
 
 VersionChange::~VersionChange() {

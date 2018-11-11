@@ -202,7 +202,7 @@ bool Compiler::Command(string& input) {
 			if (marker.IsValid()) {
 				marker.Delete();
 			}
-			varible.Add(input, IDs[i]);
+			varible.Add(varibles[i], IDs[i]);
 		}
 	}
 	return flag;
