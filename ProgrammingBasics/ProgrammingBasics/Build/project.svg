@@ -2,49 +2,449 @@
 <!-- DrawProject -->
 <svg width="1000" height="1000">
 	<drawProject:point
-		px="426"
-		py="110"
-		id="1"
+		px="468"
+		py="291"
+		id="44"
 	/>
 	<drawProject:point
-		px="532"
-		py="64"
-		id="2"
+		px="467"
+		py="448"
+		id="45"
 	/>
 	<line
-		x1="426"
-		y1="110"
-		x2="532"
-		y2="64"
-		id="3"
-		childIds="1 2"
+		x1="468"
+		y1="291"
+		x2="467"
+		y2="448"
+		id="46"
+		childIds="44 45"
 		stroke="red"
 		stroke-width="5"
 	/>
 	<drawProject:point
-		px="426"
-		py="110"
-		id="4"
+		px="467.134"
+		py="292.5"
+		id="47"
 	/>
 	<drawProject:point
-		px="518"
-		py="184"
-		id="5"
+		px="603.6"
+		py="214.866"
+		id="48"
 	/>
 	<line
-		x1="426"
-		y1="110"
-		x2="518"
-		y2="184"
-		id="6"
-		childIds="4 5"
+		x1="467.134"
+		y1="292.5"
+		x2="603.6"
+		y2="214.866"
+		id="49"
+		childIds="47 48"
+		stroke="red"
+		stroke-width="5"
+	/>
+	<drawProject:point
+		px="468.866"
+		py="292.5"
+		id="50"
+	/>
+	<drawProject:point
+		px="333.4"
+		py="213.134"
+		id="51"
+	/>
+	<line
+		x1="468.866"
+		y1="292.5"
+		x2="333.4"
+		y2="213.134"
+		id="52"
+		childIds="50 51"
+		stroke="red"
+		stroke-width="5"
+	/>
+	<drawProject:point
+		px="467"
+		py="448"
+		id="53"
+	/>
+	<drawProject:point
+		px="602"
+		py="370"
+		id="54"
+	/>
+	<line
+		x1="467"
+		y1="448"
+		x2="602"
+		y2="370"
+		id="55"
+		childIds="53 54"
+		stroke="red"
+		stroke-width="5"
+	/>
+	<drawProject:point
+		px="603.6"
+		py="214.866"
+		id="56"
+	/>
+	<drawProject:point
+		px="468.55"
+		py="136.953"
+		id="57"
+	/>
+	<line
+		x1="603.6"
+		y1="214.866"
+		x2="468.55"
+		y2="136.953"
+		id="58"
+		childIds="56 57"
+		stroke="red"
+		stroke-width="5"
+	/>
+	<drawProject:point
+		px="333.4"
+		py="213.134"
+		id="59"
+	/>
+	<drawProject:point
+		px="333.45"
+		py="369.047"
+		id="60"
+	/>
+	<line
+		x1="333.4"
+		y1="213.134"
+		x2="333.45"
+		y2="369.047"
+		id="61"
+		childIds="59 60"
+		stroke="red"
+		stroke-width="5"
+	/>
+	<drawProject:point
+		px="602"
+		py="370"
+		id="65"
+	/>
+	<drawProject:point
+		px="604"
+		py="214"
+		id="66"
+	/>
+	<line
+		x1="602"
+		y1="370"
+		x2="604"
+		y2="214"
+		id="67"
+		childIds="65 66"
+		stroke="red"
+		stroke-width="5"
+	/>
+	<drawProject:point
+		px="468.55"
+		py="136.953"
+		id="68"
+	/>
+	<drawProject:point
+		px="332.45"
+		py="213.221"
+		id="69"
+	/>
+	<line
+		x1="468.55"
+		y1="136.953"
+		x2="332.45"
+		y2="213.221"
+		id="70"
+		childIds="68 69"
+		stroke="red"
+		stroke-width="5"
+	/>
+	<drawProject:point
+		px="333.45"
+		py="369.047"
+		id="71"
+	/>
+	<drawProject:point
+		px="467.55"
+		py="448.779"
+		id="72"
+	/>
+	<line
+		x1="333.45"
+		y1="369.047"
+		x2="467.55"
+		y2="448.779"
+		id="73"
+		childIds="71 72"
+		stroke="red"
+		stroke-width="5"
+	/>
+	<drawProject:point
+		px="469"
+		py="341"
+		id="86"
+	/>
+	<drawProject:point
+		px="604"
+		py="264"
+		id="87"
+	/>
+	<line
+		x1="469"
+		y1="341"
+		x2="604"
+		y2="264"
+		id="88"
+		childIds="86 87"
+		stroke="red"
+		stroke-width="5"
+	/>
+	<drawProject:point
+		px="509.935"
+		py="266.634"
+		id="89"
+	/>
+	<drawProject:point
+		px="375.751"
+		py="188.221"
+		id="90"
+	/>
+	<line
+		x1="509.935"
+		y1="266.634"
+		x2="375.751"
+		y2="188.221"
+		id="91"
+		childIds="89 90"
+		stroke="red"
+		stroke-width="5"
+	/>
+	<drawProject:point
+		px="425.065"
+		py="268.366"
+		id="92"
+	/>
+	<drawProject:point
+		px="424.249"
+		py="423.779"
+		id="93"
+	/>
+	<line
+		x1="425.065"
+		y1="268.366"
+		x2="424.249"
+		y2="423.779"
+		id="94"
+		childIds="92 93"
+		stroke="red"
+		stroke-width="5"
+	/>
+	<drawProject:point
+		px="379"
+		py="242"
+		id="95"
+	/>
+	<drawProject:point
+		px="379"
+		py="396"
+		id="96"
+	/>
+	<line
+		x1="379"
+		y1="242"
+		x2="379"
+		y2="396"
+		id="97"
+		childIds="95 96"
+		stroke="red"
+		stroke-width="5"
+	/>
+	<drawProject:point
+		px="469.199"
+		py="394.076"
+		id="98"
+	/>
+	<drawProject:point
+		px="602.567"
+		py="317.076"
+		id="99"
+	/>
+	<line
+		x1="469.199"
+		y1="394.076"
+		x2="602.567"
+		y2="317.076"
+		id="100"
+		childIds="98 99"
+		stroke="red"
+		stroke-width="5"
+	/>
+	<drawProject:point
+		px="555.801"
+		py="239.924"
+		id="101"
+	/>
+	<drawProject:point
+		px="422.433"
+		py="162.924"
+		id="102"
+	/>
+	<line
+		x1="555.801"
+		y1="239.924"
+		x2="422.433"
+		y2="162.924"
+		id="103"
+		childIds="101 102"
+		stroke="red"
+		stroke-width="5"
+	/>
+	<drawProject:point
+		px="511"
+		py="267"
+		id="104"
+	/>
+	<drawProject:point
+		px="511"
+		py="422"
+		id="105"
+	/>
+	<line
+		x1="511"
+		y1="267"
+		x2="511"
+		y2="422"
+		id="106"
+		childIds="104 105"
+		stroke="red"
+		stroke-width="5"
+	/>
+	<drawProject:point
+		px="424.849"
+		py="267.261"
+		id="107"
+	/>
+	<drawProject:point
+		px="559.083"
+		py="189.761"
+		id="108"
+	/>
+	<line
+		x1="424.849"
+		y1="267.261"
+		x2="559.083"
+		y2="189.761"
+		id="109"
+		childIds="107 108"
+		stroke="red"
+		stroke-width="5"
+	/>
+	<drawProject:point
+		px="468.151"
+		py="341.739"
+		id="110"
+	/>
+	<drawProject:point
+		px="333.917"
+		py="264.239"
+		id="111"
+	/>
+	<line
+		x1="468.151"
+		y1="341.739"
+		x2="333.917"
+		y2="264.239"
+		id="112"
+		childIds="110 111"
+		stroke="red"
+		stroke-width="5"
+	/>
+	<drawProject:point
+		px="559"
+		py="244"
+		id="113"
+	/>
+	<drawProject:point
+		px="560"
+		py="392"
+		id="114"
+	/>
+	<line
+		x1="559"
+		y1="244"
+		x2="560"
+		y2="392"
+		id="115"
+		childIds="113 114"
+		stroke="red"
+		stroke-width="5"
+	/>
+	<drawProject:point
+		px="380.931"
+		py="237.192"
+		id="116"
+	/>
+	<drawProject:point
+		px="508.603"
+		py="162.326"
+		id="117"
+	/>
+	<line
+		x1="380.931"
+		y1="237.192"
+		x2="508.603"
+		y2="162.326"
+		id="118"
+		childIds="116 117"
+		stroke="red"
+		stroke-width="5"
+	/>
+	<drawProject:point
+		px="464.069"
+		py="394.808"
+		id="119"
+	/>
+	<drawProject:point
+		px="335.397"
+		py="321.674"
+		id="120"
+	/>
+	<line
+		x1="464.069"
+		y1="394.808"
+		x2="335.397"
+		y2="321.674"
+		id="121"
+		childIds="119 120"
 		stroke="red"
 		stroke-width="5"
 	/>
 	<drawProject:req>
 		<distBetPoints
-			id="7"
-			IDs="1 4"
+			id="62"
+			IDs="45 53"
+			params="0"	/>
+		<distBetPoints
+			id="63"
+			IDs="48 56"
+			params="0"	/>
+		<distBetPoints
+			id="64"
+			IDs="51 59"
+			params="0"	/>
+		<distBetPoints
+			id="74"
+			IDs="54 65"
+			params="0"	/>
+		<distBetPoints
+			id="75"
+			IDs="57 68"
+			params="0"	/>
+		<distBetPoints
+			id="76"
+			IDs="60 71"
 			params="0"	/>
 	</drawProject:req>
 </svg>

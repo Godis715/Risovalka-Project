@@ -166,10 +166,15 @@ Mode::Mode() {
 
 #pragma region Changing_Properties
 ChangingProperties::ChangingProperties() : Mode()
-{}
+{
+	IDrawMode* outputWidjet = static_cast<IDrawMode*>(view->GetWidjet(drawMode));
+	outputWidjet->SetName("Mode: ChangingProperties");
+}
 
 ChangingProperties::ChangingProperties(const ID _selObject) : Mode(), selectedObject(_selObject)
 {
+	IDrawMode* outputWidjet = static_cast<IDrawMode*>(view->GetWidjet(drawMode));
+	outputWidjet->SetName("Mode: ChangingProperties");
 	widjetPrim = static_cast<IDisplayParamPrim*>(view->GetWidjet(displayParamPrim));
 	SetWidjetParamPrim();
 }
@@ -359,49 +364,62 @@ void ChangingProperties::DrawMode()
 #pragma region DrawingModes
 DrawingModes::DrawingModes(Event e) : selectionObjects(0)
 {
+	outputWidjet = static_cast<IDrawMode*>(view->GetWidjet(drawMode));
 	pointRotate = nullptr;
 	stateCreate = none;
 	stateMode = defualtDraw;
+	nameMode = "Mode: DrawingModes::DefualtDraw";
 	switch (e)
 	{
 	case ev_createPoint: {
 		stateCreate = create;
+		outputWidjet->SetName(nameMode + "::CreatingPoint");
 		createObject = new CreatingPoint();
 		break;
 	}
 	case ev_createSegment: {
 		stateCreate = create;
+		outputWidjet->SetName(nameMode + "::CreatingSegment");
 		createObject = new CreatingSegment();
 		break;
 	}
 	case ev_createStar:
 	{
 		stateCreate = create;
+		outputWidjet->SetName(nameMode + "::CreatingStar");
 		createObject = new CreatingStar();
 		break;
 	}
 	case ev_createBrokenLine:
 	{
 		stateCreate = create;
+		outputWidjet->SetName(nameMode + "::CreatingBrokenLine");
 		createObject = new CreatingBrokenLine();
 		break;
 	}
 	case ev_createArc: {
 
 		stateCreate = create;
+		outputWidjet->SetName(nameMode + "::CreatingArc");
 		createObject = new CreatingArc();
 		break;
 	}
 	case ev_createCircle: {
 		stateCreate = create;
+		outputWidjet->SetName(nameMode + "::CreatingCircle");
 		createObject = new CreatingCircle();
 		break;
 	}
 	case ev_symmetricalDraw: {
+		nameMode = "Mode: DrawingModes::SymmetricalDraw";
+		outputWidjet->SetName(nameMode);
 		stateMode = symmetricalDraw;
 		break;
 	}
 	case ev_defualtDraw: {
+		nameMode = "Mode: DrawingModes::DefualtDraw";
+		outputWidjet->SetName(nameMode);
+		stateMode = defualtDraw;
 		break;
 	}
 	default:
@@ -439,6 +457,7 @@ Mode* DrawingModes::HandleEvent(const Event ev, const Array<double>& params)
 			}
 			if (stateCreate == none)
 			{
+				outputWidjet->SetName(nameMode);
 				selectionObjects.Clear();
 				delete pointRotate;
 				pointRotate = new Vector2(params[0], params[1]);
@@ -492,7 +511,7 @@ Mode* DrawingModes::HandleEvent(const Event ev, const Array<double>& params)
 			}
 			if (stateCreate == none)
 			{
-				//selectionObjects.Clear();
+				outputWidjet->SetName(nameMode);
 				return new Selection();
 			}
 			else
@@ -538,6 +557,7 @@ Mode* DrawingModes::HandleEvent(const Event ev, const Array<double>& params)
 	{
 	case ev_createArc:
 	{
+		outputWidjet->SetName(nameMode + "::CreatingArc");
 		selectionObjects.Clear();
 		stateCreate = create;
 		createObject = new CreatingArc();
@@ -545,6 +565,7 @@ Mode* DrawingModes::HandleEvent(const Event ev, const Array<double>& params)
 	}
 	case ev_createCircle:
 	{
+		outputWidjet->SetName(nameMode + "::CreatingCircle");
 		selectionObjects.Clear();
 		stateCreate = create;
 		createObject = new CreatingCircle();
@@ -552,6 +573,7 @@ Mode* DrawingModes::HandleEvent(const Event ev, const Array<double>& params)
 	}
 	case ev_createSegment:
 	{
+		outputWidjet->SetName(nameMode + "::CreatingSegment");
 		selectionObjects.Clear();
 		stateCreate = create;
 		createObject = new CreatingSegment();
@@ -559,6 +581,7 @@ Mode* DrawingModes::HandleEvent(const Event ev, const Array<double>& params)
 	}
 	case ev_createStar:
 	{
+		outputWidjet->SetName(nameMode + "::CreatingStar");
 		selectionObjects.Clear();
 		stateCreate = create;
 		createObject = new CreatingStar();
@@ -566,6 +589,7 @@ Mode* DrawingModes::HandleEvent(const Event ev, const Array<double>& params)
 	}
 	case ev_createBrokenLine:
 	{
+		outputWidjet->SetName(nameMode + "::CreatingBrokenLine");
 		selectionObjects.Clear();
 		stateCreate = create;
 		createObject = new CreatingBrokenLine();
@@ -573,6 +597,7 @@ Mode* DrawingModes::HandleEvent(const Event ev, const Array<double>& params)
 	}
 	case ev_createPoint:
 	{
+		outputWidjet->SetName(nameMode + "::CreatingPoint");
 		selectionObjects.Clear();
 		stateCreate = create;
 		createObject = new CreatingPoint();
@@ -580,6 +605,8 @@ Mode* DrawingModes::HandleEvent(const Event ev, const Array<double>& params)
 	}
 	case ev_symmetricalDraw:
 	{
+		nameMode = "Mode: DrawingModes::SymmetricalDraw";
+		outputWidjet->SetName(nameMode);
 		delete createObject;
 		createObject = nullptr;
 		stateCreate = none;
@@ -589,6 +616,8 @@ Mode* DrawingModes::HandleEvent(const Event ev, const Array<double>& params)
 	}
 	case ev_defualtDraw:
 	{
+		nameMode = "Mode: DrawingModes::DefualtDraw";
+		outputWidjet->SetName(nameMode);
 		selectionObjects.Clear();
 		delete createObject;
 		createObject = nullptr;
@@ -600,6 +629,7 @@ Mode* DrawingModes::HandleEvent(const Event ev, const Array<double>& params)
 	}
 	case ev_enter:
 	{
+		outputWidjet->SetName(nameMode);
 		delete createObject;
 		createObject = nullptr;
 		stateCreate = none;
@@ -636,6 +666,9 @@ void DrawingModes::DrawMode()
 #pragma region DrawingModeSectorSymmetrical
 DMSectorSymmetrical::DMSectorSymmetrical(const Event ev, const Array<double>& params) : selectionObjects(0)
 {
+	outputWidjet = static_cast<IDrawMode*>(view->GetWidjet(drawMode));
+	nameMode = "Mode: DrawingModes::SectorSymmetrical";
+	outputWidjet->SetName(nameMode);
 	if (params.GetSize() != 1) {
 		throw std::invalid_argument("Bad number of parameters");
 	}
@@ -696,6 +729,7 @@ Mode* DMSectorSymmetrical::HandleEvent(const Event ev, const Array<double>& para
 		}
 		if (stateCreate == none)
 		{
+			outputWidjet->SetName(nameMode);
 			selectionObjects.Clear();
 			delete pointRotate;
 			pointRotate = new Vector2(params[0], params[1]);
@@ -736,6 +770,7 @@ Mode* DMSectorSymmetrical::HandleEvent(const Event ev, const Array<double>& para
 	}
 	case ev_createArc:
 	{
+		outputWidjet->SetName(nameMode + "::CreatingArc");
 		selectionObjects.Clear();
 		stateCreate = create;
 		createObject = new CreatingArc();
@@ -743,6 +778,7 @@ Mode* DMSectorSymmetrical::HandleEvent(const Event ev, const Array<double>& para
 	}
 	case ev_createCircle:
 	{
+		outputWidjet->SetName(nameMode + "::CreatingCircle");
 		selectionObjects.Clear();
 		stateCreate = create;
 		createObject = new CreatingCircle();
@@ -750,6 +786,7 @@ Mode* DMSectorSymmetrical::HandleEvent(const Event ev, const Array<double>& para
 	}
 	case ev_createSegment:
 	{
+		outputWidjet->SetName(nameMode + "::CreatingSegment");
 		selectionObjects.Clear();
 		stateCreate = create;
 		createObject = new CreatingSegment();
@@ -757,6 +794,7 @@ Mode* DMSectorSymmetrical::HandleEvent(const Event ev, const Array<double>& para
 	}
 	case ev_createStar:
 	{
+		outputWidjet->SetName(nameMode + "::CreatingStar");
 		selectionObjects.Clear();
 		stateCreate = create;
 		createObject = new CreatingStar();
@@ -764,6 +802,7 @@ Mode* DMSectorSymmetrical::HandleEvent(const Event ev, const Array<double>& para
 	}
 	case ev_createBrokenLine:
 	{
+		outputWidjet->SetName(nameMode + "::CreatingBrokenLine");
 		selectionObjects.Clear();
 		stateCreate = create;
 		createObject = new CreatingBrokenLine();
@@ -771,6 +810,7 @@ Mode* DMSectorSymmetrical::HandleEvent(const Event ev, const Array<double>& para
 	}
 	case ev_createPoint:
 	{
+		outputWidjet->SetName(nameMode + "::CreatingPoint");
 		selectionObjects.Clear();
 		stateCreate = create;
 		createObject = new CreatingPoint();
@@ -778,6 +818,7 @@ Mode* DMSectorSymmetrical::HandleEvent(const Event ev, const Array<double>& para
 	}
 	case ev_enter:
 	{
+		outputWidjet->SetName(nameMode);
 		delete createObject;
 		createObject = nullptr;
 		stateCreate = none;
@@ -793,6 +834,8 @@ Mode* DMSectorSymmetrical::HandleEvent(const Event ev, const Array<double>& para
 
 #pragma region Selection
 Selection::Selection(Array<ID> _selObjects) : Mode(), selectedObjects(_selObjects) {
+	IDrawMode* outputWidjet = static_cast<IDrawMode*>(view->GetWidjet(drawMode));
+	outputWidjet->SetName("Mode: Selection");
 	state = single_selection;
 	widjet = static_cast<ICreatingToolbar*>(view->GetWidjet(creatingToolbar));
 	if (selectedObjects.GetSize() == 1) {
@@ -804,6 +847,8 @@ Selection::Selection(Array<ID> _selObjects) : Mode(), selectedObjects(_selObject
 }
 
 Selection::Selection() : Mode(), selectedObjects(0) {
+	IDrawMode* outputWidjet = static_cast<IDrawMode*>(view->GetWidjet(drawMode));
+	outputWidjet->SetName("Mode: Selection");
 	widjet = static_cast<ICreatingToolbar*>(view->GetWidjet(creatingToolbar));
 	state = single_selection;
 	widjet->Clear();
@@ -1055,15 +1100,20 @@ void Selection::DrawMode()
 
 #pragma region Redaction
 Redaction::Redaction(Array<ID> _selecObj, Event _ev) : selectedObjects(_selecObj) {
+	IDrawMode* outputWidjet = static_cast<IDrawMode*>(view->GetWidjet(drawMode));
 	isChanged = false;
 	state = noClick;
 	switch (_ev)
 	{
 	case ev_moveObjects:
+	{
+		outputWidjet->SetName("Mode: Redaction::Move");
 		status = move;
 		break;
+	}
 	case ev_scaleObjects:
 	{
+		outputWidjet->SetName("Mode: Redaction::Scale");
 		status = scale;
 		break;
 	}
@@ -1232,6 +1282,8 @@ void Redaction::DrawMode() {
 
 #pragma region CreateRequirementWithParam
 CreateRequirementWithParam::CreateRequirementWithParam(Array<ID> _selecObj, Event _ev) : selectedObjects(_selecObj) {
+	IDrawMode* outputWidjet = static_cast<IDrawMode*>(view->GetWidjet(drawMode));
+	outputWidjet->SetName("Mode: CreateRequirementWithParam");
 	inputWidjet = static_cast<IRequirementInput*>(view->GetWidjet(requirementInput));
 	switch (_ev)
 	{
@@ -1317,7 +1369,18 @@ CreateDistBetPointsReq::CreateDistBetPointsReq(ModeType _type) :
 	type(_type),
 	state(pointNotSelected)
 {
-
+	outputWidjet = static_cast<IDrawMode*>(view->GetWidjet(drawMode));
+	switch (_type)
+	{
+	case CreateDistBetPointsReq::pointDist:
+		outputWidjet->SetName("Mode: FastTool::PointDist");
+		break;
+	case CreateDistBetPointsReq::equalPointPos:
+		outputWidjet->SetName("Mode: FastTool::EqualPointPos");
+		break;
+	default:
+		break;
+	}
 }
 
 CreateDistBetPointsReq::~CreateDistBetPointsReq() {
@@ -1382,6 +1445,7 @@ Mode * CreateDistBetPointsReq::HandleEvent(const Event e, const Array<double>& p
 		return nullptr;
 	}
 	if (e == ev_req_Eq_point_fast) {
+		outputWidjet->SetName("Mode: FastTool::EqualPointPos");
 		if (type == pointDist) {
 			state = pointNotSelected;
 			type = equalPointPos;
@@ -1389,6 +1453,7 @@ Mode * CreateDistBetPointsReq::HandleEvent(const Event e, const Array<double>& p
 		return nullptr;
 	}
 	if (e == ev_req_D_point_fast) {
+		outputWidjet->SetName("Mode: FastTool::PointDist");
 		if (type == equalPointPos) {
 			state = pointNotSelected;
 			type = pointDist;
@@ -1420,11 +1485,16 @@ void CreateDistBetPointsReq::DrawMode() {
 
 #pragma region NavigationOnScene
 NavigationOnScene::NavigationOnScene(Array<ID> _selecObj) : selectedPrim(_selecObj) { 
+	IDrawMode* outputWidjet = static_cast<IDrawMode*>(view->GetWidjet(drawMode));
+	outputWidjet->SetName("Mode: NavigationOnScene");
 	stateMove =  noClick;
 	speedMove = 10;
 }
 
-NavigationOnScene::NavigationOnScene() { }
+NavigationOnScene::NavigationOnScene() {
+	IDrawMode* outputWidjet = static_cast<IDrawMode*>(view->GetWidjet(drawMode));
+	outputWidjet->SetName("Mode: NavigationOnScene");
+}
 
 NavigationOnScene::~NavigationOnScene() { }
 

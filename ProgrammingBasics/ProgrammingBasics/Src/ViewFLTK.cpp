@@ -6,7 +6,7 @@ ViewFLTK::ViewFLTK()
 
 	inventory = inventory->GetInstance();
 
-	mainWindow = new MainWindow(1300, 620, "Main Window");
+	mainWindow = new MainWindow(1300, 660, "Main Window");
 	DisplayWidjet* mainWindowWidjet = mainWindow;
 	dataWidjet->Add("MainWindow", mainWindowWidjet);
 
@@ -15,6 +15,9 @@ ViewFLTK::ViewFLTK()
 
 	DisplayWidjet* viewFile = new ViewFile();
 	dataWidjet->Add("WorkFile", viewFile);
+
+	DrawMode* drawMode = DrawMode::GetInstance();
+	dataWidjet->Add("DrawMode", drawMode);
 
 	viewLog = ViewLog::GetInstance();
 	
@@ -224,6 +227,11 @@ IWidjet* ViewFLTK::GetWidjet(const typeWidjet typeW)
 		RequirementInput* requirementInput = new RequirementInput();
 		dataWidjet->Add("RequirementInput", requirementInput);
 		widjet = new IRequirementInput("RequirementInput");
+		break;
+	}
+	case drawMode:
+	{
+		widjet = new IRequirementInput("DrawMode");
 		break;
 	}
 	default:

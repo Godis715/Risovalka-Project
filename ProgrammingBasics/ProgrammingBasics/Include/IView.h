@@ -5,7 +5,7 @@
 
 enum typeDrawing{points, line, polygon};
 enum statusCreate { drawPoint, drawSegment, drawArc, drawCircle };
-enum typeWidjet{displayParamPrim, displayParamReq, creatingToolbar, requirementInput};
+enum typeWidjet{displayParamPrim, displayParamReq, creatingToolbar, requirementInput, drawMode};
 
 class IView
 {

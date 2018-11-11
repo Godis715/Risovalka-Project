@@ -57,4 +57,13 @@ public:
 	~IRequirementInput();
 };
 
+class IDrawMode : public IWidjet
+{
+public:
+	IDrawMode(const std::string);
+	~IDrawMode();
+
+	void SetName(const std::string);
+};
+
 #endif __IWIDJET

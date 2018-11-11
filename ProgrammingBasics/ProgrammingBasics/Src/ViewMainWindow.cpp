@@ -16,6 +16,14 @@ int MainWindow::handle(int e)
 	switch (e)
 	{
 	case FL_KEYDOWN: {
+		if (Fl::event_key() == FL_Enter && inventory->lastEvent == ev_altDown)
+		{
+			if (fullscreen_active())
+			{
+				fullscreen_off();
+			}
+			else fullscreen();
+		}
 		if (Fl::event_key() == FL_Down)
 		{
 			Presenter::Set_event(ev_arrowDown, params);
@@ -37,7 +45,7 @@ int MainWindow::handle(int e)
 			Presenter::Set_event(ev_ctrlDown, params);
 			inventory->lastEvent = ev_ctrlDown;
 		}
-		if (Fl::event_key() == FL_Alt_L && inventory->lastEvent != ev_altDown)
+		if ((Fl::event_key() == FL_Alt_L or Fl::event_key() == FL_Alt_R) && inventory->lastEvent != ev_altDown)
 		{
 			Presenter::Set_event(ev_altDown, params);
 			inventory->lastEvent = ev_altDown;
@@ -53,7 +61,6 @@ int MainWindow::handle(int e)
 		{
 			delete inventory->lastCursor;
 			inventory->lastCursor = new Fl_Cursor(FL_CURSOR_DEFAULT);
-			inventory->lastEvent = ev_ctrlUp;
 			Presenter::Set_event(ev_enter, params);
 		}
 		if (Fl::event_key() == FL_Shift_L && inventory->lastEvent != ev_ctrlDown)
@@ -74,7 +81,7 @@ int MainWindow::handle(int e)
 			Presenter::Set_event(ev_ctrlUp, params);
 			inventory->lastEvent = ev_ctrlUp;
 		}
-		if (Fl::event_key() == FL_Alt_L)
+		if (Fl::event_key() == FL_Alt_L or Fl::event_key() == FL_Alt_R)
 		{
 			Presenter::Set_event(ev_altUp, params);
 			inventory->lastEvent = ev_altUp;

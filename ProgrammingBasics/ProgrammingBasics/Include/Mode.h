@@ -270,6 +270,8 @@ private:
 	enum StateMode { defualtDraw, symmetricalDraw };
 	enum StateCreate { none, create};
 
+	IDrawMode* outputWidjet;
+	std::string nameMode;
 	StateMode stateMode;
 	StateCreate stateCreate;
 
@@ -294,7 +296,8 @@ class DMSectorSymmetrical : public Mode
 {
 private:
 	enum StateCreate { none, create};
-
+	IDrawMode* outputWidjet;
+	std::string nameMode;
 	StateCreate stateCreate;
 	Vector2* pointRotate;
 	CreateObject* createObject;
@@ -390,6 +393,7 @@ private:
 	enum State { firstPointSelected, pointNotSelected, secondPointSelected };
 	State state;
 	ModeType type;
+	IDrawMode* outputWidjet;
 
 	ID firstPoint;
 	ID secondPoint;
