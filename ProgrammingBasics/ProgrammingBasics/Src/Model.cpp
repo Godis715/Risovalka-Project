@@ -167,7 +167,62 @@ void Model::CashNewComponent(const Array<ID>& IDs) const {
 	dataCtrl->CashComponent(IDs);
 }
 
-void Model::Scale(const Array<ID>&, const double) const { } 
+void Model::Scale(const Array<ID>& objs, const double coef) const {
+	Set<ID> points;
+	List<ID> circles;
+	double x = 0;
+	double y = 0;
+	for (int i = 0; i < objs.GetSize(); ++i) {
+		if (objCtrl->GetType(objs[i]) == ot_point) {
+			points.Add(objs[i]);
+		}
+		else {
+			if (objCtrl->GetType(objs[i]) == ot_circle) {
+				circles.Push(objs[i]);
+			}
+			Array<ID> children = primCtrl->GetChildren(objs[i]);
+			for (int j = 0; j < children.GetSize(); ++j) {
+				auto params = primCtrl->GETVARPARAMS(children[j], VERTEX);
+				x += params[0];
+				y += params[1];
+				points.Add(children[j]);
+			}
+		}
+	}
+	x /= points.GetSize();
+	y /= points.GetSize();
+	auto point = points.GetMarker();
+	while (point.IsValid()) {
+		auto params = primCtrl->GETVARPARAMS(*point, VERTEX);
+
+		params[0] = (params[0] - x) * coef + x;
+		params[1] = (params[1] - y) * coef + y;
+
+		primCtrl->SetPrimitiveParams(*point, params);
+
+		primCtrl->Deactivate(*point);
+
+		++point;
+	}
+
+	auto circle = circles.Begin();
+	while (circle.IsValid())
+	{
+		auto params = primCtrl->GETVARPARAMS(*circle, RADIUS);
+		params[0] = params[0] * coef;
+		primCtrl->SetPrimitiveParams(*circle, params);
+		++circle;
+	}
+
+	Optimize();
+
+	auto it = points.GetMarker();
+
+	while (it.IsValid()) {
+		primCtrl->Activate(*it);
+		++it;
+	}
+} 
 
 void Model::Move(const Array<ID>& objs, const Vector2& direction) const {
 	Set<ID> points;
@@ -204,6 +259,95 @@ void Model::Move(const Array<ID>& objs, const Vector2& direction) const {
 		++it;
 	}*/
 
+	Optimize();
+
+	auto it = points.GetMarker();
+
+	while (it.IsValid()) {
+		primCtrl->Activate(*it);
+		++it;
+	}
+}
+
+void Model::Rotate(const Array<ID>& objs, const double angle) const {
+	Set<ID> points;
+	double centerX = 0;
+	double centerY = 0;
+	for (int i = 0; i < objs.GetSize(); ++i) {
+		if (objCtrl->GetType(objs[i]) == ot_point) {
+			points.Add(objs[i]);
+		}
+		else {
+			Array<ID> children = primCtrl->GetChildren(objs[i]);
+			for (int j = 0; j < children.GetSize(); ++j) {
+				auto params = primCtrl->GETVARPARAMS(children[j], VERTEX);
+				centerX += params[0];
+				centerY += params[1];
+				points.Add(children[j]);
+			}
+		}
+	}
+
+	centerX /= points.GetSize();
+	centerY /= points.GetSize();
+	double sinus = sin(angle);
+	double cosinus = cos(angle);
+
+	auto point = points.GetMarker();
+	while (point.IsValid()) {
+		auto params = primCtrl->GETVARPARAMS(*point, VERTEX);
+		double x = params[0] - centerX;
+		double y = params[1] - centerY;
+		params[0] = cosinus * x + sinus * y + centerX;
+		params[1] = cosinus * y - sinus * x + centerY;
+
+		primCtrl->SetPrimitiveParams(*point, params);
+
+		primCtrl->Deactivate(*point);
+
+		++point;
+	}
+	Optimize();
+
+	auto it = points.GetMarker();
+
+	while (it.IsValid()) {
+		primCtrl->Activate(*it);
+		++it;
+	}
+}
+
+void Model::Rotate(const Array<ID>& objs, const Vector2& center, const double angle) const {
+	Set<ID> points;
+	for (int i = 0; i < objs.GetSize(); ++i) {
+		if (objCtrl->GetType(objs[i]) == ot_point) {
+			points.Add(objs[i]);
+		}
+		else {
+			Array<ID> children = primCtrl->GetChildren(objs[i]);
+			for (int j = 0; j < children.GetSize(); ++j) {
+				points.Add(children[j]);
+			}
+		}
+	}
+
+	double sinus = sin(angle);
+	double cosinus = cos(angle);
+
+	auto point = points.GetMarker();
+	while (point.IsValid()) {
+		auto params = primCtrl->GETVARPARAMS(*point, VERTEX);
+		double x = params[0] - center.x;
+		double y = params[1] - center.y;
+		params[0] = cosinus * x + sinus * y + center.x;
+		params[1] = cosinus * y - sinus * x + center.y;
+
+		primCtrl->SetPrimitiveParams(*point, params);
+
+		primCtrl->Deactivate(*point);
+
+		++point;
+	}
 	Optimize();
 
 	auto it = points.GetMarker();
