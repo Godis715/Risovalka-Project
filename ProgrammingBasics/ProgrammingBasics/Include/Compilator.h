@@ -25,7 +25,7 @@ private:
 
 	Compiler(treeFunc* _Tree);
 
-	bool IsRight(const string& str);
+	bool Command(string& str);
 
 	bool IsSymbol(char s);
 
@@ -39,7 +39,10 @@ private:
 
 	Array<ID> Complete(const string& func, const Array<string>& variables, const Array<double>& params, bool& flag);
 
-	bool Command(string& input);
+	bool CommandCreatePrim(string& input);
+	bool CommandCreateReq(string& input);
+	bool CommandChange(string& input);
+	bool CommandDel(string& input);
 
 	treeFunc* Tree;
 

@@ -121,7 +121,7 @@ void DataController::Connect(const ID& head, Component* headLink) {
 }
 
 void DataController::DeleteObject(const ID& id) {
-	if ((!primData.Find(id).IsValid()) || (!reqData.Find(id).IsValid())){
+	if ((!primData.Find(id).IsValid()) && (!reqData.Find(id).IsValid())){
 		return;
 	}
 	DataID objectsToDelete;

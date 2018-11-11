@@ -40,7 +40,6 @@ Array<ID> Move(const Array<ID>& obj, const Array<double>& params) {
 		throw std::exception("invalid arguments");
 	}
 	Model::GetInstance()->Move(obj, Vector2(params[0], params[1]));
-	Model::GetInstance()->Move(obj, Vector2(params[0], params[1]));
 	return Array<ID>(0);
 
 }
@@ -94,10 +93,10 @@ void Presenter::Initializer(IView* _view)
 	//	return ID();
 	//};
 	auto tree = new treeFunc;
-	tree->Add("Create_point", CreatePoint);
-	tree->Add("Create_segment", CreateSegment);
-	tree->Add("Create_arc", CreateArc);
-	tree->Add("Create_circle", CreateCircle);
+	tree->Add("Point", CreatePoint);
+	tree->Add("Segment", CreateSegment);
+	tree->Add("Arc", CreateArc);
+	tree->Add("Circle", CreateCircle);
 	tree->Add("Move", Move);
 	tree->Add("Scale", Scale);
 	tree->Add("Dist_bet_points", DistBetPoints);
