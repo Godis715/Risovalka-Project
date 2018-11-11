@@ -1,56 +1,73 @@
 #include "Presenter.h"
 #include "Mode.h"
 
-ID CreatePoint(const Array<ID>& obj, const Array<double>& params) {
+Array<ID> CreatePoint(const Array<ID>& obj, const Array<double>& params) {
+	if (params.GetSize() != 2) {
+		return Array<ID>(0);
+	}
 	ID id = Model::GetInstance()->CreatePrimitive(ot_point, params);
-	return id;
+	return CreateArr(id);
 }
-ID CreateSegment(const Array<ID>& obj, const Array<double>& params) {
+Array<ID> CreateSegment(const Array<ID>& obj, const Array<double>& params) {
+	if (params.GetSize() != 4) {
+		return Array<ID>(0);
+	}
 	ID id = Model::GetInstance()->CreatePrimitive(ot_segment, params);
-	return id;
+	auto res = CreateArr(id);
+	res += PrimController::GetInstance()->GetChildren(id);
+	return res;
 }
-ID CreateArc(const Array<ID>& obj, const Array<double>& params) {
+Array<ID> CreateArc(const Array<ID>& obj, const Array<double>& params) {
+	if (params.GetSize() != 6) {
+		return Array<ID>(0);
+	}
 	ID id = Model::GetInstance()->CreatePrimitive(ot_arc, params);
-	return id;
+	auto res = CreateArr(id);
+	res += PrimController::GetInstance()->GetChildren(id);
+	return res;
 }
-ID CreateCircle(const Array<ID>& obj, const Array<double>& params) {
+Array<ID> CreateCircle(const Array<ID>& obj, const Array<double>& params) {
+	if (params.GetSize() != 3) {
+		return Array<ID>(0);
+	}
 	ID id = Model::GetInstance()->CreatePrimitive(ot_circle, params);
-	return id;
+	auto res = CreateArr(id);
+	res += PrimController::GetInstance()->GetChildren(id);
+	return res;
 }
-ID Move(const Array<ID>& obj, const Array<double>& params) {
+Array<ID> Move(const Array<ID>& obj, const Array<double>& params) {
 	if (params.GetSize() != 2) {
 		throw std::exception("invalid arguments");
 	}
 	Model::GetInstance()->Move(obj, Vector2(params[0], params[1]));
-	Model::GetInstance()->Move(obj, Vector2(params[0], params[1]));
-	return ID();
+	return Array<ID>(0);
 
 }
-ID Scale(const Array<ID>& obj, const Array<double>& params) {
+Array<ID> Scale(const Array<ID>& obj, const Array<double>& params) {
 	if (params.GetSize() != 1) {
 		throw std::exception("invalid arguments");
 	}
 	Model::GetInstance()->Scale(obj, params[0]);
 	Model::GetInstance()->Scale(obj, params[0]);
-	return ID();
+	return Array<ID>(0);
 }
-ID DistBetPoints(const Array<ID>& obj, const Array<double>& params) {
+Array<ID> DistBetPoints(const Array<ID>& obj, const Array<double>& params) {
 	ID id = Model::GetInstance()->CreateRequirement(ot_distBetPoints, obj, params);
-	return id;
+	return CreateArr(id);
 }
-ID EqualSegment(const Array<ID>& obj, const Array<double>& params) {
+Array<ID> EqualSegment(const Array<ID>& obj, const Array<double>& params) {
 	ID id = Model::GetInstance()->CreateRequirement(ot_equalSegmentLen, obj, params);
-	return id;
+	return CreateArr(id);
 }
-ID DistanceBetPointSegment(const Array<ID>& obj, const Array<double>& params) {
+Array<ID> DistanceBetPointSegment(const Array<ID>& obj, const Array<double>& params) {
 	ID id = Model::GetInstance()->CreateRequirement(ot_distBetPointSeg, obj, params);
-	return id;
+	return CreateArr(id);
 }
-ID Delete(const Array<ID>& obj, const Array<double>& params) {
+Array<ID> Delete(const Array<ID>& obj, const Array<double>& params) {
 	for (int i = 0; i < obj.GetSize(); ++i) {
 		DataController::GetInstance()->DeleteObject(obj[i]);
 	}
-	return ID();
+	return Array<ID>(0);
 }
 
 
@@ -75,11 +92,11 @@ void Presenter::Initializer(IView* _view)
 	//	model->Move(a, Vector2(b[0], b[1]));
 	//	return ID();
 	//};
-	kek* tree = new kek;
-	tree->Add("Create_point", CreatePoint);
-	tree->Add("Create_segment", CreateSegment);
-	tree->Add("Create_arc", CreateArc);
-	tree->Add("Create_circle", CreateCircle);
+	auto tree = new treeFunc;
+	tree->Add("Point", CreatePoint);
+	tree->Add("Segment", CreateSegment);
+	tree->Add("Arc", CreateArc);
+	tree->Add("Circle", CreateCircle);
 	tree->Add("Move", Move);
 	tree->Add("Scale", Scale);
 	tree->Add("Dist_bet_points", DistBetPoints);
@@ -87,7 +104,6 @@ void Presenter::Initializer(IView* _view)
 	tree->Add("Distance_bet_point_segment", DistanceBetPointSegment);
 	tree->Add("Delete", Delete);
 	Compiler::Initializer(tree);
-
 }
 
 //ID Presenter::CreateObject(object_type type, const Array<double>& params) {

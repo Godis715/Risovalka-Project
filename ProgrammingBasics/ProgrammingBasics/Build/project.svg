@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- DrawProject -->
+<svg width="1000" height="1000">
+	<drawProject:point
+		px="426"
+		py="110"
+		id="1"
+	/>
+	<drawProject:point
+		px="532"
+		py="64"
+		id="2"
+	/>
+	<line
+		x1="426"
+		y1="110"
+		x2="532"
+		y2="64"
+		id="3"
+		childIds="1 2"
+		stroke="red"
+		stroke-width="5"
+	/>
+	<drawProject:point
+		px="426"
+		py="110"
+		id="4"
+	/>
+	<drawProject:point
+		px="518"
+		py="184"
+		id="5"
+	/>
+	<line
+		x1="426"
+		y1="110"
+		x2="518"
+		y2="184"
+		id="6"
+		childIds="4 5"
+		stroke="red"
+		stroke-width="5"
+	/>
+	<drawProject:req>
+		<distBetPoints
+			id="7"
+			IDs="1 4"
+			params="0"	/>
+	</drawProject:req>
+</svg>

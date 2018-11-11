@@ -187,6 +187,9 @@
     <ClInclude Include="..\Include\ViewMainWindow.h" />
     <ClInclude Include="..\Include\ViewToolbar.h" />
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="..\..\Debug\script.txt" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
