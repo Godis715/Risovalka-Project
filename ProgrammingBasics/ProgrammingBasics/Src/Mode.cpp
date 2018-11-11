@@ -1111,7 +1111,7 @@ Mode * CreateDistBetPointsReq::HandleEvent(const Event e, Array<double>& params)
 		}
 		return nullptr;
 	}
-	return nullptr;
+	return UnexpectedEvent(e);
 }
 
 void CreateDistBetPointsReq::DrawMode() {
