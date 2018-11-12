@@ -80,6 +80,8 @@ public:
 	EqualSegmentLenReq(const Array<ID>&, const Array<double>&);
 
 	double error();
+	virtual Array<double> Gradient() override;
+
 };
 
 class PointPosReq : public Requirement {

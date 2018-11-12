@@ -70,7 +70,6 @@ public:
 class Primitive : public Object {
 private:
 	Array<double*> doubleParams;
-
 	bool isActivated;
 public:
 	Primitive(object_type, const Array<double>&, const Array<ID>&);

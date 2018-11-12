@@ -185,13 +185,59 @@ EqualSegmentLenReq::EqualSegmentLenReq(const Array<ID>& _objects,
 	}
 }
 
-double EqualSegmentLenReq::error() {
-	Vector2 vec1(*(args[3]) - *(args[1]), *(args[2]) - *(args[0]));
-	Vector2 vec2(*(args[7]) - *(args[5]), *(args[6]) - *(args[4]));
 
-	double divergence = vec2.GetLength() - vec1.GetLength();
+double EqualSegmentLenReq::error() {
+	Vector2 vec1(*(args[0]) - *(args[2]), *(args[1]) - *(args[3]));
+	Vector2 vec2(*(args[4]) - *(args[6]), *(args[5]) - *(args[7]));
+
+	double divergence = vec1.GetLength() - vec2.GetLength();
 	return divergence * divergence;
 }
+
+
+Array<double> EqualSegmentLenReq::Gradient() {
+
+	double x1x2 = *(args[0]) - *(args[2]);
+	double y1y2 = *(args[1]) - *(args[3]);
+	double x3x4 = *(args[4]) - *(args[6]);
+	double y3y4 = *(args[5]) - *(args[7]);
+
+	double AB = sqrt(x1x2 * x1x2 + y1y2 * y1y2);
+	double CD = sqrt(x3x4 * x3x4 + y3y4 * y3y4);
+
+	double C2 = 2.0 * (1.0 - CD / AB);
+	double C1 = 2.0 * (AB / CD - 1.0);
+
+	Array<double> temp_grad(8);
+
+	temp_grad[0] = -x1x2 * C2;
+	temp_grad[1] = -y1y2 * C2;
+	temp_grad[2] = -temp_grad[0];
+	temp_grad[3] = -temp_grad[1];
+
+	temp_grad[4] = -x3x4 * C1;
+	temp_grad[5] = -y3y4 * C1;
+	temp_grad[6] = -temp_grad[4];
+	temp_grad[7] = -temp_grad[5];
+	
+	int grad_len = 0;
+	for (int i = 0; i < objects.GetSize(); ++i) {
+		grad_len++;
+	}
+	Array<double> grad(grad_len * 2);
+
+	int j = 0;
+	for (int i = 0; i < objects.GetSize(); ++i) {
+		if (primCtrl->IsActivated(objects[i])) {
+			grad[j * 2] = temp_grad[i * 2];
+			grad[j * 2 + 1] = temp_grad[i * 2 + 1];
+			++j;
+		}
+	}
+
+	return grad;
+}
+
 #pragma endregion
 
 #pragma region PointPosReq
