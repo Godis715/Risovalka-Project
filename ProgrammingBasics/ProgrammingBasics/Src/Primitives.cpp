@@ -307,3 +307,52 @@ void Circle::SetRadius(const double _radius)
 	*radius = _radius;
 }
 #pragma endregion
+
+#pragma region Curve
+Curve::Curve(Point* p1, Point* p2, Point* p3, Point* p4) :
+	Primitive(ot_circle, 0, 
+		CreateArr(p1->GetID(), p2->GetID(), p3->GetID(), p4->GetID()))
+{
+	point1 = p1;
+	point2 = p2;
+	point3 = p3;
+	point4 = p4;
+}
+
+double Curve::GetDist(const Vector2&) const {
+	return 500.0;
+}
+
+Array<ID> Curve::GetPointIDs() const {
+	return CreateArr(point1->GetID(), point2->GetID(), point3->GetID(), point4->GetID());
+}
+Array<Vector2> Curve::GetPointPositions() const {
+	return CreateArr(point1->GetPos(), point2->GetPos(), point3->GetPos(), point4->GetPos());
+}
+Array<double> Curve::GetPointDoubles() const {
+	auto v1 = point1->GetPos();
+	auto v2 = point2->GetPos();
+	auto v3 = point3->GetPos();
+	auto v4 = point4->GetPos();
+
+	return CreateArr(v1.x, v1.y, v2.x, v2.y, v3.x, v3.y, v4.x, v4.y);
+}
+void Curve::SetPointPositions(const Array<Vector2>& vectors) {
+	if (vectors.GetSize() != 4) {
+		throw std::invalid_argument("Curve::invalid size");
+	}
+	point1->SetPos(vectors[0]);
+	point2->SetPos(vectors[1]);
+	point3->SetPos(vectors[2]);
+	point4->SetPos(vectors[3]);
+}
+void Curve::SetPointPositions(const Array<double> params) {
+	if (params.GetSize() != 8) {
+		throw std::invalid_argument("Curve::invalid size");
+	}
+	point1->SetPos(params[0], params[1]);
+	point2->SetPos(params[2], params[3]);
+	point3->SetPos(params[4], params[5]);
+	point4->SetPos(params[6], params[7]);
+}
+#pragma endregion

@@ -17,6 +17,7 @@ class Arc;
 class Point;
 class Segment;
 class Circle;
+class Curve;
 
 class PrimController{
 private:
@@ -197,6 +198,26 @@ public:
 	double GetRadius() const;
 	void SetRadius(const double);
 	//
+};
+
+class Curve : public Primitive {
+private:
+	Point* point1;
+	Point* point2;
+	Point* point3;
+	Point* point4;
+
+	friend class PrimController;
+public:
+	Curve(Point*, Point*, Point*, Point*);
+
+	double GetDist(const Vector2&) const;
+
+	Array<ID> GetPointIDs() const;
+	Array<Vector2> GetPointPositions() const;
+	Array<double> GetPointDoubles() const;
+	void SetPointPositions(const Array<Vector2>&);
+	void SetPointPositions(const Array<double>);
 };
 
 #endif
