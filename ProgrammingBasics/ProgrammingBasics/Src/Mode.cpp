@@ -359,7 +359,7 @@ void ChangingProperties::DrawMode()
 {
 	Array<ID> selectedObjects;
 	selectedObjects.PushBack(selectedObject);
-	view->SetColor(col_Aqua);
+	view->SetColor(col_Blue);
 	Presenter::DrawSelectedObjects(primiOfReqIDs);
 	view->SetColor(col_Orange);
 	Presenter::DrawSelectedObjects(selectedObjects);
