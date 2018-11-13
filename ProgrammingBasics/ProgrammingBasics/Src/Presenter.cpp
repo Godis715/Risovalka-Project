@@ -130,8 +130,12 @@ void Presenter::Initializer(IView* _view)
 //}
 
 void Presenter::CleareScene() {
-	Array<double> temp(0);
-	mode->HandleEvent(ev_escape, temp);
+	auto temp = mode->HandleEvent(ev_escape, Array<double>(0));
+	if (temp != nullptr) {
+		delete mode;
+		mode = temp;
+	}
+	Undo_Redo::GetInstance()->Clear();
 	model->Clear();
 	view->Update();
 }
@@ -167,39 +171,121 @@ void Presenter::MoveObject(const Array<ID>& primitiveID,const Vector2& vector) {
 //	return Model::GetInstance()->GetObjectsOnArea(x1, y1, x2, y2, obj_id, types);
 //}
 
+//void Presenter::DrawSelectedObjects(const Array<ID>& selectedObjects)
+//{
+//	for (int i = 0; i < selectedObjects.GetSize(); i++)
+//	{
+//		Array<double> params = model->GetPrimParamsForDrawing(selectedObjects[i]);
+//		object_type type = model->GetObjType(selectedObjects[i]);
+//
+//		switch (type)
+//		{
+//		case ot_point:
+//			GetView()->DrawPoint(Vector2(params[0], params[1]));
+//			break;
+//		case ot_segment:
+//			GetView()->DrawLine(Vector2(params[0], params[1]),
+//				Vector2(params[2], params[3]), line);
+//			break;
+//		case ot_arc:
+//			GetView()->DrawArc(Vector2(params[5], params[6]),
+//				Vector2(params[0], params[1]),
+//				Vector2(params[2], params[3]), line);
+//			break;
+//		case ot_circle:
+//			GetView()->DrawCircle(Vector2(params[0], params[1]),
+//				Vector2(params[0] + params[2], params[1]), line);
+//			break;
+//		}
+//	}
+//}
+
 void Presenter::DrawSelectedObjects(const Array<ID>& selectedObjects)
 {
 	for (int i = 0; i < selectedObjects.GetSize(); i++)
 	{
-		Array<double> params = model->GetPrimParamsForDrawing(selectedObjects[i]);
+		ID obj = selectedObjects[i];
 		object_type type = model->GetObjType(selectedObjects[i]);
-
 		switch (type)
 		{
-		case ot_point:
-			GetView()->DrawPoint(Vector2(params[0], params[1]));
+		case ot_point: {
+			auto params = model->GetVariableObjParam(obj, VERTEX);
+			view->DrawPoint(params);
 			break;
-		case ot_segment:
-			GetView()->DrawLine(Vector2(params[0], params[1]),
-				Vector2(params[2], params[3]), line);
+		}
+		case ot_segment: {
+			auto params = model->GetVariableObjParam(obj, VERTEX);
+			view->DrawLine(params, line);
 			break;
-		case ot_arc:
-			GetView()->DrawArc(Vector2(params[5], params[6]),
-				Vector2(params[0], params[1]),
-				Vector2(params[2], params[3]), line);
+		}
+		case ot_arc: {
+			auto params = model->GetVariableObjParam(obj, VERTEX, CENTER, RADIUS, ANGLE);
+			view->DrawArc(params, line);
 			break;
-		case ot_circle:
-			GetView()->DrawCircle(Vector2(params[0], params[1]),
-				Vector2(params[0] + params[2], params[1]), line);
+		}
+		case ot_circle: {
+			auto params = model->GetVariableObjParam(obj, CENTER, RADIUS);
+			view->DrawCircle(params, line);
+			break;
+		}
+		case ot_curve: {
+			auto params = model->GetVariableObjParam(obj, VERTEX);
+			view->DrawCurve(params, line);
+			break;
+		}
+		default:
 			break;
 		}
 	}
 }
 
+//void Presenter::DrawScene()
+//{
+//	auto objCtrl = ObjectController::GetInstance();
+//	auto primCtrl = PrimController::GetInstance();
+//	auto iter = model->GetPrimIterator();
+//	while (iter.IsValid()) {
+//		ID obj = *iter;
+//		++iter;
+//		if (!objCtrl->IsValid(obj)) {
+//			continue;
+//		}
+//		Array<double> params = model->GetPrimParamsForDrawing(obj);
+//
+//		if (model->GetObjType(obj) == ot_point) {
+//			view->SetColor(col_Red);
+//			view->DrawPoint(Vector2(params[0], params[1]));
+//		}
+//		if (model->GetObjType(obj) == ot_segment) {
+//			view->SetColor(col_White);
+//			view->DrawLine(Vector2(params[0], params[1]),
+//				Vector2(params[2], params[3]), line);
+//		}
+//		if (model->GetObjType(obj) == ot_arc) {
+//			view->SetColor(col_White);
+//			view->DrawArc(Vector2(params[5], params[6]),
+//				Vector2(params[0], params[1]),
+//				Vector2(params[2], params[3]), line);
+//		}
+//		if (model->GetObjType(obj) == ot_circle) {
+//			view->SetColor(col_White);
+//			view->DrawCircle(Vector2(params[0], params[1]),
+//				Vector2(params[0] + params[2], params[1]), line);
+//		}
+//		if (model->GetObjType(obj) == ot_curve) {
+//			view->SetColor(col_White);
+//			view->DrawCurve(params, line);
+//		}
+//
+//	}
+//
+//	mode->DrawMode();
+//}
+
+
 void Presenter::DrawScene()
 {
 	auto objCtrl = ObjectController::GetInstance();
-	auto primCtrl = PrimController::GetInstance();
 	auto iter = model->GetPrimIterator();
 	while (iter.IsValid()) {
 		ID obj = *iter;
@@ -207,29 +293,31 @@ void Presenter::DrawScene()
 		if (!objCtrl->IsValid(obj)) {
 			continue;
 		}
-		Array<double> params = model->GetPrimParamsForDrawing(obj);
-
 		if (model->GetObjType(obj) == ot_point) {
 			view->SetColor(col_Red);
-			view->DrawPoint(Vector2(params[0], params[1]));
+			auto params = model->GetVariableObjParam(obj, VERTEX);
+			view->DrawPoint(params);
 		}
 		if (model->GetObjType(obj) == ot_segment) {
 			view->SetColor(col_White);
-			view->DrawLine(Vector2(params[0], params[1]),
-				Vector2(params[2], params[3]), line);
+			auto params = model->GetVariableObjParam(obj, VERTEX);
+			view->DrawLine(params, line);
 		}
 		if (model->GetObjType(obj) == ot_arc) {
 			view->SetColor(col_White);
-			view->DrawArc(Vector2(params[5], params[6]),
-				Vector2(params[0], params[1]),
-				Vector2(params[2], params[3]), line);
+			auto params = model->GetVariableObjParam(obj, VERTEX, CENTER, RADIUS, ANGLE);
+			view->DrawArc(params, line);
 		}
 		if (model->GetObjType(obj) == ot_circle) {
 			view->SetColor(col_White);
-			view->DrawCircle(Vector2(params[0], params[1]),
-				Vector2(params[0] + params[2], params[1]), line);
+			auto params = model->GetVariableObjParam(obj, CENTER, RADIUS);
+			view->DrawCircle(params, line);
 		}
-
+		if (model->GetObjType(obj) == ot_curve) {
+			view->SetColor(col_White);
+			auto params = model->GetVariableObjParam(obj, VERTEX);
+			view->DrawCurve(params, line);
+		}
 	}
 
 	mode->DrawMode();

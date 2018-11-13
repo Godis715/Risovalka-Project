@@ -75,6 +75,7 @@ private:
 	bool isActivated;
 public:
 	Primitive(object_type, const Array<double>&, const Array<ID>&);
+	Primitive(object_type, const Array<double>&, const Array<Point*>&);
 	virtual ~Primitive();
 	virtual double GetDist(const Vector2&) const = 0;
 	bool IsActivated();
@@ -202,14 +203,11 @@ public:
 
 class Curve : public Primitive {
 private:
-	Point* point1;
-	Point* point2;
-	Point* point3;
-	Point* point4;
+	Array<Point*> points;
 
 	friend class PrimController;
 public:
-	Curve(Point*, Point*, Point*, Point*);
+	Curve(const Array<Point*>&);
 
 	double GetDist(const Vector2&) const;
 

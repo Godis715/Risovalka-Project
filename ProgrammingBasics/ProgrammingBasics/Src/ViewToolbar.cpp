@@ -77,6 +77,12 @@ void ViewToolbar::cl_Create(Fl_Widget* o, void*)
 		Presenter::Set_event(ev_createArc, params);
 		inventory->lastEvent = ev_createArc;
 	}
+	if (((Fl_Menu_Button*)o)->mvalue()->label() == "Curve")
+	{
+		viewLog->Push("Log::Create Curve");
+		Presenter::Set_event(ev_createCurve, params);
+		inventory->lastEvent = ev_createCurve;
+	}
 	if (((Fl_Menu_Button*)o)->mvalue()->label() == "Circle")
 	{
 		viewLog->Push("Log::Create circle");
@@ -219,14 +225,15 @@ void ViewToolbar::Initializer()
 	}
 	coordX += (wMenu + indentX);
 	{
-		objects = new Fl_Menu_Item[7];
+		objects = new Fl_Menu_Item[8];
 		objects[0] = { "Point", FL_ALT + 'z' };
 		objects[1] = { "Segment", FL_ALT + 'x' };
 		objects[2] = { "Star", FL_ALT + 's' };
 		objects[3] = { "Broken", FL_ALT + 'b' };
 		objects[4] = { "Arc", FL_ALT + 'c' };
 		objects[5] = { "Circle", FL_ALT + 'v' };
-		objects[6] = { 0 };
+		objects[6] = { "Curve", FL_ALT + 'r' };
+		objects[7] = { 0 };
 		createObject_b = new  Fl_Menu_Button(coordX, positionY + indentY, wMenu, hMenu, "Object");
 		createObject_b->menu(objects);
 		createObject_b->callback(cl_Create);

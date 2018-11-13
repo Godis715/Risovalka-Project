@@ -23,6 +23,7 @@ enum Event
 	ev_createBrokenLine,
 	ev_createArc,
 	ev_createCircle,
+	ev_createCurve,
 	// drawingMode
 	ev_symmetricalDraw,
 	ev_defualtDraw,
@@ -191,6 +192,20 @@ private:
 public:
 	CreatingArc();
 	~CreatingArc();
+
+	Array<ID> HandleEvent(const Event, Array<Vector2>&);
+
+	void DrawMode();
+};
+
+class CreatingCurve : public CreateObject {
+private:
+	int countClick;
+	Array<Array<Vector2>> PointsCurves;
+	Array<Vector2> imaginaryPoints;
+public:
+	CreatingCurve();
+	~CreatingCurve();
 
 	Array<ID> HandleEvent(const Event, Array<Vector2>&);
 

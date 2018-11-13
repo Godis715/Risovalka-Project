@@ -70,9 +70,9 @@ Array<double> PrimController::GetPrimParamsForDrawing(const ID& id) const {
 	Array<ID> children = GetChildren(id);
 	Array<double> params(0);
 	for (int i = 0; i < children.GetSize(); ++i) {
-		params = params + GetPrimitiveParamsAsValues(children[i]);
+		params += GetPrimitiveParamsAsValues(children[i]);
 	}
-	params = params + GetPrimitiveParamsAsValues(id);
+	params += GetPrimitiveParamsAsValues(id);
 	if (objCtrl->GetType(id) == ot_arc) {
 		Arc* arc = dynamic_cast<Arc*>(GetPrimitive(id));
 		params = params + arc->cx + arc->cy;
@@ -166,21 +166,23 @@ Array<double> PrimController::GetVariableObjParam(const ID& obj, int modifiers[]
 			case VERTEX: {
 				auto pos1 = arc->GetPointPos1();
 				auto pos2 = arc->GetPointPos2();
-				params = params + CreateArr(pos1.x, pos1.y, pos2.x, pos2.y);
+				params += CreateArr(pos1.x, pos1.y, pos2.x, pos2.y);
 				break;
 			}
 			case CENTER: {
 				auto center = arc->GetCenter();
-				params = params + CreateArr(center.x, center.y);
+				params += CreateArr(center.x, center.y);
 				break;
 			}
 			case ANGLE: {
 				auto angle = arc->GetAngle();
-				params = params + CreateArr(angle);
+				params += CreateArr(angle);
 				break;
 			}
 			case RADIUS: {
-				// ...
+				auto center = arc->GetCenter();
+				auto pos1 = arc->GetPointPos1();
+				params += CreateArr((center - pos1).GetLength());
 				break;
 			}
 			default: {
@@ -216,7 +218,7 @@ Array<double> PrimController::GetVariableObjParam(const ID& obj, int modifiers[]
 		for (int i = 0; modifiers[i] != 0; ++i) {
 			switch (modifiers[i]) {
 			case VERTEX: {
-				params += curve->GetPointDoubles();
+				params = curve->GetPointDoubles();
 				break;
 			}
 			default: {
@@ -509,20 +511,20 @@ ID PrimController::CreatePrimitive(object_type type, const Array<ID>& dependObjs
 	}
 	case ot_curve: {
 		if (dependObjs.GetSize() == 0) {
-			if (params.GetSize() != 8) {
+			if (params.GetSize() < 6 || params.GetSize() % 2 == 1) {
 				LOGERROR("CreatePrimitive: bad size of params", LEVEL_1);
 			}
-			Point* point1 = new Point(params[0], params[1]);
-			Point* point2 = new Point(params[2], params[3]);
-			Point* point3 = new Point(params[4], params[5]);
-			Point* point4 = new Point(params[6], params[7]);
-			prim = new Curve(point1, point2, point3, point4);
+			Array<Point*> points = Array<Point*>(params.GetSize() / 2);
+			for (int i = 0; i < points.GetSize(); ++i) {
+				points[i] = new Point(params[2 * i], params[2 * i + 1]);
+			}
+			prim = new Curve(points);
 		}
 		else {
 			if (params.GetSize() != 0) {
 				LOGERROR("CreatePrimitive: bad size of params", LEVEL_1);
 			}
-			if (dependObjs.GetSize() != 4) {
+			if (dependObjs.GetSize() < 3) {
 				LOGERROR("CreatePrimitive: bad size of dependent objs", LEVEL_1);
 			}
 			if (objCtrl->GetType(dependObjs[0]) != ot_point ||
@@ -531,11 +533,11 @@ ID PrimController::CreatePrimitive(object_type type, const Array<ID>& dependObjs
 				objCtrl->GetType(dependObjs[3]) != ot_point){
 				LOGERROR("CreatePrimitive: bad type of dependent object", LEVEL_1);
 			}
-			Point* point1 = dynamic_cast<Point*>(GetPrimitive(dependObjs[0]));
-			Point* point2 = dynamic_cast<Point*>(GetPrimitive(dependObjs[1]));
-			Point* point3 = dynamic_cast<Point*>(GetPrimitive(dependObjs[2]));
-			Point* point4 = dynamic_cast<Point*>(GetPrimitive(dependObjs[3]));
-			prim = new Curve(point1, point2, point3, point4);
+			Array<Point*> points = Array<Point*>(dependObjs.GetSize());
+			for (int i = 0; i < points.GetSize(); ++i) {
+				points[i] = dynamic_cast<Point*>(GetPrimitive(dependObjs[i]));
+			}
+			prim = new Curve(points);
 		}
 		LOG("CreatePrimitive: created segment", LEVEL_2);
 		break;

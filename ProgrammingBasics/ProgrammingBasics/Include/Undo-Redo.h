@@ -75,6 +75,8 @@ public:
 	void Undo();
 
 	void Redo();
+
+	void Clear();
 private:
 	List<Version*>::Marker it;
 
