@@ -20,6 +20,7 @@ enum object_type {
 	ot_segment,
 	ot_arc,
 	ot_circle,
+	ot_curve,
 
 	ot_connection,
 	ot_distBetPoints,

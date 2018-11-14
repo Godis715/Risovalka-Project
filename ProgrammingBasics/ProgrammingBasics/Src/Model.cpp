@@ -375,6 +375,6 @@ Set<ID>::bst_iterator Model::GetPrimIterator() {
 }
 
 Array<double> Model::GetPrimParamsForDrawing(const ID& obj) const {
-		Array<double> arr = primCtrl->GetPrimParamsForDrawing(obj);
+	Array<double> arr = primCtrl->GetPrimParamsForDrawing(obj);
 	return arr;
 }

@@ -18,6 +18,9 @@ string objTypeToString(const object_type type)
 	case ot_circle: {
 		return string("circle");
 	}
+	case ot_curve: {
+		return string("curve");
+	}
 	case ot_distBetPoints: {
 		return string("distBetPoints");
 	}
@@ -131,6 +134,9 @@ Mode* Mode::UnexpectedEvent(const Event e, const Array<double>& params) {
 		return new DMDefualt(e);
 	}
 	case ev_createCircle: {
+		return new DMDefualt(e);
+	}
+	case ev_createCurve: {
 		return new DMDefualt(e);
 	}
 	case ev_mouseMove:
@@ -353,7 +359,7 @@ void ChangingProperties::DrawMode()
 {
 	Array<ID> selectedObjects;
 	selectedObjects.PushBack(selectedObject);
-	view->SetColor(col_Aqua);
+	view->SetColor(col_Blue);
 	Presenter::DrawSelectedObjects(primiOfReqIDs);
 	view->SetColor(col_Orange);
 	Presenter::DrawSelectedObjects(selectedObjects);
@@ -406,6 +412,14 @@ DMDefualt::DMDefualt(Event e) : selectionObjects(0)
 		stateCreate = create;
 		outputWidjet->SetName(nameMode + "::CreatingCircle");
 		createObject = new CreatingCircle();
+		break;
+	}
+	case ev_createCurve:
+	{
+		outputWidjet->SetName(nameMode + "::CreatingCurve");
+		selectionObjects.Clear();
+		stateCreate = create;
+		createObject = new CreatingCurve();
 		break;
 	}
 	default:
@@ -509,6 +523,14 @@ Mode* DMDefualt::HandleEvent(const Event ev, const Array<double>& params)
 		selectionObjects.Clear();
 		stateCreate = create;
 		createObject = new CreatingPoint();
+		return nullptr;
+	}
+	case ev_createCurve:
+	{
+		outputWidjet->SetName(nameMode + "::CreatingCurve");
+		selectionObjects.Clear();
+		stateCreate = create;
+		createObject = new CreatingCurve();
 		return nullptr;
 	}
 	case ev_enter:
@@ -796,6 +818,14 @@ Mode* DMSymmetrical::HandleEvent(const Event ev, const Array<double>& params)
 		createObject = new CreatingPoint();
 		return nullptr;
 	}
+	case ev_createCurve:
+	{
+		outputWidjet->SetName(nameMode + "::CreatingCurve");
+		selectionObjects.Clear();
+		stateCreate = create;
+		createObject = new CreatingCurve();
+		return nullptr;
+	}
 	case ev_enter:
 	{
 		outputWidjet->SetName(nameMode);
@@ -1036,6 +1066,14 @@ Mode* DMSectorSymmetrical::HandleEvent(const Event ev, const Array<double>& para
 		selectionObjects.Clear();
 		stateCreate = create;
 		createObject = new CreatingPoint();
+		return nullptr;
+	}
+	case ev_createCurve:
+	{
+		outputWidjet->SetName(nameMode + "::CreatingCurve");
+		selectionObjects.Clear();
+		stateCreate = create;
+		createObject = new CreatingCurve();
 		return nullptr;
 	}
 	case ev_enter:
@@ -2374,7 +2412,6 @@ CreatingCircle::~CreatingCircle() {
 #pragma endregion
 
 #pragma region CreatingArc
-
 CreatingArc::CreatingArc() {
 	stateClick = noClick;
 }
@@ -2488,5 +2525,96 @@ void CreatingArc::DrawMode() {
 }
 
 CreatingArc::~CreatingArc() {
+}
+#pragma endregion
+
+#pragma region CreatingCurve
+CreatingCurve::CreatingCurve() {
+	countClick = 0;
+}
+CreatingCurve::~CreatingCurve() {
+	int countCurves = PointsCurves[0].GetSize();
+	Array<ID> createdCurves = Array<ID>(countCurves);
+	for (int i = 0; i < countCurves; i++)
+	{
+		Array<double> curve = Array<double>(PointsCurves.GetSize() * 2);
+		for (int j = 0; j < PointsCurves.GetSize(); ++j) {
+			curve[2 * j] = PointsCurves[j][i].x;
+			curve[2 * j + 1] = PointsCurves[j][i].y;
+		}
+		createdCurves[i] = model->CreatePrimitive(ot_curve, curve);
+		
+	}
+	undo_redo->AddVersion(tfc_creation, createdCurves);
+	for (int i = 0; i < PointsCurves.GetSize(); ++i) {
+		PointsCurves[i].Clear();
+	}
+	PointsCurves.Clear();
+}
+
+Array<ID> CreatingCurve::HandleEvent(const Event ev, Array<Vector2>& params) {
+	switch (ev)
+	{
+	case ev_leftMouseDown:
+	{
+		imaginaryPoints.Clear();
+		imaginaryPoints = params;
+		++countClick;
+		if (countClick == 1)
+		{
+			for (int i = 0; i < params.GetSize(); i++)
+			{
+				PointsCurves.PushBack(params);
+			}
+			return Array<ID>(0);
+		}
+		if (params.GetSize() != PointsCurves[0].GetSize())
+		{
+			throw std::invalid_argument("Bad number of parameters");
+		}
+		auto t = params;
+		PointsCurves.PushBack(t);
+		return Array<ID>(0);
+	}
+	case ev_mouseMove:
+	{
+		if (countClick != 0)
+		{
+			if (params.GetSize() != PointsCurves[0].GetSize())
+			{
+				throw std::invalid_argument("Bad number of parameters");
+			}
+			imaginaryPoints.Clear();
+			imaginaryPoints = params;
+		}
+		return Array<ID>(0);
+	}
+	}
+	return Array<ID>(0);
+}
+
+
+void CreatingCurve::DrawMode() {
+	if (countClick != 0)
+	{
+		view->SetColor(col_Red);
+		for (int i = 0; i < PointsCurves.GetSize(); i++)
+		{
+			for (int j = 0; j < PointsCurves[i].GetSize(); ++j) {
+				view->DrawPoint(PointsCurves[i][j]);
+			}
+		}
+		view->SetColor(col_Yellow);
+		int countCurves = PointsCurves[0].GetSize();
+		for (int i = 0; i < countCurves; i++)
+		{
+			Array<Vector2> curve = Array<Vector2>(PointsCurves.GetSize() +1 );
+			for (int j = 0; j < PointsCurves.GetSize(); ++j) {
+				curve[j] = PointsCurves[j][i];
+			}
+			curve[curve.GetSize() - 1] = imaginaryPoints[i];
+			view->DrawCurve(curve, points);
+		}
+	}
 }
 #pragma endregion

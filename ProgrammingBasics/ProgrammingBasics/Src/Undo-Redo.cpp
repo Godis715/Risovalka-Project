@@ -333,6 +333,17 @@ void Undo_Redo::Redo() {
 	(*it)->Redo();
 }
 
+void Undo_Redo::Clear() {
+	auto i = versions.Begin();
+	while (i.IsValid())
+	{
+		delete *i;
+		++i;
+	}
+	versions.Clear();
+	it = List<Version*>::Marker();
+}
+
 Undo_Redo::Undo_Redo() {}
 
 void Undo_Redo::DeleteLastVersion() {

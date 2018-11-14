@@ -224,11 +224,15 @@ public:
 	}
 
 	void Push(const T& val) {
+		if (guardHead == nullptr) {
+			guardHead = new  Node(nullptr, val);
+			guardTail = new  Node(nullptr, val);
+		}
 		if (size == 0)
 		{
-			guardHead = head;
-			head = tail = new Node(nullptr, val);
-			guardHead = new Node(head, val);
+			head = new Node(nullptr, val);
+			tail = head;
+			guardHead->next = new Node(head, val);
 		}
 		else
 		{
@@ -268,6 +272,23 @@ public:
 			}
 		}
 		return marker;
+	}
+
+	void Clear() {
+		if (head == nullptr || size ==0)
+		{
+			return;
+		}
+		guardHead->next = guardTail;
+		auto node = head;
+		while (node != guardTail) {
+			auto temp = node->next;
+			delete node;
+			node = temp;
+		}
+		size = 0;
+		head = nullptr;
+		tail = nullptr;
 	}
 };
 #endif

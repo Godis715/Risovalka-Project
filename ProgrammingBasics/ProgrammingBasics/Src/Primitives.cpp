@@ -12,6 +12,17 @@ Primitive::Primitive(object_type _type, const Array<double>& _params, const Arra
 	}
 }
 
+Primitive::Primitive(object_type _type, const Array<double>& _params, const Array<Point*>& _children)
+	: Object(_type, _params, children),
+	doubleParams(_params.GetSize()),
+	isActivated(true)
+{
+	for (int i = 0; i < doubleParams.GetSize(); ++i) {
+		doubleParams[i] = new double(params[i]);
+	}
+}
+
+
 Primitive::~Primitive() {
 	for (int i = 0; i < doubleParams.GetSize(); ++i) {
 		delete doubleParams[i];
@@ -305,5 +316,58 @@ double Circle::GetRadius() const {
 void Circle::SetRadius(const double _radius)
 {
 	*radius = _radius;
+}
+#pragma endregion
+
+#pragma region Curve
+Curve::Curve(const Array<Point*>& _points) :
+	Primitive(ot_curve, 0, _points)
+{
+	points = _points;
+
+}
+
+double Curve::GetDist(const Vector2&) const {
+	return 500.0;
+}
+
+Array<ID> Curve::GetPointIDs() const {
+	Array<ID> result = Array<ID>(points.GetSize());
+	for (int i = 0; i < points.GetSize(); ++i) {
+		result[i] = points[i]->GetID();
+	}
+	return result;
+}
+Array<Vector2> Curve::GetPointPositions() const {
+	Array<Vector2> result = Array<Vector2>(points.GetSize());
+	for (int i = 0; i < points.GetSize(); ++i) {
+		result[i] = points[i]->GetPos();
+	}
+	return result;
+}
+Array<double> Curve::GetPointDoubles() const {
+	Array<double> result = Array<double>(points.GetSize() * 2);
+	for (int i = 0; i < points.GetSize(); ++i) {
+		Vector2 vector = points[i]->GetPos();
+		result[2 * i] = vector.x;
+		result[2 * i + 1] = vector.y;
+	}
+	return result;
+}
+void Curve::SetPointPositions(const Array<Vector2>& vectors) {
+	if (vectors.GetSize() != points.GetSize()) {
+		throw std::invalid_argument("Curve::invalid size");
+	}
+	for (int i = 0; i < points.GetSize(); ++i) {
+		points[i]->SetPos(vectors[i]);
+	}
+}
+void Curve::SetPointPositions(const Array<double> params) {
+	if (params.GetSize() != points.GetSize() * 2) {
+		throw std::invalid_argument("Curve::invalid size");
+	}
+	for (int i = 0; i < points.GetSize(); ++i) {
+		points[i]->SetPos(params[2 * i ], params[2 * i + 1]);
+	}
 }
 #pragma endregion
