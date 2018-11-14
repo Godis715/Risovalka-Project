@@ -2,64 +2,78 @@
 <!-- DrawProject -->
 <svg width="1000" height="1000">
 	<drawProject:point
-		px="347"
-		py="137"
+		px="553.662"
+		py="198.776"
 		id="1"
 	/>
-	<circle
-		cx="347"
-		cy="137"
-		r="43.1393"
+	<drawProject:point
+		px="569.517"
+		py="300.279"
 		id="2"
-		childIds="1"
+	/>
+	<line
+		x1="553.662"
+		y1="198.776"
+		x2="569.517"
+		y2="300.279"
+		id="3"
+		childIds="1 2"
+		stroke="red"
+		stroke-width="5"
+	/>
+	<drawProject:point
+		px="369.727"
+		py="275.206"
+		id="4"
+	/>
+	<drawProject:point
+		px="267.481"
+		py="284.804"
+		id="5"
+	/>
+	<line
+		x1="369.727"
+		y1="275.206"
+		x2="267.481"
+		y2="284.804"
+		id="6"
+		childIds="4 5"
+		stroke="red"
+		stroke-width="5"
+	/>
+	<drawProject:point
+		px="471.771"
+		py="274.507"
+		id="8"
+	/>
+	<circle
+		cx="471.771"
+		cy="274.507"
+		r="100"
+		id="9"
+		childIds="8"
 		stroke="red"
 		stroke-width="5"
 		fill="none"
 	/>
-	<drawProject:point
-		px="426"
-		py="110"
-		id="3"
-	/>
-	<drawProject:point
-		px="532"
-		py="64"
-		id="4"
-	/>
-	<drawProject:point
-		px="426"
-		py="110"
-		id="5"
-	/>
-	<drawProject:point
-		px="518"
-		py="184"
-		id="6"
-	/>
-	<line
-		x1="426"
-		y1="110"
-		x2="532"
-		y2="64"
-		id="7"
-		childIds="3 4"
-		stroke="red"
-		stroke-width="5"
-	/>
-	<line
-		x1="426"
-		y1="110"
-		x2="518"
-		y2="184"
-		id="8"
-		childIds="5 6"
-		stroke="red"
-		stroke-width="5"
-	/>
 	<drawProject:req>
+		<equalSegmentLen
+			id="7"
+			IDs="3 6"	/>
 		<distBetPoints
-			id="9"
-			IDs="3 5"
-			params="0"	/>
+			id="10"
+			IDs="4 8"
+			params="100"	/>
+		<distBetPoints
+			id="11"
+			IDs="2 8"
+			params="100"	/>
+		<equalSegmentLen
+			id="12"
+			IDs="3 6"	/>
+		<distBetPoints
+			id="13"
+			IDs="4 5"
+			params="100"	/>
 	</drawProject:req>
 </svg>

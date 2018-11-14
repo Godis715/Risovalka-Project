@@ -62,8 +62,8 @@ void Optimizer::OptimizeByGradient
 
 	double error = reqCtrl->GetReqError(reqs);
 
-	double left = -1.0;
-	double right = 1.0;
+	double left = -0.75;
+	double right = 0.75;
 
 	double leftValue = ErrorByAlpha(reqs, args, agrad, left);
 	double rightValue = ErrorByAlpha(reqs, args, agrad, right);
