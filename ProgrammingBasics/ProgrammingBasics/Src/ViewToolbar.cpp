@@ -1,5 +1,47 @@
 #include "ViewToolbar.h"
 
+void ViewToolbar::cl_DefualtDrawMode(Fl_Widget* o, void*)
+{
+	delete inventory->lastCursor;
+	inventory->lastCursor = new Fl_Cursor(FL_CURSOR_DEFAULT);
+	Array<double> params(0);
+	Presenter::Set_event(ev_defualtDraw, params);
+}
+
+void ViewToolbar::cl_xSymmetricDrawMode(Fl_Widget* o, void*)
+{
+	Array<double> params(0);
+	string nameMode = ((Fl_Menu_Button*)o)->mvalue()->label();
+	if (nameMode[0] == 'y') {
+		nameMode[1] = '1';
+	}
+	nameMode[0] = '0';
+	params.PushBack(std::stod(nameMode));
+	Presenter::Set_event(ev_symmetricalDraw, params);
+}
+
+void ViewToolbar::cl_xRotateDrawMode(Fl_Widget* o, void*)
+{
+	Array<double> params(0);
+	string nameMode = ((Fl_Menu_Button*)o)->mvalue()->label();
+	nameMode[0] = '0';
+	params.PushBack(std::stod(nameMode));
+	Presenter::Set_event(ev_rotationDraw, params);
+}
+
+void ViewToolbar::cl_FastRequirement(Fl_Widget* o, void*) {
+	delete inventory->lastCursor;
+	inventory->lastCursor = new Fl_Cursor(FL_CURSOR_DEFAULT);
+	Array<double> params(0);
+	const string nameMode = ((Fl_Menu_Button*)o)->mvalue()->label();
+	if (nameMode == "Points distance") {
+		Presenter::Set_event(ev_req_D_point_fast, params);
+	}
+	if (nameMode == "Merge points") {
+		Presenter::Set_event(ev_req_Eq_point_fast, params);
+	}
+}
+
 void ViewToolbar::cl_Create(Fl_Widget* o, void*)
 {
 	delete inventory->lastCursor;
@@ -17,11 +59,29 @@ void ViewToolbar::cl_Create(Fl_Widget* o, void*)
 		Presenter::Set_event(ev_createSegment, params);
 		inventory->lastEvent = ev_createSegment;
 	}
+	if (((Fl_Menu_Button*)o)->mvalue()->label() == "Star")
+	{
+		viewLog->Push("Log::Create Star line");
+		Presenter::Set_event(ev_createStar, params);
+		inventory->lastEvent = ev_createStar;
+	}
+	if (((Fl_Menu_Button*)o)->mvalue()->label() == "Broken")
+	{
+		viewLog->Push("Log::Create broken line");
+		Presenter::Set_event(ev_createBrokenLine, params);
+		inventory->lastEvent = ev_createBrokenLine;
+	}
 	if (((Fl_Menu_Button*)o)->mvalue()->label() == "Arc")
 	{
 		viewLog->Push("Log::Create arc");
 		Presenter::Set_event(ev_createArc, params);
 		inventory->lastEvent = ev_createArc;
+	}
+	if (((Fl_Menu_Button*)o)->mvalue()->label() == "Curve")
+	{
+		viewLog->Push("Log::Create Curve");
+		Presenter::Set_event(ev_createCurve, params);
+		inventory->lastEvent = ev_createCurve;
 	}
 	if (((Fl_Menu_Button*)o)->mvalue()->label() == "Circle")
 	{
@@ -36,8 +96,9 @@ void ViewToolbar::cl_Redaction(Fl_Widget* o, void*)
 	delete inventory->lastCursor;
 	inventory->lastCursor = new Fl_Cursor(FL_CURSOR_DEFAULT);
 	Array<double> params(0);
+	auto name = ((Fl_Menu_Button*)o)->mvalue()->label();
 
-	if (((Fl_Menu_Button*)o)->mvalue()->label() == "Move selection")
+	if (name == "Move selection")
 	{
 		viewLog->Push("Log::Move selection");
 		delete inventory->lastCursor;
@@ -45,21 +106,28 @@ void ViewToolbar::cl_Redaction(Fl_Widget* o, void*)
 		Presenter::Set_event(ev_moveObjects, params);
 	}
 
-	if (((Fl_Menu_Button*)o)->mvalue()->label() == "Scale selection")
+	if (name == "Scale selection")
 	{
 		viewLog->Push("Log::Scale selection");
 		Presenter::Set_event(ev_scaleObjects, params);
 	}
 
-	if (((Fl_Menu_Button*)o)->mvalue()->label() == "Delete selection")
+	if (name == "Rotate selection")
+	{
+		viewLog->Push("Log::Scale selection");
+		Presenter::Set_event(ev_rotateObjects, params);
+	}
+
+	if (name == "Delete selection")
 	{
 		viewLog->Push("Log::Delete selection");
 		Presenter::Set_event(ev_del, params);
 	}
 
-	if (((Fl_Menu_Button*)o)->mvalue()->label() == "Delete all scene")
+	if (name == "Delete all scene")
 	{
 		viewLog->Push("Log::Delete all scene");
+		Presenter::Set_event(ev_delAll, params);
 		Presenter::CleareScene();
 	}
 }
@@ -103,48 +171,111 @@ void ViewToolbar::cl_Requirement(Fl_Widget* b_Req, void*)
 
 }
 
+void ViewToolbar::cl_Button(Fl_Widget* but, void*)
+{
+	Array<double> params(0);
+	const string nameBut = ((Fl_Button*)but)->label();
+	if (nameBut == "<--")Presenter::Set_event(ev_undo, params);
+	if (nameBut == "-->")Presenter::Set_event(ev_redu, params);
+}
+
 void ViewToolbar::Initializer()
 {
-	int hGroup = 2 * indentY + hBut;
-	int wGroup = countBut * wBut + (countBut + 1) * indentX;
-	int coordX = positionX + indentX;
+	int hGroup = 2 * indentY + hMenu;
+	int wGroup = (countMenu * wMenu + (countMenu + 1) * indentX) + (countBut * wBut + (countBut + 1) * indentX);
 	group = new Fl_Group(positionX, positionY, wGroup, hGroup);
+
+	int coordX = positionX + indentX;
+	b_Undo = new Fl_Button(coordX, positionY + indentY, wBut, hBut, "<--");
+	b_Undo->color(FL_RED);
+	b_Undo->callback(cl_Button);
+	b_Undo->clear_visible_focus();
+
+	coordX += (wBut + indentX);
+	b_Redu = new Fl_Button(coordX, positionY + indentY, wBut, hBut, "-->");
+	b_Redu->color(FL_GREEN);
+	b_Redu->callback(cl_Button);
+	b_Redu->clear_visible_focus();
+
+	coordX += (wBut + indentX);
 	{
-		objects = new Fl_Menu_Item[5];
+		drawingModes = new Fl_Menu_Item[18];
+		drawingModes[0] = { "Defualt", 0, cl_DefualtDrawMode, 0 , 0 };
+		drawingModes[1] = { "Symmetrical", 0, 0, 0, FL_SUBMENU };
+			drawingModes[2] = { "y2", 0, cl_xSymmetricDrawMode, 0, 0 };
+			drawingModes[3] = { "x2", 0, cl_xSymmetricDrawMode, 0, 0 };
+			drawingModes[4] = { "x4", 0, cl_xSymmetricDrawMode, 0, 0 };
+			drawingModes[5] = { "x8", 0, cl_xSymmetricDrawMode, 0, 0 };
+			drawingModes[6] = { 0 };
+		drawingModes[7] = { "Rotation", 0, 0, 0, FL_SUBMENU };
+			drawingModes[8] = { "x2", 0, cl_xRotateDrawMode, 0, 0 };
+			drawingModes[9] = { "x3", 0, cl_xRotateDrawMode, 0, 0 };
+			drawingModes[10] = { "x4", 0, cl_xRotateDrawMode, 0, 0 };
+			drawingModes[11] = { "x5", 0, cl_xRotateDrawMode, 0, 0 };
+			drawingModes[12] = { "x6", 0, cl_xRotateDrawMode, 0, 0 };
+			drawingModes[13] = { "x8", 0, cl_xRotateDrawMode, 0, 0 };
+			drawingModes[14] = { "x9", 0, cl_xRotateDrawMode, 0, 0 };
+			drawingModes[15] = { "x10", 0, cl_xRotateDrawMode, 0, 0 };
+		drawingModes[16] = { 0 };
+		drawingModes[17] = { 0 };
+		drawingModes_b = new  Fl_Menu_Button(coordX, positionY + indentY, wMenu, hMenu, "DrawingModes");
+		drawingModes_b->menu(drawingModes);
+		drawingModes_b->clear_visible_focus();
+		drawingModes_b->color(FL_WHITE);
+	}
+	coordX += (wMenu + indentX);
+	{
+		objects = new Fl_Menu_Item[8];
 		objects[0] = { "Point", FL_ALT + 'z' };
 		objects[1] = { "Segment", FL_ALT + 'x' };
-		objects[2] = { "Arc", FL_ALT + 'c' };
-		objects[3] = { "Circle", FL_ALT + 'v' };
-		objects[4] = { 0 };
-		createObject_b = new  Fl_Menu_Button(coordX, indentY, wBut, hBut, "Object");
+		objects[2] = { "Star", FL_ALT + 's' };
+		objects[3] = { "Broken", FL_ALT + 'b' };
+		objects[4] = { "Arc", FL_ALT + 'c' };
+		objects[5] = { "Circle", FL_ALT + 'v' };
+		objects[6] = { "Curve", FL_ALT + 'r' };
+		objects[7] = { 0 };
+		createObject_b = new  Fl_Menu_Button(coordX, positionY + indentY, wMenu, hMenu, "Object");
 		createObject_b->menu(objects);
 		createObject_b->callback(cl_Create);
 		createObject_b->clear_visible_focus();
 		createObject_b->color(FL_WHITE);
 	}
-	coordX += (wBut + indentX);
+	coordX += (wMenu + indentX);
 	{
 		toolingRed = new Fl_Menu_Item[6];
 		toolingRed[0] = { "Move selection" };
 		toolingRed[1] = { "Scale selection" };
-		toolingRed[2] = { "Delete selection" };
-		toolingRed[3] = { "Delete all scene" };
-		toolingRed[4] = { 0 };
-		redaction_b = new  Fl_Menu_Button(coordX, indentY, wBut, hBut, "Redaction");
+		toolingRed[2] = { "Rotate selection" };
+		toolingRed[3] = { "Delete selection" };
+		toolingRed[4] = { "Delete all scene" };
+		toolingRed[5] = { 0 };
+		redaction_b = new  Fl_Menu_Button(coordX, positionY + indentY, wMenu, hMenu, "Redaction");
 		redaction_b->menu(toolingRed);
 		redaction_b->callback(cl_Redaction);
 		redaction_b->clear_visible_focus();
 		redaction_b->color(FL_WHITE);
 	}
-	coordX += (wBut + indentX);
+	coordX += (wMenu + indentX);
 	{
 		requirements = new Fl_Menu_Item[1];
 		requirements[0] = { 0 };
-		createRequirement_b = new  Fl_Menu_Button(coordX, indentY, wBut, hBut, "Requirement");
+		createRequirement_b = new  Fl_Menu_Button(coordX, positionY + indentY, wMenu, hMenu, "Requirement");
 		createRequirement_b->menu(requirements);
 		createRequirement_b->callback(cl_Requirement);
 		createRequirement_b->clear_visible_focus();
 		createRequirement_b->color(FL_WHITE);
+	}
+	coordX += (wMenu + indentX);
+	{
+		fastRequirements = new Fl_Menu_Item[3];
+		fastRequirements[0] = { "Points distance" };
+		fastRequirements[1] = { "Merge points" };
+		fastRequirements[2] = { 0 };
+		createFastRequirement_b = new Fl_Menu_Button(coordX, positionY + indentY, wMenu, hMenu, "FastTool");
+		createFastRequirement_b->menu(fastRequirements);
+		createFastRequirement_b->callback(cl_FastRequirement);
+		createFastRequirement_b->clear_visible_focus();
+		createFastRequirement_b->color(FL_WHITE);
 	}
 	group->box(FL_UP_BOX);
 	group->color(fl_rgb_color(0, 140, 240)); // цвет "Аква"

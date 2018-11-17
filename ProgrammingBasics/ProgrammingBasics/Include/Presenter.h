@@ -4,18 +4,16 @@
 #ifndef __PRESENTER
 #define __PRESENTER
 
-
-
 #include "Mode.h"
-
 
 class Presenter {
 private:
 	static Mode* mode;
 	static IView* view;
+	static Model* model;
 public:
-	static void SaveProject(std::string);
-	static void DownloadFile(std::string);
+	static void SaveProject(const std::string&);
+	static void DownloadFile(const std::string&);
 	static IView* GetView();
 	static void DrawScene();
 	static void DrawSelectedObjects(const Array<ID>&);
@@ -39,8 +37,6 @@ public:
 
 	//static ID CreateRequirement(object_type, const Array<ID>&, const Array<double>&);
 
-	static bool GetObject(double, double, ID&);
-
 	//static bool GetObjectsOnArea(double, double, double, double, Array<ID>&);
 
 	static void CleareScene();
@@ -51,7 +47,7 @@ public:
 
 	//static void ScaleObjects(const Array<ID>&, const double);
 
-	//static void MoveObject(const Array<ID>&, const Vector2&);
+	static void MoveObject(const Array<ID>&, const Vector2&);
 
 	/*static void ChangeObject(){}*/
 

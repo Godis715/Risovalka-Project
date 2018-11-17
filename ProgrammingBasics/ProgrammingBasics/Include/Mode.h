@@ -2,7 +2,7 @@
 #define __MODE
 
 #include "IView.h"
-#include "ModelNew.h"
+#include "Model.h"
 #include "Colors.h"
 #include <sstream>
 #include <iomanip>
@@ -14,14 +14,20 @@ const char* ReverseParse(const double, int&);
 const string ReverseParse(const double);
 
 const char* str_ch(const string);
-
 enum Event
 {
 	// create primitive
 	ev_createPoint = 1,
 	ev_createSegment,
+	ev_createStar,
+	ev_createBrokenLine,
 	ev_createArc,
 	ev_createCircle,
+	ev_createCurve,
+	// drawingMode
+	ev_symmetricalDraw,
+	ev_defualtDraw,
+	ev_rotationDraw,
 	//create requirements
 	ev_req_D_point,
 	ev_req_Eq_Segment,
@@ -30,10 +36,17 @@ enum Event
 	ev_req_D_point_arc,
 	ev_req_angle_segment,
 	ev_input,
+	//fase create requirements
+	ev_req_D_point_fast,
+	ev_req_Eq_point_fast,
 	// redaction
 	ev_moveObjects,
 	ev_scaleObjects,
+	ev_rotateObjects,
 	ev_del,
+	ev_delAll,
+	ev_undo,
+	ev_redu,
 
 	// mouseEvent
 	ev_leftMouseClick,
@@ -54,6 +67,7 @@ enum Event
 	ev_arrowLeft,
 	ev_arrowRight,
 	ev_escape,
+	ev_enter,
 	// Widjets
 	ev_click_Req,
 	ev_change_Prim,
@@ -65,19 +79,154 @@ enum Event
 	ev_save
 };
 
+class CreateObject {
+protected:
+	//enum TypeCreate { tCreate_segment, tCreate_point, tCreate_arc, tCreate_circle, tCreate };
+	IView* view;
+	Model* model;
+	Undo_Redo* undo_redo;
+	bool isCreationFinish = false;
+public:
+	bool IsCreationFinish();
+	CreateObject();
+	virtual ~CreateObject() {}
+	virtual void DrawMode() = 0;
+	virtual Array<ID> HandleEvent(const Event, Array<Vector2>&) = 0;
+};
+
+class CreatingSegment : public CreateObject {
+private:
+	enum StateClick {
+		noClick,
+		oneClick
+	};
+	StateClick stateClick;
+	Array<Vector2> segmentStartPoints;
+	Array<Vector2> imaginaryPoints;
+public:
+	CreatingSegment();
+	~CreatingSegment();
+
+	Array<ID> HandleEvent(const Event, Array<Vector2>&);
+
+	void DrawMode();
+};
+
+class CreatingStar : public CreateObject {
+private:
+	enum StateClick {
+		noClick,
+		oneClick
+	};
+	StateClick stateClick;
+	Array<ID> createdSegments;
+	Array<ID> pointsToConnect;
+	Array<Vector2> segmentStartPoints;
+	Array<Vector2> imaginaryPoints;
+public:
+	CreatingStar();
+	~CreatingStar();
+
+	Array<ID> HandleEvent(const Event, Array<Vector2>&);
+
+	void DrawMode();
+};
+
+class CreatingBrokenLine : public CreateObject {
+private:
+	enum StateClick {
+		noClick,
+		oneClick
+	};
+	StateClick stateClick;
+	Array<ID> createdSegments;
+	Array<ID> pointsToConnect;
+	Array<Vector2> segmentStartPoints;
+	Array<Vector2> imaginaryPoints;
+public:
+	CreatingBrokenLine();
+	~CreatingBrokenLine();
+
+	Array<ID> HandleEvent(const Event, Array<Vector2>&);
+
+	void DrawMode();
+};
+
+class CreatingPoint : public CreateObject
+{
+private:
+
+public:
+	~CreatingPoint();
+
+	CreatingPoint();
+
+	Array<ID> HandleEvent(const Event, Array<Vector2>&);
+
+	void DrawMode();
+};
+
+class CreatingCircle : public CreateObject {
+private:
+	enum StateClick { noClick, oneClick };
+	StateClick stateClick;
+	Array<Vector2> centerPoints;
+	Array<Vector2> imaginaryPoints;
+public:
+	CreatingCircle();
+
+	~CreatingCircle();
+
+	Array<ID> HandleEvent(const Event, Array<Vector2>&);
+
+	void DrawMode();
+};
+
+class CreatingArc : public CreateObject {
+private:
+	enum StateClick { noClick, oneClick, twoClick };
+	StateClick stateClick;
+	Array<Vector2> centerPoints;
+	Array<Vector2> startPoints;
+	Array<Vector2> imaginaryPoints;
+public:
+	CreatingArc();
+	~CreatingArc();
+
+	Array<ID> HandleEvent(const Event, Array<Vector2>&);
+
+	void DrawMode();
+};
+
+class CreatingCurve : public CreateObject {
+private:
+	int countClick;
+	Array<Array<Vector2>> PointsCurves;
+	Array<Vector2> imaginaryPoints;
+public:
+	CreatingCurve();
+	~CreatingCurve();
+
+	Array<ID> HandleEvent(const Event, Array<Vector2>&);
+
+	void DrawMode();
+};
+
+
+//---------------------------------
+
 class Mode {
 protected:
 	Event lastEvent;
 
-	Mode* UnexpectedEvent(const Event e);
+	Mode* UnexpectedEvent(const Event e, const Array<double>&);
 
 	IView* view;
 	Model* model;
-	ModelNew* modelNew;
 public:
 	Mode();
 	virtual ~Mode() {}
-	virtual Mode* HandleEvent(const Event, Array<double>&) = 0;
+	virtual Mode* HandleEvent(const Event, const Array<double>&) = 0;
 	virtual void DrawMode() { }
 };
 
@@ -101,7 +250,7 @@ public:
 	ChangingProperties(const ID _selObjects);
 	~ChangingProperties();
 
-	Mode* HandleEvent(const Event e, Array<double>& params);
+	Mode* HandleEvent(const Event e, const Array<double>& params);
 
 	void DrawMode();
 };
@@ -127,61 +276,82 @@ public:
 	Selection(Array<ID>);
 	~Selection();
 
-	Mode* HandleEvent(const Event e, Array<double>& params);
+	Mode* HandleEvent(const Event e, const Array<double>& params);
 
 	void DrawMode();
 };
 
-class CreatingSegment : public Mode {
+class DMDefualt : public Mode
+{
 private:
-	enum State {
-		noClick,
-		oneClick
-	};
-	State state;
-	Array<double> segmentParameters;
-	Vector2 infoMode;
-public:
-	CreatingSegment();
-	~CreatingSegment();
+	enum StateCreate { none, create};
+	IDrawMode* outputWidjet;
+	std::string nameMode;
+	StateCreate stateCreate;
 
-	Mode* HandleEvent(const Event, Array<double>&);
+	CreateObject* createObject;
+
+	Array<ID> selectionObjects;
+public:
+	DMDefualt(Event);
+
+	~DMDefualt();
+
+	Mode* HandleEvent(const Event, const Array<double>&);
 
 	void DrawMode();
 };
 
-class CreatingPoint : public Mode {
-public:
-	CreatingPoint() {}
-	Mode* HandleEvent(const Event, Array<double>&);
-
-	void DrawMode();
-};
-
-class CreatingCircle : public Mode {
+class DMSymmetrical : public Mode
+{
 private:
-	enum State { noClick, oneClick };
-	State state;
-	Array<double> CircleParameters;
-	Vector2 infoMode;
-public:
-	CreatingCircle();
-	~CreatingCircle();
+	enum StateMode { ox2, oy2, o4, o8 };
+	enum StateCreate { none, create };
 
-	Mode* HandleEvent(const Event, Array<double>&);
+	IDrawMode* outputWidjet;
+	std::string nameMode;
+	StateMode stateMode;
+	StateCreate stateCreate;
+
+	Vector2* pointRotate;
+
+	CreateObject* createObject;
+
+	Array<ID> selectionObjects;
+
+	Array<Vector2> PointRotate(const Vector2&, const Vector2&);
+public:
+	DMSymmetrical(Event, const Array<double>&);
+
+	~DMSymmetrical();
+
+	Mode* HandleEvent(const Event, const Array<double>&);
+
 	void DrawMode();
 };
 
-class CreatingArc : public Mode {
+class DMSectorSymmetrical : public Mode
+{
 private:
-	enum State { noClick, oneClick, twoClick };
-	State state;
-	Array<double> arcParameters;
-	Vector2 infoMode;
+	enum StateCreate { none, create};
+	IDrawMode* outputWidjet;
+	std::string nameMode;
+	StateCreate stateCreate;
+	Vector2* pointRotate;
+	CreateObject* createObject;
+	Array<ID> selectionObjects;
+	
+	unsigned int countSector;
+	double sinus;
+	double cosinus;
+
+	Array<Vector2> PointRotate(const Vector2&, const Vector2&);
 public:
-	CreatingArc();
-	~CreatingArc();
-	Mode* HandleEvent(const Event, Array<double>&);
+	DMSectorSymmetrical(const Event, const Array<double>&);
+
+	~DMSectorSymmetrical();
+
+	Mode* HandleEvent(const Event, const Array<double>&);
 
 	void DrawMode();
 };
@@ -202,18 +372,23 @@ public:
 class Redaction : public Mode {
 private:
 	enum State { noClick, click };
-	enum StatusRedaction { move, scale };
+	enum StatusRedaction { move, scale, rotate };
 	Array<ID> selectedObjects;
 	Vector2 posStart;
 	Vector2 posEnd;
+	Vector2 posLast;
+	Vector2* pointRotate;
+	double shiftBuffer;
 	State state;
 	StatusRedaction status;
+
+	bool isChanged;
 public:
 	// must take containers in constructor
 	Redaction(Array<ID>, Event);
 	~Redaction();
 
-	Mode* HandleEvent(const Event, Array<double>&);
+	Mode* HandleEvent(const Event, const Array<double>&);
 
 	void DrawMode();
 };
@@ -245,8 +420,31 @@ public:
 	CreateRequirementWithParam();
 	~CreateRequirementWithParam();
 
-	Mode* HandleEvent(const Event, Array<double>&);
+	Mode* HandleEvent(const Event, const Array<double>&);
 
+	void DrawMode();
+};
+
+class CreateDistBetPointsReq : public Mode {
+public:
+	enum ModeType { pointDist, equalPointPos };
+private:
+	enum State { firstPointSelected, pointNotSelected, secondPointSelected };
+	State state;
+	ModeType type;
+	IDrawMode* outputWidjet;
+
+	ID firstPoint;
+	ID secondPoint;
+	Vector2 currentCursorPos;
+	IRequirementInput* inputWidjet;
+public:
+
+
+	CreateDistBetPointsReq(ModeType);
+
+	~CreateDistBetPointsReq();
+	Mode * HandleEvent(const Event, const Array<double>&);
 	void DrawMode();
 };
 
@@ -263,7 +461,7 @@ public:
 	NavigationOnScene();
 	~NavigationOnScene();
 
-	Mode* HandleEvent(const Event, Array<double>&);
+	Mode* HandleEvent(const Event, const Array<double>&);
 
 	void DrawMode();
 };

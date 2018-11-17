@@ -19,6 +19,8 @@ DrawWindow::DrawWindow(int x, int y, int w, int h, const char *l)
 	box(FL_UP_BOX);
 	color(FL_BLACK);
 
+	drawCoord = new Fl_Output(520, 630, 200, 30);
+
 	resizable(this);
 	viewLog = viewLog->GetInstance();
 	inventory = inventory->GetInstance();
@@ -69,6 +71,8 @@ int DrawWindow::handle(int e)
 		fl_cursor(*(inventory->lastCursor));
 		params.PushBack((Fl::event_x() - translateScene->x) / scaleScene);
 		params.PushBack((Fl::event_y() - translateScene->y) / scaleScene);
+		std::string out = "x:" + ReverseParse(params[0]) + " y: " + ReverseParse(params[1]);
+		OutputCoord::Push(str_ch(out));
 		Presenter::Set_event(ev_mouseMove, params);
 		break;
 	}

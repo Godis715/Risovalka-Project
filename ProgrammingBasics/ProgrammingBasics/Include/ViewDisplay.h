@@ -85,6 +85,16 @@ public:
 
 };
 
+class DrawMode : public DisplayWidjet
+{
+private:
+	static Fl_Output* output;
+	static DrawMode* instance;
+	DrawMode();
+public:
+	static DrawMode* GetInstance();
 
+	void SetName(const std::string);
+};
 
 #endif __DISPLAY

@@ -19,11 +19,15 @@ private:
 		}
 	};
 
+	Node* guardHead;
+	Node* guardTail;
 	Node* head;
 	Node* tail;
 	int size;
 public:
 	List() {
+		guardHead = nullptr;
+		guardTail = nullptr;
 		head = nullptr;
 		tail = nullptr;
 		size = 0;
@@ -38,17 +42,28 @@ public:
 		bool isValid;
 
 		bool MoveNext() {
-			if (!isValid || current->next == nullptr) {
+			if (!isValid || current == list->guardTail) {
 				isValid = false;
 				return false;
 			}
+			
 			prev = current;
 			current = current->next;
-			return true;
+			if (current == list->guardTail) {
+				isValid = false;
+				return false;
+			}
+			else {
+				return true;
+			}
+		}
+	public:
+		Marker() {
+			list = nullptr;
+			current = nullptr;
+			isValid = false;
 		}
 
-
-	public:
 		Marker(List* _list)
 		{
 			if (_list->head == nullptr) {
@@ -61,32 +76,64 @@ public:
 			list = _list;
 		}
 
+		Marker(List* _list, Node* _prev, Node* _current)
+		{
+			if (_list->head == nullptr || _prev == nullptr || _current == nullptr) {
+				isValid = false;
+			}
+			prev = _prev;
+			current = _current;
+			list = _list;	prev = _prev;
+			if (current == list->guardTail) {
+				isValid = false;
+			}
+			else {
+				isValid = true;
+			}
+		}
+
 		Marker(const Marker& marker) {
 			this->current = marker->current;
 			this->prev = marker->prev;
 			this->list = marker->list;
+			this->isValid = marker.isValid;
 		}
 
 		Marker(Marker&& marker) {
 			this->current = marker.current;
 			this->prev = marker.prev;
 			this->list = marker.list;
+			this->isValid = marker.isValid;
 
 			marker.current = nullptr;
 			marker.prev = nullptr;
 			marker.list = nullptr;
 		}
 
-		Marker() {
-			list = nullptr;
-			current = nullptr;
-			isValid = false;
-		}
-
 		void operator=(const Marker& marker) {
 			this->current = marker.current;
 			this->prev = marker.prev;
 			this->list = marker.list;
+			this->isValid = marker.isValid;
+		}
+
+		void operator=(Marker&& marker) {
+			this->current = marker.current;
+			this->prev = marker.prev;
+			this->list = marker.list;
+			this->isValid = marker.isValid;
+
+			marker.current = nullptr;
+			marker.prev = nullptr;
+			marker.list = nullptr;
+		}
+
+		bool operator==(const Marker& marker) {
+			return current == marker.current;
+		}
+
+		bool operator!=(const Marker& marker) {
+			return current != marker.current;
 		}
 
 		bool operator++() {
@@ -99,11 +146,12 @@ public:
 			}
 			Node* temp = current;
 
-			if (prev != nullptr) {
-				prev->next = current->next;
+			if (list->head == current) {
+				list->head = current->next;
+				list->guardHead->next = list->head;
 			}
 			else {
-				list->head = current->next;
+				prev->next = current->next;
 			}
 			if (current->next == nullptr) {
 				list->tail = prev;
@@ -113,9 +161,9 @@ public:
 			delete temp;
 		}
 
-		T GetValue() const {
+		T operator*() const {
 			if (!isValid) {
-                throw std::runtime_error("Marker was not valid");
+				throw std::exception("Marker was not valid");
 			}
 			return current->value;
 		}
@@ -141,13 +189,50 @@ public:
 	size_t GetSize() const {
 		return size;
 	}
-	Marker GetMarker() {
-		return Marker(this);
+
+	Marker BeforeBegin() {
+		head = guardHead;
+		auto marker = Marker(this);
+		if (head != nullptr) {
+			head = guardHead->next;
+		}
+		return marker;
 	}
-	void PushTail(const T& val) {
+
+	Marker Begin() {
+		auto marker = Marker(this);
+		if (marker.IsValid()) {
+			return marker;
+		}
+		else {
+			return AfterEnd();
+		}
+	}
+
+	Marker End() {
+		auto marker = Marker(this);
+		auto temp = Marker(this);
+		while (++temp)
+		{
+			++marker;
+		}
+		return marker;
+	}
+
+	Marker AfterEnd() {
+		return Marker(this, tail, guardTail);
+	}
+
+	void Push(const T& val) {
+		if (guardHead == nullptr) {
+			guardHead = new  Node(nullptr, val);
+			guardTail = new  Node(nullptr, val);
+		}
 		if (size == 0)
 		{
-			head = tail = new Node(nullptr, val);
+			head = new Node(nullptr, val);
+			tail = head;
+			guardHead->next = new Node(head, val);
 		}
 		else
 		{
@@ -155,8 +240,29 @@ public:
 			tail->next = newNode;
 			tail = newNode;
 		}
+		tail->next = guardTail;
 		size++;
 	}
+
+	T GetTail() {
+		if (tail != nullptr)
+		{
+			return tail->value;
+		}
+		else {
+			// $$$
+		}
+	}
+
+	T GetHead() {
+		if (head != nullptr)
+		{
+			return head->value;
+		}
+		else {
+			// $$$
+		}
+	}	
 
 	Marker Find(const T& val) {
 		Marker marker(this);
@@ -167,179 +273,22 @@ public:
 		}
 		return marker;
 	}
-};
 
-//
-//template <class T> class ListE
-//{
-//private:
-//	template <class T> class Element
-//	{
-//	public:
-//		Element() {
-//
-//		}
-//		Element(T& val) : value(val) {
-//		
-//		}
-//		Element* next = nullptr;
-//		Element* prev = nullptr;
-//		T value;
-//	};
-//	Element<T>* head;
-//	Element<T>* tail;
-//	Element<T>* current;
-//	int size = 0;
-//public:
-//	ListE() {
-//		head = nullptr;
-//		tail = nullptr;
-//		current = nullptr;
-//	}
-//
-//	int GetSize() const {
-//		return size;
-//	}
-//
-//	void PushHead(T& newValue) {
-//		Element<T>* newElement = new Element<T>(newValue);
-//		if (size != 0) {
-//			head->prev = newElement;
-//			newElement->next = head;
-//		}
-//		else {
-//			current = newElement;
-//			tail = newElement;
-//		}
-//		head = newElement;
-//		++size;
-//		return;
-//	}
-//
-//	void PushAfterCurrent(T& newValue) {
-//		if (size == 0) {
-//			PushHead(newValue);
-//			return;
-//		}
-//		if (current == tail) {
-//			PushTail(newValue);
-//			return;
-//		}
-//		Element<T>* newElement = new Element<T>(newValue);
-//		newElement->next = current->next;
-//		newElement->prev = current;
-//		current->next->prev = newElement;
-//		current->next = newElement;
-//		++size;
-//		return;
-//	}
-//
-//	void PushBeforeCurrent(T& newValue) {
-//		if (size == 0) {
-//			PushHead(newValue);
-//			return;
-//		}
-//		if (current == head) {
-//			PushHead(newValue);
-//			return;
-//		}
-//		MovePrev();
-//		PushAfterCurrent();
-//		MoveNext();
-//		MoveNext();
-//	}
-//
-//	void PushTail(T& newValue) {
-//		if (size == 0) {
-//			PushHead(newValue);
-//			return;
-//		}
-//		Element<T>* newElement = new Element<T>(newValue);
-//		newElement->prev = tail;
-//		tail->next = newElement;
-//		tail = newElement;
-//		++size;
-//		return;
-//	}
-//
-//	void DeleteCurrent() {
-//		if (size == 1) {
-//			head = nullptr;
-//			tail = nullptr;
-//			delete current;
-//			current = nullptr;
-//			--size;
-//			return;
-//		}
-//		if ((current->next == nullptr) || (current == tail)) {
-//			tail = current->prev;
-//		}
-//		else {
-//			current->next->prev = current->prev;
-//		}
-//		if ((current->prev == nullptr) || (current == head)) {
-//			head = current->next;
-//		}
-//		else {
-//			current->prev->next = current->next;
-//		}
-//		Element<T>* temp = current;
-//		if (!MoveNext()) {
-//			current = tail;
-//		}
-//		delete temp;
-//		--size;
-//		return;
-//	}
-//
-//	void DeleteList() {
-//		while (size != 0)
-//		{
-//			current = head;
-//			DeleteCurrent();
-//		}
-//		return;
-//	}
-//
-//	bool IsCurrent() {
-//		if (current == nullptr) {
-//			return false;
-//		}
-//		else {
-//			return true;
-//		}
-//	}
-//
-//	T GetCurrent() {
-//		return current->value;
-//	}
-//
-//	void MoveHead() {
-//		current = head;
-//	}
-//
-//	void MoveTail() {
-//		current =tail;
-//	}
-//
-//	bool MoveNext() {
-//		if (current->next == nullptr) {
-//			return false;
-//		}
-//		else {
-//			current = current->next;
-//			return true;
-//		}
-//	}
-//
-//	bool MovePrev() {
-//		if (current->prev == nullptr) {
-//			return false;
-//		}
-//		else {
-//			current = current->prev;
-//			return true;
-//		}
-//	}
-//};
+	void Clear() {
+		if (head == nullptr || size ==0)
+		{
+			return;
+		}
+		guardHead->next = guardTail;
+		auto node = head;
+		while (node != guardTail) {
+			auto temp = node->next;
+			delete node;
+			node = temp;
+		}
+		size = 0;
+		head = nullptr;
+		tail = nullptr;
+	}
+};
 #endif

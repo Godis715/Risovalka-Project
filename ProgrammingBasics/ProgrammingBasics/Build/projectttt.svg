@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- DrawProject -->
+<svg width="1000" height="1000">
+	<drawProject:point
+		px="482.778"
+		py="311.199"
+		id="1"
+	/>
+	<drawProject:point
+		px="509.488"
+		py="237.279"
+		id="2"
+	/>
+	<drawProject:point
+		px="509.464"
+		py="237.28"
+		id="3"
+	/>
+	<drawProject:point
+		px="619.811"
+		py="131.455"
+		id="4"
+	/>
+	<drawProject:point
+		px="665.719"
+		py="369.514"
+		id="5"
+	/>
+	<drawProject:point
+		px="619.815"
+		py="131.416"
+		id="6"
+	/>
+	<drawProject:point
+		px="665.749"
+		py="369.587"
+		id="7"
+	/>
+	<drawProject:point
+		px="482.726"
+		py="311.232"
+		id="8"
+	/>
+	<drawProject:point
+		px="609.277"
+		py="230.685"
+		id="9"
+	/>
+	<line
+		x1="482.778"
+		y1="311.199"
+		x2="509.488"
+		y2="237.279"
+		id="10"
+		childIds="1 2"
+		stroke="red"
+		stroke-width="5"
+	/>
+	<line
+		x1="509.464"
+		y1="237.28"
+		x2="619.811"
+		y2="131.455"
+		id="11"
+		childIds="3 4"
+		stroke="red"
+		stroke-width="5"
+	/>
+	<line
+		x1="665.719"
+		y1="369.514"
+		x2="619.815"
+		y2="131.416"
+		id="12"
+		childIds="5 6"
+		stroke="red"
+		stroke-width="5"
+	/>
+	<line
+		x1="665.749"
+		y1="369.587"
+		x2="482.726"
+		y2="311.232"
+		id="13"
+		childIds="7 8"
+		stroke="red"
+		stroke-width="5"
+	/>
+	<drawProject:req>
+		<distBetPoints
+			id="14"
+			IDs="2 3"
+			params="0"	/>
+		<distBetPoints
+			id="15"
+			IDs="1 8"
+			params="0"	/>
+		<distBetPoints
+			id="16"
+			IDs="5 7"
+			params="0"	/>
+		<distBetPoints
+			id="17"
+			IDs="4 6"
+			params="0"	/>
+		<distBetPoints
+			id="18"
+			IDs="3 9"
+			params="100"	/>
+		<distBetPoints
+			id="19"
+			IDs="8 9"
+			params="150"	/>
+		<distBetPoints
+			id="20"
+			IDs="7 9"
+			params="150"	/>
+		<distBetPoints
+			id="21"
+			IDs="6 9"
+			params="100"	/>
+	</drawProject:req>
+</svg>

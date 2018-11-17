@@ -1,10 +1,10 @@
 #ifndef __LOGGER
 #define __LOGGER
 
-#include "Requirement.h"
 #include <fstream>
+#include <string>
 
-
+using std::string;
 
 #define LEVEL_1 1
 #define LEVEL_2 2
@@ -12,6 +12,7 @@
 #define MAX_LEVEL 3
 
 #define LOG Logger::Log
+#define LOGERROR Logger::LogError
 
 class Logger {
 private:
@@ -57,9 +58,20 @@ public:
 		}
 	}
 
-	static void Log(std::string message, int priority) {
+	static void Log(const char* message, int priority) {
 		if (priority >= minLevel) {
-			(*output) << message << std::endl;
+			(*output) << "LOG:" << message << std::endl;
+		}
+		else {
+			return;
+		}
+	}
+
+	static void LogError(const char* message, int priority) {
+		if (priority >= minLevel) {
+			(*output) << "ERROR:" << message << std::endl;
+			system("pause");
+			exit(0);
 		}
 		else {
 			return;
@@ -67,8 +79,8 @@ public:
 	}
 };
 
-string operator + (int num, const string &str);
+string operator + (int num, string str);
 
-string operator + (const string &str, int num);
+string operator + (string str, int num);
 
 #endif

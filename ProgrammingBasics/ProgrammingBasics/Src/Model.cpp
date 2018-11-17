@@ -1,1469 +1,380 @@
-#include "Model.h"
-#include <functional>
-#define cast dynamic_cast
-
-bool Model::NewComponent(const ID& id, Array<ID>& Prims, Array<ID>& Reqs)
-{
-	delete currentComponent;
-	currentComponent = new BinSearchTree<ID, ID>;
-	Queue<ID> queuePrim;
-	Queue<ID> queueReq;
-	ID currentID;
-
-	auto tempPrimMarker = dataPrim.Find(id);
-	if (tempPrimMarker.IsValid()) {
-		// get ID Requirement
-		auto tempLinkMarker = dataLink.Find(id);
-		if(tempLinkMarker.IsValid()) {
-			currentID = (*dataLink.Find(id))->GetMarker().GetValue();
-		}
-		else {
-			currentComponent->Add(id, id);
-			Prims.PushBack(id);
-			return true;
-		}
-	}
-	else {
-		auto tempReqMarker = dataReq.Find(id);
-		if (tempReqMarker.IsValid()) {
-			currentID = id;
-		}
-		else {
-			return false;
-		}
-	}
-
-	queueReq.Push(currentID);
-	currentComponent->Add(currentID, currentID);
-	while (!queueReq.IsEmpty())
-	{
-		while (!queueReq.IsEmpty())
-		{
-			currentID = queueReq.Pop();
-
-			Reqs.PushBack(currentID);
-			
-			auto marker = dataLink.Find(currentID);
-			if (marker.IsValid()) {
-				for (auto l = (*marker)->GetMarker(); l.IsValid(); ++l) {
-					currentID = l.GetValue();
-					if (!currentComponent->Find(currentID).IsValid()) {
-						currentComponent->Add(currentID, currentID);
-						queuePrim.Push(currentID);
-						
-					}
-				}
-			}
-		}
-		while (!queuePrim.IsEmpty())
-		{
-			currentID = queuePrim.Pop();
-			
-			Prims.PushBack(currentID);
-
-			auto marker = dataLink.Find(currentID);
-			if (marker.IsValid()) {
-				for (auto l = (*marker)->GetMarker(); l.IsValid(); ++l) {
-					currentID = l.GetValue();
-					if (!currentComponent->Find(currentID).IsValid()) {
-						currentComponent->Add(currentID, currentID);
-						queueReq.Push(currentID);
-						
-					}
-				}
-			}
-		}
-	}
-	return (Prims.GetSize() != 0) || (Reqs.GetSize() != 0);
-}
-
-bool Model::GetRequirements(const Array<ID>& ids, Array<Requirement*>& req) {
-	for (int i = 0; i < ids.GetSize(); ++i) {
-		auto marker = dataReq.Find(ids[i]);
-		if (marker.IsValid()) {
-			req.PushBack(*marker);
-		}
-	}
-	return (req.GetSize() != ids.GetSize());
-}
-
-bool Model::GetPrimitives(const Array<ID>& ids, Array<Primitive*>& prim) {
-	for (int i = 0; i < ids.GetSize(); ++i) {
-		auto marker = dataPrim.Find(ids[i]);
-		if (marker.IsValid()) {
-			prim.PushBack(*marker);
-		}
-	}
-	return (prim.GetSize() == ids.GetSize());
-}
-
-bool Model::GetRequirementsFromComponent(BinSearchTree<ID, ID>& component, Array<Requirement*>& reqs) {
-	for (auto i = component.GetMarker(); i.IsValid(); ++i) {
-		auto reqsMarker = dataReq.Find(*i);
-		if (reqsMarker.IsValid()) {
-			reqs.PushBack(*reqsMarker);
-		}
-	}
-	return (reqs.GetSize() != 0);
-}
-
-bool Model::GetPrimitivesFromComponent(BinSearchTree<ID, ID>& component, Array<Primitive*>& prims) {
-	for (auto i = component.GetMarker(); i.IsValid(); ++i) {
-		auto primsMarker = dataPrim.Find(*i);
-		if (primsMarker.IsValid()) {
-			prims.PushBack(*primsMarker);
-		}
-	}
-	return (prims.GetSize() != 0);
-}
-
-void Model::ConnectPrimitives(const Array<Primitive*>& prims) {
-	Requirement* _connection = new ConnectionReq;
-	dataReq.Add(_connection->GetID(), _connection);
-	CreateLink(_connection->GetID(), prims);
-
-}
-
-bool Model::CreateObject(const object_type type, const Array<double>& params, ID& obj_id) {
-	switch (type)
-	{
-	case ot_point: {
-		if (params.GetSize() != 2) {
-			return false;
-		}
-		Point* _point;
-		_point = new Point(params[0], params[1]);
-		dataPrim.Add(_point->GetID(), _point);
-		obj_id = _point->GetID();
-		return true;
-	}
-	case ot_segment: {
-		if (params.GetSize() != 4) {
-			return false;
-		}
-		Point* p1 = new Point(params[0], params[1]);
-		Point* p2 = new Point(params[2], params[3]);
-
-		Segment* _seg = new Segment(p1, p2);
-
-		// points belong to segment
-		p1->SetParent(_seg);
-		p2->SetParent(_seg);
-
-		dataPrim.Add(p1->GetID(), p1);
-		dataPrim.Add(p2->GetID(), p2);
-		dataPrim.Add(_seg->GetID(), _seg);
-
-		Array<Primitive*> prims(3);
-		prims[0] = p1;
-		prims[1] = p2;
-		prims[2] = _seg;
-		ConnectPrimitives(prims);
-
-		obj_id = _seg->GetID();
-		return true;
-	}
-	case ot_arc: {
-		if (params.GetSize() != 6) {
-			return false;
-		}
-		Vector2 vector1 = Vector2(params[2], params[3]) - Vector2(params[0], params[1]);
-		Vector2 vector2 = Vector2(params[4], params[5]) - Vector2(params[0], params[1]);
-
-		double angle = Vector2::Angle(vector1, vector2);
-
-		vector2 = vector2 * (vector1.GetLength() / vector2.GetLength());
-
-		Point* p1 = new Point(vector1.x + params[0], vector1.y + params[1]);
-		Point* p2 = new Point(vector2.x + params[0], vector2.y + params[1]);
-
-		Arc* _arc = new Arc(p1, p2, angle);
-		_arc->RestoreCenter();
-
-		// points belong to arc
-		p1->SetParent(_arc);
-		p2->SetParent(_arc);
-
-		dataPrim.Add(p1->GetID(), p1);
-		dataPrim.Add(p2->GetID(), p2);
-		dataPrim.Add(_arc->GetID(), _arc);
-
-		Array<Primitive*> prims(3);
-		prims[0] = p1;
-		prims[1] = p2;
-		prims[2] = _arc;
-		ConnectPrimitives(prims);
-
-		obj_id = _arc->GetID();
-		return true;
-	}
-	case ot_circle: {
-		if (params.GetSize() != 3) {
-			return false;
-		}
-		Point* center = new Point(params[0], params[1]);
-
-		Circle* _circle = new Circle(center, params[2]);
-
-		// points belong to arc
-		center->SetParent(_circle);
-
-		dataPrim.Add(center->GetID(), center);
-		dataPrim.Add(_circle->GetID(), _circle);
-
-		Array<Primitive*> prims(2);
-		prims[0] = center;
-		prims[1] = _circle;
-		ConnectPrimitives(prims);
-
-		obj_id = _circle->GetID();
-		return true;
-	}
-	default:
-		return false;
-	}
-}
-
-bool Model::DeleteRequirement(const ID& req_id) {
-	auto dataReqMarker = dataReq.Find(req_id);
-	if (!dataReqMarker.IsValid()) {
-		return false;
-	}
-
-	auto dataLinkMarker = dataLink.Find(req_id);
-	if (!dataLinkMarker.IsValid()) {
-        throw std::invalid_argument("Invalid link requirement->primitive");
-	}
-
-	auto listPrim = *dataLinkMarker;
-	dataLinkMarker.Delete();
-
-	for (auto i = listPrim->GetMarker(); i.IsValid(); ++i) {
-		dataLinkMarker = dataLink.Find(i.GetValue());
-		if (!dataLinkMarker.IsValid()) {
-            throw std::invalid_argument("Invalid link primitive->requirement");
-		}
-		auto listReq = *dataLinkMarker;
-		listReq->Find(req_id).DeleteCurrent();
-	}
-
-	Requirement* req = *dataReqMarker;
-	dataReqMarker.Delete();
-	delete req;
-	delete listPrim;
-
-
-	return true;
-}
-
-bool Model::DeletePrimitive(const ID& prim_id) {
-	auto dataPrimMarker = dataPrim.Find(prim_id);
-	if (!dataPrimMarker.IsValid()) {
-		return false;
-	}
-
-	Primitive* prim = *dataPrimMarker;
-	auto dataLinkMarker = dataLink.Find(prim_id);
-	if (!dataLinkMarker.IsValid()) {
-		delete prim;
-		dataPrimMarker.Delete();
-		return true;
-	}
-
-	if (prim->GetType() == ot_point) {
-		Point* point = cast<Point*>(prim);
-		if (point->GetParent() != nullptr) {
-			return DeletePrimitive(point->GetParent()->GetID());
-		}
-	}
-
-	auto list = *dataLinkMarker;
-
-	while (list->GetSize() != 0) {
-		DeleteRequirement(list->GetMarker().GetValue());
-	}
-
-	delete list;
-
-	dataPrimMarker.Delete();
-	dataLinkMarker.Delete();
-
-	switch (prim->GetType())
-	{
-	case ot_segment: {
-		Segment* segment = cast<Segment*>(prim);
-		segment->point1->DeleteParent();
-		segment->point2->DeleteParent();
-		bool result = DeletePrimitive(segment->GetPoint1_ID());
-		result &= DeletePrimitive(segment->GetPoint2_ID());
-		delete prim;
-		return result;
-	}
-	case ot_arc: {
-		Arc* arc = cast<Arc*>(prim);
-		arc->point1->DeleteParent();
-		arc->point2->DeleteParent();
-		bool result = DeletePrimitive(arc->GetPoint1_ID());
-		result &= DeletePrimitive(arc->GetPoint2_ID());
-		delete prim;
-		return result;
-	}
-	case ot_circle: {
-		Circle* circle = cast<Circle*>(prim);
-		circle->center->DeleteParent();
-		bool result = DeletePrimitive(circle->GetCenter_ID());
-		delete prim;
-		return result;
-	}
-	default:
-		delete prim;
-		return true;
-	}
-	// return DeletePrimitive(true); ??
-
-}
-
-void Model::Clear() {
-	if (dataPrim.GetSize() != 0) {
-		for (auto i = dataPrim.GetMarker(); i.IsValid(); ++i) {
-			delete *i;
-		}
-		dataPrim.DeleteDict();
-	}
-	if (dataReq.GetSize() != 0) {
-		for (auto i = dataReq.GetMarker(); i.IsValid(); ++i) {
-			delete *i;
-		}
-		dataReq.DeleteDict();
-	}
-	if (dataLink.GetSize() != 0) {
-		for (auto i = dataLink.GetMarker(); i.IsValid(); ++i) {
-			delete *i;
-		}
-		dataLink.DeleteDict();
-	}
-}
-
-bool Model::CreateRequirementByID(const object_type type, const Array<ID>& id_arr, const Array<double>& params, ID& req_id) {
-	Array<Primitive*> primitives;
-	Queue<Primitive*> arc;
-	Queue<Primitive*> circle;
-	Queue<Primitive*> segment;
-	Queue<Primitive*> point;
-	for (int i = 0; i < id_arr.GetSize(); ++i) {
-		auto marker = dataPrim.Find(id_arr[i]);
-		if (!marker.IsValid()) {
-			return false;
-		}
-		switch ((*marker)->GetType())
-		{
-		case ot_point: {
-			point.Push(*marker);
-			break;
-		}
-		case ot_segment: {
-			segment.Push(*marker);
-			break;
-		}
-		case ot_circle: {
-			circle.Push(*marker);
-			break;
-		}
-		case ot_arc: {
-			arc.Push(*marker);
-			break;
-		}
-		default:
-			break;
-		}
-	
-	}
-	// arc
-	while (!arc.IsEmpty())
-	{
-		primitives.PushBack(arc.Pop());
-	}
-	// cicrle
-	while (!circle.IsEmpty())
-	{
-		primitives.PushBack(circle.Pop());
-	}
-	// segment
-	while (!segment.IsEmpty())
-	{
-		primitives.PushBack(segment.Pop());
-	}
-	// point
-	while (!point.IsEmpty())
-	{
-		primitives.PushBack(point.Pop());
-	}
-	return CreateRequirement(type, primitives, params, req_id);
-}
-
-bool Model::CreateRequirement(object_type type, Array<Primitive*>& primitives, const Array<double>& params, ID& req_id) {
-	Requirement* requirement;
-	switch (type)
-	{
-	case ot_distBetPoints: {
-		// verification parameters
-		if ((primitives.GetSize() != 2)
-			|| (params.GetSize() != 1)
-			|| (params[0] < 0)
-			|| (primitives[0]->GetType() != ot_point)
-			|| (primitives[1]->GetType() != ot_point)) {
-			return false;
-		}
-		// creating
-		requirement = new DistBetPointsReq(cast<Point*>(primitives[0]),
-			cast<Point*>(primitives[1]),
-			params[0]);
-		break;
-	}
-	case ot_equalSegmentLen: {
-		// verification parameters
-		if ((primitives.GetSize() != 2)
-			|| (params.GetSize() != 0)
-			|| (primitives[0]->GetType() != ot_segment)
-			|| (primitives[1]->GetType() != ot_segment)) {
-			return false;
-		}
-		// creating
-		requirement = new EqualSegmentLenReq(cast<Segment*>(primitives[0]),
-			cast<Segment*>(primitives[1]));
-		break;
-	}
-	case ot_pointsOnTheOneHand: {
-		// verification parameters
-		if ((primitives.GetSize() != 3)
-			|| (params.GetSize() != 0)
-			|| (primitives[0]->GetType() != ot_segment)
-			|| (primitives[1]->GetType() != ot_point)
-			|| (primitives[2]->GetType() != ot_point))
-		{
-			return false;
-		}
-		// creating
-		requirement = new PointsOnTheOneHand(cast<Segment*>(primitives[0]),
-			cast<Point*>(primitives[1]),
-			cast<Point*>(primitives[2]));
-		break;
-	}
-	case ot_distBetPointSeg: {
-		// verification parameters
-		if ((primitives.GetSize() != 2)
-			|| (params.GetSize() != 1)
-			|| (params[0] < 0)
-			|| (primitives[0]->GetType() != ot_segment)
-			|| (primitives[1]->GetType() != ot_point))
-		{
-			return false;
-		}
-		// creating
-		requirement = new DistanceBetweenPointSegment(cast<Segment*>(primitives[0]),
-			cast<Point*>(primitives[1]),
-			params[0]);
-		break;
-	}
-	case ot_pointPosReq: {
-		if (primitives.GetSize() != 1
-			|| params.GetSize() != 2
-			|| primitives[0]->GetType() != ot_point) {
-		}
-		requirement = new PointPosReq(cast<Point*>(primitives[0]), params[0], params[1]);
-		break;
-	}
-	case ot_angleBetSeg: {
-		// verification parameters
-		if ((primitives.GetSize() != 2)
-			|| (params.GetSize() != 1)
-			|| (primitives[0]->GetType() != ot_segment)
-			|| (primitives[1]->GetType() != ot_segment))
-		{
-			return false;
-		}
-		// creating
-		requirement = new AngleBetweenSegments(cast<Segment*>(primitives[0]),
-			cast<Segment*>(primitives[1]),
-			params[0]);
-		break;
-	}
-	case ot_distBetPointArc: {
-		// verification parameters
-		if ((primitives.GetSize() != 2)
-			|| (params.GetSize() != 1)
-			|| (primitives[0]->GetType() != ot_arc)
-			|| (primitives[1]->GetType() != ot_point))
-		{
-			return false;
-		}
-		// creating
-		requirement = new DistanceBetweenPointArc(cast<Arc*>(primitives[0]),
-			cast<Point*>(primitives[1]),
-			params[0]);
-		break;
-	}
-	case ot_pointInArc: {
-		// verification parameters
-		if ((primitives.GetSize() != 2)
-			|| (params.GetSize() != 0)
-			|| (primitives[0]->GetType() != ot_arc)
-			|| (primitives[1]->GetType() != ot_point))
-		{
-			return false;
-		}
-		// creating
-		requirement = new PointInArc(cast<Arc*>(primitives[0]),
-			cast<Point*>(primitives[1]));
-		break;
-		}
-					 //case correctTriangle: {
-					 //	CorrectTriangle* Requirement;
-					 //	if ((primitives[0]->GetType() == segment)
-					 //		&& (primitives[1]->GetType() == segment)
-					 //		&& (primitives[2]->GetType() == segment)
-					 //		&& (params.GetSize() > 0)) {
-					 //		Requirement = new ÑorrectTriangle(dynamic_cast<Segment*>(primitives[0]),
-					 //			dynamic_cast<Segment*>(primitives[1]),
-					 //			dynamic_cast<Segment*>(primitives[2]),
-					 //			params[0]);
-					 //		dataPrimReq.PushBack(Requirement);
-					 //		return true;
-					 //	}
-					 //	else {
-					 //		return false;
-					 //	}
-					 //}
-					 //case nsAngle: {
-					 //	NsAngle* Requirement;
-					 //	ListE<Segment*> list;
-					 //	for (int i = 0; i < primitives.GetSize(); ++i) {
-					 //		if (segment == primitives[i]->GetType()) {
-					 //			list.PushTail(dynamic_cast<Segment*>(primitives[i]));
-					 //		}
-					 //		else {
-					 //			return false;
-					 //		}
-					 //	}
-					 //	Requirement = new NsAngle(list);
-					 //	dataPrimReq.PushBack(Requirement);
-					 //	return true;
-					 //}
-					 //case correctNsAngle: {
-					 //	CorrectNsAngle* Requirement;
-					 //	if (params.GetSize() > 0) {
-					 //		ListE<Segment*> list;
-					 //		for (int i = 0; i < primitives.GetSize(); ++i) {
-					 //			if (segment == primitives[i]->GetType()) {
-					 //				list.PushTail(dynamic_cast<Segment*>(primitives[i]));
-					 //			}
-					 //			else {
-					 //				return false;
-					 //			}
-					 //		}
-					 //		Requirement = new CorrectNsAngle(list, params[0]);
-					 //		dataPrimReq.PushBack(Requirement);
-					 //		return true;
-					 //	}
-					 //	else {
-					 //		return false;
-					 //	}
-					 //}
-					 //}
-	default:
-		return false;
-	}
-
-	req_id = requirement->GetID();
-
-	dataReq.Add(req_id, requirement);
-
-	CreateLink(req_id, primitives);
-
-	return this->OptimizeByID(req_id);
-}
-
-void Model::CreateLink(const ID& IDreq, const Array<Primitive*>& primitives) {
-	// create link Prim on Req
-	for (int i = 0; i < primitives.GetSize(); ++i) {
-		auto markerLink = dataLink.Find(primitives[i]->GetID());
-		if (markerLink.IsValid()) {
-			(*markerLink)->PushTail(IDreq);
-		}
-		else {
-			auto newList = new List<ID>;
-			newList->PushTail(IDreq);
-			dataLink.Add(primitives[i]->GetID(), newList);
-		}
-	}
-	// create link Req on Prim
-	List<ID>* list = new List<ID>;
-	for (int i = 0; i < primitives.GetSize(); ++i) {
-		list->PushTail(primitives[i]->GetID());
-	}
-	dataLink.Add(IDreq, list);
-}
-
-bool Model::DischargeInfoObjects(Array<infoObject>& dataPrimInfoObjects)
-{
-	if (dataPrim.GetSize() == 0) {
-		return false;
-	}
-	auto dataPrimMarker = dataPrim.GetMarker();
-	do
-	{
-		infoObject temp;
-		GetObjParam((*dataPrimMarker)->GetID(), temp.params);
-		GetObjType((*dataPrimMarker)->GetID(), temp.type);
-		dataPrimInfoObjects.PushBack(temp);
-	} while (++dataPrimMarker);
-	return true;
-}
-
-// optimize
-
-double Model::GetError(const Array<Requirement*>& requirments) const {
-	double error = 0.0;
-	for (int i = 0; i < requirments.GetSize(); ++i) {
-		error += requirments[i]->error();
-	}
-	return error / requirments.GetSize();
-}
-
-double Model::ErrorByAlpha(const Array<Requirement*>& req, const Array<double*>& params, const Array<double>& aGrad, double alpha) {
-	for (int i = 0; i < params.GetSize(); ++i) {
-		double delta = aGrad[i];
-		*(params[i]) += delta * alpha;
-	}
-	double error = GetError(req);
-	for (int i = 0; i < params.GetSize(); ++i) {
-		*(params[i]) -= aGrad[i] * alpha;
-	}
-	return error;
-}
-
-void Model::OptimizeByGradient(const Array<Requirement*>& requirments, const Array<double*>& params, const Array<double>& aGradient) {
-
-	const double gold_section = 1.6180339887498;
-	int reqSize = requirments.GetSize();
-
-	double error = GetError(requirments);
-
-	double left = 0.0;
-	double right = 0.1;
-
-	double leftValue = ErrorByAlpha(requirments, params, aGradient, left);
-	double rightValue = ErrorByAlpha(requirments, params, aGradient, right);
-
-	double x1 = right - (right - left) / gold_section;
-	double x2 = left + (right - left) / gold_section;
-
-	double x1_Value = ErrorByAlpha(requirments, params, aGradient, x1);
-	double x2_Value = ErrorByAlpha(requirments, params, aGradient, x2);
-
-	while (abs(leftValue - rightValue) > OPTIM_GRAD_EPS * error) {
-
-		if (x1_Value > x2_Value) {
-			left = x1;
-			leftValue = x1_Value;
-			x1 = x2;
-			x1_Value = x2_Value;
-			x2 = left + (right - left) / gold_section;
-			x2_Value = ErrorByAlpha(requirments, params, aGradient, x2);
-		}
-		else {
-			right = x2;
-			rightValue = x2_Value;
-			x2 = x1;
-			x1 = right - (right - left) / gold_section;
-			x2_Value = x1_Value;
-			x1_Value = ErrorByAlpha(requirments, params, aGradient, x1);
-		}
-	}
-
-	double alpha = (leftValue < rightValue) ? left : right;
-
-	for (int i = 0; i < params.GetSize(); ++i) {
-		(*params[i]) += aGradient[i] * alpha;
-	}
-}
-
-bool Model::OptimizeRequirements(const Array<Requirement*>& requirments) {
-	// get parameters number
-	int params_number = 0;
-	for (int i = 0; i < requirments.GetSize(); ++i) {
-		Array<double*> params = requirments[i]->GetArguments();
-		params_number += params.GetSize();
-	}
-
-	class UniqueParam {
-	private:
-	public:
-		double* param;
-		int unique_number;
-	};
-
-	//ctreating match_array, which will establish a correspondence
-	//between not-unique parameters and their unique numbers
-
-	Array<double*> all_parameters(params_number);
-	BinSearchTree<double*, UniqueParam> set;
-	int* match_array = new int[params_number];
-
-	// from 0 to params_number
-	int all_parameters_iterator = 0;
-
-	// from 0 to number of unique double*
-	int uniq_numbers_iterator = 0;
-
-	// filling match_array
-	for (int i = 0; i < requirments.GetSize(); ++i) {
-
-		Array<double*> currentRequirmentParams = requirments[i]->GetArguments();
-
-		for (int j = 0; j < currentRequirmentParams.GetSize(); ++j) {
-
-			double* currentParameter = currentRequirmentParams[j];
-			all_parameters[all_parameters_iterator] = currentParameter;
-
-			UniqueParam unique_param;
-			auto setMarker = set.Find(currentParameter);
-			bool notUniqueParam = setMarker.IsValid();
-
-			if (notUniqueParam) {
-				match_array[all_parameters_iterator] = (*setMarker).unique_number;
-			}
-			else {
-				unique_param = UniqueParam{ currentParameter, uniq_numbers_iterator };
-				set.Add(currentParameter, unique_param);
-				match_array[all_parameters_iterator] = uniq_numbers_iterator;
-				uniq_numbers_iterator++;
-			}
-			all_parameters_iterator++;
-		}
-	}
-
-	// array of unique_parameters
-	Array<double*> unique_parameters(uniq_numbers_iterator, nullptr);
-
-	for (int i = 0; i < params_number; ++i) {
-		unique_parameters[match_array[i]] = all_parameters[i];
-	}
-
-	// anti gradient
-	Array<double> aGradient(uniq_numbers_iterator, 0.0);
-
-	//filling anti gradient
-	double err = GetError(requirments);
-	int optimization_iter = 0;
-	while (err > OPTIM_EPS) {
-		int match_array_iterator = 0;
-		for (int i = 0; i < requirments.GetSize(); ++i) {
-			Array<double> currentGradient = requirments[i]->Gradient();
-			for (int j = 0; j < currentGradient.GetSize(); ++j) {
-				aGradient[match_array[match_array_iterator]] -= currentGradient[j] / requirments.GetSize();
-				++match_array_iterator;
-			}
-		}
-
-		OptimizeByGradient(requirments, unique_parameters, aGradient);
-		aGradient.FillDefault(0.0);
-		err = GetError(requirments);
-		
-		optimization_iter++;
-		// temp
-		if (optimization_iter >= 100) {
-			return (err < OPTIM_EPS * 10);
-		}
-	}
-
-	return true;
-}
-
-bool Model::OptimizeByID(const ID& id) {
-	BinSearchTree<ID, ID> component;
-	Array<ID> reqID;
-	Array<ID> primID;
-	if(!NewComponent(id, primID, reqID)) {
-		return true;
-	}
-	Array<Requirement*> reqs;
-	GetRequirements(reqID, reqs);
-
-	bool result =  OptimizeRequirements(reqs);
-
-	Array<Primitive*> prims;
-	GetPrimitives(primID, prims);
-
-	// restore arcs' centers
-	for (int i = 0; i < prims.GetSize(); ++i) {
-		if (prims[i]->GetType() == ot_arc) {
-			cast<Arc*>(prims[i])->RestoreCenter();
-		}
-	}
-
-	return result;
-}
-
-void Model::OptitmizeNewton(const ID& id) {
-
-	Array<ID> primID;
-	Array<ID> reqID;
-	Array<Primitive*> prim;
-	Array<Requirement*> req;
-	Array<double*> params;
-
-	NewComponent(id, primID, reqID);
-	GetRequirements(reqID, req);
-	GetPrimitives(primID, prim);
-	GetDoublesForOptimize(prim, params);
-
-
-}
-
-void Model::GetDoublesForOptimize(Array<Primitive*>& prims, Array<double*>& params) {
-	for (int i = 0; i < prims.GetSize(); ++i) {
-		if (prims[i]->GetType() == ot_point) {
-			Point* point = cast<Point*>(prims[i]);
-			params.PushBack(&point->position.x);
-			params.PushBack(&point->position.y);
-		}
-		if (prims[i]->GetType() == ot_arc) {
-			Arc* arc = cast<Arc*>(prims[i]);
-			params.PushBack(&arc->angle);
-		}
-	}
-}
-
-void Model::GetDifferential(const Array<Requirement*>& reqs, Array<double*>& params, Array<double>& diff) {
-	double begin = GetError(reqs);
-	for (int i = 0; i < params.GetSize(); ++i) {
-		*params[i] += DELTA_X;
-		diff[i] = (begin - GetError(reqs)) / DELTA_X;
-		*params[i] -= DELTA_X;
-	}
-}
-
-//
-void Model::GetRequirementsByID(const ID& id, Array<ID>& reqIDs)
-{
-	if (dataPrim.Find(id).IsValid())
-	{
-		auto marker = dataLink.Find(id);
-		if (marker.IsValid()) {
-			auto listMarker = (*marker)->GetMarker();
-			do
-			{
-				ID currentID = listMarker.GetValue();
-				if ((*dataReq.Find(currentID))->GetType() != ot_connection)
-				{
-					reqIDs.PushBack(currentID);
-				}
-			} while (++listMarker);
-		}
-	}
-}
-
-void Model::GetPrimitivesByID(const ID& id, Array<ID>& primDs) {
-	if (dataReq.Find(id).IsValid())
-	{
-		auto marker = dataLink.Find(id);
-		if (marker.IsValid()) {
-			auto listMarker = (*marker)->GetMarker();
-			do
-			{
-				primDs.PushBack(listMarker.GetValue());
-			} while (++listMarker);
-		}
-	}
-}
-
-bool Model::GetObjType(const ID& obj_id, object_type& type) {
-	Primitive* objPrim = nullptr;
-	auto dataPrimMarker = dataPrim.Find(obj_id);
-	if (dataPrimMarker.IsValid()) {
-		objPrim = (*dataPrimMarker);
-		type = objPrim->GetType();
-		return true;
-	}
-
-	Requirement* objReq = nullptr;
-	auto dataReqMarker = dataReq.Find(obj_id);
-	if (dataReqMarker.IsValid()) {
-		objReq = (*dataReqMarker);
-		type = objReq->GetType();
-		return true;
-	}
-	return false;
-}
-
-bool Model::GetObjParam(const ID& obj_id, Array<double>& result) {
-	Primitive* objPrim = nullptr;
-	auto dataPrimMarker = dataPrim.Find(obj_id);
-	if (dataPrimMarker.IsValid()) {
-		objPrim = *dataPrimMarker;
-		switch (objPrim->GetType()) {
-		case ot_point: {
-			Point* point = cast<Point*>(objPrim);
-			result.Clear();
-			Vector2 pos = point->GetPosition();
-			result.PushBack(pos.x);
-			result.PushBack(pos.y);
-			return true;
-			break;
-		}
-		case ot_segment: {
-			Segment* segment = cast<Segment*>(objPrim);
-			result.Clear();
-			Vector2 pos1 = segment->GetPoint1_pos();
-			Vector2 pos2 = segment->GetPoint2_pos();
-			result.PushBack(pos1.x);
-			result.PushBack(pos1.y);
-			result.PushBack(pos2.x);
-			result.PushBack(pos2.y);
-			return true;
-			break;
-		}
-		case ot_arc: {
-			Arc* arc = cast<Arc*>(objPrim);
-			result.Clear();
-			Vector2 pos1 = arc->GetPoint1_pos();
-			Vector2 pos2 = arc->GetPoint2_pos();
-			double angle = arc->GetAngle();
-			result.PushBack(arc->GetCenter().x);
-			result.PushBack(arc->GetCenter().y);
-			result.PushBack(pos1.x);
-			result.PushBack(pos1.y);
-			result.PushBack(pos2.x);
-			result.PushBack(pos2.y);
-			return true;
-			break;
-		}
-		case ot_circle: {
-			Circle* circle = dynamic_cast<Circle*>(objPrim);
-			result.Clear();
-			Vector2 center = circle->GetCenter();
-			double radius = circle->GetRadius();
-			result.PushBack(center.x);
-			result.PushBack(center.y);
-			result.PushBack(radius);
-			return true;
-			break;
-		}
-		default: {
-			return false;
-		}
-		}
-	}
-
-	Requirement* objReq = nullptr;
-	auto dataReqMarker = dataReq.Find(obj_id);
-	if (dataReqMarker.IsValid()) {
-		objReq = *dataReqMarker;
-		result = objReq->GetParams();
-	}
-	return false;
-}
-
-#define SEARCH_AREA 5.0
-
-bool Model::GetObject(double x, double y, Array<ID>& obj_id, Array<object_type>& types, Array<double>& distances) {
-	bool isFound = false;
-	for (auto i = dataPrim.GetMarker(); i.IsValid(); ++i) {
-		double dist = (*i)->GetDistance(Vector2(x, y));
-		if (dist < SEARCH_AREA) {
-			isFound = true;
-			distances.PushBack(dist);
-			obj_id.PushBack((*i)->GetID());
-			types.PushBack((*i)->GetType());
-		}
-	}
-	return isFound;
-}
-
-bool Model::pointInArea(double point_x, double point_y, double x1, double y1, double x2, double y2)
-{
-	if ((point_y >= y1 && point_x >= x1 && point_y <= y2 && point_x <= x2) ||
-		(point_y >= y1 && point_x <= x1 && point_y <= y2 && point_x >= x2) ||
-		(point_y <= y1 && point_x >= x1 && point_y >= y2 && point_x <= x2) ||
-		(point_y <= y1 && point_x <= x1 && point_y >= y2 && point_x >= x2))
-	{
-		return true;
-	}
-	else
-	{
-		return false;
-	}
-}
-
-bool Model::GetObjectsOnArea(double x1, double y1, double x2, double y2, Array<ID>& obj_id, Array<object_type>& types)
-{
-	bool isFound = false;
-	Primitive* obj = nullptr;
-	for (auto i = dataPrim.GetMarker(); i.IsValid(); ++i) {
-		obj = *i;
-		switch ((*i)->GetType())
-		{
-		case ot_point: {
-			Point* point = cast<Point*>(obj);
-			if (pointInArea(point->position.x, point->position.y, x1, y1, x2, y2))
-			{
-				obj_id.PushBack(point->GetID());
-				types.PushBack(point->GetType());
-				isFound = true;
-			}
-			break;
-		}
-		case ot_segment: {
-			Segment* segment = cast<Segment*>(obj);
-			if (pointInArea(segment->point1->position.x, segment->point1->position.y, x1, y1, x2, y2) &&
-				pointInArea(segment->point2->position.x, segment->point2->position.y, x1, y1, x2, y2)
-				)
-			{
-				obj_id.PushBack(segment->GetID());
-				types.PushBack(segment->GetType());
-				isFound = true;
-			}
-			break;
-		}
-		case ot_arc: {
-			Arc* arc = cast<Arc*>(obj);
-			if (pointInArea(arc->point1->position.x, arc->point1->position.y, x1, y1, x2, y2) &&
-				pointInArea(arc->point2->position.x, arc->point2->position.y, x1, y1, x2, y2)
-				)
-			{
-				obj_id.PushBack(arc->GetID());
-				types.PushBack(arc->GetType());
-				isFound = true;
-			}
-			break;
-		}
-		case ot_circle: {
-			Circle* circle = cast<Circle*>(obj);
-			if (pointInArea(circle->GetCenter().x - circle->radius, circle->GetCenter().y, x1, y1, x2, y2) &&
-				pointInArea(circle->GetCenter().x + circle->radius, circle->GetCenter().y, x1, y1, x2, y2) &&
-				pointInArea(circle->GetCenter().x, circle->GetCenter().y - circle->radius, x1, y1, x2, y2) &&
-				pointInArea(circle->GetCenter().x, circle->GetCenter().y + circle->radius, x1, y1, x2, y2))
-			{
-				obj_id.PushBack(circle->GetID());
-				types.PushBack(circle->GetType());
-				isFound = true;
-			}
-			break;
-		}
-		default: {
-			return false;
-		}
-		}
-	}
-	return isFound;
-}
-
-void Model::ChangeRequirement(const ID& id, Array<double>& params) {
-	auto marker = dataReq.Find(id);
-	if (marker.IsValid()) {
-		(*marker)->ChangeParams(params);
-		OptimizeByID(id);
-	}
-}
-
-void Model::ChangePrimitive(const ID& id, Array<double>& params)
-{
-	auto marker = dataPrim.Find(id);
-	if (marker.IsValid()) {
-		switch ((*marker)->GetType())
-		{
-		case ot_point: {
-			//if(params.GetSize() != 2) 
-			Point* point = dynamic_cast<Point*>((*marker));
-			point->SetPosition(Vector2(params[0], params[1]));
-			break;
-		}
-		case ot_segment: {
-			Segment* seg = dynamic_cast<Segment*>((*marker));
-			seg->SetPoint1_pos(Vector2(params[0], params[1]));
-			seg->SetPoint2_pos(Vector2(params[2], params[3]));
-			break;
-		}
-		case ot_arc: {
-			Arc* arc = dynamic_cast<Arc*>((*marker));
-			arc->SetPoint1_pos(Vector2(params[0], params[1]));
-			arc->SetPoint2_pos(Vector2(params[2], params[3]));
-			arc->SetAngle(params[4]);
-			arc->RestoreCenter();
-			break;
-		}
-		case ot_circle: {
-			Circle* circle = dynamic_cast<Circle*>((*marker));
-			circle->SetCenter_pos(Vector2(params[0], params[1]));
-			circle->SetRadius(params[2]);
-			break;
-		}
-		default:
-			break;
-		}
-		Array<ID> idPrim;
-		idPrim.PushBack(id);
-		Move(idPrim, Vector2(0, 0));
-	}
-}
-
-bool Model::OptimizeGroup(Array<Primitive*>& group) {
-
-	do {
-		if (!OptimizeByID(group[0]->GetID())) {
-			return false;
-		}
-		for (int i = 0; i < group.GetSize(); ++i) {
-			if (currentComponent->Find(group[i]->GetID()).IsValid()) {
-				group.EraseO_1_(i);
-				--i;
-			}
-		}
-	} while (group.GetSize() > 0);
-	return true;
-}
-
-void Model::LockPoint(Point* _point, ID& id) {
-	Requirement* requirement = new PointPosReq(_point, _point->position.x, _point->position.y);
-
-	id = requirement->GetID();
-
-	dataReq.Add(id, requirement);
-
-	Array<Primitive*> point(1);
-	point[0] = _point;
-	CreateLink(id, point);
-}
-
-bool Model::Scale(const Array<ID>& idPrim, const double koef) {
-	Array<Primitive*> primitives;
-	if (!GetPrimitives(idPrim, primitives)) {
-		// in presenter invalid ID
-		LOG(string("could not find primitives by id"), primitives.GetSize(), LEVEL_2);
-		return false;
-	}
-	BinSearchTree<ID, Point*> points;
-	GetPointsFromPrimitives(primitives, points);
-	// geting center
-	Vector2 center;
-	for (auto i = points.GetMarker(); i.IsValid(); ++i) {
-		center += (*i)->position;
-	}
-	center /= points.GetSize();
-	Array<ID> reqs;
-	// Moving
-	for (auto i = points.GetMarker(); i.IsValid(); ++i) {
-
-		Vector2 newPos(((*i)->position - center) * koef);
-		(*i)->position = center + newPos;
-
-		ID id;
-
-		LockPoint(*i, id);
-
-		reqs.PushBack(id);
-	}
-
-	if (!OptimizeGroup(primitives)) {
-
-		for (int i = 0; i < reqs.GetSize(); ++i) {
-			DeleteRequirement(reqs[i]);
-		}
-
-		return false;
-	}
-
-	for (int i = 0; i < reqs.GetSize(); ++i) {
-		DeleteRequirement(reqs[i]);
-	}
-	return true;
-}
-
-bool Model::Move(const Array<ID>& idPrim, const Vector2& shift) {
-	Array<Primitive*> primitives;
-	if (!GetPrimitives(idPrim, primitives)) {
-		LOG(string("could not find primitives by id"), primitives.GetSize(), LEVEL_2);
-		return false;
-	}
-	BinSearchTree<ID, Point*> points;
-	GetPointsFromPrimitives(primitives, points);
-
-	Array<ID> reqs;
-
-	for (auto i = points.GetMarker(); i.IsValid(); ++i) {
-		(*i)->position += shift;
-
-		ID id;
-
-		LockPoint(*i, id);
-
-		reqs.PushBack(id);
-	}
-
-	if (!OptimizeGroup(primitives)) {
-
-		for (int i = 0; i < reqs.GetSize(); ++i) {
-			DeleteRequirement(reqs[i]);
-		}
-
-		return false;
-	}
-
-	for (int i = 0; i < reqs.GetSize(); ++i) {
-		DeleteRequirement(reqs[i]);
-	}
-	return true;
-}
-
-void Model::GetPointsFromPrimitives(Array<Primitive*>& primitives, BinSearchTree<ID, Point*>& pointTree ) {
-	for (int i = 0; i < primitives.GetSize(); ++i) {
-		switch (primitives[i]->GetType())
-		{
-		case ot_point: {
-			if (!pointTree.Find(primitives[i]->GetID()).IsValid()) {
-				Point* point = cast<Point*>(primitives[i]);
-				pointTree.Add(point->GetID(), point);
-			}
-			break;
-		}
-		case ot_segment: {
-			Segment* segment = cast<Segment*>(primitives[i]);
-			if (!pointTree.Find(segment->GetPoint1_ID()).IsValid()) {
-				Point* point = segment->point1;
-				pointTree.Add(point->GetID(), point);
-			}
-			if (!pointTree.Find(segment->GetPoint2_ID()).IsValid()) {
-				Point* point = segment->point2;
-				pointTree.Add(point->GetID(), point);
-			}
-			break;
-		}
-		case ot_arc: {
-			Arc* arc = cast<Arc*>(primitives[i]);
-			if (!pointTree.Find(arc->GetPoint1_ID()).IsValid()) {
-				Point* point = arc->point1;
-				pointTree.Add(point->GetID(), point);
-			}
-			if (!pointTree.Find(arc->GetPoint2_ID()).IsValid()) {
-				Point* point = arc->point2;
-				pointTree.Add(point->GetID(), point);
-			}
-			break;
-		}
-		case ot_circle: {
-			Circle* circle = cast<Circle*>(primitives[i]);
-			if (!pointTree.Find(circle->GetCenter_ID()).IsValid()) {
-				Point* point = circle->center;
-				pointTree.Add(point->GetID(), point);
-			}
-			break;
-		}
-		default:
-			break;
-		}
-	}
-}
-
-bool Model::CreateObjByID(object_type type, Array<ID>& IDs, Array<double>& params)
-{
-	switch (type)
-	{
-		case ot_point: 
-		{
-			if (IDs.GetSize() != 1 || params.GetSize() != 2) return false; //исключение
-			Point* point = new Point(IDs[0], params[0], params[1]);
-			dataPrim.Add(IDs[0], point);
-			break; 
-		}
-		case ot_segment:
-		{
-			if (IDs.GetSize() != 3 || params.GetSize() != 0) return false; //исключение
-			Point* p1 = dynamic_cast<Point*>(*dataPrim.Find(IDs[1]));
-			Point* p2 = dynamic_cast<Point*>(*dataPrim.Find(IDs[2]));
-			Segment* seg = new Segment(IDs[0], p1, p2);
-			dataPrim.Add(IDs[0], seg);
-			Array<Primitive*> primitives;
-			primitives.PushBack(p1);
-			primitives.PushBack(p2);
-			primitives.PushBack(seg);
-			ConnectionReq* _connection = new ConnectionReq;
-			dataReq.Add(_connection->GetID(), _connection);
-			CreateLink(_connection->GetID(), primitives);
-			break; 
-		}
-		case ot_arc:
-		{
-			if (IDs.GetSize() != 3 || params.GetSize() != 1) return false; //исключение
-			Point* p1 = dynamic_cast<Point*>(*dataPrim.Find(IDs[1]));
-			Point* p2 = dynamic_cast<Point*>(*dataPrim.Find(IDs[2]));
-			Arc* arc = new Arc(IDs[0], p1, p2, params[0]);
-			dataPrim.Add(IDs[0], arc);
-			arc->RestoreCenter();
-			Array<Primitive*> primitives;
-			primitives.PushBack(p1);
-			primitives.PushBack(p2);
-			primitives.PushBack(arc);
-			ConnectionReq* _connection = new ConnectionReq;
-			dataReq.Add(_connection->GetID(), _connection);
-			CreateLink(_connection->GetID(), primitives);
-			break; 
-		}
-		case ot_circle:
-		{
-			if (IDs.GetSize() != 2 || params.GetSize() != 1) return false; //исключение
-			Point* center = dynamic_cast<Point*>(*dataPrim.Find(IDs[1]));
-			Circle* circle = new Circle(IDs[0], center, params[0]);
-			dataPrim.Add(IDs[0], circle);
-			Array<Primitive*> primitives;
-			primitives.PushBack(center);
-			primitives.PushBack(circle);
-			ConnectionReq* _connection = new ConnectionReq;
-			dataReq.Add(_connection->GetID(), _connection);
-			CreateLink(_connection->GetID(), primitives);
-			break; 
-		}
-		case ot_distBetPoints:
-		{
-			if (IDs.GetSize() != 3 || params.GetSize() != 1) return false;
-			Point* p1 = dynamic_cast<Point*>(*dataPrim.Find(IDs[1]));
-			Point* p2 = dynamic_cast<Point*>(*dataPrim.Find(IDs[2]));
-			DistBetPointsReq* req = new DistBetPointsReq(IDs[0], p1, p2, params[0]);
-			dataReq.Add(IDs[0], req);
-			Array<Primitive*> primitives;
-			primitives.PushBack(p1);
-			primitives.PushBack(p2);
-			CreateLink(IDs[0], primitives);
-			break;
-		}	
-		case ot_equalSegmentLen:
-		{
-			if (IDs.GetSize() != 3 || params.GetSize() != 0) return false;
-			Segment* seg1 = dynamic_cast<Segment*>(*dataPrim.Find(IDs[1]));
-			Segment* seg2 = dynamic_cast<Segment*>(*dataPrim.Find(IDs[2]));
-			EqualSegmentLenReq* req = new EqualSegmentLenReq(IDs[0], seg1, seg2);
-			dataReq.Add(IDs[0], req);
-			Array<Primitive*> primitives;
-			primitives.PushBack(seg1);
-			primitives.PushBack(seg2);
-			CreateLink(IDs[0], primitives);
-			break;
-		}	
-		case ot_pointPosReq:
-		{
-			if (IDs.GetSize() != 2 || params.GetSize() != 2) return false;
-			Point* p = dynamic_cast<Point*>(*dataPrim.Find(IDs[1]));
-			PointPosReq* req = new PointPosReq(IDs[0], p, params[0], params[1]);
-			dataReq.Add(IDs[0], req);
-			Array<Primitive*> primitives;
-			primitives.PushBack(p);
-			CreateLink(IDs[0], primitives);
-			break;
-		}	
-		case ot_pointsOnTheOneHand:
-		{
-			if (IDs.GetSize() != 4 || params.GetSize() != 0) return false;
-			Segment* seg = dynamic_cast<Segment*>(*dataPrim.Find(IDs[1]));
-			Point* p1 = dynamic_cast<Point*>(*dataPrim.Find(IDs[2]));
-			Point* p2 = dynamic_cast<Point*>(*dataPrim.Find(IDs[3]));
-			PointsOnTheOneHand* req = new PointsOnTheOneHand(IDs[0], seg, p1, p2);
-			dataReq.Add(IDs[0], req);
-			Array<Primitive*> primitives;
-			primitives.PushBack(seg);
-			primitives.PushBack(p1);
-			primitives.PushBack(p2);
-			CreateLink(IDs[0], primitives);
-			break;
-		}	
-		case ot_distBetPointSeg:
-		{
-			if (IDs.GetSize() != 3 || params.GetSize() != 1) return false;
-			Segment* seg = dynamic_cast<Segment*>(*dataPrim.Find(IDs[1]));
-			Point* p = dynamic_cast<Point*>(*dataPrim.Find(IDs[2]));
-			DistanceBetweenPointSegment* req = new DistanceBetweenPointSegment(IDs[0], seg, p, params[0]);
-			dataReq.Add(IDs[0], req);
-			Array<Primitive*> primitives;
-			primitives.PushBack(seg);
-			primitives.PushBack(p);
-			CreateLink(IDs[0], primitives);
-			break;
-		}	
-		case ot_distBetPointArc:
-		{
-			if (IDs.GetSize() != 3 || params.GetSize() != 1) return false;
-			Arc* arc = dynamic_cast<Arc*>(*dataPrim.Find(IDs[1]));
-			Point* p = dynamic_cast<Point*>(*dataPrim.Find(IDs[2]));
-			DistanceBetweenPointArc* req = new DistanceBetweenPointArc(IDs[0], arc, p, params[0]);
-			dataReq.Add(IDs[0], req);
-			Array<Primitive*> primitives;
-			primitives.PushBack(arc);
-			primitives.PushBack(p);
-			CreateLink(IDs[0], primitives);
-			break;
-		}	
-		case ot_angleBetSeg:
-		{
-			//проблема была только с 90 град 
-			if (IDs.GetSize() != 3 || params.GetSize() != 1) return false;
-			Segment* seg1 = dynamic_cast<Segment*>(*dataPrim.Find(IDs[1]));
-			Segment* seg2 = dynamic_cast<Segment*>(*dataPrim.Find(IDs[2]));
-			double angle = (acos(params[0]) * 180) / PI;
-			AngleBetweenSegments* req = new AngleBetweenSegments(IDs[0], seg1, seg2, angle);
-			dataReq.Add(IDs[0], req);
-			Array<Primitive*> primitives;
-			primitives.PushBack(seg1);
-			primitives.PushBack(seg2);
-			CreateLink(IDs[0], primitives);
-			break;
-		}	
-		case ot_pointInArc:
-		{
-			//не реализовано
-			if (IDs.GetSize() != 3 || params.GetSize() != 0) return false;
-			Arc* arc = dynamic_cast<Arc*>(*dataPrim.Find(IDs[1]));
-			Point* p = dynamic_cast<Point*>(*dataPrim.Find(IDs[2]));
-			PointInArc* req = new PointInArc(IDs[0], arc, p);
-			dataReq.Add(IDs[0], req);
-			Array<Primitive*> primitives;
-			primitives.PushBack(arc);
-			primitives.PushBack(p);
-			CreateLink(IDs[0], primitives);
-			break;
-		}
-		default:
-		{
-			return false; 
-		}
-	}
-	
-	return true;
-}
-
-bool Model::SaveProject(const std::string way)
-{
-	workingWithReester = new SVGformat(this);
-	bool isNotError = workingWithReester->Save(way);
-	delete workingWithReester;
-	return isNotError;
-}
-
-bool Model::DownloadFile(const std::string nameFile)
-{
-	dataPrim.DeleteDict();
-	dataReq.DeleteDict();
-	dataLink.DeleteDict();
-	workingWithReester = new SVGformat(this);
-	bool isNotError = workingWithReester->Download(nameFile);
-	delete workingWithReester;
-	return isNotError;
-}
-
+﻿#include "Model.h"
+#include <list>
 
 Model* Model::instance = nullptr;
 
 Model* Model::GetInstance() {
-	if (instance == nullptr) {
+	if(instance == nullptr) {
 		instance = new Model;
 	}
 	return instance;
+}
+
+Model::Model() {
+	dataCtrl = DataController::GetInstance();
+	primCtrl = PrimController::GetInstance();
+	reqCtrl = ReqController::GetInstance();
+	objCtrl = ObjectController::GetInstance();
+}
+
+ID Model::CreatePrimitive(object_type type, const Array<double>& params) const {
+	ID obj = primCtrl->CreatePrimitive(type, Array<ID>(0), params);
+	dataCtrl->AddObject(obj);
+	Array<ID> children = primCtrl->GetChildren(obj);
+	if (children.GetSize() != 0) {
+		for (int i = 0; i < children.GetSize(); ++i) {
+			dataCtrl->AddObject(children[i]);
+		}
+		dataCtrl->Connect(obj, children);
+	}
+	return obj;
+}
+
+ID Model::CreateRequirement(object_type type, const Array<ID>& children, const Array<double>& params) const {
+	ID obj = reqCtrl->CreateReq(type, children, params);
+	dataCtrl->AddObject(obj);
+	dataCtrl->Connect(obj, children);
+
+	OptimizeByID(obj);
+
+	return obj;
+}
+
+ID Model::GetObjectByClick(double x, double y) const {
+	return dataCtrl->GetObjectInCircle(x, y, SEARCHING_AREA);
+}
+
+void Model::DeleteObject(ID& obj) const {
+	dataCtrl->MakeInValid(obj);
+}
+
+void Model::DeleteObjects(Array<ID>& objs) const {
+	for (int i = 0; i < objs.GetSize(); ++i) {
+		DeleteObject(objs[i]);
+	}
+}
+
+void Model::ChangeRequirement(const ID& req, const Array<double>& params) const {
+	reqCtrl->SetReqParams(req, params);
+	OptimizeByID(req);
+}
+
+void Model::Save(const std::string& path) const {
+	SVGformat downloader;
+	downloader.Save(path, true);
+}
+
+void Model::Download(const std::string& path) const {
+	SVGformat downloader;
+	downloader.Download(path);
+}
+
+Array<ID> Model::GetRelatedObjects(const ID& obj) const {
+	return dataCtrl->GetRelatedObjects(obj);
+}
+
+void Model::OptimizeByID(const ID& obj) const {
+	auto component = dataCtrl->GetComponent(obj);
+	
+	Array<ID> req(0);
+
+	List<ID> arcs;
+
+	auto compIt = component.GetMarker();
+	while (compIt.IsValid()) {
+		ID currID = *compIt;
+		if (reqCtrl->IsReq(currID)) {
+			req.PushBack(currID);
+		}
+		if (objCtrl->GetType(currID) == ot_arc) {
+			arcs.Push(currID);
+		}
+		++compIt;
+	}
+	if (req.GetSize() != 0) {
+		Optimizer optimizer;
+		optimizer.OptimizeRequirements(req);
+
+	}
+
+	for (auto i = arcs.Begin(); i != arcs.AfterEnd(); ++i) {
+		auto arc = dynamic_cast<Arc*>(primCtrl->GetPrimitive(*i));
+		arc->RestoreCenter();
+	}
+}
+
+void Model::Optimize() const {
+	auto component = dataCtrl->GetComponent();
+
+	Array<ID> req(0);
+
+	List<ID> arcs;
+
+	auto compIt = component->GetMarker();
+	while (compIt.IsValid()) {
+		ID currID = *compIt;
+		if (reqCtrl->IsReq(currID)) {
+			req.PushBack(currID);
+		}
+		if (objCtrl->GetType(currID) == ot_arc) {
+			arcs.Push(currID);
+		}
+		++compIt;
+	}
+	if (req.GetSize() != 0) {
+		Optimizer optimizer;
+		optimizer.OptimizeRequirements(req);
+
+	}
+
+	for (auto i = arcs.Begin(); i != arcs.AfterEnd(); ++i) {
+		auto arc = dynamic_cast<Arc*>(primCtrl->GetPrimitive(*i));
+		arc->RestoreCenter();
+	}
+}
+
+Array<double> Model::GetObjParam(const ID& obj) const {
+	if (primCtrl->IsPrimitive(obj)) {
+		return primCtrl->GetPrimitiveParamsAsValues(obj);
+	}
+	if (reqCtrl->IsReq(obj)) {
+		return reqCtrl->GetReqParamsAsValues(obj);
+	}
+	LOGERROR("GetObjParam: unknown type", LEVEL_1);
+	
+}
+
+void Model::SetVariableObjParam(const ID& obj, const Array<double>& params, int modifiers...) const {
+	primCtrl->SetVariableObjParam(obj, params, &modifiers);
+}
+
+Array<double> Model::GetVariableObjParam(const ID& obj, int modifiers...) const {
+	return primCtrl->GetVariableObjParam(obj, &modifiers);
+}
+
+bool Model::IsPrim(const ID& obj) const {
+	return primCtrl->IsPrimitive(obj);
+}
+bool Model::IsReq(const ID& obj) const {
+	return reqCtrl->IsReq(obj);
+}
+
+Array<ID> Model::GetObjectsByArea(double x1, double y1, double x2, double y2) const { 
+	return dataCtrl->GetObjectsByArea(x1, y1, x2, y2);
+}
+
+void Model::CashNewComponent(const Array<ID>& IDs) const {
+	dataCtrl->CashComponent(IDs);
+}
+
+void Model::Scale(const Array<ID>& objs, const double coef) const {
+	Set<ID> points;
+	List<ID> circles;
+	double x = 0;
+	double y = 0;
+	for (int i = 0; i < objs.GetSize(); ++i) {
+		if (objCtrl->GetType(objs[i]) == ot_point) {
+			points.Add(objs[i]);
+		}
+		else {
+			if (objCtrl->GetType(objs[i]) == ot_circle) {
+				circles.Push(objs[i]);
+			}
+			Array<ID> children = primCtrl->GetChildren(objs[i]);
+			for (int j = 0; j < children.GetSize(); ++j) {
+				auto params = primCtrl->GETVARPARAMS(children[j], VERTEX);
+				x += params[0];
+				y += params[1];
+				points.Add(children[j]);
+			}
+		}
+	}
+	x /= points.GetSize();
+	y /= points.GetSize();
+	auto point = points.GetMarker();
+	while (point.IsValid()) {
+		auto params = primCtrl->GETVARPARAMS(*point, VERTEX);
+
+		params[0] = (params[0] - x) * coef + x;
+		params[1] = (params[1] - y) * coef + y;
+
+		primCtrl->SetPrimitiveParams(*point, params);
+
+		primCtrl->Deactivate(*point);
+
+		++point;
+	}
+
+	auto circle = circles.Begin();
+	while (circle.IsValid())
+	{
+		auto params = primCtrl->GETVARPARAMS(*circle, RADIUS);
+		params[0] = params[0] * coef;
+		primCtrl->SetPrimitiveParams(*circle, params);
+		++circle;
+	}
+
+	Optimize();
+
+	auto it = points.GetMarker();
+
+	while (it.IsValid()) {
+		primCtrl->Activate(*it);
+		++it;
+	}
+} 
+
+void Model::Move(const Array<ID>& objs, const Vector2& direction) const {
+	Set<ID> points;
+	for (int i = 0; i < objs.GetSize(); ++i) {
+		if (objCtrl->GetType(objs[i]) == ot_point) {
+				points.Add(objs[i]);
+		}
+		else {
+			Array<ID> children = primCtrl->GetChildren(objs[i]);
+			for (int j = 0; j < children.GetSize(); ++j) {
+				points.Add(children[j]);
+			}
+		}
+	}
+
+	auto point = points.GetMarker();
+	while (point.IsValid()) {
+		auto params = primCtrl->GETVARPARAMS(*point, VERTEX);
+
+		params[0] += direction.x;
+		params[1] += direction.y;
+
+		primCtrl->SetPrimitiveParams(*point, params);
+		
+		primCtrl->Deactivate(*point);
+
+		++point;
+	}
+
+	/*auto it = points.GetMarker();
+	
+	while (it.IsValid()) {
+		OptimizeByID(*it);
+		++it;
+	}*/
+
+	Optimize();
+
+	auto it = points.GetMarker();
+
+	while (it.IsValid()) {
+		primCtrl->Activate(*it);
+		++it;
+	}
+}
+
+void Model::Rotate(const Array<ID>& objs, const double angle) const {
+	Set<ID> points;
+	double centerX = 0;
+	double centerY = 0;
+	for (int i = 0; i < objs.GetSize(); ++i) {
+		if (objCtrl->GetType(objs[i]) == ot_point) {
+			points.Add(objs[i]);
+		}
+		else {
+			Array<ID> children = primCtrl->GetChildren(objs[i]);
+			for (int j = 0; j < children.GetSize(); ++j) {
+				auto params = primCtrl->GETVARPARAMS(children[j], VERTEX);
+				centerX += params[0];
+				centerY += params[1];
+				points.Add(children[j]);
+			}
+		}
+	}
+
+	centerX /= points.GetSize();
+	centerY /= points.GetSize();
+	double sinus = sin(angle);
+	double cosinus = cos(angle);
+
+	auto point = points.GetMarker();
+	while (point.IsValid()) {
+		auto params = primCtrl->GETVARPARAMS(*point, VERTEX);
+		double x = params[0] - centerX;
+		double y = params[1] - centerY;
+		params[0] = cosinus * x + sinus * y + centerX;
+		params[1] = cosinus * y - sinus * x + centerY;
+
+		primCtrl->SetPrimitiveParams(*point, params);
+
+		primCtrl->Deactivate(*point);
+
+		++point;
+	}
+	Optimize();
+
+	auto it = points.GetMarker();
+
+	while (it.IsValid()) {
+		primCtrl->Activate(*it);
+		++it;
+	}
+}
+
+void Model::Rotate(const Array<ID>& objs, const Vector2& center, const double angle) const {
+	Set<ID> points;
+	for (int i = 0; i < objs.GetSize(); ++i) {
+		if (objCtrl->GetType(objs[i]) == ot_point) {
+			points.Add(objs[i]);
+		}
+		else {
+			Array<ID> children = primCtrl->GetChildren(objs[i]);
+			for (int j = 0; j < children.GetSize(); ++j) {
+				points.Add(children[j]);
+			}
+		}
+	}
+
+	double sinus = sin(angle);
+	double cosinus = cos(angle);
+
+	auto point = points.GetMarker();
+	while (point.IsValid()) {
+		auto params = primCtrl->GETVARPARAMS(*point, VERTEX);
+		double x = params[0] - center.x;
+		double y = params[1] - center.y;
+		params[0] = cosinus * x + sinus * y + center.x;
+		params[1] = cosinus * y - sinus * x + center.y;
+
+		primCtrl->SetPrimitiveParams(*point, params);
+
+		primCtrl->Deactivate(*point);
+
+		++point;
+	}
+	Optimize();
+
+	auto it = points.GetMarker();
+
+	while (it.IsValid()) {
+		primCtrl->Activate(*it);
+		++it;
+	}
+}
+
+void Model::Clear() const { 
+	dataCtrl->Clear();
+}
+
+Component Model::GetComponent(const ID& obj) {
+	return dataCtrl->GetComponent(obj);
+}
+
+object_type Model::GetObjType(const ID& obj) const {
+	return objCtrl->GetType(obj);
+}
+
+Set<ID>::bst_iterator Model::GetPrimIterator() {
+	return dataCtrl->GetPrimIterator();
+}
+
+Array<double> Model::GetPrimParamsForDrawing(const ID& obj) const {
+	Array<double> arr = primCtrl->GetPrimParamsForDrawing(obj);
+	return arr;
 }

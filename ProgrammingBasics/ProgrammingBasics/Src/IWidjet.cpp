@@ -87,3 +87,22 @@ IRequirementInput::~IRequirementInput() {
 	view->DeleteWidjet(password);
 }
 #pragma endregion
+
+#pragma region IDrawMode
+IDrawMode::IDrawMode(const std::string _pass) : IWidjet(_pass) {
+
+}
+
+IDrawMode::~IDrawMode() {}
+
+void IDrawMode::SetName(const std::string nameMode) {
+	auto view = ViewFLTK::GetInstance();
+	auto widjet = dynamic_cast<DrawMode*>(view->GetWidjet(password));
+	auto mainWindow = dynamic_cast<MainWindow*>(view->GetWidjet("MainWindow"));
+	mainWindow->begin();
+	widjet->SetName(nameMode);
+	mainWindow->end();
+	mainWindow->redraw();
+}
+
+#pragma endregion

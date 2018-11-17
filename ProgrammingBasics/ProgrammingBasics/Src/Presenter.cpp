@@ -1,67 +1,79 @@
 #include "Presenter.h"
 #include "Mode.h"
 
-ID CreatePoint(const Array<ID>& obj, const Array<double>& params) {
-	ID id = ModelNew::GetInstance()->CreatePrimitive(ot_point, params);
-	Model::GetInstance()->CreateObject(ot_point, params, id);
-	return id;
-}
-ID CreateSegment(const Array<ID>& obj, const Array<double>& params) {
-	ID id = ModelNew::GetInstance()->CreatePrimitive(ot_segment, params);
-	Model::GetInstance()->CreateObject(ot_segment, params, id);
-	return id;
-}
-ID CreateArc(const Array<ID>& obj, const Array<double>& params) {
-	ID id = ModelNew::GetInstance()->CreatePrimitive(ot_arc, params);
-	Model::GetInstance()->CreateObject(ot_arc, params, id);
-	return id;
-}
-ID CreateCircle(const Array<ID>& obj, const Array<double>& params) {
-	ID id = ModelNew::GetInstance()->CreatePrimitive(ot_circle, params);
-	Model::GetInstance()->CreateObject(ot_circle, params, id);
-	return id;
-}
-ID Move(const Array<ID>& obj, const Array<double>& params) {
+Array<ID> CreatePoint(const Array<ID>& obj, const Array<double>& params) {
 	if (params.GetSize() != 2) {
-        throw std::invalid_argument("invalid arguments");
+		return Array<ID>(0);
 	}
-	ModelNew::GetInstance()->Move(obj, Vector2(params[0], params[1]));
+	ID id = Model::GetInstance()->CreatePrimitive(ot_point, params);
+	return CreateArr(id);
+}
+Array<ID> CreateSegment(const Array<ID>& obj, const Array<double>& params) {
+	if (params.GetSize() != 4) {
+		return Array<ID>(0);
+	}
+	ID id = Model::GetInstance()->CreatePrimitive(ot_segment, params);
+	auto res = CreateArr(id);
+	res += PrimController::GetInstance()->GetChildren(id);
+	return res;
+}
+Array<ID> CreateArc(const Array<ID>& obj, const Array<double>& params) {
+	if (params.GetSize() != 6) {
+		return Array<ID>(0);
+	}
+	ID id = Model::GetInstance()->CreatePrimitive(ot_arc, params);
+	auto res = CreateArr(id);
+	res += PrimController::GetInstance()->GetChildren(id);
+	return res;
+}
+Array<ID> CreateCircle(const Array<ID>& obj, const Array<double>& params) {
+	if (params.GetSize() != 3) {
+		return Array<ID>(0);
+	}
+	ID id = Model::GetInstance()->CreatePrimitive(ot_circle, params);
+	auto res = CreateArr(id);
+	res += PrimController::GetInstance()->GetChildren(id);
+	return res;
+}
+Array<ID> Move(const Array<ID>& obj, const Array<double>& params) {
+	if (params.GetSize() != 2) {
+		throw std::exception("invalid arguments");
+	}
 	Model::GetInstance()->Move(obj, Vector2(params[0], params[1]));
-	return ID();
+	return Array<ID>(0);
 
 }
-ID Scale(const Array<ID>& obj, const Array<double>& params) {
+Array<ID> Scale(const Array<ID>& obj, const Array<double>& params) {
 	if (params.GetSize() != 1) {
-        throw std::invalid_argument("invalid arguments");
+		throw std::exception("invalid arguments");
 	}
-	ModelNew::GetInstance()->Scale(obj, params[0]);
 	Model::GetInstance()->Scale(obj, params[0]);
-	return ID();
+	Model::GetInstance()->Scale(obj, params[0]);
+	return Array<ID>(0);
 }
-ID DistBetPoints(const Array<ID>& obj, const Array<double>& params) {
-	ID id = ModelNew::GetInstance()->CreateRequirement(ot_distBetPoints, obj, params);
-	Model::GetInstance()->CreateRequirementByID(ot_distBetPoints, obj, params, id);
-	return id;
+Array<ID> DistBetPoints(const Array<ID>& obj, const Array<double>& params) {
+	ID id = Model::GetInstance()->CreateRequirement(ot_distBetPoints, obj, params);
+	return CreateArr(id);
 }
-ID EqualSegment(const Array<ID>& obj, const Array<double>& params) {
-	ID id = ModelNew::GetInstance()->CreateRequirement(ot_equalSegmentLen, obj, params);
-	Model::GetInstance()->CreateRequirementByID(ot_equalSegmentLen, obj, params, id);
-	return id;
+Array<ID> EqualSegment(const Array<ID>& obj, const Array<double>& params) {
+	ID id = Model::GetInstance()->CreateRequirement(ot_equalSegmentLen, obj, params);
+	return CreateArr(id);
 }
-ID DistanceBetPointSegment(const Array<ID>& obj, const Array<double>& params) {
-	ID id = ModelNew::GetInstance()->CreateRequirement(ot_distBetPointSeg, obj, params);
-	Model::GetInstance()->CreateRequirementByID(ot_distBetPointSeg, obj, params, id);
-	return id;
+Array<ID> DistanceBetPointSegment(const Array<ID>& obj, const Array<double>& params) {
+	ID id = Model::GetInstance()->CreateRequirement(ot_distBetPointSeg, obj, params);
+	return CreateArr(id);
 }
-ID Delete(const Array<ID>& obj, const Array<double>& params) {
-	ModelNew::GetInstance()->DeleteObjects(obj);
-	Model::GetInstance()->DeletePrimitives(obj);
-	return ID();
+Array<ID> Delete(const Array<ID>& obj, const Array<double>& params) {
+	for (int i = 0; i < obj.GetSize(); ++i) {
+		DataController::GetInstance()->DeleteObject(obj[i]);
+	}
+	return Array<ID>(0);
 }
 
 
 Mode* Presenter::mode(nullptr);
 IView* Presenter::view(nullptr);
+Model* Presenter::model(nullptr);
 //temp
 
 IView* Presenter::GetView()
@@ -71,19 +83,20 @@ IView* Presenter::GetView()
 
 void Presenter::Initializer(IView* _view)
 {
-	LOG(string("Initializing presenter"), LEVEL_3);
+	LOG("Initializing presenter", LEVEL_3);
 	view = _view;
 	mode = new Selection();
+	model = Model::GetInstance();
 	// BinSearchTree<string, std::function<ID(const Array<ID>&, const Array<double>&)>> kek;
 	//std::function<ID(const Array<ID>&, const Array<double>&)> f = [model](const Array<ID>& a, const Array<double>& b) {
 	//	model->Move(a, Vector2(b[0], b[1]));
 	//	return ID();
 	//};
-	kek* tree = new kek;
-	tree->Add("Create_point", CreatePoint);
-	tree->Add("Create_segment", CreateSegment);
-	tree->Add("Create_arc", CreateArc);
-	tree->Add("Create_circle", CreateCircle);
+	auto tree = new treeFunc;
+	tree->Add("Point", CreatePoint);
+	tree->Add("Segment", CreateSegment);
+	tree->Add("Arc", CreateArc);
+	tree->Add("Circle", CreateCircle);
 	tree->Add("Move", Move);
 	tree->Add("Scale", Scale);
 	tree->Add("Dist_bet_points", DistBetPoints);
@@ -91,7 +104,6 @@ void Presenter::Initializer(IView* _view)
 	tree->Add("Distance_bet_point_segment", DistanceBetPointSegment);
 	tree->Add("Delete", Delete);
 	Compiler::Initializer(tree);
-
 }
 
 //ID Presenter::CreateObject(object_type type, const Array<double>& params) {
@@ -118,9 +130,13 @@ void Presenter::Initializer(IView* _view)
 //}
 
 void Presenter::CleareScene() {
-	Array<double> temp(0);
-	mode->HandleEvent(ev_escape, temp);
-	Model::GetInstance()->Clear();
+	auto temp = mode->HandleEvent(ev_escape, Array<double>(0));
+	if (temp != nullptr) {
+		delete mode;
+		mode = temp;
+	}
+	Undo_Redo::GetInstance()->Clear();
+	model->Clear();
 	view->Update();
 }
 
@@ -139,59 +155,15 @@ void Presenter::CleareScene() {
 //	}
 //}
 //
-//void Presenter::MoveObject(const Array<ID>& primitiveID,const Vector2& vector) {
-//	if (!Model::GetInstance()->Move(primitiveID, vector)) {
-//		LOG(string("could not move prim"), LEVEL_3);
-//	}
-//}
-//
+void Presenter::MoveObject(const Array<ID>& primitiveID,const Vector2& vector) {
+	model->Move(primitiveID, vector);
+}
+
 //void Presenter::GetComponent(const ID& id, Array<ID>& primID, Array<ID>& reqID) {
 //	if (!Model::GetInstance()->NewComponent(id, primID, reqID)) {
 //		LOG(string("could not get new component"), LEVEL_3);
 //	}
 //}
-
-bool Presenter::GetObject(double x, double y, ID& obj_id) {
-	Array<ID> ids;
-	Array<object_type> types;
-	Array<double> distances;
-	bool isFound = Model::GetInstance()->GetObject(x, y, ids, types, distances);
-	if (isFound) {
-		if (ids.GetSize() == 0) {
-			LOG(string("could not find primitives by point"), LEVEL_1);
-			return false;
-		}
-		bool foundPoint = (types[0] == ot_point);
-		double minDist = distances[0];
-		obj_id = ids[0];
-		for (int i = 1; i < distances.GetSize(); ++i) {
-			if (types[i] == ot_point) {
-				if (foundPoint) {
-					if (minDist > distances[i]) {
-						obj_id = ids[i];
-						minDist = distances[i];
-					}
-				}
-				else {
-					foundPoint = true;
-					obj_id = ids[i];
-					minDist = distances[i];
-				}
-			}
-			else {
-				if (!foundPoint) {
-					if (minDist > distances[i]) {
-						obj_id = ids[i];
-						minDist = distances[i];
-					}
-				}
-			}
-		}
-	}
-	else {
-		return false;
-	}
-}
 
 //bool Presenter::GetObjectsOnArea(double x1, double y1, double x2, double y2, Array<ID>& obj_id)
 //{
@@ -199,74 +171,166 @@ bool Presenter::GetObject(double x, double y, ID& obj_id) {
 //	return Model::GetInstance()->GetObjectsOnArea(x1, y1, x2, y2, obj_id, types);
 //}
 
+//void Presenter::DrawSelectedObjects(const Array<ID>& selectedObjects)
+//{
+//	for (int i = 0; i < selectedObjects.GetSize(); i++)
+//	{
+//		Array<double> params = model->GetPrimParamsForDrawing(selectedObjects[i]);
+//		object_type type = model->GetObjType(selectedObjects[i]);
+//
+//		switch (type)
+//		{
+//		case ot_point:
+//			GetView()->DrawPoint(Vector2(params[0], params[1]));
+//			break;
+//		case ot_segment:
+//			GetView()->DrawLine(Vector2(params[0], params[1]),
+//				Vector2(params[2], params[3]), line);
+//			break;
+//		case ot_arc:
+//			GetView()->DrawArc(Vector2(params[5], params[6]),
+//				Vector2(params[0], params[1]),
+//				Vector2(params[2], params[3]), line);
+//			break;
+//		case ot_circle:
+//			GetView()->DrawCircle(Vector2(params[0], params[1]),
+//				Vector2(params[0] + params[2], params[1]), line);
+//			break;
+//		}
+//	}
+//}
+
 void Presenter::DrawSelectedObjects(const Array<ID>& selectedObjects)
 {
 	for (int i = 0; i < selectedObjects.GetSize(); i++)
 	{
-		Array<double> params;
-		object_type type;
-		Model::GetInstance()->GetObjParam(selectedObjects[i], params);
-		Model::GetInstance()->GetObjType(selectedObjects[i], type);
+		ID obj = selectedObjects[i];
+		object_type type = model->GetObjType(selectedObjects[i]);
 		switch (type)
 		{
-		case ot_point:
-			GetView()->DrawPoint(Vector2(params[0], params[1]));
+		case ot_point: {
+			auto params = model->GetVariableObjParam(obj, VERTEX);
+			view->DrawPoint(params);
 			break;
-		case ot_segment:
-			GetView()->DrawLine(Vector2(params[0], params[1]),
-				Vector2(params[2], params[3]), line);
+		}
+		case ot_segment: {
+			auto params = model->GetVariableObjParam(obj, VERTEX);
+			view->DrawLine(params, line);
 			break;
-		case ot_arc:
-			GetView()->DrawArc(Vector2(params[0], params[1]),
-				Vector2(params[2], params[3]),
-				Vector2(params[4], params[5]), line);
+		}
+		case ot_arc: {
+			auto params = model->GetVariableObjParam(obj, VERTEX, CENTER, RADIUS, ANGLE);
+			view->DrawArc(params, line);
 			break;
-		case ot_circle:
-			GetView()->DrawCircle(Vector2(params[0], params[1]),
-				Vector2(params[0] + params[2], params[1]), line);
+		}
+		case ot_circle: {
+			auto params = model->GetVariableObjParam(obj, CENTER, RADIUS);
+			view->DrawCircle(params, line);
+			break;
+		}
+		case ot_curve: {
+			auto params = model->GetVariableObjParam(obj, VERTEX);
+			view->DrawCurve(params, line);
+			break;
+		}
+		default:
 			break;
 		}
 	}
 }
+
+//void Presenter::DrawScene()
+//{
+//	auto objCtrl = ObjectController::GetInstance();
+//	auto primCtrl = PrimController::GetInstance();
+//	auto iter = model->GetPrimIterator();
+//	while (iter.IsValid()) {
+//		ID obj = *iter;
+//		++iter;
+//		if (!objCtrl->IsValid(obj)) {
+//			continue;
+//		}
+//		Array<double> params = model->GetPrimParamsForDrawing(obj);
+//
+//		if (model->GetObjType(obj) == ot_point) {
+//			view->SetColor(col_Red);
+//			view->DrawPoint(Vector2(params[0], params[1]));
+//		}
+//		if (model->GetObjType(obj) == ot_segment) {
+//			view->SetColor(col_White);
+//			view->DrawLine(Vector2(params[0], params[1]),
+//				Vector2(params[2], params[3]), line);
+//		}
+//		if (model->GetObjType(obj) == ot_arc) {
+//			view->SetColor(col_White);
+//			view->DrawArc(Vector2(params[5], params[6]),
+//				Vector2(params[0], params[1]),
+//				Vector2(params[2], params[3]), line);
+//		}
+//		if (model->GetObjType(obj) == ot_circle) {
+//			view->SetColor(col_White);
+//			view->DrawCircle(Vector2(params[0], params[1]),
+//				Vector2(params[0] + params[2], params[1]), line);
+//		}
+//		if (model->GetObjType(obj) == ot_curve) {
+//			view->SetColor(col_White);
+//			view->DrawCurve(params, line);
+//		}
+//
+//	}
+//
+//	mode->DrawMode();
+//}
+
 
 void Presenter::DrawScene()
 {
-	Array<Model::infoObject> scene;
-	if (Model::GetInstance()->DischargeInfoObjects(scene)) {
-		for (int i = 0; i < scene.GetSize(); ++i) {
-			if (scene[i].type == ot_point) {
-				view->SetColor(col_Red);
-				view->DrawPoint(Vector2(scene[i].params[0], scene[i].params[1]));
-			}
-			if (scene[i].type == ot_segment) {
-				view->SetColor(col_White);
-				view->DrawLine(Vector2(scene[i].params[0], scene[i].params[1]),
-					Vector2(scene[i].params[2], scene[i].params[3]), line);
-			}
-			if (scene[i].type == ot_arc) {
-				view->SetColor(col_White);
-				view->DrawArc(Vector2(scene[i].params[0], scene[i].params[1]),
-					Vector2(scene[i].params[2], scene[i].params[3]),
-					Vector2(scene[i].params[4], scene[i].params[5]), line);
-			}
-			if (scene[i].type == ot_circle) {
-				view->SetColor(col_White);
-				view->DrawCircle(Vector2(scene[i].params[0], scene[i].params[1]),
-					Vector2(scene[i].params[0] + scene[i].params[2], scene[i].params[1]), line);
-			}
+	auto objCtrl = ObjectController::GetInstance();
+	auto iter = model->GetPrimIterator();
+	while (iter.IsValid()) {
+		ID obj = *iter;
+		++iter;
+		if (!objCtrl->IsValid(obj)) {
+			continue;
+		}
+		if (model->GetObjType(obj) == ot_point) {
+			view->SetColor(col_Red);
+			auto params = model->GetVariableObjParam(obj, VERTEX);
+			view->DrawPoint(params);
+		}
+		if (model->GetObjType(obj) == ot_segment) {
+			view->SetColor(col_White);
+			auto params = model->GetVariableObjParam(obj, VERTEX);
+			view->DrawLine(params, line);
+		}
+		if (model->GetObjType(obj) == ot_arc) {
+			view->SetColor(col_White);
+			auto params = model->GetVariableObjParam(obj, VERTEX, CENTER, RADIUS, ANGLE);
+			view->DrawArc(params, line);
+		}
+		if (model->GetObjType(obj) == ot_circle) {
+			view->SetColor(col_White);
+			auto params = model->GetVariableObjParam(obj, CENTER, RADIUS);
+			view->DrawCircle(params, line);
+		}
+		if (model->GetObjType(obj) == ot_curve) {
+			view->SetColor(col_White);
+			auto params = model->GetVariableObjParam(obj, VERTEX);
+			view->DrawCurve(params, line);
 		}
 	}
+
 	mode->DrawMode();
 }
 
-void Presenter::SaveProject(std::string way) 
+void Presenter::SaveProject(const std::string& path) 
 {
-	Model::GetInstance()->SaveProject(way);
+	model->Save(path);
 }
 
-void Presenter::DownloadFile(std::string nameFile)
+void Presenter::DownloadFile(const std::string& path)
 {
-	Model::GetInstance()->DownloadFile(nameFile);
+	model->Download(path);
 	view->Update();
 }
 
@@ -297,7 +361,6 @@ void Presenter::Set_event(Event _ev, Array<double>& _params)
 //}
 
 void Presenter::Compile() {
-
 	Compiler* compiler = Compiler::GetInstance();
 	std::ifstream file;
 	file.open("script.txt");

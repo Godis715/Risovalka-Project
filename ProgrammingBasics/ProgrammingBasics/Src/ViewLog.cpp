@@ -22,3 +22,27 @@ void ViewLog::Push(const char* _val)
 
 ViewLog* ViewLog::instance = nullptr;
 Fl_Output* ViewLog::log = nullptr;
+
+
+OutputCoord::OutputCoord()
+{
+	if (output == nullptr)
+	{
+		output = new Fl_Output(520, 630, 490, 30);
+	}
+}
+
+OutputCoord* OutputCoord::GetInstance() {
+	if (instance == nullptr) {
+		instance = new OutputCoord();
+	}
+	return instance;
+}
+
+void OutputCoord::Push(const char* _val)
+{
+	output->value(_val);
+}
+
+OutputCoord* OutputCoord::instance = nullptr;
+Fl_Output* OutputCoord::output = nullptr;
