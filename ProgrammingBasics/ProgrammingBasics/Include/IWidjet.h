@@ -1,6 +1,7 @@
 #ifndef __IWIDJET
 #define __IWIDJET
-
+#include <string>
+#include "Array.h"
 
 class IWidjet
 {
@@ -54,6 +55,15 @@ public:
 	IRequirementInput(const std::string);
 
 	~IRequirementInput();
+};
+
+class IDrawMode : public IWidjet
+{
+public:
+	IDrawMode(const std::string);
+	~IDrawMode();
+
+	void SetName(const std::string);
 };
 
 #endif __IWIDJET

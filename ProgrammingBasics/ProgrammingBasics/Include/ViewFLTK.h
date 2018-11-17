@@ -44,14 +44,21 @@ public:
 	int Run();
 
 	void DrawLine(const Vector2&, const Vector2&, typeDrawing);
+	void DrawLine(const Array<double>&, typeDrawing);
 
 	void DrawCircle(const Vector2&, const Vector2&, typeDrawing);
+	void DrawCircle(const Array<double>&, typeDrawing);
 
 	void _DrawArc(const Vector2&, double, double, double);
 
 	void DrawArc(const Vector2&, const Vector2&, const Vector2&, typeDrawing);
+	void DrawArc(const Array<double>&, typeDrawing);
 
 	void DrawPoint(const Vector2&);
+	void DrawPoint(const Array<double>&);
+
+	void DrawCurve(const Array<Vector2>& points, typeDrawing type);
+	void DrawCurve(const Array<double>& points, typeDrawing type);
 
 	void SetColor(int, int, int);
 	

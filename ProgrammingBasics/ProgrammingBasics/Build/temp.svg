@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- DrawProject -->
+<svg width="1000" height="1000">
+	<drawProject:point
+		px="20"
+		py="30"
+		id="1"
+	/>
+	<drawProject:point
+		px="0"
+		py="-50"
+		id="2"
+	/>
+	<drawProject:point
+		px="0"
+		py="1.1"
+		id="4"
+	/>
+	<drawProject:point
+		px="2.2"
+		py="-5.5"
+		id="5"
+	/>
+	<line
+		x1="0"
+		y1="1.1"
+		x2="2.2"
+		y2="-5.5"
+		id="6"
+		childIds="4 5"
+		stroke="red"
+		stroke-width="5"
+	/>
+	<drawProject:point
+		px="100"
+		py="200"
+		id="7"
+	/>
+	<drawProject:point
+		px="5"
+		py="6"
+		id="8"
+	/>
+	<line
+		x1="100"
+		y1="200"
+		x2="5"
+		y2="6"
+		id="9"
+		childIds="7 8"
+		stroke="red"
+		stroke-width="5"
+	/>
+	<drawProject:req>
+		<distBetPoints
+			id="3"
+			IDs="1 2"
+			params="20"	/>
+		<equalSegmentLen
+			id="10"
+			IDs="6 9"	/>
+	</drawProject:req>
+</svg>

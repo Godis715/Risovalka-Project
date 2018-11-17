@@ -318,4 +318,27 @@ void DisplayParamsReq::Clear() {
 Array<Fl_Float_Input*> DisplayParamsReq::inputs;
 #pragma endregion
 
+#pragma region DrawMode
+DrawMode::DrawMode()
+{
+	if (output == nullptr)
+	{
+		output = new Fl_Output(10, 630, 500, 30);
+	}
+}
 
+DrawMode* DrawMode::GetInstance() {
+	if (instance == nullptr) {
+		instance = new DrawMode();
+	}
+	return instance;
+}
+
+void DrawMode::SetName(const std::string name)
+{
+	output->value(str_ch(name));
+}
+
+DrawMode* DrawMode::instance = nullptr;
+Fl_Output* DrawMode::output = nullptr;
+#pragma endregion

@@ -1,43 +1,107 @@
 #ifndef __PRIMITIVES
 #define __PRIMITIVES
-#define PI 3.141592653589793 
 
 #include "Vector2.h"
+#include "ID.h"
 
+#define VERTEX		1
+#define CENTER		2
+#define ANGLE		3
+#define RADIUS		4
 
-class Primitive {
+#define GETVARPARAMS(...) GetVariableObjParam(__VA_ARGS__, 0)
+#define SETVARPARAMS(...) SetVariableObjParam(__VA_ARGS__, 0)
+
+class Primitive;
+class Arc;
+class Point;
+class Segment;
+class Circle;
+class Curve;
+
+class PrimController{
 private:
-	const ID id;
-	const object_type type;
+	PrimController();
+	static PrimController* instance;
+
+	ObjectController* objCtrl;
+
+	Primitive* ConvertToPrimitive(Object*) const;
 public:
-	Primitive(ID, object_type);
-	virtual double GetDistance(const Vector2&) const = 0;
-	ID GetID() const;
-	object_type GetType();
+	static PrimController* GetInstance();
+
+	Primitive* GetPrimitive(const ID&) const;
+
+	bool IsPrimitive(object_type) const;
+
+	bool IsPrimitive(const ID&) const;
+
+	bool IsActivated(const ID&) const;
+
+	Array<double> GetPrimitiveParamsAsValues(const ID&) const;
+	Array<double> GetPrimParamsForDrawing(const ID&) const;
+
+	Array<double> GetVariableObjParam(const ID&, int...) const;
+	Array<double> GetVariableObjParam(const ID&, int[]) const;
+
+	void SetVariableObjParam(const ID&, const Array<double>&, int...) const;
+	void SetVariableObjParam(const ID&, const Array<double>&, int[]) const;
+
+
+	Array<double*> GetPrimitiveParamsAsPointers(const ID&) const;
+	Array<double*> GetPrimitiveParamsAsPointers(const Array<ID>&, int) const;
+
+	Array<double*> GetPrimitiveDoubleParamsAsPointers(const ID&) const;
+	//Array<double*> GetPrimitiveDoubleParamsAsPointers(const Array<ID>&, int) const;
+	
+	void ApplyPrimitiveDoubleParams(const ID&) const;
+
+	void SetPrimitiveParams(const ID&, const Array<double>&) const;
+
+	void Activate(const ID&) const;
+
+	void Deactivate(const ID&) const;
+
+	ID CreatePrimitive(object_type, const Array<ID>&, const Array<double>&) const;
+	Array<ID> GetChildren(const ID&) const;
+
+	double GetDistanceToPoint(const ID&, double, double) const;
+};
+
+class Primitive : public Object {
+private:
+	Array<double*> doubleParams;
+
+	bool isActivated;
+public:
+	Primitive(object_type, const Array<double>&, const Array<ID>&);
+	Primitive(object_type, const Array<double>&, const Array<Point*>&);
+	virtual ~Primitive();
+	virtual double GetDist(const Vector2&) const = 0;
+	bool IsActivated();
+	void Activate();
+	void Deactivate();
+	Array<double*> GetDoubleParamsAsPointers();
+
+	void ApplyDoubleParams();
 };
 
 class Point : public Primitive {
 private:
-	Primitive* parent;
-public:
-	Vector2 position;
+	double* x;
+	double* y;
 
+	friend class PrimController;
+public:
 	Point(const Vector2&);
 	Point(double, double);
-	Point(ID, double, double);
 	Point(const Point&);
 
-	double GetDistance(const Vector2&) const;
+	double GetDist(const Vector2&) const;
 
-	// do we need this functions?
-	Vector2 GetPosition() const;
-	void SetPosition(const Vector2&);
-	void SetPosition(double, double);
-
-	Primitive* GetParent();
-	void DeleteParent();
-	bool SetParent(Primitive*);
-	//
+	Vector2 GetPos() const;
+	void SetPos(const Vector2&);
+	void SetPos(double, double);
 };
 
 class Segment : public Primitive {
@@ -49,33 +113,34 @@ private:
 		double b;
 		double c;
 	};
-	Equation* CreateEquation() {
+	Equation* CreateEquation() const {
 		Equation* NewEquation = new Equation;
-		Vector2 vector1 = point1->GetPosition();
-		Vector2 vector2 = point2->GetPosition();
+		Vector2 vector1 = point1->GetPos();
+		Vector2 vector2 = point2->GetPos();
 		NewEquation->a = vector1.y - vector2.y;
 		NewEquation->b = vector2.x - vector1.x;
 		NewEquation->c = vector1.x * vector2.y - vector2.x  * vector1.y;
 		return NewEquation;
 	}
 	//
-
+	friend class PrimController;
 public:
 	Point* point1;
 	Point* point2;
 
 	Segment(Point*, Point*);
-	Segment(ID, Point*, Point*);
-	double GetDistance(const Vector2&) const;
+	double GetDist(const Vector2&) const;
 	double GetLength() const;
 
 	// temp functions
-	ID GetPoint1_ID() const;
-	ID GetPoint2_ID() const;
-	Vector2 GetPoint1_pos() const;
-	Vector2 GetPoint2_pos() const;
-	void SetPoint1_pos(Vector2);
-	void SetPoint2_pos(Vector2);
+	ID GetPointID1() const;
+	ID GetPointID2() const;
+	Vector2 GetPointPos1() const;
+	Vector2 GetPointPos2() const;
+	void SetPointPos1(const Vector2&);
+	void SetPointPos2(const Vector2&);
+	void SetPointPos1(const double, const double);
+	void SetPointPos2(const double, const double);
 	//
 
 	// move to requirement!!!
@@ -84,28 +149,30 @@ public:
 
 class Arc : public Primitive {
 private:
-	Vector2 center;
-	
-public:
+	double cx;
+	double cy;
+	double* angle;
+
 	Point* point1;
 	Point* point2;
-	// from 0 to 2pi
-	double angle;
 
+	friend class PrimController;
+public:
 	Arc(Point*, Point*, double);
-	Arc(ID, Point*, Point*, double);
 
-	double GetDistance(const Vector2&) const;
+	double GetDist(const Vector2&) const;
 	void RestoreCenter();
 	Vector2 GetCenter() const;
 
 	// temp functions
-	ID GetPoint1_ID() const;
-	ID GetPoint2_ID() const;
-	Vector2 GetPoint1_pos() const;
-	Vector2 GetPoint2_pos() const;
-	void SetPoint1_pos(Vector2);
-	void SetPoint2_pos(Vector2);
+	ID GetPointID1() const;
+	ID GetPointID2() const;
+	Vector2 GetPointPos1() const;
+	Vector2 GetPointPos2() const;
+	void SetPointPos1(const Vector2&);
+	void SetPointPos2(const Vector2&);
+	void SetPointPos1(const double, const double);
+	void SetPointPos2(const double, const double);
 	double GetAngle() const;
 	void SetAngle(double);
 	//
@@ -113,22 +180,42 @@ public:
 
 class Circle : public Primitive {
 private:
-public:
-	double radius;
+
 	Point* center;
 
-	Circle(Point*, double);
-	Circle(ID, Point*, double);
+	double* radius;
 
-	double GetDistance(const Vector2&) const;
+	friend class PrimController;
+public:
+	Circle(Point*, double);
+
+	double GetDist(const Vector2&) const;
 	Vector2 GetCenter() const;
 
 	// temp functions
-	ID GetCenter_ID() const;
-	void SetCenter_pos(Vector2);
+	ID GetCenterID() const;
+	void SetCenterPos(const Vector2&);
+	void SetCenterPos(const double, const double);
 	double GetRadius() const;
-	void SetRadius(double);
+	void SetRadius(const double);
 	//
+};
+
+class Curve : public Primitive {
+private:
+	Array<Point*> points;
+
+	friend class PrimController;
+public:
+	Curve(const Array<Point*>&);
+
+	double GetDist(const Vector2&) const;
+
+	Array<ID> GetPointIDs() const;
+	Array<Vector2> GetPointPositions() const;
+	Array<double> GetPointDoubles() const;
+	void SetPointPositions(const Array<Vector2>&);
+	void SetPointPositions(const Array<double>);
 };
 
 #endif

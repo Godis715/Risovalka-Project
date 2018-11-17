@@ -81,15 +81,13 @@
 #define col_Purple 128, 0, 128
 #define col_Red	255, 0, 0
 #define col_Maroon 128, 0, 0
-#define col_Yellow 205, 92, 92
 #define col_Olive 240, 128, 128
-#define col_Lime 250, 128, 114
-#define col_Green 233, 150, 122
-#define col_Aqua 205, 92, 92
+#define col_Aqua 102, 217, 255
 #define col_Tea	240, 128, 128
-#define col_Blue 250, 128, 114
+#define col_Blue 66, 170, 255
 #define col_Navy 233, 150, 122
 //Зелёные тона :
+#define col_Green 233, 150, 122
 #define col_GreenYellow	173, 255, 47
 #define col_Chartreuse 127, 255, 0
 #define col_LawnGreen 124, 252, 0
@@ -102,19 +100,14 @@
 #define col_MediumSeaGreen 60, 179, 113
 #define col_SeaGreen 46, 139, 87
 #define col_ForestGreen	34, 139, 34
-#define col_Green 0, 128, 0
 #define col_DarkGreen 0, 100, 0
-#define col_YellowGreen 154, 205, 50
 #define col_OliveDrab 107, 142, 35
-#define col_Olive 128, 128, 0
 #define col_DarkOliveGreen B2F	85, 107, 47
 #define col_MediumAquamarine 102, 205, 170
 #define col_DarkSeaGreen 143, 188, 143
 #define col_LightSeaGreen 32, 178, 170
 #define col_DarkCyan 0, 139, 139
-#define col_Tea 0, 128, 128
 //Синие тона :
-#define col_Aqua 0, 255, 255
 #define col_Cyan 0, 255, 255
 #define col_LightCyan 224, 255, 255
 #define col_PaleTurquoise 175, 238, 238
@@ -134,10 +127,8 @@
 #define col_CornflowerBlue 100, 149, 237
 #define col_MediumSlateBlue	123, 104, 238
 #define col_RoyalBlue 65, 105, 225
-#define col_Blue 0, 0, 255
 #define col_MediumBlue 0, 0, 205
 #define col_DarkBlue 0, 0, 139
-#define col_Navy 0, 0, 128
 #define col_MidnightBlu	25, 25, 112
 //Белые тона :
 #define col_White 255, 255, 255

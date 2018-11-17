@@ -1,13 +1,12 @@
-#include "Copmilator.h"
+#include "Compilator.h"
 
-
-Compiler::Compiler(kek* _Tree) : Tree(_Tree) {}
+Compiler::Compiler(treeFunc* _Tree) : Tree(_Tree) {}
 
 Compiler::~Compiler() {
 	delete Tree;
 }
 
-void Compiler::Initializer(kek* _Tree) {
+void Compiler::Initializer(treeFunc* _Tree) {
 	if (_instance != nullptr) {
 		delete _instance;
 	}
@@ -31,46 +30,66 @@ void Compiler::Parse(std::istream& input) {
 			input >> symbol;
 			str += symbol;
 		}
-		if (!IsRight(str)) {
-			return;
-		}
 		if (!Command(str)) {
 			return;
 		}
 	}
 }
 
-bool Compiler::IsRight(const string& str) {
+bool Compiler::Command(string& str) {
 	std::cmatch result;
-	std::regex regul("[A-Z]"
-		"([a-z0-9_])*"
-		"\\("
-		"(([a-z0-9_])*,)*"
-		"(([a-z0-9_])*\\))"
+	std::regex createPrim("[A-Z]"
+		"([a-z])*"
 		"\\("
 		"(([0-9.])*,)*"
 		"(([0-9.])*\\))"
+		"->\\("
+		"([a-z]([a-z0-9_])*,)*"
+		"([a-z]([a-z0-9_])*\\))*"
 		";"
 	);
-	if (regex_match(str.c_str(), result, regul)) {
-		return true;
+	if (regex_match(str.c_str(), result, createPrim)) {
+		return CommandCreatePrim(str);
 	}
 
-	std::regex regul2("[A-Z]"
-		"([a-z0-9_])*"
+	std::regex createReq("[A-Z]"
+		"([a-z_])*"
 		"\\("
-		"(([a-z0-9_])*,)*"
-		"(([a-z0-9_])*\\))"
+		"([a-z]([a-z0-9_])*,)*"
+		"([a-z]([a-z0-9_])*\\))*"
 		"\\("
 		"(([0-9.])*,)*"
 		"(([0-9.])*\\))"
 		"->"
-		"[a-z]"
-		"([a-z0-9_])*"
+		"[a-z]([a-z0-9_])*"
 		";"
 	);
-	if (regex_match(str.c_str(), result, regul2)) {
-		return true;
+	if (regex_match(str.c_str(), result, createReq)) {
+		return CommandCreateReq(str);
+	}
+
+	std::regex change("[A-Z]"
+		"([a-z])*"
+		"\\("
+		"(([a-z0-9_])*,)*"
+		"(([a-z0-9_])*\\))"
+		"\\("
+		"(([0-9.])*,)*"
+		"(([0-9.])*\\))"
+		";"
+		);
+	if (regex_match(str.c_str(), result, change)) {
+		return CommandChange(str);
+	}
+
+	std::regex del("Delete"
+		"\\("
+		"([a-z]([a-z0-9_])*,)*"
+		"([a-z]([a-z0-9_])*\\))*"
+		";"
+		);
+	if (regex_match(str.c_str(), result, del)) {
+		return CommandDel(str);;
 	}
 	return false;
 }
@@ -154,8 +173,7 @@ Array<double> Compiler::GetPararms(string& input, bool& flag) {
 	return result;
 }
 
-ID Compiler::Complete(const string& func, const Array<string>& variables, const Array<double>& params, bool& flag) {
-	ID id;
+Array<ID> Compiler::Complete(const string& func, const Array<string>& variables, const Array<double>& params, bool& flag) {
 	double param;
 
 	Array<ID> ids(variables.GetSize());
@@ -166,7 +184,7 @@ ID Compiler::Complete(const string& func, const Array<string>& variables, const 
 		}
 		else {
 			flag = false;
-			return id;
+			return Array<ID>(0);
 		}
 	}
 
@@ -175,35 +193,65 @@ ID Compiler::Complete(const string& func, const Array<string>& variables, const 
 		return marker.operator*()(ids, params);
 	}
 	else {
-		return id;
+		flag = false;
+		return Array<ID>(0);
 	}
 }
 
-bool Compiler::Command(string& input) {
+bool Compiler::CommandCreatePrim(string& input) {
 	bool flag = true;
 	string func = GetNameFunction(input);
-
-	auto varibles = GetVaribles(input);
 
 	auto params = GetPararms(input, flag);
 	if (!flag) {
 		return flag;
 	}
-	ID id = Complete(func, varibles, params, flag);
+	Array<ID> IDs = Complete(func, Array<string>(0), params, flag);
 
 	if (!flag) {
 		return flag;
 	}
-
-	if (input[0] == '-') {
-		int x = input.length() - 3;
-		input = input.substr(2, input.length() - 3);
-		auto marker = varible.Find(input);
+	input = input.substr(2, input.length() - 3);
+	auto varibles = GetVaribles(input);
+	for (int i = 0; i < varibles.GetSize(); ++i) {
+		auto marker = varible.Find(varibles[i]);
 		if (marker.IsValid()) {
 			marker.Delete();
 		}
-		varible.Add(input, id);
+		varible.Add(varibles[i], IDs[i]);
 	}
+	return flag;
+}
+
+bool Compiler::CommandCreateReq(string& input) {
+	bool flag = true;
+	string func = GetNameFunction(input);
+	auto varibles = GetVaribles(input);
+	auto params = GetPararms(input, flag);
+	Array<ID> IDs = Complete(func, varibles, params, flag);
+
+	if (!flag) {
+		return flag;
+	}
+	input = input.substr(2, input.length() - 3);
+	varible.Add(input, IDs[0]);
+	return flag;
+}
+
+bool Compiler::CommandChange(string& input) {
+	bool flag = true;
+	string func = GetNameFunction(input);
+	auto varibles = GetVaribles(input);
+	auto params = GetPararms(input, flag);
+	Array<ID> IDs = Complete(func, varibles, params, flag);
+	return flag;
+}
+
+bool Compiler::CommandDel(string& input) {
+	bool flag = true;
+	string func = GetNameFunction(input);
+	auto varibles = GetVaribles(input);
+	Array<ID> IDs = Complete(func, varibles, Array<double>(0), flag);
 	return flag;
 }
 

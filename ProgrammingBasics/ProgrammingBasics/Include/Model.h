@@ -1,177 +1,66 @@
 #ifndef __MODEL
 #define __MODEL
 
-#include "Copmilator.h"
+#include "Requirement.h"
+#include "Primitives.h"
+#include "Optimizer.h"
+#include "DataController.h"
+#include "Compilator.h"
+#include "Undo-Redo.h"
 
-// ID
-// IDGenerator
-// Library //
-// Queue
-// Dequeue
-// List
-// Array
-// Dictionary
-// Type
-// Vector2
-// Primitives
-// Requirement
-// Logger
-// Compilator
-// Model
-
-typedef BinSearchTree<ID, List<ID>*> DataLink;
-typedef BinSearchTree<ID, Primitive*> DataPrim;
-typedef BinSearchTree<ID, Requirement*> DataReq;
-
-class Model
-{
+class Model {
 private:
+	ObjectController* objCtrl;
+	PrimController* primCtrl;
+	ReqController* reqCtrl;
+	DataController* dataCtrl;
+
 	static Model* instance;
 
-	IDGenerator* idGen;
-
-	DataPrim dataPrim;
-
-	DataReq dataReq;
-
-	DataLink dataLink;
-
-	BinSearchTree<ID, ID>* currentComponent;
-
-	bool GetRequirements(const Array<ID>&, Array<Requirement*>&);
-
-	bool GetPrimitives(const Array<ID>&, Array<Primitive*>&);
-	
-	bool GetRequirementsFromComponent(BinSearchTree<ID, ID>&, Array<Requirement*>&);
-
-	bool GetPrimitivesFromComponent(BinSearchTree<ID, ID>&, Array<Primitive*>&);
-
-	void ConnectPrimitives(const Array<Primitive*>&);
-
-	bool CreateRequirement(object_type, Array<Primitive*>&, const Array<double>&, ID&);
-
-	bool OptimizeGroup(Array<Primitive*>&);
-
-	double GetError(const Array<Requirement*>&) const;
-
-	double ErrorByAlpha(const Array<Requirement*>&, const Array<double*>&, const Array<double>&, double);
-	void OptimizeByGradient(const Array<Requirement*>&, const Array<double*>&, const Array<double>&);
-
-	void LockPoint(Point* point, ID&);
-
-	/*version 2*/
-	void OptitmizeNewton(const ID&);
-
-	void GetDoublesForOptimize(Array<Primitive*>&, Array<double*>&);
-
-	void GetDifferential(const Array<Requirement*>&, Array<double*>&, Array<double>&);
-
-	void GetPointsFromPrimitives(Array<Primitive*>&, BinSearchTree<ID, Point*>&);
-
-	bool pointInArea(double, double, double, double, double, double);
-
-	bool CreateObjByID(object_type, Array<ID>&, Array<double>&);
-
-	class SVGformat
-	{
-	private:
-		Model* model;
-		std::string ScanAttribute(std::ifstream&);
-		Array<double> ScanParams(std::ifstream&);
-		bool ParsePointTag(std::ifstream&);
-		bool ParseSegmentTag(std::ifstream&);
-		bool ParseCircleTag(std::ifstream&);
-		bool ParseArcTag(std::ifstream&);
-		bool ParseRequirementTag(std::ifstream&, object_type);
-	public:
-		SVGformat();
-		SVGformat(Model*);
-		~SVGformat();
-		bool Download(const std::string);
-		bool Save(const std::string);
-
-	};
-	SVGformat* workingWithReester;
-
+	Model();
 public:
 	static Model* GetInstance();
 
-	class infoObject
-	{
-	public:
-		infoObject(){ }
-		void operator=(const infoObject& input)
-		{
-			this->params = input.params;
-			this->type = input.type;
-		}
-		Array<double> params;
-		object_type type;
-	};
+	ID CreatePrimitive(object_type, const Array<double>&) const;
+	ID CreateRequirement(object_type, const Array<ID>&, const Array<double>&) const;
 
-	Model() { }
+	#define SEARCHING_AREA 5.0
+	ID GetObjectByClick(double, double) const;
 
-	// Create destructor
-	~Model() {
-		int i = 0;
-	}
-
-	bool NewComponent(const ID&, Array<ID>&, Array<ID>&);
-
-	bool DischargeInfoObjects(Array<infoObject>&);
-
-	bool CreateObject(object_type, const Array<double>&, ID&);
+	// with optimization
+	void ChangeRequirement(const ID&, const Array<double>&) const;
 	
-	bool CreateRequirementByID(object_type, const Array<ID>&, const Array<double>&, ID&);
+	void DeleteObject(ID&) const;
+	void DeleteObjects(Array<ID>&) const;
 
-	void CreateLink(const ID&, const Array<Primitive*>&);
+	void OptimizeByID(const ID&) const;
+	void Optimize() const;
+	void CashNewComponent(const Array<ID>&) const;
+	void Scale(const Array<ID>&, const double) const;
+	void Move(const Array<ID>&, const Vector2&) const;
+	void Rotate(const Array<ID>& objs, const double) const;
+	void Rotate(const Array<ID>& objs, const Vector2&, const double) const;
+	void Clear() const;
 
-	bool DeletePrimitive(const ID&);
+	void Save(const std::string&) const;
+	void Download(const std::string&) const;
 
-	void DeletePrimitives(const Array<ID>& primitiveID) {
-		for (int i = 0; i < primitiveID.GetSize(); ++i) {
-			if (!DeletePrimitive(primitiveID[i])) {
-				LOG(string("could not delete prim"), primitiveID[i], LEVEL_3);
-			}
-		}
-	}
+	bool IsPrim(const ID&) const;
+	bool IsReq(const ID&) const;
 
-	bool DeleteRequirement(const ID&);
+	Array<ID> GetObjectsByArea(double, double, double, double) const;
 
-	void Clear();
+	Array<ID> GetRelatedObjects(const ID&) const;
 
-	bool GetObject(double, double, Array<ID>&, Array<object_type>&, Array<double>&);
+	Component GetComponent(const ID&);
 
-	//test
-	bool GetObjectsOnArea(double, double, double, double, Array<ID>&, Array<object_type>&);
+	object_type GetObjType(const ID&) const;
+	Array<double> GetObjParam(const ID&) const;
+	void SetVariableObjParam(const ID&, const Array<double>&, int...) const;
+	Array<double> GetVariableObjParam(const ID&, int...) const;
+	Array<double> GetPrimParamsForDrawing(const ID&) const;
 
-	void GetRequirementsByID(const ID&, Array<ID>&);
-
-	void GetPrimitivesByID(const ID&, Array<ID>&);
-
-	bool GetObjType(const ID&, object_type&);
-
-	// bool ImposeRequirement(object_type, const Array<ID>&);
-
-	bool GetObjParam(const ID&, Array<double>&);
-	
-	bool OptimizeRequirements(const Array<Requirement*>&);
-
-	bool OptimizeByID(const ID&);
-	// new functon
-
-	//void ChangeRequirement(const ID&, const double);
-
-	void ChangeRequirement(const ID&, Array<double>&);
-
-	void ChangePrimitive(const ID&, Array<double>&);
-
-	bool Scale(const Array<ID>&, const double);
-
-	bool Move(const Array<ID>&, const Vector2&);
-
-	bool SaveProject(const std::string);
-
-	bool DownloadFile(const std::string);
+	Set<ID>::bst_iterator GetPrimIterator();
 };
+
 #endif

@@ -16,6 +16,8 @@ private:
 
 	static double rotateScene;
 
+	Fl_Output* drawCoord;
+
 	void draw();
 
 public:
