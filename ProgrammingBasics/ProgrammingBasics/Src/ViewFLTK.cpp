@@ -1,4 +1,5 @@
 #include "ViewFLTK.h"
+#include "FLTKWidget.h"
 
 ViewFLTK::ViewFLTK()
 {
@@ -563,7 +564,7 @@ IWidjet* ViewFLTK::GetWidjet(const typeWidjet typeW)
 	{
 		DisplayParamsPrim* displayParamsPrim = new DisplayParamsPrim();
 		dataWidjet->Add("DisplayParamsPrim", displayParamsPrim);
-		widjet = new IDisplayParamPrim("DisplayParamsPrim");
+		widjet = new FLTKDisplayParamPrim("DisplayParamsPrim");
 		break;
 	}
 	case displayParamReq:
@@ -575,24 +576,24 @@ IWidjet* ViewFLTK::GetWidjet(const typeWidjet typeW)
 		int coordY = paramsDisp[1] + paramsDisp[3] + 20;
 		DisplayParamsReq* displayParamsReq = new DisplayParamsReq(coordX, coordY);
 		dataWidjet->Add("DisplayParamsReq", displayParamsReq);
-		widjet = new IDisplayParamReq("DisplayParamsReq");
+		widjet = new FLTKDisplayParamReq("DisplayParamsReq");
 		break;
 	}
 	case creatingToolbar:
 	{
-		widjet = new ICreatingToolbar("ToolBar");
+		widjet = new FLTKCreatingToolbar("ToolBar");
 		break;
 	}
 	case requirementInput:
 	{
 		RequirementInput* requirementInput = new RequirementInput();
 		dataWidjet->Add("RequirementInput", requirementInput);
-		widjet = new IRequirementInput("RequirementInput");
+		widjet = new FLTKRequirementInput("RequirementInput");
 		break;
 	}
 	case drawMode:
 	{
-		widjet = new IRequirementInput("DrawMode");
+		widjet = new FLTKDrawMode("DrawMode");
 		break;
 	}
 	default:

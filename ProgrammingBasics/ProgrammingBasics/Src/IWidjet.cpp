@@ -1,25 +1,21 @@
 #include "ViewFLTK.h"
-#include "IWidjet.h"
+#include "FLTKWidget.h"
 
 
 #pragma region IWidjet
-IWidjet::IWidjet(const std::string _pass) : password(_pass) {}
 
-IWidjet::~IWidjet() {
-
-}
 #pragma endregion
 
 
 #pragma region IDisplayParam
-IDisplayParamPrim::IDisplayParamPrim(const string _pass) : IWidjet(_pass) {}
+FLTKDisplayParamPrim::FLTKDisplayParamPrim(const string _pass) : password(_pass) {}
 
-IDisplayParamPrim::~IDisplayParamPrim() {
+FLTKDisplayParamPrim::~FLTKDisplayParamPrim() {
 	auto view = ViewFLTK::GetInstance();
 	view->DeleteWidjet(password);
 }
 
-void IDisplayParamPrim::SetParam(const Array<std::string>& params, const Array<std::string>& names) {
+void FLTKDisplayParamPrim::SetParam(const Array<std::string>& params, const Array<std::string>& names) {
 	auto view = ViewFLTK::GetInstance();
 	auto widjet = dynamic_cast<DisplayParamsPrim*>(view->GetWidjet(password));
 	auto mainWindow = dynamic_cast<MainWindow*>(view->GetWidjet("MainWindow"));
@@ -32,14 +28,14 @@ void IDisplayParamPrim::SetParam(const Array<std::string>& params, const Array<s
 #pragma endregion
 
 #pragma region IDisplayParamReq
-IDisplayParamReq::IDisplayParamReq(const string _pass) : IWidjet(_pass) {}
+FLTKDisplayParamReq::FLTKDisplayParamReq(const string _pass) : password(_pass) {}
 
-IDisplayParamReq::~IDisplayParamReq() {
+FLTKDisplayParamReq::~FLTKDisplayParamReq() {
 	auto view = ViewFLTK::GetInstance();
 	view->DeleteWidjet(password);
 }
 
-void IDisplayParamReq::SetParam(const Array<std::string>& params, const std::string name) {
+void FLTKDisplayParamReq::SetParam(const Array<std::string>& params, const std::string name) {
 	auto view = ViewFLTK::GetInstance();
 	auto widjet = dynamic_cast<DisplayParamsReq*>(view->GetWidjet(password));
 	auto mainWindow = dynamic_cast<MainWindow*>(view->GetWidjet("MainWindow"));
@@ -52,15 +48,15 @@ void IDisplayParamReq::SetParam(const Array<std::string>& params, const std::str
 #pragma endregion
 
 #pragma region ICreatingToolbar
-ICreatingToolbar::ICreatingToolbar(const std::string _pass) : IWidjet(_pass) {
+FLTKCreatingToolbar::FLTKCreatingToolbar(const std::string _pass) : password(_pass) {
 
 }
 
-ICreatingToolbar::~ICreatingToolbar() {
+FLTKCreatingToolbar::~FLTKCreatingToolbar() {
 	Clear();
 }
 
-void ICreatingToolbar::SetParam(const Array<std::string>& names) {
+void FLTKCreatingToolbar::SetParam(const Array<std::string>& names) {
 	auto view = ViewFLTK::GetInstance();
 	auto widjet = dynamic_cast<ViewToolbar*>(view->GetWidjet(password));
 	auto mainWindow = dynamic_cast<MainWindow*>(view->GetWidjet("MainWindow"));
@@ -72,7 +68,7 @@ void ICreatingToolbar::SetParam(const Array<std::string>& names) {
 }
 
 
-void ICreatingToolbar::Clear() {
+void FLTKCreatingToolbar::Clear() {
 	auto view = ViewFLTK::GetInstance();
 	auto widjet = dynamic_cast<ViewToolbar*>(view->GetWidjet(password));
 	widjet->ClearRequirements();
@@ -80,22 +76,22 @@ void ICreatingToolbar::Clear() {
 #pragma endregion
 
 #pragma region IRequirementInput
-IRequirementInput::IRequirementInput(const std::string _pass) : IWidjet(_pass) {}
+FLTKRequirementInput::FLTKRequirementInput(const std::string _pass) : password(_pass) {}
 
-IRequirementInput::~IRequirementInput() {
+FLTKRequirementInput::~FLTKRequirementInput() {
 	auto view = ViewFLTK::GetInstance();
 	view->DeleteWidjet(password);
 }
 #pragma endregion
 
 #pragma region IDrawMode
-IDrawMode::IDrawMode(const std::string _pass) : IWidjet(_pass) {
+FLTKDrawMode::FLTKDrawMode(const std::string _pass) : password(_pass) {
 
 }
 
-IDrawMode::~IDrawMode() {}
+FLTKDrawMode::~FLTKDrawMode() {}
 
-void IDrawMode::SetName(const std::string nameMode) {
+void FLTKDrawMode::SetName(const std::string nameMode) {
 	auto view = ViewFLTK::GetInstance();
 	auto widjet = dynamic_cast<DrawMode*>(view->GetWidjet(password));
 	auto mainWindow = dynamic_cast<MainWindow*>(view->GetWidjet("MainWindow"));

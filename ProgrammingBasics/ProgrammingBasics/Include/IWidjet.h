@@ -5,65 +5,46 @@
 
 class IWidjet
 {
-protected:
-	const std::string password;
 public:
-	IWidjet(const std::string);
-	~IWidjet();
 };
 
 class IDisplayParamPrim : public IWidjet
 {
-	Array<std::string> params;
-	Array<std::string> reqs;
 public:
-	IDisplayParamPrim(const std::string);
-
-	~IDisplayParamPrim();
-
-	void SetParam(const Array<std::string>&, const Array<std::string>&);
+	virtual void SetParam(const Array<std::string>&, const Array<std::string>&) = 0;
+	virtual ~IDisplayParamPrim() { }
 };
 
 class IDisplayParamReq : public IWidjet
 {
 public:
-	Array<std::string> params;
-	std::string reqName;
-public:
-	IDisplayParamReq(const std::string);
+	virtual void SetParam(const Array<std::string>&, const std::string) = 0;
+	virtual ~IDisplayParamReq() { }
 
-	~IDisplayParamReq();
-
-	void SetParam(const Array<std::string>&, const std::string);
 };
 
 class ICreatingToolbar : public IWidjet
 {
-	Array<std::string> possibleReqs;
 public:
-	ICreatingToolbar(const std::string);
-	~ICreatingToolbar();
+	virtual void SetParam(const Array<std::string>&) = 0;
+	virtual void Clear() = 0;
+	virtual ~ICreatingToolbar() { }
 
-	void SetParam(const Array<std::string>&);
-
-	void Clear();
 };
 
 class IRequirementInput : public IWidjet
 {
 public:
-	IRequirementInput(const std::string);
-
-	~IRequirementInput();
+	virtual ~IRequirementInput() { }
 };
 
 class IDrawMode : public IWidjet
 {
 public:
-	IDrawMode(const std::string);
-	~IDrawMode();
-
-	void SetName(const std::string);
+	virtual void SetName(const std::string) = 0;
+	virtual ~IDrawMode() { }
 };
+
+
 
 #endif __IWIDJET

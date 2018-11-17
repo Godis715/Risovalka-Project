@@ -163,6 +163,7 @@
     <ClInclude Include="..\Include\DataController.h" />
     <ClInclude Include="..\Include\Dequeue.h" />
     <ClInclude Include="..\Include\Dictionary.h" />
+    <ClInclude Include="..\Include\FLTKWidget.h" />
     <ClInclude Include="..\Include\ID.h" />
     <ClInclude Include="..\Include\IDGenerator.h" />
     <ClInclude Include="..\Include\IView.h" />
@@ -186,6 +187,7 @@
     <ClInclude Include="..\Include\ViewLog.h" />
     <ClInclude Include="..\Include\ViewMainWindow.h" />
     <ClInclude Include="..\Include\ViewToolbar.h" />
+    <ClInclude Include="..\Include\WPFWidget.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\..\Debug\script.txt" />
