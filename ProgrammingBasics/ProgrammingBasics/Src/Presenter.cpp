@@ -316,7 +316,8 @@ void Presenter::DrawScene()
 		if (model->GetObjType(obj) == ot_curve) {
 			view->SetColor(col_White);
 			auto params = model->GetVariableObjParam(obj, VERTEX);
-			view->DrawCurve(params, line);
+			//view->DrawCurve(params, line);
+			view->DrawCurve3(params, line);
 		}
 	}
 

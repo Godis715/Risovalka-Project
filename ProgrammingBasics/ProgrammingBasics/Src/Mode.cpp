@@ -418,7 +418,8 @@ DMDefualt::DMDefualt(Event e) : selectionObjects(0)
 	{
 		outputWidjet->SetName(nameMode + "::CreatingCurve");
 		stateCreate = create;
-		createObject = new CreatingCurve();
+		//createObject = new CreatingCurve();
+		createObject = new CreatingCurve3();
 		break;
 	}
 	default:
@@ -434,6 +435,15 @@ Mode* DMDefualt::HandleEvent(const Event ev, const Array<double>& params)
 {
 	switch (ev)
 	{
+	case ev_leftMouseUp:
+	{
+		if (createObject != nullptr)
+		{
+			Array<Vector2> points(0);
+			createObject->HandleEvent(ev_leftMouseUp, points);
+		}
+		return nullptr;
+	}
 	case ev_leftMouseDown:
 	{
 		if (params.GetSize() != 2) {
@@ -529,7 +539,8 @@ Mode* DMDefualt::HandleEvent(const Event ev, const Array<double>& params)
 		outputWidjet->SetName(nameMode + "::CreatingCurve");
 		selectionObjects.Clear();
 		stateCreate = create;
-		createObject = new CreatingCurve();
+		//createObject = new CreatingCurve();
+		createObject = new CreatingCurve3();
 		return nullptr;
 	}
 	case ev_enter:
@@ -723,6 +734,15 @@ Mode* DMSymmetrical::HandleEvent(const Event ev, const Array<double>& params)
 {
 	switch (ev)
 	{
+	case ev_leftMouseUp:
+	{
+		if (createObject != nullptr)
+		{
+			Array<Vector2> points(0);
+			createObject->HandleEvent(ev_leftMouseUp, points);
+		}
+		return nullptr;
+	}
 	case ev_leftMouseDown:
 	{
 		if (params.GetSize() != 2) {
@@ -822,7 +842,8 @@ Mode* DMSymmetrical::HandleEvent(const Event ev, const Array<double>& params)
 		outputWidjet->SetName(nameMode + "::CreatingCurve");
 		selectionObjects.Clear();
 		stateCreate = create;
-		createObject = new CreatingCurve();
+		//createObject = new CreatingCurve();
+		createObject = new CreatingCurve3();
 		return nullptr;
 	}
 	case ev_enter:
@@ -973,6 +994,15 @@ Mode* DMSectorSymmetrical::HandleEvent(const Event ev, const Array<double>& para
 {
 	switch (ev)
 	{
+	case ev_leftMouseUp:
+	{
+		if (createObject != nullptr)
+		{
+			Array<Vector2> points(0);
+			createObject->HandleEvent(ev_leftMouseUp, points);
+		}
+		return nullptr;
+	}
 	case ev_leftMouseDown:
 	{
 		if (params.GetSize() != 2) {
@@ -1072,7 +1102,8 @@ Mode* DMSectorSymmetrical::HandleEvent(const Event ev, const Array<double>& para
 		outputWidjet->SetName(nameMode + "::CreatingCurve");
 		selectionObjects.Clear();
 		stateCreate = create;
-		createObject = new CreatingCurve();
+		//createObject = new CreatingCurve();
+		createObject = new CreatingCurve3();
 		return nullptr;
 	}
 	case ev_enter:
@@ -2614,6 +2645,178 @@ void CreatingCurve::DrawMode() {
 			}
 			curve[curve.GetSize() - 1] = imaginaryPoints[i];
 			view->DrawCurve(curve, points);
+		}
+	}
+}
+#pragma endregion
+
+#pragma region CreatingCurve
+CreatingCurve3::CreatingCurve3() {
+	countClick = 0;
+	isDrag = false;
+	lastEvent = ev_mouseMove;
+}
+CreatingCurve3::~CreatingCurve3() {
+	if (PointsCurves.GetSize() > 2)
+	{
+		PointsCurves.PopBack();
+		int countCurves = PointsCurves[0].GetSize();
+		Array<ID> createdCurves = Array<ID>(countCurves);
+		for (int i = 0; i < countCurves; i++)
+		{
+			Array<double> curve = Array<double>(PointsCurves.GetSize() * 2);
+			for (int j = 0; j < PointsCurves.GetSize(); ++j) {
+				curve[2 * j] = PointsCurves[j][i].x;
+				curve[2 * j + 1] = PointsCurves[j][i].y;
+			}
+			createdCurves[i] = model->CreatePrimitive(ot_curve, curve);
+
+		}
+		undo_redo->AddVersion(tfc_creation, createdCurves);
+		for (int i = 0; i < PointsCurves.GetSize(); ++i) {
+			PointsCurves[i].Clear();
+		}
+		PointsCurves.Clear();
+	}
+}
+
+Array<ID> CreatingCurve3::HandleEvent(const Event ev, Array<Vector2>& params) {
+	switch (ev)
+	{
+	case ev_leftMouseDown:
+	{
+		connectPoints.Clear();
+		connectPoints = params;
+		imaginaryPoints.Clear();
+		imaginaryPoints = params;
+		lastEvent = ev_leftMouseDown;
+		return Array<ID>(0);
+	}
+	case ev_mouseMove:
+	{
+		imaginaryPoints.Clear();
+		imaginaryPoints = params;
+		if (lastEvent == ev_leftMouseDown)
+		{
+			lastEvent = ev_mouseMove;
+			isDrag = true;
+		}
+		if (isDrag)
+		{
+			controlPoints2.Clear();
+			controlPoints2 = imaginaryPoints;
+			controlPoints1.Clear();
+			controlPoints1 = connectPoints;
+			if (countClick != 0)
+			{
+				for (size_t i = 0; i < controlPoints2.GetSize(); i++)
+				{
+					controlPoints1[i] = controlPoints1[i] * 2 - controlPoints2[i];
+				}
+			}
+		}
+		imaginaryPoints.Clear();
+		imaginaryPoints = params;
+		return Array<ID>(0);
+	}
+	case ev_leftMouseUp:
+	{
+		if (lastEvent == ev_leftMouseDown)
+		{
+			if (countClick == 0)
+			{
+				PointsCurves.PushBack(connectPoints);
+				PointsCurves.PushBack(connectPoints); // controlPoints2
+			}
+			else
+			{
+				PointsCurves.PushBack(connectPoints); // controlPoints1
+				PointsCurves.PushBack(connectPoints);
+				PointsCurves.PushBack(connectPoints); // controlPoints2
+			}
+		}
+		if (isDrag)
+		{
+			if (countClick == 0)
+			{
+				PointsCurves.PushBack(connectPoints);
+				PointsCurves.PushBack(controlPoints2);
+			}
+			else
+			{
+				PointsCurves.PushBack(controlPoints1);
+				PointsCurves.PushBack(connectPoints);
+				PointsCurves.PushBack(controlPoints2);
+			}
+		}
+		connectPoints.Clear();
+		connectPoints = params;
+		lastEvent = ev_leftMouseUp;
+		isDrag = false;
+		countClick++;
+		return Array<ID>(0);
+	}
+	default:
+		break;
+	}
+	return Array<ID>(0);
+}
+
+void CreatingCurve3::DrawMode() {
+	if (countClick != 0)
+	{
+		view->SetColor(col_Red);
+		for (int i = 0; i < PointsCurves.GetSize(); i++)
+		{
+			for (int j = 0; j < PointsCurves[i].GetSize(); ++j) {
+				view->DrawPoint(PointsCurves[i][j]);
+			}
+		}
+		view->SetColor(col_Yellow);
+		int countCurves = PointsCurves[0].GetSize();
+		for (int i = 0; i < countCurves; i++)
+		{
+			Array<Vector2> curve = Array<Vector2>(PointsCurves.GetSize() + 2);
+			for (int j = 0; j < PointsCurves.GetSize(); ++j) {
+				curve[j] = PointsCurves[j][i];
+			}
+			if (isDrag)
+			{
+				if (countClick != 0)
+				{
+					curve[curve.GetSize() - 2] = controlPoints1[i];
+				}
+				else
+				{
+					curve[curve.GetSize() - 2] = connectPoints[i];
+				}
+				curve[curve.GetSize() - 1] = connectPoints[i];
+			}
+			else
+			{
+				curve[curve.GetSize() - 2] = imaginaryPoints[i];
+				curve[curve.GetSize() - 1] = imaginaryPoints[i];
+
+			}
+			view->DrawCurve3(curve, points);
+		}
+	}
+	if (isDrag)
+	{
+		for (size_t i = 0; i < controlPoints2.GetSize(); i++)
+		{
+			view->SetColor(col_Red);
+			view->DrawPoint(connectPoints[i]);
+			view->DrawPoint(controlPoints2[i]);
+			view->SetColor(col_Purple);
+			view->DrawLine(connectPoints[i], controlPoints2[i], line);
+			if (countClick != 0)
+			{
+				view->DrawLine(connectPoints[i], controlPoints1[i], line);
+				view->SetColor(col_Red);
+				view->DrawPoint(controlPoints1[i]);
+
+			}
 		}
 	}
 }

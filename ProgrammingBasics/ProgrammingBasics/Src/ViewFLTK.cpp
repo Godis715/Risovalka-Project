@@ -527,6 +527,36 @@ void ViewFLTK::DrawCurve(const Array<double>& points, typeDrawing type) {
 	fl_end_line();
 }
 
+void ViewFLTK::DrawCurve3(const Array<Vector2>& points, typeDrawing type)
+{
+	if (type == typeDrawing::points) {
+		fl_line_style(FL_DOT, 2);
+	}
+	fl_begin_line();
+	for (size_t i = 0; i < points.GetSize() - 1; i = i + 3)
+	{
+		fl_curve(points[i].x, points[i].y, 
+			points[i + 1].x, points[i + 1].y,
+			points[i + 2].x, points[i + 2].y,
+			points[i + 3].x, points[i + 3].y);
+	}
+	fl_end_line();
+}
+void ViewFLTK::DrawCurve3(const Array<double>& points, typeDrawing type) {
+	if (type == typeDrawing::points) {
+		fl_line_style(FL_DOT, 2);
+	}
+	fl_begin_line();
+	for (size_t i = 0; i < points.GetSize() - 2; i = i + 6)
+	{
+		fl_curve(points[i], points[i + 1],
+			points[i + 2], points[i + 3],
+			points[i + 4], points[i + 5],
+			points[i + 6], points[i + 7]);
+	}
+	fl_end_line();
+}
+
 void ViewFLTK::SetColor(int r, int g, int b)
 {
 	fl_color(fl_rgb_color(r, g, b));

@@ -212,6 +212,27 @@ public:
 	void DrawMode();
 };
 
+class CreatingCurve3 : public CreateObject {
+private:
+	int countClick;
+	bool isDrag;
+	Array<Array<Vector2>> PointsCurves;
+
+	Array<Vector2> connectPoints;
+	Array<Vector2> controlPoints1;
+	Array<Vector2> controlPoints2;
+	Array<Vector2> imaginaryPoints;
+
+	Event lastEvent;
+public:
+	CreatingCurve3();
+	~CreatingCurve3();
+
+	Array<ID> HandleEvent(const Event, Array<Vector2>&);
+
+	void DrawMode();
+};
+
 
 //---------------------------------
 

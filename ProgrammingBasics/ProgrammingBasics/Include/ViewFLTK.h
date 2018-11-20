@@ -60,6 +60,9 @@ public:
 	void DrawCurve(const Array<Vector2>& points, typeDrawing type);
 	void DrawCurve(const Array<double>& points, typeDrawing type);
 
+	void DrawCurve3(const Array<Vector2>& points, typeDrawing type);
+	void DrawCurve3(const Array<double>& points, typeDrawing type);
+
 	void SetColor(int, int, int);
 	
 	void Update();

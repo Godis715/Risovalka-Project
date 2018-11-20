@@ -2,62 +2,62 @@
 <!-- DrawProject -->
 <svg width="1000" height="1000">
 	<drawProject:point
-		px="278"
-		py="386"
-		id="54"
+		px="206"
+		py="378"
+		id="1"
 	/>
 	<drawProject:point
-		px="455"
-		py="248"
-		id="55"
+		px="207"
+		py="378"
+		id="2"
 	/>
 	<drawProject:point
-		px="512"
-		py="397"
-		id="56"
+		px="385"
+		py="143"
+		id="3"
 	/>
 	<drawProject:point
-		px="645"
-		py="240"
-		id="57"
+		px="396"
+		py="258"
+		id="4"
 	/>
 	<drawProject:point
-		px="438"
-		py="171"
-		id="58"
+		px="407"
+		py="373"
+		id="5"
 	/>
 	<drawProject:point
-		px="370"
-		py="318"
-		id="59"
+		px="487"
+		py="260"
+		id="6"
 	/>
 	<drawProject:point
-		px="694"
-		py="304"
-		id="60"
+		px="487"
+		py="260"
+		id="7"
 	/>
 	<drawProject:point
-		px="821"
-		py="205"
-		id="61"
+		px="487"
+		py="260"
+		id="8"
 	/>
 	<drawProject:point
-		px="840"
-		py="364"
-		id="62"
+		px="613"
+		py="237"
+		id="9"
 	/>
 	<drawProject:point
-		px="701"
-		py="411"
-		id="63"
+		px="613"
+		py="237"
+		id="10"
 	/>
 	<path
 		style = "fill:none;stroke:#000000;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-		d="M 278,386 C 455,248 512,397 645,240 438,171 370,318 694,304 821,205 840,364 701,411"
-		id="64"
+		d="M 206,378 C 207,378 385,143 396,258 407,373 487,260 487,260 487,260 613,237 613,237"
+		id="11"
 	/>
 	<drawProject:curve
-		id="64"
-		childIds="54 55 56 57 58 59 60 61 62 63"
+		id="11"
+		childIds="1 2 3 4 5 6 7 8 9 10"
 	/>
 </svg>
