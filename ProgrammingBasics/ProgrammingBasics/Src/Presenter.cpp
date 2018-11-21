@@ -230,7 +230,8 @@ void Presenter::DrawSelectedObjects(const Array<ID>& selectedObjects)
 		}
 		case ot_curve: {
 			auto params = model->GetVariableObjParam(obj, VERTEX);
-			view->DrawCurve(params, line);
+			//view->DrawCurve(params, line);
+			view->DrawCurveNew(params, line);
 			break;
 		}
 		default:
@@ -317,7 +318,7 @@ void Presenter::DrawScene()
 			view->SetColor(col_White);
 			auto params = model->GetVariableObjParam(obj, VERTEX);
 			//view->DrawCurve(params, line);
-			view->DrawCurve3(params, line);
+			view->DrawCurveNew(params, line);
 		}
 	}
 

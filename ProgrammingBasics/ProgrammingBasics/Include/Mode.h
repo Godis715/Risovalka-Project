@@ -212,7 +212,7 @@ public:
 	void DrawMode();
 };
 
-class CreatingCurve3 : public CreateObject {
+class CreatingCurveNew : public CreateObject {
 private:
 	int countClick;
 	bool isDrag;
@@ -225,8 +225,8 @@ private:
 
 	Event lastEvent;
 public:
-	CreatingCurve3();
-	~CreatingCurve3();
+	CreatingCurveNew();
+	~CreatingCurveNew();
 
 	Array<ID> HandleEvent(const Event, Array<Vector2>&);
 

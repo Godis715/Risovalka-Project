@@ -24,7 +24,7 @@ public:
 	ID CreatePrimitive(object_type, const Array<double>&) const;
 	ID CreateRequirement(object_type, const Array<ID>&, const Array<double>&) const;
 
-	#define SEARCHING_AREA 5.0
+
 	ID GetObjectByClick(double, double) const;
 
 	// with optimization

@@ -1,6 +1,80 @@
 #include "Primitives.h"
 #include <stdexcept>
 
+#define EPS 1e-3
+#pragma region someFunc
+int sign(double x) {
+	if (x > 0) {
+		return 1;
+	}
+	return -1;
+}
+
+void line흎uation(double a, double b, double& x1) {
+	if (abs(a) < EPS) {
+		return;
+	}
+	x1 = -b / a;
+}
+
+void quadro흎uation(double a, double b, double c, double& x1, double &x2) {
+	if (abs(a) < EPS) {
+		line흎uation(b, c, x1);
+		return;
+	}
+	if (abs(c) < EPS) {
+		x2 = 0;
+		line흎uation(a, b, x1);
+		return;
+	}
+	double D = b * b - 4 * a * c;
+	if (abs(D) < EPS) {
+		x1 = -b / (2 * a);
+		return;
+	}
+	if (D > 0) {
+		D = sqrt(D);
+		x1 = (-b + D) / (2 * a);
+		x2 = (-b - D) / (2 * a);
+		return;
+	}
+}
+
+void cubic흎uation(double a, double b, double c, double d, double& x1, double &x2, double &x3) {
+	if (abs(a) < EPS) {
+		quadro흎uation(b, c, d, x1, x2);
+		return;
+	}
+	if (abs(d) < EPS) {
+		x3 = 0;
+		quadro흎uation(a, b, c, x1, x2);
+		return;
+	}
+	d = d / a;
+	c = c / a;
+	a = b / a;
+	b = c;
+	c = d;
+	double Q = (a * a - 3 * b) / 9;
+	double R = (2 * a * a * a - 9 * a*b + 27 * c) / 54;
+	if (R * R < Q * Q * Q) {
+		double t = acos(R / sqrt(Q * Q * Q)) / 3;
+
+		x1 = -2 * sqrt(Q)*cos(t) - a / 3;
+		x2 = -2 * sqrt(Q)*cos(t + (2 * PI / 3)) - a / 3;
+		x3 = -2 * sqrt(Q)*cos(t - (2 * PI / 3)) - a / 3;
+		return;
+	}
+	double A = -sign(R) * pow(abs(R) + sqrt(R * R - Q * Q * Q), double(1) / 3);
+	double B = 0;
+	if (abs(A) > EPS) {
+		B = Q / A;
+	}
+	x1 = (A + B) - a / 3;
+	return;
+}
+#pragma endregion
+
 #pragma region Primitive
 Primitive::Primitive(object_type _type, const Array<double>& _params, const Array<ID>& _children)
 	: Object(_type, _params, children),
@@ -320,15 +394,118 @@ void Circle::SetRadius(const double _radius)
 #pragma endregion
 
 #pragma region Curve
-Curve::Curve(const Array<Point*>& _points) :
-	Primitive(ot_curve, 0, _points)
+Curve::Curve(const Array<Point*>& _points, const Array<double>& _controlPoints) :
+	Primitive(ot_curve, 0, _points), coefControls_1(_points.GetSize() - 1),
+	coefControls_2(_points.GetSize() - 1), orts(_points.GetSize())
 {
 	points = _points;
+	
+	int index = 0;
+	for (size_t i = 0; i < points.GetSize(); i++)
+	{
+		if (i == 0)
+		{
+			Vector2 controlPoint = Vector2(_controlPoints[index], _controlPoints[index + 1]);
+			orts[i] = (controlPoint - points[i]->GetPos()).Normalized();
+			coefControls_2[i] = (controlPoint - points[i]->GetPos()).GetLength();
+			index += 2;
 
+		}
+		else if (i == points.GetSize() - 1)
+		{
+			Vector2 controlPoint = Vector2(_controlPoints[index], _controlPoints[index + 1]);
+			orts[i] = (controlPoint - points[i]->GetPos()).Normalized();
+			coefControls_1[i - 1] = (controlPoint - points[i]->GetPos()).GetLength();
+		}
+		else
+		{
+			Vector2 controlPoint = Vector2(_controlPoints[index], _controlPoints[index + 1]);
+			orts[i] = (controlPoint - points[i]->GetPos()).Normalized();
+			coefControls_1[i - 1] = (controlPoint - points[i]->GetPos()).GetLength();
+			coefControls_2[i] = coefControls_1[i - 1] * -1;
+			index += 4;
+		}
+	}
 }
 
-double Curve::GetDist(const Vector2&) const {
-	return 500.0;
+Vector2 Curve::GetPoint(const Vector2& P0, const Vector2& P1,
+	const Vector2& P2, const Vector2& P3, const double t) const {
+	double t1 = 1 - t;
+	Vector2 result =   P0 * t1 * t1 * t1;
+	result += P1 * t1 * t1 * t * 3;
+	result += P2 * t1 * t * t * 3;
+	result += P3 * t * t * t;
+	return result;
+}
+
+double Curve::GetDist(const Vector2& click) const {
+	Vector2 P0;
+	Vector2 P1;
+	Vector2 P2;
+	Vector2 P3;
+	double res = SEARCHING_AREA + 95;
+	for (int i = 0; i < points.GetSize() - 1; ++i) {
+		P0 = points[i]->GetPos();
+		P1 = orts[i] * coefControls_2[i] + points[i]->GetPos();
+		P2 = orts[i + 1] * coefControls_1[i] + points[i + 1]->GetPos();
+		P3 = points[i + 1]->GetPos();
+		if (click.x < P0.x - SEARCHING_AREA && click.x < P1.x - SEARCHING_AREA &&
+			click.x < P2.x - SEARCHING_AREA && click.x < P3.x - SEARCHING_AREA) {
+			continue;
+		}
+		if (click.x > P0.x + SEARCHING_AREA && click.x > P1.x + SEARCHING_AREA &&
+			click.x > P2.x + SEARCHING_AREA && click.x > P3.x + SEARCHING_AREA) {
+			continue;
+		}
+		if (click.y < P0.y - SEARCHING_AREA && click.y < P1.y - SEARCHING_AREA &&
+			click.y < P2.y - SEARCHING_AREA && click.y < P3.y - SEARCHING_AREA) {
+			continue;
+		}
+		if (click.y > P0.y + SEARCHING_AREA && click.y > P1.y + SEARCHING_AREA &&
+			click.y > P2.y + SEARCHING_AREA && click.y > P3.y + SEARCHING_AREA) {
+			continue;
+		}
+
+		double tx[] = {-6, -6 , -6};
+		double ty[] = { -12, -12 , -12 };
+		double Ax = (-P0.x + 3 * P1.x - 3 * P2.x + P3.x);
+		double Bx = (3 * P0.x - 6 * P1.x + 3 * P2.x);
+		double Cx = (-3 * P0.x + 3 * P1.x);
+		double Dx = (P0.x - click.x);
+
+		double Ay = (-P0.y + 3 * P1.y - 3 * P2.y + P3.y);
+		double By = (3 * P0.y - 6 * P1.y + 3 * P2.y);
+		double Cy = (-3 * P0.y + 3 * P1.y);
+		double Dy = (P0.y - click.y);
+		cubic흎uation(Ax, Bx, Cx, Dx, tx[0], tx[1], tx[2]);
+		cubic흎uation(Ay, By, Cy, Dy, ty[0], ty[1], ty[2]);
+		double q, w, e, r, t, y;
+		q = tx[0];
+		w = tx[1];
+		e = tx[2];
+		r = ty[0];
+		t = ty[1];
+		y = ty[2];
+		for (int i = 0; i < 3; ++i) {
+			if (ty[i] > -EPS && ty[i] < 1 + EPS) {
+				Vector2 Y = GetPoint(P0, P1, P2, P3, ty[i]) - click;
+				double dot = Vector2::Dot(Y, Y);
+				if (res > dot) {
+					res = dot;
+				}
+			}
+		}
+		for (int i = 0; i < 3; ++i) {
+			if (0.1 && tx[i] > -EPS && tx[i] < 1 + EPS) {
+				Vector2 X = GetPoint(P0, P1, P2, P3, tx[i]) - click;
+				double dot = Vector2::Dot(X, X);
+				if (res > dot) {
+					res = dot;
+				}
+			}
+		}
+	}
+	return sqrt(res);
 }
 
 Array<ID> Curve::GetPointIDs() const {
@@ -346,11 +523,34 @@ Array<Vector2> Curve::GetPointPositions() const {
 	return result;
 }
 Array<double> Curve::GetPointDoubles() const {
-	Array<double> result = Array<double>(points.GetSize() * 2);
-	for (int i = 0; i < points.GetSize(); ++i) {
-		Vector2 vector = points[i]->GetPos();
-		result[2 * i] = vector.x;
-		result[2 * i + 1] = vector.y;
+	Array<double> result = Array<double>(points.GetSize() * 6 - 4);
+	int index = 0;
+	double t = 0;
+	for (size_t i = 0; i < points.GetSize(); i++)
+	{
+		if (i == 0)
+		{
+			result[index++] = points[i]->GetPos().x;
+			result[index++] = points[i]->GetPos().y;
+			result[index++] = orts[i].x * coefControls_2[i] + points[i]->GetPos().x;
+			result[index++] = orts[i].y * coefControls_2[i] + points[i]->GetPos().y;
+		}
+		else if (i == points.GetSize() - 1)
+		{
+			result[index++] = orts[i].x * coefControls_1[i - 1] + points[i]->GetPos().x;
+			result[index++] = orts[i].y * coefControls_1[i - 1] + points[i]->GetPos().y;
+			result[index++] = points[i]->GetPos().x;
+			result[index++] = points[i]->GetPos().y;
+		}
+		else
+		{
+			result[index++] = orts[i].x * coefControls_1[i - 1] + points[i]->GetPos().x;
+			result[index++] = orts[i].y * coefControls_1[i - 1] + points[i]->GetPos().y;
+			result[index++] = points[i]->GetPos().x;
+			result[index++] = points[i]->GetPos().y;
+			result[index++] = orts[i].x * coefControls_2[i] + points[i]->GetPos().x;
+			result[index++] = orts[i].y * coefControls_2[i] + points[i]->GetPos().y;
+		}
 	}
 	return result;
 }

@@ -27,8 +27,8 @@ public:
 	virtual void DrawCurve(const Array<Vector2>&, typeDrawing) = 0;
 	virtual void DrawCurve(const Array<double>&, typeDrawing) = 0;
 
-	virtual void DrawCurve3(const Array<Vector2>&, typeDrawing) = 0;
-	virtual void DrawCurve3(const Array<double>&, typeDrawing) = 0;
+	virtual void DrawCurveNew(const Array<Vector2>&, typeDrawing) = 0;
+	virtual void DrawCurveNew(const Array<double>&, typeDrawing) = 0;
 
 	virtual void SetColor(int, int, int) = 0;
 	virtual int Run() = 0;

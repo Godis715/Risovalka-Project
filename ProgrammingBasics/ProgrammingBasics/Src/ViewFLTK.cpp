@@ -527,7 +527,7 @@ void ViewFLTK::DrawCurve(const Array<double>& points, typeDrawing type) {
 	fl_end_line();
 }
 
-void ViewFLTK::DrawCurve3(const Array<Vector2>& points, typeDrawing type)
+void ViewFLTK::DrawCurveNew(const Array<Vector2>& points, typeDrawing type)
 {
 	if (type == typeDrawing::points) {
 		fl_line_style(FL_DOT, 2);
@@ -542,7 +542,7 @@ void ViewFLTK::DrawCurve3(const Array<Vector2>& points, typeDrawing type)
 	}
 	fl_end_line();
 }
-void ViewFLTK::DrawCurve3(const Array<double>& points, typeDrawing type) {
+void ViewFLTK::DrawCurveNew(const Array<double>& points, typeDrawing type) {
 	if (type == typeDrawing::points) {
 		fl_line_style(FL_DOT, 2);
 	}

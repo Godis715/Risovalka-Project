@@ -8,6 +8,7 @@
 #define CENTER		2
 #define ANGLE		3
 #define RADIUS		4
+#define SEARCHING_AREA 5.0
 
 #define GETVARPARAMS(...) GetVariableObjParam(__VA_ARGS__, 0)
 #define SETVARPARAMS(...) SetVariableObjParam(__VA_ARGS__, 0)
@@ -204,10 +205,15 @@ public:
 class Curve : public Primitive {
 private:
 	Array<Point*> points;
+	Array<Vector2> orts;
+	Array<double> coefControls_1;
+	Array<double> coefControls_2;
+
+	Vector2 GetPoint(const Vector2&, const Vector2&, const Vector2&, const Vector2&, const double) const ;
 
 	friend class PrimController;
 public:
-	Curve(const Array<Point*>&);
+	Curve(const Array<Point*>&, const Array<double>&);
 
 	double GetDist(const Vector2&) const;
 

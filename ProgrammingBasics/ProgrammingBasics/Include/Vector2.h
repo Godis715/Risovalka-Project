@@ -20,6 +20,7 @@ public:
 	void operator +=(const Vector2&);
 	void operator =(const Vector2&);
 	double GetLength() const;
+	Vector2 Normalized() const;
 
 	double x;
 	double y;

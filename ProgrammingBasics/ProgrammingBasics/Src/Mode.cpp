@@ -419,7 +419,7 @@ DMDefualt::DMDefualt(Event e) : selectionObjects(0)
 		outputWidjet->SetName(nameMode + "::CreatingCurve");
 		stateCreate = create;
 		//createObject = new CreatingCurve();
-		createObject = new CreatingCurve3();
+		createObject = new CreatingCurveNew();
 		break;
 	}
 	default:
@@ -540,7 +540,7 @@ Mode* DMDefualt::HandleEvent(const Event ev, const Array<double>& params)
 		selectionObjects.Clear();
 		stateCreate = create;
 		//createObject = new CreatingCurve();
-		createObject = new CreatingCurve3();
+		createObject = new CreatingCurveNew();
 		return nullptr;
 	}
 	case ev_enter:
@@ -843,7 +843,7 @@ Mode* DMSymmetrical::HandleEvent(const Event ev, const Array<double>& params)
 		selectionObjects.Clear();
 		stateCreate = create;
 		//createObject = new CreatingCurve();
-		createObject = new CreatingCurve3();
+		createObject = new CreatingCurveNew();
 		return nullptr;
 	}
 	case ev_enter:
@@ -1103,7 +1103,7 @@ Mode* DMSectorSymmetrical::HandleEvent(const Event ev, const Array<double>& para
 		selectionObjects.Clear();
 		stateCreate = create;
 		//createObject = new CreatingCurve();
-		createObject = new CreatingCurve3();
+		createObject = new CreatingCurveNew();
 		return nullptr;
 	}
 	case ev_enter:
@@ -2651,12 +2651,12 @@ void CreatingCurve::DrawMode() {
 #pragma endregion
 
 #pragma region CreatingCurve
-CreatingCurve3::CreatingCurve3() {
+CreatingCurveNew::CreatingCurveNew() {
 	countClick = 0;
 	isDrag = false;
 	lastEvent = ev_mouseMove;
 }
-CreatingCurve3::~CreatingCurve3() {
+CreatingCurveNew::~CreatingCurveNew() {
 	if (PointsCurves.GetSize() > 2)
 	{
 		PointsCurves.PopBack();
@@ -2680,7 +2680,7 @@ CreatingCurve3::~CreatingCurve3() {
 	}
 }
 
-Array<ID> CreatingCurve3::HandleEvent(const Event ev, Array<Vector2>& params) {
+Array<ID> CreatingCurveNew::HandleEvent(const Event ev, Array<Vector2>& params) {
 	switch (ev)
 	{
 	case ev_leftMouseDown:
@@ -2762,7 +2762,7 @@ Array<ID> CreatingCurve3::HandleEvent(const Event ev, Array<Vector2>& params) {
 	return Array<ID>(0);
 }
 
-void CreatingCurve3::DrawMode() {
+void CreatingCurveNew::DrawMode() {
 	if (countClick != 0)
 	{
 		view->SetColor(col_Red);
@@ -2798,7 +2798,7 @@ void CreatingCurve3::DrawMode() {
 				curve[curve.GetSize() - 1] = imaginaryPoints[i];
 
 			}
-			view->DrawCurve3(curve, points);
+			view->DrawCurveNew(curve, points);
 		}
 	}
 	if (isDrag)
