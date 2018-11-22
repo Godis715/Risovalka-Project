@@ -550,7 +550,7 @@ ID PrimController::CreatePrimitive(object_type type, const Array<ID>& dependObjs
 			for (int i = 0; i < points.GetSize(); ++i) {
 				points[i] = dynamic_cast<Point*>(GetPrimitive(dependObjs[i]));
 			}
-			//prim = new Curve(points);
+			prim = new Curve(points, params);
 		}
 		LOG("CreatePrimitive: created segment", LEVEL_2);
 		break;
