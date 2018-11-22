@@ -1,7 +1,7 @@
 #include "Primitives.h"
 #include <stdexcept>
 
-#define EPS 1e-3
+
 #pragma region someFunc
 int sign(double x) {
 	if (x > 0) {
@@ -72,6 +72,16 @@ void cubic≈quation(double a, double b, double c, double d, double& x1, double &x
 	}
 	x1 = (A + B) - a / 3;
 	return;
+}
+
+Vector2 GetPoint(const Vector2& P0, const Vector2& P1,
+	const Vector2& P2, const Vector2& P3, const double t) {
+	double t1 = 1 - t;
+	Vector2 result = P0 * t1 * t1 * t1;
+	result += P1 * t1 * t1 * t * 3;
+	result += P2 * t1 * t * t * 3;
+	result += P3 * t * t * t;
+	return result;
 }
 #pragma endregion
 
@@ -427,16 +437,6 @@ Curve::Curve(const Array<Point*>& _points, const Array<double>& _controlPoints) 
 			index += 4;
 		}
 	}
-}
-
-Vector2 Curve::GetPoint(const Vector2& P0, const Vector2& P1,
-	const Vector2& P2, const Vector2& P3, const double t) const {
-	double t1 = 1 - t;
-	Vector2 result =   P0 * t1 * t1 * t1;
-	result += P1 * t1 * t1 * t * 3;
-	result += P2 * t1 * t * t * 3;
-	result += P3 * t * t * t;
-	return result;
 }
 
 double Curve::GetDist(const Vector2& click) const {

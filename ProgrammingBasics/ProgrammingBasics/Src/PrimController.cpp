@@ -541,15 +541,6 @@ ID PrimController::CreatePrimitive(object_type type, const Array<ID>& dependObjs
 			if (params.GetSize() != 0) {
 				LOGERROR("CreatePrimitive: bad size of params", LEVEL_1);
 			}
-			if (dependObjs.GetSize() < 3) {
-				LOGERROR("CreatePrimitive: bad size of dependent objs", LEVEL_1);
-			}
-			if (objCtrl->GetType(dependObjs[0]) != ot_point ||
-				objCtrl->GetType(dependObjs[1]) != ot_point ||
-				objCtrl->GetType(dependObjs[2]) != ot_point ||
-				objCtrl->GetType(dependObjs[3]) != ot_point){
-				LOGERROR("CreatePrimitive: bad type of dependent object", LEVEL_1);
-			}
 			Array<Point*> points = Array<Point*>(dependObjs.GetSize());
 			for (int i = 0; i < points.GetSize(); ++i) {
 				points[i] = dynamic_cast<Point*>(GetPrimitive(dependObjs[i]));

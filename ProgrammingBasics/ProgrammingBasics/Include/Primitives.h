@@ -10,9 +10,16 @@
 #define RADIUS		4
 #define CURVE_AS_IT_IS		5
 #define SEARCHING_AREA 5.0
+#define EPS 1e-3
 
 #define GETVARPARAMS(...) GetVariableObjParam(__VA_ARGS__, 0)
 #define SETVARPARAMS(...) SetVariableObjParam(__VA_ARGS__, 0)
+
+int sign(double);
+void line≈quation(double, double, double&);
+void quadro≈quation(double, double, double, double&, double&);
+void cubic≈quation(double, double, double, double, double&, double&, double&);
+Vector2 GetPoint(const Vector2&, const Vector2&, const Vector2&, const Vector2&, const double);
 
 class Primitive;
 class Arc;
@@ -210,7 +217,7 @@ private:
 	Array<double> coefControls_1;
 	Array<double> coefControls_2;
 
-	Vector2 GetPoint(const Vector2&, const Vector2&, const Vector2&, const Vector2&, const double) const ;
+	
 
 	friend class PrimController;
 public:

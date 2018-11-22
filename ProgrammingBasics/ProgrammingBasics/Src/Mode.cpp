@@ -1512,9 +1512,10 @@ Mode* RedactionCurve::HandleEvent(const Event e , const Array<double>& params) {
 			return nullptr;
 		}
 		if (state == addPoint) {
-			start.x = params[0];
-			start.y = params[1];
-			state = none;
+			int indexInsert = clickOnCurve(params[0], params[1]);
+			if (indexInsert != -1) {
+				AddPoint(indexInsert, params[0], params[1]);
+			}
 			return nullptr;
 		}
 		
@@ -1564,7 +1565,7 @@ Mode* RedactionCurve::HandleEvent(const Event e , const Array<double>& params) {
 		return nullptr;
 	}
 	default:
-		return UnexpectedEvent(e, params);;
+		return UnexpectedEvent(e, params);
 	}
 }
 
@@ -1647,6 +1648,79 @@ int RedactionCurve::GetPointOfCurve(const double x, const double y) {
 		}
 	}
 	return result;
+}
+
+int RedactionCurve::clickOnCurve(const double x, const double y) {
+	Vector2 P0;
+	Vector2 P1;
+	Vector2 P2;
+	Vector2 P3;
+	double dist = DBL_MAX;
+	for (int i = 0; i < points.GetSize() - 1; ++i) {
+		P0 = points[i];
+		P1 = orts[i] * coefControls_2[i] + points[i];
+		P2 = orts[i + 1] * coefControls_1[i] + points[i + 1];
+		P3 = points[i + 1];
+		if (x < P0.x - SEARCHING_AREA && x < P1.x - SEARCHING_AREA &&
+			x < P2.x - SEARCHING_AREA && x < P3.x - SEARCHING_AREA) {
+			continue;
+		}
+		if (x > P0.x + SEARCHING_AREA && x > P1.x + SEARCHING_AREA &&
+			x > P2.x + SEARCHING_AREA && x > P3.x + SEARCHING_AREA) {
+			continue;
+		}
+		if (y < P0.y - SEARCHING_AREA && y < P1.y - SEARCHING_AREA &&
+			y < P2.y - SEARCHING_AREA && y < P3.y - SEARCHING_AREA) {
+			continue;
+		}
+		if (y > P0.y + SEARCHING_AREA && y > P1.y + SEARCHING_AREA &&
+			y > P2.y + SEARCHING_AREA && y > P3.y + SEARCHING_AREA) {
+			continue;
+		}
+
+		double tx[] = { DBL_MIN, DBL_MIN , DBL_MIN };
+		double ty[] = { DBL_MIN, DBL_MIN , DBL_MIN };
+		size_t countSolution = 3;
+		double Ax = (-P0.x + 3 * P1.x - 3 * P2.x + P3.x);
+		double Bx = (3 * P0.x - 6 * P1.x + 3 * P2.x);
+		double Cx = (-3 * P0.x + 3 * P1.x);
+		double Dx = (P0.x - x);
+
+		double Ay = (-P0.y + 3 * P1.y - 3 * P2.y + P3.y);
+		double By = (3 * P0.y - 6 * P1.y + 3 * P2.y);
+		double Cy = (-3 * P0.y + 3 * P1.y);
+		double Dy = (P0.y - y);
+		cubic≈quation(Ax, Bx, Cx, Dx, tx[0], tx[1], tx[2]);
+		cubic≈quation(Ay, By, Cy, Dy, ty[0], ty[1], ty[2]);
+
+		for (int i = 0; i < countSolution; ++i) {
+			if (ty[i] > -EPS && ty[i] < 1 + EPS) {
+				Vector2 Y = GetPoint(P0, P1, P2, P3, ty[i]);
+				Y.x -= x;
+				Y.y -= y;
+				double dot = Vector2::Dot(Y, Y);
+				if (dist > dot) {
+					dist = dot;
+				}
+			}
+		}
+		for (int i = 0; i < countSolution; ++i) {
+			if (tx[i] > -EPS && tx[i] < 1 + EPS) {
+				Vector2 X = GetPoint(P0, P1, P2, P3, tx[i]);
+				X.x -= x;
+				X.y -= y;
+				double dot = Vector2::Dot(X, X);
+				if (dist > dot) {
+					dist = dot;
+				}
+			}
+		}
+	}
+	return sqrt(dist);
+}
+
+void RedactionCurve::AddPoint(const int indexInsert, const double x, const double y) {
+
 }
 #pragma endregion
 

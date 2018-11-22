@@ -415,6 +415,8 @@ private:
 	bool isChanged;
 
 	int GetPointOfCurve(const double, const double);
+	int clickOnCurve(const double, const double);
+	void AddPoint(const int, const double, const double);
 };
 
 class Redaction : public Mode {

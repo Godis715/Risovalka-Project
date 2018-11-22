@@ -2,33 +2,438 @@
 <!-- DrawProject -->
 <svg width="1000" height="1000">
 	<drawProject:point
-		px="249"
-		py="382"
+		px="423.021"
+		py="197.907"
 		id="1"
 	/>
 	<drawProject:point
-		px="444"
-		py="170"
+		px="492"
+		py="113"
 		id="2"
 	/>
 	<drawProject:point
-		px="613"
-		py="180"
+		px="543"
+		py="184"
 		id="3"
 	/>
 	<drawProject:point
-		px="748"
-		py="100"
+		px="620"
+		py="170"
 		id="4"
+	/>
+	<drawProject:point
+		px="701"
+		py="181"
+		id="5"
+	/>
+	<drawProject:point
+		px="747"
+		py="110"
+		id="6"
+	/>
+	<drawProject:point
+		px="791"
+		py="181"
+		id="7"
+	/>
+	<drawProject:point
+		px="790"
+		py="344"
+		id="8"
+	/>
+	<drawProject:point
+		px="612"
+		py="424"
+		id="9"
+	/>
+	<drawProject:point
+		px="427"
+		py="333"
+		id="10"
+	/>
+	<drawProject:point
+		px="423.021"
+		py="197.958"
+		id="11"
 	/>
 	<path
 		style = "fill:none;stroke:#000000;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-		d="M 249,382 C 249,382 415,41 444,170 473,299 627,286 613,180 599,74 748,100 748,100"
-		id="5"
+		d="M 423.021,197.907 C 434.021,148.907 470.978,115.841 492,113 529,108 543,184 543,184 543,184 557,173 620,170 683,167 701,181 701,181 701,181 700.997,110.851 747,110 787.124,109.258 791,181 791,181 791,181 806,297 790,344 774,391 664,422 612,424 560,426 453,411 427,333 401,255 423.021,197.958 423.021,197.958"
+		id="12"
 	/>
 	<drawProject:curve
-		id="5"
-		childIds="1 2 3 4"
-		params="249,382 415,41 473,299 627,286 599,74 748,100"
+		id="12"
+		childIds="1 2 3 4 5 6 7 8 9 10 11"
+		params="434.021,148.907 470.978,115.841 529,108 543,184 543,184 557,173 683,167 701,181 701,181 700.997,110.851 787.124,109.258 791,181 791,181 806,297 774,391 664,422 560,426 453,411 401,255 423.021,197.958"
 	/>
+	<drawProject:point
+		px="458.469"
+		py="277.489"
+		id="14"
+	/>
+	<drawProject:point
+		px="560.241"
+		py="278.419"
+		id="15"
+	/>
+	<path
+		d="M458.469,277.489 A324.905,324.905 0 0,0 560.241,278.419"
+		id="16"
+		childIds="14 15"
+		stroke="red"
+		stroke-width="5"
+		fill="none"
+	/>
+	<drawProject:arc
+		x1="458.469"
+		y1="277.489"
+		x2="560.241"
+		y2="278.419"
+		angle="1.84487"
+		id="16"
+		childIds="14 15"
+	/>
+	<drawProject:point
+		px="560.257"
+		py="278.251"
+		id="17"
+	/>
+	<drawProject:point
+		px="458.469"
+		py="277.489"
+		id="18"
+	/>
+	<path
+		d="M560.257,278.251 A167.732,167.732 0 0,0 458.469,277.489"
+		id="19"
+		childIds="17 18"
+		stroke="red"
+		stroke-width="5"
+		fill="none"
+	/>
+	<drawProject:arc
+		x1="560.257"
+		y1="278.251"
+		x2="458.469"
+		y2="277.489"
+		angle="2.36482"
+		id="19"
+		childIds="17 18"
+	/>
+	<drawProject:point
+		px="648.469"
+		py="272.489"
+		id="33"
+	/>
+	<drawProject:point
+		px="750.241"
+		py="273.419"
+		id="34"
+	/>
+	<drawProject:point
+		px="750.257"
+		py="273.251"
+		id="35"
+	/>
+	<drawProject:point
+		px="648.469"
+		py="272.489"
+		id="36"
+	/>
+	<path
+		d="M648.469,272.489 A518.378,518.378 0 0,0 750.241,273.419"
+		id="38"
+		childIds="33 34"
+		stroke="red"
+		stroke-width="5"
+		fill="none"
+	/>
+	<drawProject:arc
+		x1="648.469"
+		y1="272.489"
+		x2="750.241"
+		y2="273.419"
+		angle="1.84487"
+		id="38"
+		childIds="33 34"
+	/>
+	<path
+		d="M750.257,273.251 A358.429,358.429 0 0,0 648.469,272.489"
+		id="39"
+		childIds="35 36"
+		stroke="red"
+		stroke-width="5"
+		fill="none"
+	/>
+	<drawProject:arc
+		x1="750.257"
+		y1="273.251"
+		x2="648.469"
+		y2="272.489"
+		angle="2.36482"
+		id="39"
+		childIds="35 36"
+	/>
+	<drawProject:point
+		px="496"
+		py="243"
+		id="40"
+	/>
+	<drawProject:point
+		px="488"
+		py="270"
+		id="41"
+	/>
+	<drawProject:point
+		px="501"
+		py="303"
+		id="42"
+	/>
+	<drawProject:point
+		px="514"
+		py="274"
+		id="43"
+	/>
+	<drawProject:point
+		px="496"
+		py="245"
+		id="44"
+	/>
+	<path
+		style = "fill:none;stroke:#000000;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+		d="M 496,243 C 496,243 488,253 488,270 488,287 501,303 501,303 501,303 514,300 514,274 514,248 496,245 496,245"
+		id="45"
+	/>
+	<drawProject:curve
+		id="45"
+		childIds="40 41 42 43 44"
+		params="496,243 488,253 488,287 501,303 501,303 514,300 514,248 496,245"
+	/>
+	<drawProject:point
+		px="694"
+		py="239"
+		id="46"
+	/>
+	<drawProject:point
+		px="683"
+		py="263"
+		id="47"
+	/>
+	<drawProject:point
+		px="699"
+		py="297"
+		id="48"
+	/>
+	<drawProject:point
+		px="712"
+		py="267"
+		id="49"
+	/>
+	<drawProject:point
+		px="693"
+		py="241"
+		id="50"
+	/>
+	<path
+		style = "fill:none;stroke:#000000;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+		d="M 694,239 C 694,239 682,250 683,263 684,276 699,297 699,297 699,297 713,287 712,267 711,247 693,241 693,241"
+		id="51"
+	/>
+	<drawProject:curve
+		id="51"
+		childIds="46 47 48 49 50"
+		params="694,239 682,250 684,276 699,297 699,297 713,287 711,247 693,241"
+	/>
+	<drawProject:point
+		px="532"
+		py="319"
+		id="52"
+	/>
+	<drawProject:point
+		px="596.019"
+		py="318.512"
+		id="53"
+	/>
+	<path
+		d="M532,319 A277.568,277.568 0 1,0 596.019,318.512"
+		id="54"
+		childIds="52 53"
+		stroke="red"
+		stroke-width="5"
+		fill="none"
+	/>
+	<drawProject:arc
+		x1="532"
+		y1="319"
+		x2="596.019"
+		y2="318.512"
+		angle="3.23827"
+		id="54"
+		childIds="52 53"
+	/>
+	<drawProject:point
+		px="595.933"
+		py="318.491"
+		id="55"
+	/>
+	<drawProject:point
+		px="663.006"
+		py="312.922"
+		id="56"
+	/>
+	<path
+		d="M595.933,318.491 A351.565,351.565 0 0,0 663.006,312.922"
+		id="57"
+		childIds="55 56"
+		stroke="red"
+		stroke-width="5"
+		fill="none"
+	/>
+	<drawProject:arc
+		x1="595.933"
+		y1="318.491"
+		x2="663.006"
+		y2="312.922"
+		angle="2.9819"
+		id="57"
+		childIds="55 56"
+	/>
+	<drawProject:point
+		px="589.533"
+		py="295.445"
+		id="60"
+	/>
+	<drawProject:point
+		px="568"
+		py="317"
+		id="61"
+	/>
+	<line
+		x1="589.533"
+		y1="295.445"
+		x2="568"
+		y2="317"
+		id="62"
+		childIds="60 61"
+		stroke="red"
+		stroke-width="5"
+	/>
+	<drawProject:point
+		px="568"
+		py="317"
+		id="63"
+	/>
+	<drawProject:point
+		px="615"
+		py="315"
+		id="64"
+	/>
+	<line
+		x1="568"
+		y1="317"
+		x2="615"
+		y2="315"
+		id="65"
+		childIds="63 64"
+		stroke="red"
+		stroke-width="5"
+	/>
+	<drawProject:point
+		px="615"
+		py="315"
+		id="67"
+	/>
+	<drawProject:point
+		px="589.482"
+		py="295.445"
+		id="68"
+	/>
+	<line
+		x1="615"
+		y1="315"
+		x2="589.482"
+		y2="295.445"
+		id="69"
+		childIds="67 68"
+		stroke="red"
+		stroke-width="5"
+	/>
+	<drawProject:point
+		px="440"
+		py="199"
+		id="72"
+	/>
+	<drawProject:point
+		px="475"
+		py="142"
+		id="73"
+	/>
+	<drawProject:point
+		px="491"
+		py="189"
+		id="74"
+	/>
+	<path
+		style = "fill:none;stroke:#000000;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+		d="M 440,199 C 440,199 448,152 475,142 502,132 492,189 491,189"
+		id="75"
+	/>
+	<drawProject:curve
+		id="75"
+		childIds="72 73 74"
+		params="440,199 448,152 502,132 492,189"
+	/>
+	<drawProject:point
+		px="742"
+		py="182"
+		id="76"
+	/>
+	<drawProject:point
+		px="753"
+		py="130"
+		id="77"
+	/>
+	<drawProject:point
+		px="781"
+		py="184"
+		id="78"
+	/>
+	<path
+		style = "fill:none;stroke:#000000;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+		d="M 742,182 C 742,182 736,133 753,130 775.842,125.969 780,184 781,184"
+		id="79"
+	/>
+	<drawProject:curve
+		id="79"
+		childIds="76 77 78"
+		params="742,182 736,133 775.842,125.969 780,184"
+	/>
+	<drawProject:req>
+
+			id="13"
+			IDs="1 11"	/>
+
+			id="20"
+			IDs="14 18"	/>
+
+			id="21"
+			IDs="15 17"	/>
+
+			id="58"
+			IDs="55"	/>
+
+			id="59"
+			IDs="53 55"	/>
+		<distBetPoints
+			id="66"
+			IDs="61 63"
+			params="0"	/>
+		<distBetPoints
+			id="70"
+			IDs="64 67"
+			params="0"	/>
+
+			id="71"
+			IDs="60 68"	/>
+	</drawProject:req>
 </svg>

@@ -29,21 +29,20 @@ void VersionChange::Undo() {
 
 void VersionChange::Redo() {
 	auto primCtrl = PrimController::GetInstance();
-
+	auto reqCtrl = ReqController::GetInstance();
 	for (int i = 0; i < IDs.GetSize(); ++i) {
 		if (primCtrl->IsPrimitive(IDs[i])) {
 			primCtrl->SetPrimitiveParams(IDs[i], dataAfter[i]);
 		}
 		else {
-			auto reqCtrl = ReqController::GetInstance();
 			reqCtrl->SetReqParams(IDs[i], dataAfter[i]);
 		}
 	}
-	
 }
 
 VersionChange::~VersionChange() {
-
+	dataAfter.Clear();
+	dataBefore.Clear();
 }
 #pragma endregion 
 
@@ -58,8 +57,9 @@ void VersionCreateReq::Undo() {
 	auto objectController = ObjectController::GetInstance();
 	objectController->MakeInValid(idReq);
 
+	auto primCtrl = PrimController::GetInstance();
 	for (int i = 0; i < IDs.GetSize(); ++i) {
-		objectController->SetObjParam(IDs[i], dataBefore[i]);
+		primCtrl->SetPrimitiveParams(IDs[i], dataBefore[i]);
 	}
 }
 
@@ -67,8 +67,9 @@ void VersionCreateReq::Redo() {
 	auto objectController = ObjectController::GetInstance();
 	objectController->MakeValid(idReq);
 
+	auto primCtrl = PrimController::GetInstance();
 	for (int i = 0; i < IDs.GetSize(); ++i) {
-		objectController->SetObjParam(IDs[i], dataAfter[i]);
+		primCtrl->SetPrimitiveParams(IDs[i], dataAfter[i]);
 	}
 }
 
@@ -80,6 +81,8 @@ VersionCreateReq::~VersionCreateReq() {
 		dataController->DeleteObject(idReq);
 
 	}
+	dataAfter.Clear();
+	dataBefore.Clear();
 }
 #pragma endregion
 
