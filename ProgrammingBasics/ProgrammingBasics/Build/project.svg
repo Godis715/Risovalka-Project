@@ -2,18 +2,33 @@
 <!-- DrawProject -->
 <svg width="1000" height="1000">
 	<drawProject:point
-		px="600"
-		py="300"
+		px="249"
+		py="382"
 		id="1"
 	/>
 	<drawProject:point
-		px="600"
-		py="200"
+		px="444"
+		py="170"
 		id="2"
 	/>
 	<drawProject:point
-		px="700"
-		py="200"
-		id="6"
+		px="613"
+		py="180"
+		id="3"
+	/>
+	<drawProject:point
+		px="748"
+		py="100"
+		id="4"
+	/>
+	<path
+		style = "fill:none;stroke:#000000;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+		d="M 249,382 C 249,382 415,41 444,170 473,299 627,286 613,180 599,74 748,100 748,100"
+		id="5"
+	/>
+	<drawProject:curve
+		id="5"
+		childIds="1 2 3 4"
+		params="249,382 415,41 473,299 627,286 599,74 748,100"
 	/>
 </svg>
