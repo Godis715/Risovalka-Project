@@ -406,8 +406,8 @@ Curve::Curve(const Array<Point*>& _points, const Array<double>& _controlPoints) 
 		if (i == 0)
 		{
 			Vector2 controlPoint = Vector2(_controlPoints[index], _controlPoints[index + 1]);
-			orts[i] = (controlPoint - points[i]->GetPos()).Normalized() * -1;
-			coefControls_2[i] = (controlPoint - points[i]->GetPos()).GetLength() * -1;
+			orts[i] = (controlPoint - points[i]->GetPos()).Normalized();
+			coefControls_2[i] = (controlPoint - points[i]->GetPos()).GetLength();
 			index += 2;
 
 		}
@@ -415,7 +415,7 @@ Curve::Curve(const Array<Point*>& _points, const Array<double>& _controlPoints) 
 		{
 			Vector2 controlPoint = Vector2(_controlPoints[index], _controlPoints[index + 1]);
 			orts[i] = (controlPoint - points[i]->GetPos()).Normalized();
-			coefControls_1[i - 1] = (controlPoint - points[i]->GetPos()).GetLength();
+			coefControls_1[i - 1] = (controlPoint - points[i]->GetPos()).GetLength() * 1;
 		}
 		else
 		{
@@ -565,23 +565,55 @@ Array<double> Curve::GetCurveAsItIs() const {
 	result += coefControls_2;
 	return result;
 }
-void Curve::SetPointPositions(const Array<Vector2>& vectors) {
-	if (vectors.GetSize() != points.GetSize()) {
-		throw std::invalid_argument("Curve::invalid size");
-	}
-	for (int i = 0; i < points.GetSize(); ++i) {
-		points[i]->SetPos(vectors[i]);
-	}
-}
+//void Curve::SetPointPositions(const Array<Vector2>& vectors) {
+//	if (vectors.GetSize() != points.GetSize()) {
+//		throw std::invalid_argument("Curve::invalid size");
+//	}
+//	for (int i = 0; i < points.GetSize(); ++i) {
+//		points[i]->SetPos(vectors[i]);
+//	}
+//}
 void Curve::SetPointPositions(const Array<double> params) {
 	if (params.GetSize() != points.GetSize() * 2) {
 		throw std::invalid_argument("Curve::invalid size");
 	}
-	for (int i = 0; i < points.GetSize(); ++i) {
-		points[i]->SetPos(params[2 * i ], params[2 * i + 1]);
-	}
-}
-void Curve::SetCurveAsItIs(const Array<double>) {
+	int countParams = params.GetSize();
+	points[0]->SetPos(params[0], params[1]);
+	Vector2 controlPoint = Vector2(params[2], params[2]);
+	orts[0] = (controlPoint - points[0]->GetPos()).Normalized();
+	coefControls_2[0] = (controlPoint - points[0]->GetPos()).GetLength();
+	int index = 1;
+	for (int i = 4; i < countParams - 4; i += 6) {
+		controlPoint = Vector2(params[i], params[i + 1]);
+		points[index]->SetPos(params[i + 2], params[i + 3]);
+		orts[index] = (controlPoint - points[index]->GetPos()).Normalized() * (-1);
 
+		coefControls_2[index] = (controlPoint - points[index]->GetPos()).GetLength();
+		coefControls_1[index - 1] = coefControls_2[index] * -1;
+		++index;
+	}
+
+}
+void Curve::SetCurveAsItIs(const Array<double> params) {
+	int countParams = (params.GetSize() + 4) / 6;
+	int index = 0;
+	for (int i = 0; i < countParams; ++i) {
+		points[i]->SetPos(params[index], params[index + 1]);
+		++index;
+		++index;
+	}
+	for (int i = 0; i < countParams; ++i) {
+		orts[i] = Vector2(params[index], params[index + 1]);
+		++index;
+		++index;
+	}
+	for (int i = 0; i < countParams - 1; ++i) {
+		coefControls_1[i] = params[index];
+		++index;
+	}
+	for (int i = 0; i < countParams - 1; ++i) {
+		coefControls_2[i] = params[index];
+		++index;
+	}
 }
 #pragma endregion

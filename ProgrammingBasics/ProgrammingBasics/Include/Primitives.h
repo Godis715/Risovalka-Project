@@ -222,7 +222,7 @@ public:
 	Array<Vector2> GetPointPositions() const;
 	Array<double> GetPointDoubles() const;
 	Array<double> GetCurveAsItIs() const;
-	void SetPointPositions(const Array<Vector2>&);
+	// void SetPointPositions(const Array<Vector2>&);
 	void SetPointPositions(const Array<double>);
 	void SetCurveAsItIs(const Array<double>);
 };

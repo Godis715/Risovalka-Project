@@ -339,6 +339,10 @@ void PrimController::SetVariableObjParam(const ID& obj, const Array<double>& par
 				curve->SetPointPositions(params);
 				break;
 			}
+			case CURVE_AS_IT_IS: {
+				curve->SetCurveAsItIs(params);
+				break;
+			}
 			default: {
 				LOGERROR("PrimController:SetVariableObjParam: not appropriate param modifier", LEVEL_1);
 			}

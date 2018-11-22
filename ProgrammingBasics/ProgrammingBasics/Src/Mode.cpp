@@ -1462,7 +1462,26 @@ RedactionCurve::RedactionCurve(const ID& _obj) {
 	index = -1;
 }
 RedactionCurve::~RedactionCurve() {
+	if (isChanged) {
+		int size = points.GetSize();
+		Array<double> change = Array<double>(size * 4);
+		int index = 0;
+		for (int i = 0; i < size; ++i) {
+			change[index] = points[i].x;
+			change[index + 1] = points[i].y;
+			change[index + size * 2] = orts[i].x;
+			change[index + 1 + size * 2] = orts[i].y;
+			index += 2;
+		}
+		change += coefControls_1;
+		change += coefControls_2;
+		model->SetVariableObjParam(obj, change, CURVE_AS_IT_IS, 0);
+	}
 	ObjectController::GetInstance()->MakeValid(obj);
+	points.Clear();
+	coefControls_1.Clear();
+	coefControls_2.Clear();
+	orts.Clear();
 }
 
 Mode* RedactionCurve::HandleEvent(const Event e , const Array<double>& params) {
@@ -1506,6 +1525,9 @@ Mode* RedactionCurve::HandleEvent(const Event e , const Array<double>& params) {
 			if (params.GetSize() != 2) {
 				throw std::invalid_argument("Bad number of parameters");
 			}
+			if (!isChanged) {
+				isChanged = true;
+			}
 			Vector2 shift = Vector2(params[0] - start.x, params[1] - start.y);
 			start.x = params[0];
 			start.y = params[1];
@@ -1523,6 +1545,7 @@ Mode* RedactionCurve::HandleEvent(const Event e , const Array<double>& params) {
 	}
 	case ev_leftMouseUp: {
 		if (state == click) {
+			
 			state = none;
 			index = -1;
 		}
