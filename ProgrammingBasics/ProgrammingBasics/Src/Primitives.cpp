@@ -443,7 +443,7 @@ double Curve::GetDist(const Vector2& click) const {
 	Vector2 P1;
 	Vector2 P2;
 	Vector2 P3;
-	double res = SEARCHING_AREA + 95;
+	double dist = DBL_MAX;
 	for (int i = 0; i < points.GetSize() - 1; ++i) {
 		P0 = points[i]->GetPos();
 		P1 = orts[i] * coefControls_2[i] + points[i]->GetPos();
@@ -466,8 +466,9 @@ double Curve::GetDist(const Vector2& click) const {
 			continue;
 		}
 
-		double tx[] = {-6, -6 , -6};
-		double ty[] = { -12, -12 , -12 };
+		double tx[] = { DBL_MIN, DBL_MIN , DBL_MIN };
+		double ty[] = { DBL_MIN, DBL_MIN , DBL_MIN };
+		size_t countSolution = 3;
 		double Ax = (-P0.x + 3 * P1.x - 3 * P2.x + P3.x);
 		double Bx = (3 * P0.x - 6 * P1.x + 3 * P2.x);
 		double Cx = (-3 * P0.x + 3 * P1.x);
@@ -479,33 +480,27 @@ double Curve::GetDist(const Vector2& click) const {
 		double Dy = (P0.y - click.y);
 		cubic≈quation(Ax, Bx, Cx, Dx, tx[0], tx[1], tx[2]);
 		cubic≈quation(Ay, By, Cy, Dy, ty[0], ty[1], ty[2]);
-		double q, w, e, r, t, y;
-		q = tx[0];
-		w = tx[1];
-		e = tx[2];
-		r = ty[0];
-		t = ty[1];
-		y = ty[2];
-		for (int i = 0; i < 3; ++i) {
+		
+		for (int i = 0; i < countSolution; ++i) {
 			if (ty[i] > -EPS && ty[i] < 1 + EPS) {
 				Vector2 Y = GetPoint(P0, P1, P2, P3, ty[i]) - click;
 				double dot = Vector2::Dot(Y, Y);
-				if (res > dot) {
-					res = dot;
+				if (dist > dot) {
+					dist = dot;
 				}
 			}
 		}
-		for (int i = 0; i < 3; ++i) {
-			if (0.1 && tx[i] > -EPS && tx[i] < 1 + EPS) {
+		for (int i = 0; i < countSolution; ++i) {
+			if (tx[i] > -EPS && tx[i] < 1 + EPS) {
 				Vector2 X = GetPoint(P0, P1, P2, P3, tx[i]) - click;
 				double dot = Vector2::Dot(X, X);
-				if (res > dot) {
-					res = dot;
+				if (dist > dot) {
+					dist = dot;
 				}
 			}
 		}
 	}
-	return sqrt(res);
+	return sqrt(dist);
 }
 
 Array<ID> Curve::GetPointIDs() const {
