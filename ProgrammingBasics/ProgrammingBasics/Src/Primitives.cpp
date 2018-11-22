@@ -406,8 +406,8 @@ Curve::Curve(const Array<Point*>& _points, const Array<double>& _controlPoints) 
 		if (i == 0)
 		{
 			Vector2 controlPoint = Vector2(_controlPoints[index], _controlPoints[index + 1]);
-			orts[i] = (controlPoint - points[i]->GetPos()).Normalized();
-			coefControls_2[i] = (controlPoint - points[i]->GetPos()).GetLength();
+			orts[i] = (controlPoint - points[i]->GetPos()).Normalized() * -1;
+			coefControls_2[i] = (controlPoint - points[i]->GetPos()).GetLength() * -1;
 			index += 2;
 
 		}
@@ -420,9 +420,10 @@ Curve::Curve(const Array<Point*>& _points, const Array<double>& _controlPoints) 
 		else
 		{
 			Vector2 controlPoint = Vector2(_controlPoints[index], _controlPoints[index + 1]);
-			orts[i] = (controlPoint - points[i]->GetPos()).Normalized();
-			coefControls_1[i - 1] = (controlPoint - points[i]->GetPos()).GetLength();
-			coefControls_2[i] = coefControls_1[i - 1] * -1;
+			orts[i] = (controlPoint - points[i]->GetPos()).Normalized() * (-1);
+			
+			coefControls_2[i] = (controlPoint - points[i]->GetPos()).GetLength();
+			coefControls_1[i - 1] = coefControls_2[i]  * -1;
 			index += 4;
 		}
 	}
@@ -549,6 +550,21 @@ Array<double> Curve::GetPointDoubles() const {
 	}
 	return result;
 }
+Array<double> Curve::GetCurveAsItIs() const {
+	int size = points.GetSize();
+	Array<double> result = Array<double>(size * 4);
+	int index = 0;
+	for (int i = 0; i < size; ++i) {
+		result[index] = points[i]->GetPos().x;
+		result[index + 1] = points[i]->GetPos().y;
+		result[index + size * 2] = orts[i].x;
+		result[index + 1 + size * 2] = orts[i].y;
+		index += 2;
+	}
+	result += coefControls_1;
+	result += coefControls_2;
+	return result;
+}
 void Curve::SetPointPositions(const Array<Vector2>& vectors) {
 	if (vectors.GetSize() != points.GetSize()) {
 		throw std::invalid_argument("Curve::invalid size");
@@ -564,5 +580,8 @@ void Curve::SetPointPositions(const Array<double> params) {
 	for (int i = 0; i < points.GetSize(); ++i) {
 		points[i]->SetPos(params[2 * i ], params[2 * i + 1]);
 	}
+}
+void Curve::SetCurveAsItIs(const Array<double>) {
+
 }
 #pragma endregion

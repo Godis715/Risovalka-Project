@@ -390,6 +390,33 @@ private:
 public:
 };
 
+class RedactionCurve : public Mode {
+public:
+	RedactionCurve(const ID&);
+	~RedactionCurve();
+	
+	Mode* HandleEvent(const Event, const Array<double>&);
+
+	void DrawMode();
+private:
+	ID obj;
+	Array<Vector2> points;
+	Array<Vector2> orts;
+	Array<double> coefControls_1;
+	Array<double> coefControls_2;
+
+	Vector2 selectedPoint;
+	int index;
+	bool leftControl;
+	Vector2 start;
+
+	enum State { none, addPoint, click, move };
+	State state;
+	bool isChanged;
+
+	int GetPointOfCurve(const double, const double);
+};
+
 class Redaction : public Mode {
 private:
 	enum State { noClick, click };

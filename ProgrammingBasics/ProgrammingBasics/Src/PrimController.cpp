@@ -221,6 +221,10 @@ Array<double> PrimController::GetVariableObjParam(const ID& obj, int modifiers[]
 				params = curve->GetPointDoubles();
 				break;
 			}
+			case CURVE_AS_IT_IS: {
+				params = curve->GetCurveAsItIs();
+				break;
+			}
 			default: {
 				LOGERROR("PrimController:GetVariableObjParam: not appropriate param modifier", LEVEL_1);
 			}
@@ -519,17 +523,12 @@ ID PrimController::CreatePrimitive(object_type type, const Array<ID>& dependObjs
 			Array<double> coordControlPoints = Array<double>(countParams - points.GetSize() * 2);
 			int indexControlPoints = 0;
 			int indexPoints = 0;
-			double t = 0;
 			for (int i = 0; i < countParams - 2; i += 6) {
 				points[indexPoints++] = new Point(params[i], params[i + 1]);
 				coordControlPoints[indexControlPoints++] = params[i + 2];
 				coordControlPoints[indexControlPoints++] = params[i + 3];
 				coordControlPoints[indexControlPoints++] = params[i + 4];
 				coordControlPoints[indexControlPoints++] = params[i + 5];
-				t = params[i + 2];
-				t = params[i + 3];
-				t = params[i + 4];
-				t = params[i + 5];
 			}
 			points[indexPoints] = new Point(params[countParams - 2], params[countParams - 1]);
 			prim = new Curve(points, coordControlPoints);

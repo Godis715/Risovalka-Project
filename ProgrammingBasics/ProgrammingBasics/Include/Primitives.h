@@ -8,6 +8,7 @@
 #define CENTER		2
 #define ANGLE		3
 #define RADIUS		4
+#define CURVE_AS_IT_IS		5
 #define SEARCHING_AREA 5.0
 
 #define GETVARPARAMS(...) GetVariableObjParam(__VA_ARGS__, 0)
@@ -220,8 +221,10 @@ public:
 	Array<ID> GetPointIDs() const;
 	Array<Vector2> GetPointPositions() const;
 	Array<double> GetPointDoubles() const;
+	Array<double> GetCurveAsItIs() const;
 	void SetPointPositions(const Array<Vector2>&);
 	void SetPointPositions(const Array<double>);
+	void SetCurveAsItIs(const Array<double>);
 };
 
 #endif

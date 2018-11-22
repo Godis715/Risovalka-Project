@@ -1260,6 +1260,9 @@ Mode* Selection::HandleEvent(const Event e, const Array<double>& params) {
 		ID obj = model->GetObjectByClick(params[0], params[1]);
 		if (!IDGenerator::IsNullID(obj))
 		{
+			if (model->GetObjType(obj) == ot_curve) {
+				return new RedactionCurve(obj);
+			}
 			return new ChangingProperties(obj);
 		}
 		return nullptr;
@@ -1422,6 +1425,205 @@ void Selection::DrawMode()
 		view->DrawLine(infoArea2, point1, points);
 		view->DrawLine(infoArea2, point2, points);
 	}
+}
+#pragma endregion
+
+#pragma region RedactionCurve
+RedactionCurve::RedactionCurve(const ID& _obj) {
+	obj = _obj;
+	auto params = model->GetVariableObjParam(obj, CURVE_AS_IT_IS);
+	int countParams = (params.GetSize() + 4) / 6;
+	points = Array<Vector2>(countParams);
+	orts = Array<Vector2>(countParams);
+	coefControls_1 = Array<double>(countParams - 1);
+	coefControls_2 = Array<double>(countParams - 1);
+	int index = 0;
+	for (int i = 0; i < countParams; ++i) {
+		points[i] = Vector2(params[index], params[index + 1]);
+		++index;
+		++index;
+	}
+	for (int i = 0; i < countParams; ++i) {
+		orts[i] = Vector2(params[index], params[index + 1]);
+		++index;
+		++index;
+	}
+	for (int i = 0; i < countParams - 1; ++i) {
+		coefControls_1[i] = params[index];
+		++index;
+	}
+	for (int i = 0; i < countParams - 1; ++i) {
+		coefControls_2[i] = params[index];
+		++index;
+	}
+	ObjectController::GetInstance()->MakeInValid(obj);
+	state = none;
+	isChanged = false;
+	index = -1;
+}
+RedactionCurve::~RedactionCurve() {
+	ObjectController::GetInstance()->MakeValid(obj);
+}
+
+Mode* RedactionCurve::HandleEvent(const Event e , const Array<double>& params) {
+	switch (e)
+	{
+	case  ev_leftMouseDown: {
+		if (params.GetSize() != 2) {
+			throw std::invalid_argument("Bad number of parameters");
+		}
+		if (state == none) {
+			 index = GetPointOfCurve(params[0], params[1]);
+			if (index == -1) {
+				ID id = model->GetObjectByClick(params[0], params[1]);
+				if (!IDGenerator::IsNullID(id))
+				{
+					return new Selection(id);
+				}
+				return new Selection();
+			}
+			state = click;
+			start.x = params[0];
+			start.y = params[1];
+			if (leftControl) {
+				selectedPoint = orts[index] * coefControls_1[index - 1] + points[index];
+				return nullptr;
+			}
+			selectedPoint = orts[index] * coefControls_2[index] + points[index];
+			return nullptr;
+		}
+		if (state == addPoint) {
+			start.x = params[0];
+			start.y = params[1];
+			state = none;
+			return nullptr;
+		}
+		
+	}
+	case ev_mouseMove: {
+		if (state == click)
+		{
+			if (params.GetSize() != 2) {
+				throw std::invalid_argument("Bad number of parameters");
+			}
+			Vector2 shift = Vector2(params[0] - start.x, params[1] - start.y);
+			start.x = params[0];
+			start.y = params[1];
+			selectedPoint += shift;
+			orts[index] = (selectedPoint - points[index]).Normalized();
+			if (leftControl) {
+				orts[index] *= -1.0;
+				coefControls_1[index - 1] = (selectedPoint - points[index]).GetLength() * (-1);
+			}
+			else {
+				coefControls_2[index] = (selectedPoint - points[index]).GetLength();
+			}
+			return nullptr;
+		}
+	}
+	case ev_leftMouseUp: {
+		if (state == click) {
+			state = none;
+			index = -1;
+		}
+		return nullptr;
+	}
+	case ev_ctrlDown: {
+		if (state == none) {
+			state = addPoint;
+		}
+		return nullptr;
+	}
+	case ev_ctrlUp: {
+		if (state == addPoint) {
+			state = none;
+		}
+		return nullptr;
+	}
+	default:
+		return UnexpectedEvent(e, params);;
+	}
+}
+
+void RedactionCurve::DrawMode() {
+	Vector2 Control1;
+	Vector2 Control2;
+	view->SetColor(col_Red);
+	view->DrawPoint(points[0]);
+	
+	for (size_t i = 0; i < points.GetSize() - 1; i++)
+	{
+		Vector2 Control1 = orts[i] * coefControls_2[i] + points[i];
+		Vector2 Control2 = orts[i + 1] * coefControls_1[i] + points[i + 1];
+		view->SetColor(col_Red);
+		view->DrawPoint(points[i + 1]);
+		view->SetColor(col_Blue);
+		view->DrawPoint(Control1);
+		view->DrawPoint(Control2);
+		view->SetColor(col_Purple);
+		view->DrawLine(CreateArr(points[i].x, points[i].y, Control1.x, Control1.y), line);
+		view->DrawLine(CreateArr(points[i + 1].x, points[i + 1].y, Control2.x, Control2.y), line);
+		view->SetColor(col_Yellow);
+		view->DrawCurveNew(CreateArr(points[i].x, points[i].y, Control1.x, Control1.y,
+			Control2.x, Control2.y, points[i + 1].x, points[i + 1].y), line);
+	}
+	if (index != -1) {
+		view->SetColor(col_ForestGreen);
+		view->DrawPoint(selectedPoint);
+	}
+}
+
+int RedactionCurve::GetPointOfCurve(const double x, const double y) {
+	double dist = SEARCHING_AREA * SEARCHING_AREA;
+	int result = -1;
+	double px;
+	double py;
+	double dot;
+	for (size_t i = 0; i < points.GetSize(); i++)
+	{
+		if (i == 0)
+		{
+			px = orts[i].x * coefControls_2[i] + points[i].x - x;
+			py = orts[i].y * coefControls_2[i] + points[i].y - y;
+			dot = abs(px * px + py * py);
+			if (dot < dist) {
+				dist = dot;
+				result = i;
+				leftControl = false;
+			}
+		}
+		else if (i == points.GetSize() - 1)
+		{
+			px = orts[i].x * coefControls_1[i - 1] + points[i].x - x;
+			py = orts[i].y * coefControls_1[i - 1] + points[i].y - y;
+			dot = abs(px * px + py * py);
+			if (dot < dist) {
+				dist = dot;
+				result = i;
+				leftControl = true;
+			}
+		}
+		else
+		{
+			px = orts[i].x * coefControls_1[i - 1] + points[i].x - x;
+			py = orts[i].y * coefControls_1[i - 1] + points[i].y - y;
+			dot = abs(px * px + py * py);
+			if (dot < dist) {
+				dist = dot;
+				result = i;
+				leftControl = true;
+			}
+			px = orts[i].x * coefControls_2[i] + points[i].x - x;
+			py = orts[i].y * coefControls_2[i] + points[i].y - y;
+			dot = abs(px * px + py * py);
+			if (dot < dist) {
+				dist = dot;
+				result = i;
+				leftControl = false;
+			}
+		}
+	}
+	return result;
 }
 #pragma endregion
 
