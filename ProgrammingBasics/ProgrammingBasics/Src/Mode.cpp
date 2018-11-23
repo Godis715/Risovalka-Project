@@ -1509,7 +1509,7 @@ Mode* RedactionCurve::HandleEvent(const Event e , const Array<double>& params) {
 		}
 		if (state == addPoint) {
 			int indexInsert = clickOnCurve(params[0], params[1]);
-			if (indexInsert != -1) {
+			if (indexInsert > 0) {
 				if (isChanged) {
 					ApplyChange();
 				}
@@ -1748,7 +1748,7 @@ int RedactionCurve::clickOnCurve(const double x, const double y) {
 void RedactionCurve::AddPoint(const int indexInsert, const double x, const double y) {
 	double a = -orts[indexInsert - 1].x;
 	double b = -orts[indexInsert - 1].y;
-	double c = coefControls_2[indexInsert - 1];
+	double c = 50;
 	
 	ID id = model->AddPointToCurve(obj, indexInsert, CreateArr(x, y, a, b, c));
 	undo_redo->AddVersion(tfc_creation, CreateArr(id));
