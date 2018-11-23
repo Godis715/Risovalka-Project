@@ -334,6 +334,9 @@ Mode* ChangingProperties::HandleEvent(const Event e, const Array<double>& params
 			isNew = false;
 			delete widjetPrim;
 			delete widjetReq;
+			if (model->GetObjType(obj) == ot_curve) {
+				return new RedactionCurve(obj);
+			}
 			return new ChangingProperties(obj);
 		}
 		return nullptr;
@@ -1460,8 +1463,11 @@ RedactionCurve::RedactionCurve(const ID& _obj) {
 	isChanged = false;
 	index = -1;
 	undo_redo = Undo_Redo::GetInstance();
+	model->CashNewComponent(CreateArr(obj));
 	ObjCtlr = ObjectController::GetInstance();
 	ObjCtlr->MakeInValid(obj);
+	auto primCtrl = PrimController::GetInstance();
+	pointsID = primCtrl->GetChildren(obj);
 }
 RedactionCurve::~RedactionCurve() {
 	if (isChanged) {
@@ -1525,16 +1531,24 @@ Mode* RedactionCurve::HandleEvent(const Event e , const Array<double>& params) {
 			if (params.GetSize() != 2) {
 				throw std::invalid_argument("Bad number of parameters");
 			}
+
+			Vector2 shift = Vector2(params[0] - start.x, params[1] - start.y);
+			if (Vector2::Dot(shift, shift) < 4) {
+				return nullptr;
+			}
 			if (!isChanged) {
+				ObjCtlr->MakeValid(obj);
+				undo_redo->AddVersion(tfc_change, CreateArr(obj));
+				ObjCtlr->MakeInValid(obj);
 				isChanged = true;
 			}
-			Vector2 shift = Vector2(params[0] - start.x, params[1] - start.y);
 			start.x = params[0];
 			start.y = params[1];
 			selectedPoint += shift;
 			int temp = index;
 			if (temp < points.GetSize()) {
 				points[temp] = selectedPoint;
+				model->Move(CreateArr(pointsID[temp]), shift);
 			}
 			else if (temp < points.GetSize() + coefControls_1.GetSize()) {
 				temp -= points.GetSize();
@@ -1753,6 +1767,7 @@ void RedactionCurve::AddPoint(const int indexInsert, const double x, const doubl
 	ID id = model->AddPointToCurve(obj, indexInsert, CreateArr(x, y, a, b, c));
 	undo_redo->AddVersion(tfc_creation, CreateArr(id));
 	points.Insert(indexInsert, Vector2(x, y));
+	pointsID.Insert(indexInsert, id);
 	orts.Insert(indexInsert, Vector2(a, b));
 	coefControls_1.Insert(indexInsert - 1, c * -1);
 	coefControls_2.Insert(indexInsert, c);
@@ -1760,7 +1775,6 @@ void RedactionCurve::AddPoint(const int indexInsert, const double x, const doubl
 
 void RedactionCurve::ApplyChange() {
 	ObjCtlr->MakeValid(obj);
-	undo_redo->AddVersion(tfc_change, CreateArr(obj));
 	int size = points.GetSize();
 	Array<double> change = Array<double>(size * 4);
 	int index = 0;

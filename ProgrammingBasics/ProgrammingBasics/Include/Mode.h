@@ -401,6 +401,7 @@ public:
 private:
 	ID obj;
 	Array<Vector2> points;
+	Array<ID> pointsID;
 	Array<Vector2> orts;
 	Array<double> coefControls_1;
 	Array<double> coefControls_2;
