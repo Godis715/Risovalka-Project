@@ -30,6 +30,15 @@ ID Model::CreatePrimitive(object_type type, const Array<double>& params) const {
 	return obj;
 }
 
+ID Model::AddPointToCurve(const ID& obj, const int index, const Array<double>& params) const {
+	ID id = CreatePrimitive(ot_point, CreateArr(params[0], params[1]));
+	Point* point = dynamic_cast<Point*>(primCtrl->GetPrimitive(id));
+	Curve* curve = dynamic_cast<Curve*>(primCtrl->GetPrimitive(obj));
+	curve->AddPoint(index, point, CreateArr(params[2], params[3], params[4]));
+	dataCtrl->Connect(obj, CreateArr(id));
+	return id;
+}
+
 ID Model::CreateRequirement(object_type type, const Array<ID>& children, const Array<double>& params) const {
 	ID obj = reqCtrl->CreateReq(type, children, params);
 	dataCtrl->AddObject(obj);
@@ -42,6 +51,10 @@ ID Model::CreateRequirement(object_type type, const Array<ID>& children, const A
 
 ID Model::GetObjectByClick(double x, double y) const {
 	return dataCtrl->GetObjectInCircle(x, y, SEARCHING_AREA);
+}
+
+Array<ID> Model::GetObjectsByArea(double x1, double y1, double x2, double y2) const {
+	return dataCtrl->GetObjectsByArea(x1, y1, x2, y2);
 }
 
 void Model::DeleteObject(ID& obj) const {
@@ -157,10 +170,6 @@ bool Model::IsPrim(const ID& obj) const {
 }
 bool Model::IsReq(const ID& obj) const {
 	return reqCtrl->IsReq(obj);
-}
-
-Array<ID> Model::GetObjectsByArea(double x1, double y1, double x2, double y2) const { 
-	return dataCtrl->GetObjectsByArea(x1, y1, x2, y2);
 }
 
 void Model::CashNewComponent(const Array<ID>& IDs) const {

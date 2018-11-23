@@ -72,6 +72,8 @@ public:
 	void Deactivate(const ID&) const;
 
 	ID CreatePrimitive(object_type, const Array<ID>&, const Array<double>&) const;
+	
+
 	Array<ID> GetChildren(const ID&) const;
 
 	double GetDistanceToPoint(const ID&, double, double) const;
@@ -216,10 +218,11 @@ private:
 	Array<Vector2> orts;
 	Array<double> coefControls_1;
 	Array<double> coefControls_2;
-
-	
+	ObjectController* objCtrl;
 
 	friend class PrimController;
+
+	const int GetSize() const ;
 public:
 	Curve(const Array<Point*>&, const Array<double>&);
 
@@ -229,9 +232,15 @@ public:
 	Array<Vector2> GetPointPositions() const;
 	Array<double> GetPointDoubles() const;
 	Array<double> GetCurveAsItIs() const;
+	Array<double> GetCurveParams() const;
 	// void SetPointPositions(const Array<Vector2>&);
-	void SetPointPositions(const Array<double>);
-	void SetCurveAsItIs(const Array<double>);
+	//void SetPointPositions(const Array<double>&);
+	void SetCurveAsItIs(const Array<double>&);
+	void SetCurveParams(const Array<double>&);
+
+	void AddPoint(const int, Point*, const Array<double>&);
+	void DeletePoint(const ID&);
+	bool ItISExtremePoint(const ID&) const;
 };
 
 #endif

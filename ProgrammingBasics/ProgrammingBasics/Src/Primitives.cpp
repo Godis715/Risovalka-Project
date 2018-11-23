@@ -408,6 +408,7 @@ Curve::Curve(const Array<Point*>& _points, const Array<double>& _controlPoints) 
 	Primitive(ot_curve, 0, _points), coefControls_1(_points.GetSize() - 1),
 	coefControls_2(_points.GetSize() - 1), orts(_points.GetSize())
 {
+	objCtrl = ObjectController::GetInstance();
 	points = _points;
 	
 	int index = 0;
@@ -439,17 +440,34 @@ Curve::Curve(const Array<Point*>& _points, const Array<double>& _controlPoints) 
 	}
 }
 
+const int Curve::GetSize() const {
+	ID id;
+	int size = 2;
+	for (int i = 1; i < points.GetSize() - 1; ++i) {
+		if (objCtrl->IsValid(points[i]->GetID())) {
+			++size;
+		}
+	}
+	return size;
+}
+
 double Curve::GetDist(const Vector2& click) const {
 	Vector2 P0;
 	Vector2 P1;
 	Vector2 P2;
 	Vector2 P3;
 	double dist = DBL_MAX;
-	for (int i = 0; i < points.GetSize() - 1; ++i) {
+	for (int i = 0; i < points.GetSize() - 1;) {
 		P0 = points[i]->GetPos();
 		P1 = orts[i] * coefControls_2[i] + points[i]->GetPos();
-		P2 = orts[i + 1] * coefControls_1[i] + points[i + 1]->GetPos();
-		P3 = points[i + 1]->GetPos();
+		++i;
+		for (; i < points.GetSize(); ++i) {
+			if (objCtrl->IsValid(points[i]->GetID())) {
+				P2 = orts[i] * coefControls_1[i - 1] + points[i]->GetPos();
+				P3 = points[i]->GetPos();
+				break;
+			}
+		}
 		if (click.x < P0.x - SEARCHING_AREA && click.x < P1.x - SEARCHING_AREA &&
 			click.x < P2.x - SEARCHING_AREA && click.x < P3.x - SEARCHING_AREA) {
 			continue;
@@ -505,25 +523,37 @@ double Curve::GetDist(const Vector2& click) const {
 }
 
 Array<ID> Curve::GetPointIDs() const {
-	Array<ID> result = Array<ID>(points.GetSize());
+	Array<ID> result = Array<ID>(GetSize());
+	int j = 0;
 	for (int i = 0; i < points.GetSize(); ++i) {
-		result[i] = points[i]->GetID();
+		ID id = points[i]->GetID();
+		if (objCtrl->IsValid(id)) {
+			result[j] = id;
+			++j;
+		}
 	}
 	return result;
 }
 Array<Vector2> Curve::GetPointPositions() const {
-	Array<Vector2> result = Array<Vector2>(points.GetSize());
+	Array<Vector2> result = Array<Vector2>(GetSize());
+	int j = 0;
 	for (int i = 0; i < points.GetSize(); ++i) {
-		result[i] = points[i]->GetPos();
+		if (objCtrl->IsValid(points[i]->GetID())) {
+			result[j] = points[i]->GetPos();
+			++j;
+		}
 	}
 	return result;
 }
+
 Array<double> Curve::GetPointDoubles() const {
-	Array<double> result = Array<double>(points.GetSize() * 6 - 4);
+	
+	Array<double> result = Array<double>(GetSize() * 6 - 4);
 	int index = 0;
-	double t = 0;
+	ID id;
 	for (size_t i = 0; i < points.GetSize(); i++)
 	{
+		id = points[i]->GetID();
 		if (i == 0)
 		{
 			result[index++] = points[i]->GetPos().x;
@@ -538,7 +568,7 @@ Array<double> Curve::GetPointDoubles() const {
 			result[index++] = points[i]->GetPos().x;
 			result[index++] = points[i]->GetPos().y;
 		}
-		else
+		else if (objCtrl->IsValid(id))
 		{
 			result[index++] = orts[i].x * coefControls_1[i - 1] + points[i]->GetPos().x;
 			result[index++] = orts[i].y * coefControls_1[i - 1] + points[i]->GetPos().y;
@@ -550,21 +580,78 @@ Array<double> Curve::GetPointDoubles() const {
 	}
 	return result;
 }
+
 Array<double> Curve::GetCurveAsItIs() const {
-	int size = points.GetSize();
-	Array<double> result = Array<double>(size * 4);
-	int index = 0;
-	for (int i = 0; i < size; ++i) {
-		result[index] = points[i]->GetPos().x;
-		result[index + 1] = points[i]->GetPos().y;
-		result[index + size * 2] = orts[i].x;
-		result[index + 1 + size * 2] = orts[i].y;
-		index += 2;
+	int size = GetSize();
+	Array<double> result = Array<double>(size * 6 - 2);
+	int Ipoint = 0;
+	int Iort = size << 1;
+	int Icoef1 = size << 2;
+	int Icoef2 = Icoef1 + size - 1;
+	// insert begin and end
+	result[Ipoint] = points[0]->GetPos().x;
+	result[Ipoint + 1] = points[0]->GetPos().y;
+	result[Iort] = orts[0].x;
+	result[Iort + 1] = orts[0].y;
+	result[Icoef2] = coefControls_2[0];
+	//
+	result[Iort - 2] = points[points.GetSize() - 1]->GetPos().x;
+	result[Iort - 1] = points[points.GetSize() - 1]->GetPos().y;
+	result[Icoef1 - 2] = orts[orts.GetSize() - 1].x;
+	result[Icoef1 - 1] = orts[orts.GetSize() - 1].y;
+	result[Icoef2 - 1] = coefControls_1[coefControls_1.GetSize() - 1];
+	//
+	Ipoint += 2;
+	Iort += 2;
+	++Icoef2;
+	for (int i = 1; i < points.GetSize() - 1; ++i) {
+		if (objCtrl->IsValid(points[i]->GetID())) {
+			result[Ipoint] = points[i]->GetPos().x;
+			result[Ipoint + 1] = points[i]->GetPos().y;
+			result[Iort] = orts[i].x;
+			result[Iort + 1] = orts[i].y;
+			result[Icoef1] = coefControls_1[i - 1];
+			result[Icoef2] = coefControls_2[i];
+			Ipoint += 2;
+			Iort += 2;
+			++Icoef1;
+			++Icoef2;
+		}
 	}
-	result += coefControls_1;
-	result += coefControls_2;
 	return result;
 }
+
+Array<double> Curve::GetCurveParams() const {
+	int size = GetSize();
+	Array<double> result = Array<double>(size * 4 - 2);
+	int Iort = 0;
+	int Icoef1 = size << 1;
+	int Icoef2 = Icoef1 + size - 1;
+	// insert begin and end
+	result[Iort] = orts[0].x;
+	result[Iort + 1] = orts[0].y;
+	result[Icoef2] = coefControls_2[0];
+	//
+	result[Icoef1 - 2] = orts[orts.GetSize() - 1].x;
+	result[Icoef1 - 1] = orts[orts.GetSize() - 1].y;
+	result[Icoef2 - 1] = coefControls_1[coefControls_1.GetSize() - 1];
+	//
+	Iort += 2;
+	++Icoef2;
+	for (int i = 1; i < points.GetSize() - 1; ++i) {
+		if (objCtrl->IsValid(points[i]->GetID())) {
+			result[Iort] = orts[i].x;
+			result[Iort + 1] = orts[i].y;
+			result[Icoef1] = coefControls_1[i - 1];
+			result[Icoef2] = coefControls_2[i];
+			Iort += 2;
+			++Icoef1;
+			++Icoef2;
+		}
+	}
+	return result;
+}
+
 //void Curve::SetPointPositions(const Array<Vector2>& vectors) {
 //	if (vectors.GetSize() != points.GetSize()) {
 //		throw std::invalid_argument("Curve::invalid size");
@@ -573,47 +660,107 @@ Array<double> Curve::GetCurveAsItIs() const {
 //		points[i]->SetPos(vectors[i]);
 //	}
 //}
-void Curve::SetPointPositions(const Array<double> params) {
-	if (params.GetSize() != points.GetSize() * 2) {
-		throw std::invalid_argument("Curve::invalid size");
-	}
-	int countParams = params.GetSize();
-	points[0]->SetPos(params[0], params[1]);
-	Vector2 controlPoint = Vector2(params[2], params[2]);
-	orts[0] = (controlPoint - points[0]->GetPos()).Normalized();
-	coefControls_2[0] = (controlPoint - points[0]->GetPos()).GetLength();
-	int index = 1;
-	for (int i = 4; i < countParams - 4; i += 6) {
-		controlPoint = Vector2(params[i], params[i + 1]);
-		points[index]->SetPos(params[i + 2], params[i + 3]);
-		orts[index] = (controlPoint - points[index]->GetPos()).Normalized() * (-1);
 
-		coefControls_2[index] = (controlPoint - points[index]->GetPos()).GetLength();
-		coefControls_1[index - 1] = coefControls_2[index] * -1;
-		++index;
-	}
+//void Curve::SetPointPositions(const Array<double>& params) {
+//	if (params.GetSize() != points.GetSize() * 2) {
+//		throw std::invalid_argument("Curve::invalid size");
+//	}
+//	int countParams = params.GetSize();
+//	points[0]->SetPos(params[0], params[1]);
+//	Vector2 controlPoint = Vector2(params[2], params[2]);
+//	orts[0] = (controlPoint - points[0]->GetPos()).Normalized();
+//	coefControls_2[0] = (controlPoint - points[0]->GetPos()).GetLength();
+//	int index = 1;
+//	for (int i = 4; i < countParams - 4; i += 6) {
+//		controlPoint = Vector2(params[i], params[i + 1]);
+//		points[index]->SetPos(params[i + 2], params[i + 3]);
+//		orts[index] = (controlPoint - points[index]->GetPos()).Normalized() * (-1);
+//
+//		coefControls_2[index] = (controlPoint - points[index]->GetPos()).GetLength();
+//		coefControls_1[index - 1] = coefControls_2[index] * -1;
+//		++index;
+//	}
+//
+//}
 
+void Curve::SetCurveAsItIs(const Array<double>& params) {
+	int size = GetSize();
+	int Ipoint = 0;
+	int Iort = size << 1;
+	int Icoef1 = size << 2;
+	int Icoef2 = Icoef1 + size - 1;
+	// insert begin and end
+	points[0]->SetPos(params[Ipoint], params[Ipoint + 1]);
+	orts[0] = Vector2(params[Iort], params[Iort + 1]);
+	coefControls_2[0] = params[Icoef2];
+	//
+	points[size - 1]->SetPos(params[Iort - 2], params[Iort - 1]);
+	orts[size - 1] = Vector2(params[Icoef1 - 2], params[Icoef1 - 1]);
+	coefControls_1[size - 2] = params[Icoef2 - 1];
+	//
+	Ipoint += 2;
+	Iort += 2;
+	++Icoef2;
+	for (int i = 1; i < points.GetSize() - 1; ++i) {
+		if (objCtrl->IsValid(points[i]->GetID())) {
+			points[i]->SetPos(params[Ipoint], params[Ipoint + 1]);
+			Ipoint += 2;
+			orts[i] = Vector2(params[Iort], params[Iort + 1]);
+			Iort += 2;
+			coefControls_1[i - 1] = params[Icoef1];
+			coefControls_2[i] = params[Icoef2];
+			++Icoef1;
+			++Icoef2;
+		}
+	}
 }
-void Curve::SetCurveAsItIs(const Array<double> params) {
-	int countParams = (params.GetSize() + 4) / 6;
-	int index = 0;
-	for (int i = 0; i < countParams; ++i) {
-		points[i]->SetPos(params[index], params[index + 1]);
-		++index;
-		++index;
+
+void Curve::SetCurveParams(const Array<double>& params) {
+	int size = GetSize();
+	int Iort = 0;
+	int Icoef1 = size << 1;
+	int Icoef2 = Icoef1 + size - 1;
+	// insert begin and end
+	orts[0] = Vector2(params[Iort], params[Iort + 1]);
+	coefControls_2[0] = params[Icoef2];
+	//
+	orts[size - 1] = Vector2(params[Icoef1 - 2], params[Icoef1 - 1]);
+	coefControls_1[size - 2] = params[Icoef2 - 1];
+	//
+	Iort += 2;
+	++Icoef2;
+	for (int i = 1; i < points.GetSize() - 1; ++i) {
+		if (objCtrl->IsValid(points[i]->GetID())) {
+			orts[i] = Vector2(params[Iort], params[Iort + 1]);
+			Iort += 2;
+			coefControls_1[i - 1] = params[Icoef1];
+			coefControls_2[i] = params[Icoef2];
+			++Icoef1;
+			++Icoef2;
+		}
 	}
-	for (int i = 0; i < countParams; ++i) {
-		orts[i] = Vector2(params[index], params[index + 1]);
-		++index;
-		++index;
+}
+
+void Curve::AddPoint(const int index, Point* point, const Array<double>& params) {
+	points.Insert(index, point);
+	orts.Insert(index, Vector2(params[0], params[1]));
+	coefControls_1.Insert(index - 1, params[2] * -1);
+	coefControls_2.Insert(index, params[2]);
+}
+
+void Curve::DeletePoint(const ID& id) {
+	for (int i = 1; i < points.GetSize() - 1; ++i) {
+		if (points[i]->GetID() == id) {
+			points.Erase(i);
+			orts.Erase(i);
+			coefControls_1.Erase(i - 1);
+			coefControls_2.Erase(i);
+			break;
+		}
 	}
-	for (int i = 0; i < countParams - 1; ++i) {
-		coefControls_1[i] = params[index];
-		++index;
-	}
-	for (int i = 0; i < countParams - 1; ++i) {
-		coefControls_2[i] = params[index];
-		++index;
-	}
+}
+
+bool Curve::ItISExtremePoint(const ID& id) const {
+	return points[0]->GetID() == id || points[points.GetSize() - 1]->GetID() == id;
 }
 #pragma endregion

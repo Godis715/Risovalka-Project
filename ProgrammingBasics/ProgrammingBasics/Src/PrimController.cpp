@@ -336,7 +336,7 @@ void PrimController::SetVariableObjParam(const ID& obj, const Array<double>& par
 		for (int i = 0; modifiers[i] != 0; ++i) {
 			switch (modifiers[i]) {
 			case VERTEX: {
-				curve->SetPointPositions(params);
+				//curve->SetPointPositions(params);
 				break;
 			}
 			case CURVE_AS_IT_IS: {

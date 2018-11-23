@@ -407,8 +407,9 @@ private:
 
 	Vector2 selectedPoint;
 	int index;
-	bool leftControl;
 	Vector2 start;
+	Undo_Redo* undo_redo;
+	ObjectController* ObjCtlr;
 
 	enum State { none, addPoint, click, move };
 	State state;
@@ -417,6 +418,7 @@ private:
 	int GetPointOfCurve(const double, const double);
 	int clickOnCurve(const double, const double);
 	void AddPoint(const int, const double, const double);
+	void ApplyChange();
 };
 
 class Redaction : public Mode {

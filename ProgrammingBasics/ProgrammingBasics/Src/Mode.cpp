@@ -1456,28 +1456,18 @@ RedactionCurve::RedactionCurve(const ID& _obj) {
 		coefControls_2[i] = params[index];
 		++index;
 	}
-	ObjectController::GetInstance()->MakeInValid(obj);
 	state = none;
 	isChanged = false;
 	index = -1;
+	undo_redo = Undo_Redo::GetInstance();
+	ObjCtlr = ObjectController::GetInstance();
+	ObjCtlr->MakeInValid(obj);
 }
 RedactionCurve::~RedactionCurve() {
 	if (isChanged) {
-		int size = points.GetSize();
-		Array<double> change = Array<double>(size * 4);
-		int index = 0;
-		for (int i = 0; i < size; ++i) {
-			change[index] = points[i].x;
-			change[index + 1] = points[i].y;
-			change[index + size * 2] = orts[i].x;
-			change[index + 1 + size * 2] = orts[i].y;
-			index += 2;
-		}
-		change += coefControls_1;
-		change += coefControls_2;
-		model->SetVariableObjParam(obj, change, CURVE_AS_IT_IS, 0);
+		ApplyChange();
 	}
-	ObjectController::GetInstance()->MakeValid(obj);
+	ObjCtlr->MakeValid(obj);
 	points.Clear();
 	coefControls_1.Clear();
 	coefControls_2.Clear();
@@ -1504,16 +1494,25 @@ Mode* RedactionCurve::HandleEvent(const Event e , const Array<double>& params) {
 			state = click;
 			start.x = params[0];
 			start.y = params[1];
-			if (leftControl) {
-				selectedPoint = orts[index] * coefControls_1[index - 1] + points[index];
+			if (index < points.GetSize()) {
+				selectedPoint = points[index];
 				return nullptr;
 			}
-			selectedPoint = orts[index] * coefControls_2[index] + points[index];
+			int t = index - points.GetSize();
+			if (t < coefControls_1.GetSize()) {
+				selectedPoint = orts[t + 1] * coefControls_1[t] + points[t + 1];
+				return nullptr;
+			}
+			t -= coefControls_1.GetSize();
+			selectedPoint = orts[t] * coefControls_2[t] + points[t];
 			return nullptr;
 		}
 		if (state == addPoint) {
 			int indexInsert = clickOnCurve(params[0], params[1]);
 			if (indexInsert != -1) {
+				if (isChanged) {
+					ApplyChange();
+				}
 				AddPoint(indexInsert, params[0], params[1]);
 			}
 			return nullptr;
@@ -1533,13 +1532,19 @@ Mode* RedactionCurve::HandleEvent(const Event e , const Array<double>& params) {
 			start.x = params[0];
 			start.y = params[1];
 			selectedPoint += shift;
-			orts[index] = (selectedPoint - points[index]).Normalized();
-			if (leftControl) {
-				orts[index] *= -1.0;
-				coefControls_1[index - 1] = (selectedPoint - points[index]).GetLength() * (-1);
+			int temp = index;
+			if (temp < points.GetSize()) {
+				points[temp] = selectedPoint;
+			}
+			else if (temp < points.GetSize() + coefControls_1.GetSize()) {
+				temp -= points.GetSize();
+				orts[temp + 1] = (selectedPoint - points[temp + 1]).Normalized() * -1;
+				coefControls_1[temp] = (selectedPoint - points[temp + 1]).GetLength() * (-1);
 			}
 			else {
-				coefControls_2[index] = (selectedPoint - points[index]).GetLength();
+				temp -= points.GetSize() + coefControls_1.GetSize();
+				orts[temp] = (selectedPoint - points[temp]).Normalized();
+				coefControls_2[temp] = (selectedPoint - points[temp]).GetLength();
 			}
 			return nullptr;
 		}
@@ -1572,16 +1577,15 @@ Mode* RedactionCurve::HandleEvent(const Event e , const Array<double>& params) {
 void RedactionCurve::DrawMode() {
 	Vector2 Control1;
 	Vector2 Control2;
-	view->SetColor(col_Red);
+	view->SetColor(col_Blue);
 	view->DrawPoint(points[0]);
 	
 	for (size_t i = 0; i < points.GetSize() - 1; i++)
 	{
 		Vector2 Control1 = orts[i] * coefControls_2[i] + points[i];
 		Vector2 Control2 = orts[i + 1] * coefControls_1[i] + points[i + 1];
-		view->SetColor(col_Red);
-		view->DrawPoint(points[i + 1]);
 		view->SetColor(col_Blue);
+		view->DrawPoint(points[i + 1]);
 		view->DrawPoint(Control1);
 		view->DrawPoint(Control2);
 		view->SetColor(col_Purple);
@@ -1598,6 +1602,7 @@ void RedactionCurve::DrawMode() {
 }
 
 int RedactionCurve::GetPointOfCurve(const double x, const double y) {
+	int size = points.GetSize();
 	double dist = SEARCHING_AREA * SEARCHING_AREA;
 	int result = -1;
 	double px;
@@ -1612,8 +1617,14 @@ int RedactionCurve::GetPointOfCurve(const double x, const double y) {
 			dot = abs(px * px + py * py);
 			if (dot < dist) {
 				dist = dot;
+				result = i + size + size - 1;
+			}
+			px = points[i].x - x;
+			py = points[i].y - y;
+			dot = abs(px * px + py * py);
+			if (dot < dist) {
+				dist = dot;
 				result = i;
-				leftControl = false;
 			}
 		}
 		else if (i == points.GetSize() - 1)
@@ -1623,8 +1634,14 @@ int RedactionCurve::GetPointOfCurve(const double x, const double y) {
 			dot = abs(px * px + py * py);
 			if (dot < dist) {
 				dist = dot;
+				result = i + size - 1;
+			}
+			px = points[i].x - x;
+			py = points[i].y - y;
+			dot = abs(px * px + py * py);
+			if (dot < dist) {
+				dist = dot;
 				result = i;
-				leftControl = true;
 			}
 		}
 		else
@@ -1634,17 +1651,22 @@ int RedactionCurve::GetPointOfCurve(const double x, const double y) {
 			dot = abs(px * px + py * py);
 			if (dot < dist) {
 				dist = dot;
-				result = i;
-				leftControl = true;
+				result = i + size - 1;
 			}
 			px = orts[i].x * coefControls_2[i] + points[i].x - x;
 			py = orts[i].y * coefControls_2[i] + points[i].y - y;
 			dot = abs(px * px + py * py);
 			if (dot < dist) {
 				dist = dot;
-				result = i;
-				leftControl = false;
+				result = i + size + size - 1;
 			}
+		}
+		px = points[i].x - x;
+		py = points[i].y - y;
+		dot = abs(px * px + py * py);
+		if (dot < dist) {
+			dist = dot;
+			result = i;
 		}
 	}
 	return result;
@@ -1656,6 +1678,7 @@ int RedactionCurve::clickOnCurve(const double x, const double y) {
 	Vector2 P2;
 	Vector2 P3;
 	double dist = DBL_MAX;
+	int index = -1;
 	for (int i = 0; i < points.GetSize() - 1; ++i) {
 		P0 = points[i];
 		P1 = orts[i] * coefControls_2[i] + points[i];
@@ -1693,18 +1716,19 @@ int RedactionCurve::clickOnCurve(const double x, const double y) {
 		cubicÅquation(Ax, Bx, Cx, Dx, tx[0], tx[1], tx[2]);
 		cubicÅquation(Ay, By, Cy, Dy, ty[0], ty[1], ty[2]);
 
-		for (int i = 0; i < countSolution; ++i) {
-			if (ty[i] > -EPS && ty[i] < 1 + EPS) {
-				Vector2 Y = GetPoint(P0, P1, P2, P3, ty[i]);
+		for (int j = 0; j < countSolution; ++j) {
+			if (ty[j] > -EPS && ty[j] < 1 + EPS) {
+				Vector2 Y = GetPoint(P0, P1, P2, P3, ty[j]);
 				Y.x -= x;
 				Y.y -= y;
 				double dot = Vector2::Dot(Y, Y);
 				if (dist > dot) {
 					dist = dot;
+					index = i;
 				}
 			}
 		}
-		for (int i = 0; i < countSolution; ++i) {
+		for (int j = 0; j < countSolution; ++j) {
 			if (tx[i] > -EPS && tx[i] < 1 + EPS) {
 				Vector2 X = GetPoint(P0, P1, P2, P3, tx[i]);
 				X.x -= x;
@@ -1712,15 +1736,47 @@ int RedactionCurve::clickOnCurve(const double x, const double y) {
 				double dot = Vector2::Dot(X, X);
 				if (dist > dot) {
 					dist = dot;
+					index = i;
 				}
 			}
 		}
 	}
-	return sqrt(dist);
+	++index;
+	return index;
 }
 
 void RedactionCurve::AddPoint(const int indexInsert, const double x, const double y) {
+	double a = -orts[indexInsert - 1].x;
+	double b = -orts[indexInsert - 1].y;
+	double c = coefControls_2[indexInsert - 1];
+	
+	ID id = model->AddPointToCurve(obj, indexInsert, CreateArr(x, y, a, b, c));
+	undo_redo->AddVersion(tfc_creation, CreateArr(id));
+	points.Insert(indexInsert, Vector2(x, y));
+	orts.Insert(indexInsert, Vector2(a, b));
+	coefControls_1.Insert(indexInsert - 1, c * -1);
+	coefControls_2.Insert(indexInsert, c);
+}
 
+void RedactionCurve::ApplyChange() {
+	ObjCtlr->MakeValid(obj);
+	undo_redo->AddVersion(tfc_change, CreateArr(obj));
+	int size = points.GetSize();
+	Array<double> change = Array<double>(size * 4);
+	int index = 0;
+	for (int i = 0; i < size; ++i) {
+		change[index] = points[i].x;
+		change[index + 1] = points[i].y;
+		change[index + size * 2] = orts[i].x;
+		change[index + 1 + size * 2] = orts[i].y;
+		index += 2;
+	}
+	change += coefControls_1;
+	change += coefControls_2;
+	model->SETVARPARAMS(obj, change, CURVE_AS_IT_IS);
+	isChanged = false;
+	undo_redo->CompleteAddChange();
+	ObjCtlr->MakeInValid(obj);
 }
 #pragma endregion
 

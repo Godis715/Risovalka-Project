@@ -89,6 +89,7 @@ public:
 	void Connect(const ID&, const Array<ID>&);
 	void Connect(const ID&, Component*);
 
+	
 	void DeleteObject(const ID&);
 
 	void MakeInValid(ID&);

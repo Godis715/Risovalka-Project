@@ -153,7 +153,7 @@ public:
 			else {
 				prev->next = current->next;
 			}
-			if (current->next == nullptr) {
+			if (current->next == list->guardTail) {
 				list->tail = prev;
 			}
 
@@ -191,10 +191,11 @@ public:
 	}
 
 	Marker BeforeBegin() {
+		Node* temp = head;
 		head = guardHead;
 		auto marker = Marker(this);
 		if (head != nullptr) {
-			head = guardHead->next;
+			head = temp;
 		}
 		return marker;
 	}
