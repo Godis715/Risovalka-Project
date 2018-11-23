@@ -300,7 +300,7 @@ public:
 	}
 
 	void Insert(int index, const T& value) {
-		if (index >= _size) {
+		if (index > _size) {
 			throw std::out_of_range("Index out of range!");
 		}
 		if (index < 0) {

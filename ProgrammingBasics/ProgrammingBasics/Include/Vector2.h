@@ -18,8 +18,10 @@ public:
 	Vector2 operator /(const double) const;
 	void operator /=(const double);
 	void operator +=(const Vector2&);
+	void operator *=(const double);
 	void operator =(const Vector2&);
 	double GetLength() const;
+	Vector2 Normalized() const;
 
 	double x;
 	double y;

@@ -162,15 +162,15 @@ void ViewFLTK::_DrawArc(const Vector2& center, double R, double angleStart, doub
 
 void ViewFLTK::DrawArc(const Vector2& center, const Vector2& start, const Vector2& end, typeDrawing type)
 {
-	double EPS = 5.0;
+	double Eps = 5.0;
 	double r1 = (center - start).GetLength();
-	double angleStart = (abs(r1) < EPS) ? 0.0 : acos((start.x - center.x) / r1) * (180 / PI);
+	double angleStart = (abs(r1) < Eps) ? 0.0 : acos((start.x - center.x) / r1) * (180 / PI);
 	if (center.y - start.y < 0) {
 		angleStart = 360.0 - angleStart;
 	}
 
 	double r2 = (center - end).GetLength();
-	double angleEnd = (abs(r2) < EPS) ? 360.0 : acos((end.x - center.x) / r2) * (180 / PI);
+	double angleEnd = (abs(r2) < Eps) ? 360.0 : acos((end.x - center.x) / r2) * (180 / PI);
 	if (center.y - end.y < 0) {
 		angleEnd = 360.0 - angleEnd;
 	}
@@ -198,10 +198,10 @@ void ViewFLTK::DrawArc(const Vector2& center, const Vector2& start, const Vector
 }
 void ViewFLTK::DrawArc(const Array<double>& params, typeDrawing type)
 {
-	double EPS = 5.0;
+	double Eps = 5.0;
 	double r = params[6];
 	double angle = params[7] * (180 / PI);
-	double angleStart = (r < EPS) ? 0.0 : acos((params[0] - params[4]) / r) * (180 / PI);
+	double angleStart = (r < Eps) ? 0.0 : acos((params[0] - params[4]) / r) * (180 / PI);
 	if (params[5] - params[1] < 0) {
 		angleStart = 360.0 - angleStart;
 	}
@@ -523,6 +523,36 @@ void ViewFLTK::DrawCurve(const Array<double>& points, typeDrawing type) {
 			y0 = y3;
 			i += 2;
 		}
+	}
+	fl_end_line();
+}
+
+void ViewFLTK::DrawCurveNew(const Array<Vector2>& points, typeDrawing type)
+{
+	if (type == typeDrawing::points) {
+		fl_line_style(FL_DOT, 2);
+	}
+	fl_begin_line();
+	for (size_t i = 0; i < points.GetSize() - 1; i = i + 3)
+	{
+		fl_curve(points[i].x, points[i].y, 
+			points[i + 1].x, points[i + 1].y,
+			points[i + 2].x, points[i + 2].y,
+			points[i + 3].x, points[i + 3].y);
+	}
+	fl_end_line();
+}
+void ViewFLTK::DrawCurveNew(const Array<double>& points, typeDrawing type) {
+	if (type == typeDrawing::points) {
+		fl_line_style(FL_DOT, 2);
+	}
+	fl_begin_line();
+	for (size_t i = 0; i < points.GetSize() - 2; i = i + 6)
+	{
+		fl_curve(points[i], points[i + 1],
+			points[i + 2], points[i + 3],
+			points[i + 4], points[i + 5],
+			points[i + 6], points[i + 7]);
 	}
 	fl_end_line();
 }

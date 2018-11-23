@@ -22,6 +22,14 @@ double Vector2::GetLength() const {
 	return sqrt(this->x * this->x + this->y * this->y);
 }
 
+Vector2 Vector2::Normalized() const {
+	double len = sqrt(this->x * this->x + this->y * this->y);
+	if (len < 0.0001) {
+		return Vector2(0, 0);
+	}
+	return Vector2(this->x / len, this->y / len);
+};
+
 double Vector2::Dot(const Vector2& vec1, const Vector2& vec2) {
 	return (vec1.x * vec2.x + vec1.y * vec2.y);
 }
@@ -57,6 +65,11 @@ void Vector2::operator /=(const double val) {
 void Vector2::operator +=(const Vector2& vector) {
 	this->x += vector.x;
 	this->y += vector.y;
+}
+
+void Vector2::operator *=(const double val) {
+	this->x *= val;
+	this->y *= val;
 }
 
 void Vector2::operator =(const Vector2& vector) {

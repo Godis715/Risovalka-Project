@@ -212,6 +212,27 @@ public:
 	void DrawMode();
 };
 
+class CreatingCurveNew : public CreateObject {
+private:
+	int countClick;
+	bool isDrag;
+	Array<Array<Vector2>> PointsCurves;
+
+	Array<Vector2> connectPoints;
+	Array<Vector2> controlPoints1;
+	Array<Vector2> controlPoints2;
+	Array<Vector2> imaginaryPoints;
+
+	Event lastEvent;
+public:
+	CreatingCurveNew();
+	~CreatingCurveNew();
+
+	Array<ID> HandleEvent(const Event, Array<Vector2>&);
+
+	void DrawMode();
+};
+
 
 //---------------------------------
 
@@ -367,6 +388,38 @@ class RotationControl : public Control {
 private:
 
 public:
+};
+
+class RedactionCurve : public Mode {
+public:
+	RedactionCurve(const ID&);
+	~RedactionCurve();
+	
+	Mode* HandleEvent(const Event, const Array<double>&);
+
+	void DrawMode();
+private:
+	ID obj;
+	Array<Vector2> points;
+	Array<ID> pointsID;
+	Array<Vector2> orts;
+	Array<double> coefControls_1;
+	Array<double> coefControls_2;
+
+	Vector2 selectedPoint;
+	int index;
+	Vector2 start;
+	Undo_Redo* undo_redo;
+	ObjectController* ObjCtlr;
+
+	enum State { none, addPoint, click, move };
+	State state;
+	bool isChanged;
+
+	int GetPointOfCurve(const double, const double);
+	int clickOnCurve(const double, const double);
+	void AddPoint(const int, const double, const double);
+	void ApplyChange();
 };
 
 class Redaction : public Mode {

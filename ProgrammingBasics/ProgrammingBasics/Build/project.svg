@@ -2,62 +2,28 @@
 <!-- DrawProject -->
 <svg width="1000" height="1000">
 	<drawProject:point
-		px="278"
-		py="386"
-		id="54"
+		px="256"
+		py="292"
+		id="1"
 	/>
 	<drawProject:point
-		px="455"
-		py="248"
-		id="55"
-	/>
-	<drawProject:point
-		px="512"
-		py="397"
-		id="56"
-	/>
-	<drawProject:point
-		px="645"
-		py="240"
-		id="57"
-	/>
-	<drawProject:point
-		px="438"
-		py="171"
-		id="58"
-	/>
-	<drawProject:point
-		px="370"
-		py="318"
-		id="59"
-	/>
-	<drawProject:point
-		px="694"
-		py="304"
-		id="60"
-	/>
-	<drawProject:point
-		px="821"
-		py="205"
-		id="61"
-	/>
-	<drawProject:point
-		px="840"
-		py="364"
-		id="62"
-	/>
-	<drawProject:point
-		px="701"
-		py="411"
-		id="63"
+		px="633"
+		py="317"
+		id="2"
 	/>
 	<path
 		style = "fill:none;stroke:#000000;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-		d="M 278,386 C 455,248 512,397 645,240 438,171 370,318 694,304 821,205 840,364 701,411"
-		id="64"
+		d="M 256,292 C 411,171 483,233 483,238 483,243 620,263 633,317"
+		id="3"
 	/>
 	<drawProject:curve
-		id="64"
-		childIds="54 55 56 57 58 59 60 61 62 63"
+		id="3"
+		childIds="1 4 2"
+		params="411,171 483,233 483,243 620,263"
+	/>
+	<drawProject:point
+		px="483"
+		py="238"
+		id="4"
 	/>
 </svg>

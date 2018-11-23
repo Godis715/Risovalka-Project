@@ -21,7 +21,7 @@ public:
 	virtual void Undo() = 0;
 	virtual void Redo() = 0;
 
-	virtual ~Version();
+	virtual ~Version() {};
 };
 
 class VersionChange : public Version {
@@ -30,11 +30,11 @@ public:
 	Array<Array<double>> dataBefore;
 	Array<Array<double>> dataAfter;
 
-	~VersionChange();
-	VersionChange(const TypeOFCange, const Array<ID>&);
-
 	void Undo();
 	void Redo();
+
+	~VersionChange();
+	VersionChange(const TypeOFCange, const Array<ID>&);
 };
 
 class VersionCreateReq : public Version {
@@ -54,11 +54,12 @@ public:
 class VersionCreat_Del : public Version {
 public:
 	Array<ID> IDs;
-	~VersionCreat_Del();
-	VersionCreat_Del(const TypeOFCange, const Array<ID>&);
 
 	void Undo();
 	void Redo();
+
+	~VersionCreat_Del();
+	VersionCreat_Del(const TypeOFCange, const Array<ID>&);
 };
 
 class Undo_Redo
@@ -96,5 +97,4 @@ private:
 
 	void DeleteVersionAfterIt();
 };
-
 #endif

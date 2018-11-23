@@ -8,9 +8,18 @@
 #define CENTER		2
 #define ANGLE		3
 #define RADIUS		4
+#define CURVE_AS_IT_IS		5
+#define SEARCHING_AREA 5.0
+#define EPS 1e-3
 
 #define GETVARPARAMS(...) GetVariableObjParam(__VA_ARGS__, 0)
 #define SETVARPARAMS(...) SetVariableObjParam(__VA_ARGS__, 0)
+
+int sign(double);
+void line≈quation(double, double, double&);
+void quadro≈quation(double, double, double, double&, double&);
+void cubic≈quation(double, double, double, double, double&, double&, double&);
+Vector2 GetPoint(const Vector2&, const Vector2&, const Vector2&, const Vector2&, const double);
 
 class Primitive;
 class Arc;
@@ -63,6 +72,8 @@ public:
 	void Deactivate(const ID&) const;
 
 	ID CreatePrimitive(object_type, const Array<ID>&, const Array<double>&) const;
+	
+
 	Array<ID> GetChildren(const ID&) const;
 
 	double GetDistanceToPoint(const ID&, double, double) const;
@@ -204,18 +215,32 @@ public:
 class Curve : public Primitive {
 private:
 	Array<Point*> points;
+	Array<Vector2> orts;
+	Array<double> coefControls_1;
+	Array<double> coefControls_2;
+	ObjectController* objCtrl;
 
 	friend class PrimController;
+
+	const int GetSize() const ;
 public:
-	Curve(const Array<Point*>&);
+	Curve(const Array<Point*>&, const Array<double>&);
 
 	double GetDist(const Vector2&) const;
 
 	Array<ID> GetPointIDs() const;
 	Array<Vector2> GetPointPositions() const;
 	Array<double> GetPointDoubles() const;
-	void SetPointPositions(const Array<Vector2>&);
-	void SetPointPositions(const Array<double>);
+	Array<double> GetCurveAsItIs() const;
+	Array<double> GetCurveParams() const;
+	// void SetPointPositions(const Array<Vector2>&);
+	//void SetPointPositions(const Array<double>&);
+	void SetCurveAsItIs(const Array<double>&);
+	void SetCurveParams(const Array<double>&);
+
+	void AddPoint(const int, Point*, const Array<double>&);
+	void DeletePoint(const ID&);
+	bool ItISExtremePoint(const ID&) const;
 };
 
 #endif
