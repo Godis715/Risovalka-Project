@@ -76,6 +76,21 @@ public:
 			list = _list;
 		}
 
+		Marker(List* _list, Node* _current)
+		{
+			if (_list->head == nullptr || _current == nullptr) {
+				isValid = false;
+			}
+			current = _current;
+			list = _list;
+			if (current == list->guardTail) {
+				isValid = false;
+			}
+			else {
+				isValid = true;
+			}
+		}
+
 		Marker(List* _list, Node* _prev, Node* _current)
 		{
 			if (_list->head == nullptr || _prev == nullptr || _current == nullptr) {
@@ -191,13 +206,7 @@ public:
 	}
 
 	Marker BeforeBegin() {
-		Node* temp = head;
-		head = guardHead;
-		auto marker = Marker(this);
-		if (head != nullptr) {
-			head = temp;
-		}
-		return marker;
+		return Marker(this, guardHead);
 	}
 
 	Marker Begin() {
@@ -233,7 +242,7 @@ public:
 		{
 			head = new Node(nullptr, val);
 			tail = head;
-			guardHead->next = new Node(head, val);
+			guardHead->next = head;
 		}
 		else
 		{
