@@ -1547,8 +1547,12 @@ Mode* RedactionCurve::HandleEvent(const Event e , const Array<double>& params) {
 			selectedPoint += shift;
 			int temp = index;
 			if (temp < points.GetSize()) {
-				points[temp] = selectedPoint;
 				model->Move(CreateArr(pointsID[temp]), shift);
+				for (int i = 0; i < points.GetSize(); ++i) {
+					auto params = model->GETVARPARAMS(pointsID[i], VERTEX);
+					points[i].x = params[0];
+					points[i].y = params[1];
+				}
 			}
 			else if (temp < points.GetSize() + coefControls_1.GetSize()) {
 				temp -= points.GetSize();

@@ -39,7 +39,69 @@ ID Model::AddPointToCurve(const ID& obj, const int index, const Array<double>& p
 	return id;
 }
 
-ID Model::CreateRequirement(object_type type, const Array<ID>& children, const Array<double>& params) const {
+Array<ID> Model::OrderedCreateRequirement(const Array<ID>& IDs) const {
+	Array<ID> orderedID = Array<ID>(IDs.GetSize());
+	int index = 0;
+	Queue<ID> circle;
+	Queue<ID> segment;
+	Queue<ID> point;
+
+	for (int i = 0; i < IDs.GetSize(); ++i) {
+		auto type = objCtrl->GetType(IDs[i]);
+
+		switch (type)
+		{
+		case ot_point: {
+			point.Push(IDs[i]);
+			break;
+		}
+		case ot_segment: {
+			segment.Push(IDs[i]);
+			break;
+		}
+		case ot_circle: {
+			circle.Push(IDs[i]);
+			break;
+		}
+		case ot_arc: {
+			orderedID[index] = IDs[i];
+			++index;
+			break;
+		}
+		default:
+			break;
+		}
+	}
+
+	// cicrle
+
+	while (!circle.IsEmpty())
+	{
+		orderedID[index] = circle.Pop();
+		++index;
+	}
+
+	// segment
+
+	while (!segment.IsEmpty())
+	{
+		orderedID[index] = segment.Pop();
+		++index;
+	}
+
+	// point
+
+	while (!point.IsEmpty())
+	{
+		orderedID[index] = point.Pop();
+		++index;
+	}
+
+	return orderedID;
+}
+
+ID Model::CreateRequirement(object_type type, const Array<ID>& IDs, const Array<double>& params) const {
+	Array<ID> children = OrderedCreateRequirement(IDs);
 	ID obj = reqCtrl->CreateReq(type, children, params);
 	dataCtrl->AddObject(obj);
 	dataCtrl->Connect(obj, children);

@@ -23,6 +23,7 @@ public:
 
 	ID CreatePrimitive(object_type, const Array<double>&) const;
 	ID AddPointToCurve(const ID&, const int, const Array<double>&) const;
+	Array<ID> OrderedCreateRequirement(const Array<ID>& id_arr) const;
 	ID CreateRequirement(object_type, const Array<ID>&, const Array<double>&) const;
 
 
