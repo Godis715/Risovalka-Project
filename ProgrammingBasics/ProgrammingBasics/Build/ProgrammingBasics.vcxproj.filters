@@ -114,9 +114,6 @@
     <ClCompile Include="..\Src\SVGformat.cpp">
       <Filter>Исходные файлы\Support</Filter>
     </ClCompile>
-    <ClCompile Include="Source.cpp">
-      <Filter>Исходные файлы\Support</Filter>
-    </ClCompile>
     <ClCompile Include="..\Src\Vector2.cpp">
       <Filter>Исходные файлы\Support</Filter>
     </ClCompile>
