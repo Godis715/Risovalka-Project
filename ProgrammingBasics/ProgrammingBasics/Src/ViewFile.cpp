@@ -60,7 +60,8 @@ void ViewFile::cl_theme_b(Fl_Widget* o, void*)
 	{
 		colorThemes->SetTheme(3);
 	}
-	Presenter::Update();
+	Presenter::Set_event(ev_createPoint, params);
+	Presenter::Set_event(ev_escape, params);
 }
 
 void ViewFile::cl_execute_script_b(Fl_Widget* o, void*)

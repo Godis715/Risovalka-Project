@@ -28,8 +28,6 @@ public:
 
 	static void Compile();
 
-	static void Update();
-
 	static void Set_event(Event, Array<double>&);
 };
 

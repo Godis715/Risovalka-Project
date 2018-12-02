@@ -269,6 +269,7 @@ void Presenter::DrawScene()
 	}
 
 	mode->DrawMode();
+	view->Update();
 }
 
 void Presenter::SaveProject(const std::string& path) 
@@ -276,9 +277,6 @@ void Presenter::SaveProject(const std::string& path)
 	model->Save(path);
 }
 
-void Presenter::Update() {
-	view->Update();
-}
 
 void Presenter::DownloadFile(const std::string& path)
 {
