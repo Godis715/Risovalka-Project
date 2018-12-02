@@ -184,21 +184,17 @@ void Undo_Redo::AddVersion(const TypeOFCange type, const Array<ID>& IDs) {
 		}
 	}
 	Array<ID> data(IDs.GetSize() + AllChildren.GetSize());
+	int i = 0;
+	for (; i < IDs.GetSize(); ++i) {
+		data[i] = IDs[i];
+	}
 	auto iter = AllChildren.Begin();
-	int j = 0;
 	if (iter.IsValid()) {
 		do {
-			data[j] = *iter;
-			++j;
+			data[i] = *iter;
+			++i;
 		} while (++iter);
-	}
-	
-	for (int i = 0; i < IDs.GetSize(); ++i) {
-		data[j] = IDs[i];
-		++j;
-	}
-
-	
+	}	
 	
 	Version* version = new VersionCreat_Del(type, data);
 

@@ -225,6 +225,10 @@ Array<double> PrimController::GetVariableObjParam(const ID& obj, int modifiers[]
 				params = curve->GetCurveAsItIs();
 				break;
 			}
+			case CURVE_PARAMS: {
+				params = curve->GetCurveParams();
+				break;
+			}
 			default: {
 				LOGERROR("PrimController:GetVariableObjParam: not appropriate param modifier", LEVEL_1);
 			}
@@ -341,6 +345,10 @@ void PrimController::SetVariableObjParam(const ID& obj, const Array<double>& par
 			}
 			case CURVE_AS_IT_IS: {
 				curve->SetCurveAsItIs(params);
+				break;
+			}
+			case CURVE_PARAMS: {
+				curve->SetCurveParams(params);
 				break;
 			}
 			default: {

@@ -144,12 +144,13 @@ void DataController::DeleteObject(const ID& id) {
 				
 				ID currConnNode = (*connNodesIt);
 				++connNodesIt;
-				if (objCtrl->GetType(currConnNode) == ot_curve &&
-					objCtrl->IsValid(currConnNode)) {
+				if (objCtrl->GetType(currConnNode) == ot_curve) {
 					auto curve = dynamic_cast<Curve*>(primCtrl->GetPrimitive(currConnNode));
-					curve->DeletePoint(currID);
-					continue;
-				}// we have to delete point from valid curve and don`t delete curve
+					if (!curve->ItISExtremePoint(currID)) {
+						curve->DeletePoint(currID);
+						continue;
+					}// we have to delete point from  curve
+				}// if point don`t extreme point we heve NOT delete curve
 				bool isCurrConnNodeReq = reqCtrl->IsReq(currConnNode);
 				bool isCurrConnNodePrim = primCtrl->IsPrimitive(currConnNode);
 				bool isCurrObjPrim = primCtrl->IsPrimitive(currID);

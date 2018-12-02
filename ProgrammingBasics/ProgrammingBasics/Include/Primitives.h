@@ -9,6 +9,7 @@
 #define ANGLE		3
 #define RADIUS		4
 #define CURVE_AS_IT_IS		5
+#define CURVE_PARAMS		6
 #define SEARCHING_AREA 5.0
 #define EPS 1e-3
 
@@ -233,8 +234,6 @@ public:
 	Array<double> GetPointDoubles() const;
 	Array<double> GetCurveAsItIs() const;
 	Array<double> GetCurveParams() const;
-	// void SetPointPositions(const Array<Vector2>&);
-	//void SetPointPositions(const Array<double>&);
 	void SetCurveAsItIs(const Array<double>&);
 	void SetCurveParams(const Array<double>&);
 

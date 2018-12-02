@@ -2,82 +2,70 @@
 <!-- DrawProject -->
 <svg width="1000" height="1000">
 	<drawProject:point
-		px="286.728"
-		py="385.949"
+		px="363"
+		py="91"
 		id="1"
 	/>
 	<drawProject:point
-		px="367"
-		py="182"
+		px="539"
+		py="69"
 		id="2"
 	/>
 	<drawProject:point
-		px="519"
-		py="161"
+		px="542"
+		py="124"
 		id="3"
 	/>
-	<drawProject:point
-		px="663"
-		py="160"
-		id="4"
-	/>
-	<drawProject:point
-		px="750"
-		py="286"
-		id="5"
-	/>
-	<drawProject:point
-		px="827"
-		py="377"
-		id="6"
-	/>
-	<drawProject:point
-		px="549.189"
-		py="450.401"
-		id="7"
-	/>
-	<path
-		style = "fill:none;stroke:#000000;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-		d="M 286.728,385.949 C 252.728,327.949 338,156 367,182 396,208 501,210 519,161 537,112 655,97 663,160 671,223 690,341 750,286 810,231 873,345 827,377 781,409 568.189,490.401 549.189,450.401"
-		id="8"
-	/>
-	<drawProject:curve
-		id="8"
-		childIds="1 2 3 4 5 6 7"
-		params="252.728,327.949 338,156 396,208 501,210 537,112 655,97 671,223 690,341 810,231 873,345 781,409 568.189,490.401"
-	/>
-	<drawProject:point
-		px="345.257"
-		py="399.467"
-		id="9"
-	/>
-	<drawProject:point
-		px="490.826"
-		py="436.183"
-		id="10"
-	/>
 	<line
-		x1="345.257"
-		y1="399.467"
-		x2="490.826"
-		y2="436.183"
-		id="11"
-		childIds="9 10"
+		x1="539"
+		y1="69"
+		x2="542"
+		y2="124"
+		id="4"
+		childIds="2 3"
 		stroke="red"
 		stroke-width="5"
 	/>
-	<drawProject:req>
-		<distBetPoints
-			id="12"
-			IDs="1 9"
-			params="60"	/>
-		<distBetPoints
-			id="13"
-			IDs="7 10"
-			params="60"	/>
-		<distBetPoints
-			id="14"
-			IDs="9 10"
-			params="150"	/>
-	</drawProject:req>
+	<drawProject:point
+		px="793"
+		py="110"
+		id="5"
+	/>
+	<drawProject:point
+		px="790.297"
+		py="147.707"
+		id="6"
+	/>
+	<path
+		d="M793,110 A672.439,672.439 0 1,0 790.297,147.707"
+		id="7"
+		childIds="5 6"
+		stroke="red"
+		stroke-width="5"
+		fill="none"
+	/>
+	<drawProject:arc
+		x1="793"
+		y1="110"
+		x2="790.297"
+		y2="147.707"
+		angle="5.82932"
+		id="7"
+		childIds="5 6"
+	/>
+	<drawProject:point
+		px="479"
+		py="170"
+		id="8"
+	/>
+	<circle
+		cx="479"
+		cy="170"
+		r="24.7588"
+		id="9"
+		childIds="8"
+		stroke="red"
+		stroke-width="5"
+		fill="none"
+	/>
 </svg>

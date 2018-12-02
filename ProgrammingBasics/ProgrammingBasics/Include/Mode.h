@@ -260,8 +260,12 @@ private:
 	ID reqID;
 	Array<ID> primiOfReqIDs;
 	bool isNew = true;
-	//enum State { single_selection, poly_selection, area_selection };
-	//State state;
+	enum State { none, click };
+	State state;
+
+	bool isChanged;
+	Undo_Redo* undo_redo;
+	Vector2 start;
 
 	void SetWidjetParamPrim();
 

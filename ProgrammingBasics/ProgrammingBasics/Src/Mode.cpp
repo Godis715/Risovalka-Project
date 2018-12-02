@@ -175,6 +175,9 @@ ChangingProperties::ChangingProperties() : Mode()
 {
 	IDrawMode* outputWidjet = static_cast<IDrawMode*>(view->GetWidjet(drawMode));
 	outputWidjet->SetName("Mode: ChangingProperties");
+	state = none;
+	undo_redo = Undo_Redo::GetInstance();
+	isChanged = false;
 }
 
 ChangingProperties::ChangingProperties(const ID _selObject) : Mode(), selectedObject(_selObject)
@@ -183,6 +186,10 @@ ChangingProperties::ChangingProperties(const ID _selObject) : Mode(), selectedOb
 	outputWidjet->SetName("Mode: ChangingProperties");
 	widjetPrim = static_cast<IDisplayParamPrim*>(view->GetWidjet(displayParamPrim));
 	SetWidjetParamPrim();
+	model->CashNewComponent(CreateArr(selectedObject));
+	state = none;
+	undo_redo = Undo_Redo::GetInstance();
+	isChanged = false;
 }
 
 ChangingProperties::~ChangingProperties()
@@ -262,6 +269,50 @@ Mode* ChangingProperties::HandleEvent(const Event e, const Array<double>& params
 {
 	switch (e)
 	{
+	case ev_leftMouseDown:
+	{
+		if (params.GetSize() != 2) {
+			throw std::invalid_argument("Bad number of parameters");
+		}
+		state = click;
+		start.x = params[0];
+		start.y = params[1];
+		return nullptr;
+	}
+	case ev_mouseMove:
+	{
+		if (state == click) {
+			if (params.GetSize() != 2) {
+				throw std::invalid_argument("Bad number of parameters");
+			}
+
+			Vector2 shift = Vector2(params[0] - start.x, params[1] - start.y);
+			if (Vector2::Dot(shift, shift) < 4) {
+				return nullptr;
+			}
+			if (!isChanged) {
+				undo_redo->AddVersion(tfc_change, CreateArr(selectedObject));
+				isChanged = true;
+			}
+			start.x = params[0];
+			start.y = params[1];
+			model->Move(CreateArr(selectedObject), shift);
+		}
+		return nullptr;
+	}
+	case ev_leftMouseUp:
+	{
+		state = none;
+		SetWidjetParamPrim();
+		return nullptr;
+	}
+	}
+	if (isChanged) {
+		undo_redo->CompleteAddChange();
+		isChanged = false;
+	}
+	switch (e)
+	{
 	case ev_click_Req:
 	{
 		reqID = reqIDs[int(params[0])];
@@ -301,6 +352,7 @@ Mode* ChangingProperties::HandleEvent(const Event e, const Array<double>& params
 		default:
 			break;
 		}
+		model->Move(CreateArr(selectedObject), Vector2(0, 0));
 		undo_redo->CompleteAddChange();
 		SetWidjetParamPrim();
 		return nullptr;
@@ -341,16 +393,19 @@ Mode* ChangingProperties::HandleEvent(const Event e, const Array<double>& params
 		}
 		return nullptr;
 	}
-	case ev_delete_display_Prim: {
+	case ev_delete_display_Prim: 
+	{
 		return new Selection(selectedObject);
 	}
-	case ev_delete_display_Req: {
+	case ev_delete_display_Req:
+	{
 		reqID = ID();
 		delete widjetReq;
 		widjetReq = nullptr;
 		return nullptr;
 	}
-	case ev_escape: {
+	case ev_escape:
+	{
 		return new Selection(selectedObject);
 	}
 	default:
@@ -360,13 +415,12 @@ Mode* ChangingProperties::HandleEvent(const Event e, const Array<double>& params
 
 void ChangingProperties::DrawMode()
 {
-	Array<ID> selectedObjects;
-	selectedObjects.PushBack(selectedObject);
+	Array<ID> selectedObjects(1);
+	selectedObjects[0] = selectedObject;
 	view->SetColor(col_Blue);
 	Presenter::DrawSelectedObjects(primiOfReqIDs);
 	view->SetColor(col_Orange);
 	Presenter::DrawSelectedObjects(selectedObjects);
-	
 }
 #pragma endregion
 
@@ -1465,7 +1519,6 @@ RedactionCurve::RedactionCurve(const ID& _obj) {
 	undo_redo = Undo_Redo::GetInstance();
 	model->CashNewComponent(CreateArr(obj));
 	ObjCtlr = ObjectController::GetInstance();
-	ObjCtlr->MakeInValid(obj);
 	auto primCtrl = PrimController::GetInstance();
 	pointsID = primCtrl->GetChildren(obj);
 }
@@ -1537,9 +1590,7 @@ Mode* RedactionCurve::HandleEvent(const Event e , const Array<double>& params) {
 				return nullptr;
 			}
 			if (!isChanged) {
-				ObjCtlr->MakeValid(obj);
 				undo_redo->AddVersion(tfc_change, CreateArr(obj));
-				ObjCtlr->MakeInValid(obj);
 				isChanged = true;
 			}
 			start.x = params[0];
@@ -1553,8 +1604,10 @@ Mode* RedactionCurve::HandleEvent(const Event e , const Array<double>& params) {
 					points[i].x = params[0];
 					points[i].y = params[1];
 				}
+				return nullptr;
 			}
-			else if (temp < points.GetSize() + coefControls_1.GetSize()) {
+
+			if (temp < points.GetSize() + coefControls_1.GetSize()) {
 				temp -= points.GetSize();
 				orts[temp + 1] = (selectedPoint - points[temp + 1]).Normalized() * -1;
 				coefControls_1[temp] = (selectedPoint - points[temp + 1]).GetLength() * (-1);
@@ -1564,6 +1617,20 @@ Mode* RedactionCurve::HandleEvent(const Event e , const Array<double>& params) {
 				orts[temp] = (selectedPoint - points[temp]).Normalized();
 				coefControls_2[temp] = (selectedPoint - points[temp]).GetLength();
 			}
+			int sizeOrt = orts.GetSize();
+			int sizeControl = coefControls_1.GetSize();
+			Array<double> params((sizeOrt + sizeControl) * 2);
+			
+			for (int i = 0; i < sizeOrt; ++i) {
+				params[i * 2] = orts[i].x;
+				params[i * 2 + 1] = orts[i].y;
+			}
+			sizeOrt *= 2;
+			for (int i = 0; i < sizeControl; ++i) {
+				params[sizeOrt + i] = coefControls_1[i];
+				params[sizeOrt + sizeControl + i] = coefControls_2[i];
+			}
+			model->SETVARPARAMS(obj, params, CURVE_PARAMS);
 			return nullptr;
 		}
 	}
@@ -1609,10 +1676,10 @@ void RedactionCurve::DrawMode() {
 		view->SetColor(col_Purple);
 		view->DrawLine(CreateArr(points[i].x, points[i].y, Control1.x, Control1.y), line);
 		view->DrawLine(CreateArr(points[i + 1].x, points[i + 1].y, Control2.x, Control2.y), line);
-		view->SetColor(col_Yellow);
-		view->DrawCurveNew(CreateArr(points[i].x, points[i].y, Control1.x, Control1.y,
-			Control2.x, Control2.y, points[i + 1].x, points[i + 1].y), line);
+
 	}
+	view->SetColor(col_Yellow);
+	view->DrawCurveNew(model->GETVARPARAMS(obj, VERTEX), line);
 	if (index != -1) {
 		view->SetColor(col_ForestGreen);
 		view->DrawPoint(selectedPoint);
@@ -1778,8 +1845,7 @@ void RedactionCurve::AddPoint(const int indexInsert, const double x, const doubl
 }
 
 void RedactionCurve::ApplyChange() {
-	ObjCtlr->MakeValid(obj);
-	int size = points.GetSize();
+	/*int size = points.GetSize();
 	Array<double> change = Array<double>(size * 4);
 	int index = 0;
 	for (int i = 0; i < size; ++i) {
@@ -1791,10 +1857,9 @@ void RedactionCurve::ApplyChange() {
 	}
 	change += coefControls_1;
 	change += coefControls_2;
-	model->SETVARPARAMS(obj, change, CURVE_AS_IT_IS);
+	model->SETVARPARAMS(obj, change, CURVE_AS_IT_IS);*/
 	isChanged = false;
 	undo_redo->CompleteAddChange();
-	ObjCtlr->MakeInValid(obj);
 }
 #pragma endregion
 
