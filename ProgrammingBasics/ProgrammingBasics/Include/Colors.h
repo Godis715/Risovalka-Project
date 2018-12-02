@@ -4,30 +4,38 @@
 class Color
 {
 public:
-
-	int drowWindow;
-	int backGround;
-	int primitives;
-	int selectedPrim;
-	int dependentPrim;
-	int changingPrim;
-	int creatingPrim;
-	int lineForCurve;
-
-
 	void DrowWindow(const int, const int, const int);
 	void BackGround(const int, const int, const int);
 	void Primitives(const int, const int, const int);
+	void Points(const int, const int, const int);
 	void SelectedPrim(const int, const int, const int);
 	void DependentPrim(const int, const int, const int);
 	void ChangingPrim(const int, const int, const int);
 	void CreatingPrim(const int, const int, const int);
 	void LineForCurve(const int, const int, const int);
 
+	const int DrowWindow() const;
+	const int BackGround() const;
+	const int Primitives() const;
+	const int Points() const;
+	const int SelectedPrim() const;
+	const int DependentPrim() const;
+	const int ChangingPrim() const;
+	const int CreatingPrim() const;
+	const int LineForCurve() const;
+
 	static Color* GetInstance();
 private:
+	int colors[9];
+
+	const int size = 9;
+
 	static Color* instance;
 	Color();
+
+	void SaveFile();
+
+	void FillDefault();
 };
 
 #define col_IndianRed 205, 92, 92
@@ -116,7 +124,7 @@ private:
 #define col_Blue 66, 170, 255
 #define col_Navy 233, 150, 122
 //«елЄные тона :
-#define col_Green 233, 150, 122
+#define col_Green 0, 255, 0
 #define col_GreenYellow	173, 255, 47
 #define col_Chartreuse 127, 255, 0
 #define col_LawnGreen 124, 252, 0

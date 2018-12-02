@@ -30,7 +30,8 @@ public:
 	virtual void DrawCurveNew(const Array<Vector2>&, typeDrawing) = 0;
 	virtual void DrawCurveNew(const Array<double>&, typeDrawing) = 0;
 
-	virtual void SetColor(int, int, int) = 0;
+	virtual void SetColor(const int, const int, const int) = 0;
+	virtual void SetColor(const int) = 0;
 	virtual int Run() = 0;
 	virtual void Update() = 0;
 	virtual void TranslateScene(const Vector2&) = 0;

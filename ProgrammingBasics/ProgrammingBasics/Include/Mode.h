@@ -85,6 +85,7 @@ protected:
 	IView* view;
 	Model* model;
 	Undo_Redo* undo_redo;
+	Color* color;
 	bool isCreationFinish = false;
 public:
 	bool IsCreationFinish();
@@ -244,6 +245,7 @@ protected:
 
 	IView* view;
 	Model* model;
+	Color* color;
 public:
 	Mode();
 	virtual ~Mode() {}

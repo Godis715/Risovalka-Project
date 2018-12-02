@@ -63,7 +63,8 @@ public:
 	void DrawCurveNew(const Array<Vector2>& points, typeDrawing type);
 	void DrawCurveNew(const Array<double>& points, typeDrawing type);
 
-	void SetColor(int, int, int);
+	void SetColor(const int, const int, const int);
+	void SetColor(const int);
 	
 	void Update();
 

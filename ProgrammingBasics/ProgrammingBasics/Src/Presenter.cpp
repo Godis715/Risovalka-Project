@@ -87,11 +87,6 @@ void Presenter::Initializer(IView* _view)
 	view = _view;
 	mode = new Selection();
 	model = Model::GetInstance();
-	// BinSearchTree<string, std::function<ID(const Array<ID>&, const Array<double>&)>> kek;
-	//std::function<ID(const Array<ID>&, const Array<double>&)> f = [model](const Array<ID>& a, const Array<double>& b) {
-	//	model->Move(a, Vector2(b[0], b[1]));
-	//	return ID();
-	//};
 	auto tree = new treeFunc;
 	tree->Add("Point", CreatePoint);
 	tree->Add("Segment", CreateSegment);
@@ -106,29 +101,6 @@ void Presenter::Initializer(IView* _view)
 	Compiler::Initializer(tree);
 }
 
-//ID Presenter::CreateObject(object_type type, const Array<double>& params) {
-//	ID id;
-//	LOG(string("Presenter::Creating object"), LEVEL_1);
-//	bool result = model->CreateObject(type, params, id);
-//	if (!result) {
-//		LOG(string("Presenter::Could not create object"), LEVEL_3);
-//		// $$$ throw std::runtime_error("could not create object");
-//	}
-//	LOG(string("Presenter::Created object"), id, LEVEL_1);
-//	return id;
-//}
-
-//ID Presenter::CreateRequirement(object_type type, const Array<ID>& objects, const Array<double>& params) {
-//	ID id;
-//	LOG(string("Presenter::Creating requirement"), LEVEL_1);
-//	bool result = model->CreateRequirementByID(type, objects, params, id);
-//	if (!result) {
-//		LOG(string("Presenter::Could not create requirement"), LEVEL_3);
-//	}
-//
-//	return id;
-//}
-
 void Presenter::CleareScene() {
 	auto temp = mode->HandleEvent(ev_escape, Array<double>(0));
 	if (temp != nullptr) {
@@ -140,36 +112,10 @@ void Presenter::CleareScene() {
 	view->Update();
 }
 
-//void Presenter::ChangeParamRequirement(const ID& id, const double param) {
-//	Model::GetInstance()->ChangeRequirement(id, param);
-//}
-//
-//void Presenter::ChangeParamPrimitive(const ID& id, Array<double>& params)
-//{
-//	Model::GetInstance()->ChangePrimitive(id, params);
-//}
-//
-//void Presenter::ScaleObjects(const Array<ID>& primitiveID, const double koef) {
-//	if (!Model::GetInstance()->Scale(primitiveID, koef)) {
-//		LOG(string("could not Scale prim"), LEVEL_3);
-//	}
-//}
-//
 void Presenter::MoveObject(const Array<ID>& primitiveID,const Vector2& vector) {
 	model->Move(primitiveID, vector);
 }
 
-//void Presenter::GetComponent(const ID& id, Array<ID>& primID, Array<ID>& reqID) {
-//	if (!Model::GetInstance()->NewComponent(id, primID, reqID)) {
-//		LOG(string("could not get new component"), LEVEL_3);
-//	}
-//}
-
-//bool Presenter::GetObjectsOnArea(double x1, double y1, double x2, double y2, Array<ID>& obj_id)
-//{
-//	Array<object_type> types;
-//	return Model::GetInstance()->GetObjectsOnArea(x1, y1, x2, y2, obj_id, types);
-//}
 
 //void Presenter::DrawSelectedObjects(const Array<ID>& selectedObjects)
 //{
@@ -230,7 +176,6 @@ void Presenter::DrawSelectedObjects(const Array<ID>& selectedObjects)
 		}
 		case ot_curve: {
 			auto params = model->GetVariableObjParam(obj, VERTEX);
-			//view->DrawCurve(params, line);
 			view->DrawCurveNew(params, line);
 			break;
 		}
@@ -286,6 +231,7 @@ void Presenter::DrawSelectedObjects(const Array<ID>& selectedObjects)
 
 void Presenter::DrawScene()
 {
+	auto color = Color::GetInstance();
 	auto objCtrl = ObjectController::GetInstance();
 	auto iter = model->GetPrimIterator();
 	while (iter.IsValid()) {
@@ -295,27 +241,27 @@ void Presenter::DrawScene()
 			continue;
 		}
 		if (model->GetObjType(obj) == ot_point) {
-			view->SetColor(col_Red);
+			view->SetColor(color->Points());
 			auto params = model->GetVariableObjParam(obj, VERTEX);
 			view->DrawPoint(params);
 		}
 		if (model->GetObjType(obj) == ot_segment) {
-			view->SetColor(col_White);
+			view->SetColor(color->Primitives());
 			auto params = model->GetVariableObjParam(obj, VERTEX);
 			view->DrawLine(params, line);
 		}
 		if (model->GetObjType(obj) == ot_arc) {
-			view->SetColor(col_White);
+			view->SetColor(color->Primitives());
 			auto params = model->GetVariableObjParam(obj, VERTEX, CENTER, RADIUS, ANGLE);
 			view->DrawArc(params, line);
 		}
 		if (model->GetObjType(obj) == ot_circle) {
-			view->SetColor(col_White);
+			view->SetColor(color->Primitives());
 			auto params = model->GetVariableObjParam(obj, CENTER, RADIUS);
 			view->DrawCircle(params, line);
 		}
 		if (model->GetObjType(obj) == ot_curve) {
-			view->SetColor(col_White);
+			view->SetColor(color->Primitives());
 			auto params = model->GetVariableObjParam(obj, VERTEX);
 			//view->DrawCurve(params, line);
 			view->DrawCurveNew(params, line);
