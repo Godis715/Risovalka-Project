@@ -128,6 +128,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\Src\Colors.cpp" />
     <ClCompile Include="..\Src\Compilator.cpp" />
     <ClCompile Include="..\Src\DataController.cpp" />
     <ClCompile Include="..\Src\ID.cpp" />

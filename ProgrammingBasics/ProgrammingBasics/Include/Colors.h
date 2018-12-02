@@ -1,6 +1,35 @@
 #define col___COLORS
 #ifndef _COLORS
 
+class Color
+{
+public:
+
+	int drowWindow;
+	int backGround;
+	int primitives;
+	int selectedPrim;
+	int dependentPrim;
+	int changingPrim;
+	int creatingPrim;
+	int lineForCurve;
+
+
+	void DrowWindow(const int, const int, const int);
+	void BackGround(const int, const int, const int);
+	void Primitives(const int, const int, const int);
+	void SelectedPrim(const int, const int, const int);
+	void DependentPrim(const int, const int, const int);
+	void ChangingPrim(const int, const int, const int);
+	void CreatingPrim(const int, const int, const int);
+	void LineForCurve(const int, const int, const int);
+
+	static Color* GetInstance();
+private:
+	static Color* instance;
+	Color();
+};
+
 #define col_IndianRed 205, 92, 92
 #define col_LightCoral	240, 128, 128
 #define col_Salmon	250, 128, 114
