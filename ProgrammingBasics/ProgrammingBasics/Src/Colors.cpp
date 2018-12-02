@@ -4,67 +4,67 @@
 
 
 void Color::DrowWindow(const int r, const int g, const int b) {
-	colors[0] = (r << 16) + (g << 8) + b;
+	colors[0] = rgbColor{ r, g ,b };
 	SaveFile();
 }
 void Color::BackGround(const int r, const int g, const int b) {
-	colors[1] = (r << 16) + (g << 8) + b;
+	colors[1] = rgbColor{ r, g ,b };
 	SaveFile();
 }
 void Color::Primitives(const int r, const int g, const int b) {
-	colors[2] = (r << 16) + (g << 8) + b;
+	colors[2] = rgbColor{ r, g ,b };
 	SaveFile();
 }
 void Color::Points(const int r, const int g, const int b) {
-	colors[3] = (r << 16) + (g << 8) + b;
+	colors[3] = rgbColor{ r, g ,b };
 	SaveFile();
 }
 void Color::SelectedPrim(const int r, const int g, const int b) {
-	colors[4] = (r << 16) + (g << 8) + b;
+	colors[4] = rgbColor{ r, g ,b };
 	SaveFile();
 }
 void Color::DependentPrim(const int r, const int g, const int b) {
-	colors[5] = (r << 16) + (g << 8) + b;
+	colors[5] = rgbColor{ r, g ,b };
 	SaveFile();
 }
 void Color::ChangingPrim(const int r, const int g, const int b) {
-	colors[6] = (r << 16) + (g << 8) + b;
+	colors[6] = rgbColor{ r, g ,b };
 	SaveFile();
 }
 void Color::CreatingPrim(const int r, const int g, const int b) {
-	colors[7] = (r << 16) + (g << 8) + b;
+	colors[7] = rgbColor{ r, g ,b };
 	SaveFile();
 }
 void Color::LineForCurve(const int r, const int g, const int b) {
-	colors[8] = (r << 16) + (g << 8) + b;
+	colors[8] = rgbColor{ r, g ,b };
 	SaveFile();
 }
 
-const int Color::DrowWindow() const {
+const rgbColor Color::DrowWindow() const {
 	return colors[0];
 }
-const int Color::BackGround() const {
+const rgbColor Color::BackGround() const {
 	return colors[1];
 }
-const int Color::Primitives() const {
+const rgbColor Color::Primitives() const {
 	return colors[2];
 }
-const int Color::Points() const {
+const rgbColor Color::Points() const {
 	return colors[3];
 }
-const int Color::SelectedPrim() const {
+const rgbColor Color::SelectedPrim() const {
 	return colors[4];
 }
-const int Color::DependentPrim() const {
+const rgbColor Color::DependentPrim() const {
 	return colors[5];
 }
-const int Color::ChangingPrim() const {
+const rgbColor Color::ChangingPrim() const {
 	return colors[6];
 }
-const int Color::CreatingPrim() const {
+const rgbColor Color::CreatingPrim() const {
 	return colors[7];
 }
-const int Color::LineForCurve() const {
+const rgbColor Color::LineForCurve() const {
 	return colors[8];
 }
 
@@ -76,16 +76,52 @@ Color* Color::GetInstance() {
 	return instance;
 }
 
-void Color::FillDefault() {
-	colors[0] = 16777215;
-	colors[1] = 0;
-	colors[2] = 16777215;
-	colors[3] = 16711680;
-	colors[4] = 2263842;
-	colors[5] = 4369151;
-	colors[6] = 16776960;
-	colors[7] = 16753920;
-	colors[8] = 8388736;
+void Color::SetTheme(const int theme) {
+	switch (theme)
+	{
+	case 1:
+	{
+		colors[0] = rgbColor{ col_Silver };
+		colors[1] = rgbColor{ col_Black };
+		colors[2] = rgbColor{ col_Black };
+		colors[3] = rgbColor{ col_Red };
+		colors[4] = rgbColor{ col_Blue };
+		colors[5] = rgbColor{ col_Orange };
+		colors[6] = rgbColor{ col_Yellow };
+		colors[7] = rgbColor{ col_Orange };
+		colors[8] = rgbColor{ col_Purple };
+		break;
+	}
+	case 2:
+	{
+		colors[0] = rgbColor{ col_Black };
+		colors[1] = rgbColor{ col_White };
+		colors[2] = rgbColor{ col_White };
+		colors[3] = rgbColor{ col_Red };
+		colors[4] = rgbColor{ col_ForestGreen };
+		colors[5] = rgbColor{ col_Blue };
+		colors[6] = rgbColor{ col_Yellow };
+		colors[7] = rgbColor{ col_Orange };
+		colors[8] = rgbColor{ col_Purple };
+		break;
+	}
+	case 3:
+	{
+		colors[0] = rgbColor{ col_Blue };
+		colors[1] = rgbColor{ col_DarkBlue };
+		colors[2] = rgbColor{ col_Black };
+		colors[3] = rgbColor{ col_Red };
+		colors[4] = rgbColor{ col_Yellow };
+		colors[5] = rgbColor{ col_Green };
+		colors[6] = rgbColor{ col_Orange };
+		colors[7] = rgbColor{ col_Yellow };
+		colors[8] = rgbColor{ col_Purple };
+		break;
+	}
+	default:
+		break;
+	}
+	SaveFile();
 }
 
 Color::Color() {
@@ -97,10 +133,12 @@ Color::Color() {
 	
 	for (int i = 0; i < size; ++i) {
 		if (!colorsFile.eof()) {
-			colorsFile >> colors[i];
+			colorsFile >> colors[i].r;
+			colorsFile >> colors[i].g;
+			colorsFile >> colors[i].b;
 		}
 		else {
-			FillDefault();
+			SetTheme(2);
 			return;
 		}
 	}
@@ -114,6 +152,8 @@ void Color::SaveFile() {
 		throw std::exception("file is not open");
 	}
 	for (int i = 0; i < size; ++i) {
-		colorsFile << colors[i] << ' ';
+		colorsFile << colors[i].r << ' ';
+		colorsFile << colors[i].g << ' ';
+		colorsFile << colors[i].b << ' ';
 	}
 }

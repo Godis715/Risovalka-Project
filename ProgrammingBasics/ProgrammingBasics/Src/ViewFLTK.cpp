@@ -2,21 +2,15 @@
 
 ViewFLTK::ViewFLTK()
 {
-	auto color = Color::GetInstance();
-	color->DrowWindow(col_White);
-	color->BackGround(col_Black);
-	color->Primitives(col_White);
-	color->Points(col_Red);
-	color->SelectedPrim(col_ForestGreen);
-	color->DependentPrim(col_Blue);
-	color->ChangingPrim(col_Yellow);
-	color->CreatingPrim(col_Orange);
-	color->LineForCurve(col_Purple);
+	colorTheme = Color::GetInstance();
+
 	dataWidjet = new DataWidjet();
 
 	inventory = inventory->GetInstance();
 
 	mainWindow = new MainWindow(1300, 660, "Main Window");
+	auto color = colorTheme->BackGround();
+	mainWindow->color(fl_rgb_color(color.r, color.g, color.b));
 	DisplayWidjet* mainWindowWidjet = mainWindow;
 	dataWidjet->Add("MainWindow", mainWindowWidjet);
 
@@ -404,16 +398,15 @@ void ViewFLTK::SetColor(const int r, const int g, const int b)
 	fl_color(fl_rgb_color(r, g, b));
 }
 
-void ViewFLTK::SetColor(const int color)
+void ViewFLTK::SetColor(const rgbColor color)
 {
-	int r = color >> 16;
-	int g = (color >> 8) & 255;
-	int b = color & 255;
-	fl_color(fl_rgb_color(r, g, b));
+	fl_color(fl_rgb_color(color.r, color.g, color.b));
 }
 
 void ViewFLTK::Update()
 {
+	auto color = colorTheme->BackGround();
+	mainWindow->color(fl_rgb_color(color.r, color.g, color.b));
 	drawWindow->redraw();
 }
 
@@ -513,5 +506,7 @@ ViewLog* ViewFLTK::viewLog = nullptr;
 MainWindow* ViewFLTK::mainWindow;
 
 DrawWindow* ViewFLTK::drawWindow;
+
+Color* ViewFLTK::colorTheme = nullptr;
 
 ViewFLTK* ViewFLTK::instance = nullptr;

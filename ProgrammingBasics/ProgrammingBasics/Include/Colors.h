@@ -1,8 +1,24 @@
 #define col___COLORS
 #ifndef _COLORS
+struct rgbColor
+{
+	int r;
+	int g;
+	int b;
+};
 
 class Color
 {
+private:
+
+	rgbColor colors[9];
+
+	const int size = 9;
+
+	static Color* instance;
+	Color();
+
+	void SaveFile();
 public:
 	void DrowWindow(const int, const int, const int);
 	void BackGround(const int, const int, const int);
@@ -14,28 +30,20 @@ public:
 	void CreatingPrim(const int, const int, const int);
 	void LineForCurve(const int, const int, const int);
 
-	const int DrowWindow() const;
-	const int BackGround() const;
-	const int Primitives() const;
-	const int Points() const;
-	const int SelectedPrim() const;
-	const int DependentPrim() const;
-	const int ChangingPrim() const;
-	const int CreatingPrim() const;
-	const int LineForCurve() const;
+	const rgbColor DrowWindow() const;
+	const rgbColor BackGround() const;
+	const rgbColor Primitives() const;
+	const rgbColor Points() const;
+	const rgbColor SelectedPrim() const;
+	const rgbColor DependentPrim() const;
+	const rgbColor ChangingPrim() const;
+	const rgbColor CreatingPrim() const;
+	const rgbColor LineForCurve() const;
+
+	void SetTheme(const int);
 
 	static Color* GetInstance();
-private:
-	int colors[9];
 
-	const int size = 9;
-
-	static Color* instance;
-	Color();
-
-	void SaveFile();
-
-	void FillDefault();
 };
 
 #define col_IndianRed 205, 92, 92
@@ -121,7 +129,8 @@ private:
 #define col_Olive 240, 128, 128
 #define col_Aqua 102, 217, 255
 #define col_Tea	240, 128, 128
-#define col_Blue 66, 170, 255
+#define col_Blue 0, 0, 255
+#define col_AvarageBlue 66, 170, 255
 #define col_Navy 233, 150, 122
 //«елЄные тона :
 #define col_Green 0, 255, 0

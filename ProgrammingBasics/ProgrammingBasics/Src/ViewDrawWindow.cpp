@@ -2,7 +2,9 @@
 
 void DrawWindow::draw()
 {
-	fl_color(FL_BLACK);
+	//fl_color(FL_BLACK);
+	rgbColor colorSc = colorScene->DrowWindow();
+	fl_color(fl_rgb_color(colorSc.r, colorSc.g, colorSc.b));
 	fl_rectf(0, 0, w(), h());
 
 	fl_push_matrix();
@@ -16,8 +18,10 @@ void DrawWindow::draw()
 DrawWindow::DrawWindow(int x, int y, int w, int h, const char *l)
 	: Fl_Double_Window(x, y, w, h, l)
 {
+	colorScene = Color::GetInstance();
+	rgbColor colorSc = colorScene->DrowWindow();
 	box(FL_UP_BOX);
-	color(FL_BLACK);
+	color(fl_rgb_color(colorSc.r, colorSc.g, colorSc.b));
 
 	drawCoord = new Fl_Output(520, 630, 200, 30);
 
@@ -111,6 +115,8 @@ void DrawWindow::RotateScene(const double& deltaAngle)
 }
 
 ViewLog* DrawWindow::viewLog = nullptr;
+
+Color* DrawWindow::colorScene = nullptr;
 
 Inventory* DrawWindow::inventory = nullptr;
 

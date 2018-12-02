@@ -10,6 +10,8 @@ private:
 
 	static Inventory* inventory;
 
+	static Color* colorScene;
+
 	static Vector2* translateScene;
 	
 	static double scaleScene;
@@ -19,7 +21,6 @@ private:
 	Fl_Output* drawCoord;
 
 	void draw();
-
 public:
 	DrawWindow(int, int, int, int, const char *);
 

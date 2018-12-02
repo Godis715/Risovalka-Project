@@ -2,31 +2,65 @@
 
 void ViewFile::Initializer()
 {
-	viewLog = viewLog->GetInstance();
+	viewLog = ViewLog::GetInstance();
+	colorThemes = Color::GetInstance();
 
 	int hGroup = 2 * indentY + hBut;
-	int wGroup = countBut * wBut + (countBut + 1) * indentX;
-
+	int wGroup = 0;
+	wGroup += (indentX + wTheme_m);
+	wGroup += (indentX + wScript_b);
+	wGroup += (indentX + wSave_b);
+	wGroup += (indentX + wDownland_b + indentX);
 	group = new Fl_Group(positionX, positionY, wGroup, hGroup);
 
 	int coordX = positionX + indentX;
-	execute_script_b = new Fl_Button(coordX, positionY, wBut, hBut, "script");
+	themes = new Fl_Menu_Item[4];
+	themes[0] = { "Dark" };
+	themes[1] = { "Light" };
+	themes[2] = { "Neutral" };
+	themes[3] = { 0 };
+	theme_b = new  Fl_Menu_Button(coordX, positionY + indentY, wTheme_m, hBut, "Th");
+	theme_b->menu(themes);
+	theme_b->callback(cl_theme_b);
+	theme_b->clear_visible_focus();
+	theme_b->color(FL_WHITE);
+
+	coordX += (wTheme_m + indentX);
+	execute_script_b = new Fl_Button(coordX, positionY, wScript_b, hBut, "script");
 	execute_script_b->callback(cl_execute_script_b);
 	execute_script_b->color(FL_WHITE);
 
-	coordX += (wBut + indentX);
-	save_b = new Fl_Button(coordX, positionY, wBut, hBut, "Save");
+	coordX += (wScript_b + indentX);
+	save_b = new Fl_Button(coordX, positionY, wSave_b, hBut, "Save");
 	save_b->callback(cl_SaveProject);
 	save_b->color(FL_WHITE);
 
-	coordX += (wBut + indentX);
-	downland_b = new Fl_Button(coordX, positionY, wBut, hBut, "Download");
+	coordX += (wSave_b + indentX);
+	downland_b = new Fl_Button(coordX, positionY, wDownland_b, hBut, "Download");
 	downland_b->callback(cl_DownloadFile);
 	downland_b->color(FL_WHITE);
 
 	group->box(FL_UP_BOX);
 	group->color(fl_rgb_color(255, 105, 180));
 	group->end();
+}
+
+void ViewFile::cl_theme_b(Fl_Widget* o, void*)
+{
+	Array<double> params(0);
+	if (((Fl_Menu_Button*)o)->mvalue()->label() == "Dark")
+	{
+		colorThemes->SetTheme(1);
+	}
+	if (((Fl_Menu_Button*)o)->mvalue()->label() == "Light")
+	{
+		colorThemes->SetTheme(2);
+	}
+	if (((Fl_Menu_Button*)o)->mvalue()->label() == "Neutral")
+	{
+		colorThemes->SetTheme(3);
+	}
+	Presenter::Update();
 }
 
 void ViewFile::cl_execute_script_b(Fl_Widget* o, void*)
@@ -61,3 +95,5 @@ ViewFile::ViewFile()
 ViewFile::~ViewFile() {}
 
 ViewLog* ViewFile::viewLog = nullptr;
+
+Color* ViewFile::colorThemes = nullptr;
