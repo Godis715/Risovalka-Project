@@ -2,12 +2,13 @@
 #define __WPFKWidget
 
 #include "IWidjet.h"
+#include "MailBox.h"
 
 
 class WPFDisplayParamPrim : public IDisplayParamPrim
 {
 public:
-	WPFDisplayParamPrim(const std::string);
+	WPFDisplayParamPrim();
 
 	~WPFDisplayParamPrim();
 
@@ -17,7 +18,7 @@ public:
 class WPFDisplayParamReq : public IDisplayParamReq
 {
 public:
-	WPFDisplayParamReq(const std::string);
+	WPFDisplayParamReq();
 
 	~WPFDisplayParamReq();
 
@@ -27,7 +28,7 @@ public:
 class WPFCreatingToolbar : public ICreatingToolbar
 {
 public:
-	WPFCreatingToolbar(const std::string);
+	WPFCreatingToolbar();
 	~WPFCreatingToolbar();
 
 	void SetParam(const Array<std::string>&);
@@ -38,7 +39,7 @@ public:
 class WPFRequirementInput : public IRequirementInput
 {
 public:
-	WPFRequirementInput(const std::string);
+	WPFRequirementInput();
 
 	~WPFRequirementInput();
 };
@@ -46,7 +47,7 @@ public:
 class WPFDrawMode : public IDrawMode
 {
 public:
-	WPFDrawMode(const std::string);
+	WPFDrawMode();
 	~WPFDrawMode();
 
 	void SetName(const std::string);
