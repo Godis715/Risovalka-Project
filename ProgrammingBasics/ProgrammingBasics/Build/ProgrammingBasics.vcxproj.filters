@@ -37,6 +37,12 @@
     <Filter Include="Исходные файлы\Support">
       <UniqueIdentifier>{78ad9026-04cc-4330-a48f-ae23dffc17c4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Исходные файлы\ViewWPF">
+      <UniqueIdentifier>{ddba426d-406e-4189-8bbd-bd1f9e32de9f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Файлы заголовков\ViewWPF">
+      <UniqueIdentifier>{be73f382-229b-4f61-bf5a-43c74cca973a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Src\IWidjet.cpp">
@@ -121,7 +127,13 @@
       <Filter>Исходные файлы\Presenter</Filter>
     </ClCompile>
     <ClCompile Include="..\Src\MailBox.cpp">
-      <Filter>Исходные файлы</Filter>
+      <Filter>Исходные файлы\ViewWPF</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Src\ViewWpf.cpp">
+      <Filter>Исходные файлы\ViewWPF</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Src\WPFWidjet.cpp">
+      <Filter>Исходные файлы\ViewWPF</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -153,9 +165,6 @@
       <Filter>Файлы заголовков\View</Filter>
     </ClInclude>
     <ClInclude Include="..\Include\IWidjet.h">
-      <Filter>Файлы заголовков\View</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Include\Colors.h">
       <Filter>Файлы заголовков\View</Filter>
     </ClInclude>
     <ClInclude Include="..\Include\DataController.h">
@@ -209,9 +218,6 @@
     <ClInclude Include="..\Include\Vector2.h">
       <Filter>Файлы заголовков\Support</Filter>
     </ClInclude>
-    <ClInclude Include="..\Include\WPFWidget.h">
-      <Filter>Файлы заголовков\View</Filter>
-    </ClInclude>
     <ClInclude Include="..\Include\FLTKWidget.h">
       <Filter>Файлы заголовков\View</Filter>
     </ClInclude>
@@ -219,7 +225,16 @@
       <Filter>Файлы заголовков\Presenter</Filter>
     </ClInclude>
     <ClInclude Include="..\Include\MailBox.h">
-      <Filter>Файлы заголовков</Filter>
+      <Filter>Файлы заголовков\ViewWPF</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Include\Colors.h">
+      <Filter>Файлы заголовков\Support</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Include\WPFWidget.h">
+      <Filter>Файлы заголовков\ViewWPF</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Include\ViewWPF.h">
+      <Filter>Файлы заголовков\ViewWPF</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

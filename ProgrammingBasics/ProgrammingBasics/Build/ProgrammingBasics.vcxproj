@@ -155,6 +155,8 @@
     <ClCompile Include="..\Src\ViewLog.cpp" />
     <ClCompile Include="..\Src\ViewMainWindow.cpp" />
     <ClCompile Include="..\Src\ViewToolbar.cpp" />
+    <ClCompile Include="..\Src\ViewWpf.cpp" />
+    <ClCompile Include="..\Src\WPFWidjet.cpp" />
     <ClCompile Include="Source.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -189,6 +191,7 @@
     <ClInclude Include="..\Include\ViewLog.h" />
     <ClInclude Include="..\Include\ViewMainWindow.h" />
     <ClInclude Include="..\Include\ViewToolbar.h" />
+    <ClInclude Include="..\Include\ViewWPF.h" />
     <ClInclude Include="..\Include\WPFWidget.h" />
   </ItemGroup>
   <ItemGroup>
