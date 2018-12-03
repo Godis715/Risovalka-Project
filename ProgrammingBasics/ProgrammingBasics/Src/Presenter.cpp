@@ -70,7 +70,6 @@ Array<ID> Delete(const Array<ID>& obj, const Array<double>& params) {
 	return Array<ID>(0);
 }
 
-
 Mode* Presenter::mode(nullptr);
 IView* Presenter::view(nullptr);
 Model* Presenter::model(nullptr);
@@ -106,29 +105,6 @@ void Presenter::Initializer(IView* _view)
 	Compiler::Initializer(tree);
 }
 
-//ID Presenter::CreateObject(object_type type, const Array<double>& params) {
-//	ID id;
-//	LOG(string("Presenter::Creating object"), LEVEL_1);
-//	bool result = model->CreateObject(type, params, id);
-//	if (!result) {
-//		LOG(string("Presenter::Could not create object"), LEVEL_3);
-//		// $$$ throw std::runtime_error("could not create object");
-//	}
-//	LOG(string("Presenter::Created object"), id, LEVEL_1);
-//	return id;
-//}
-
-//ID Presenter::CreateRequirement(object_type type, const Array<ID>& objects, const Array<double>& params) {
-//	ID id;
-//	LOG(string("Presenter::Creating requirement"), LEVEL_1);
-//	bool result = model->CreateRequirementByID(type, objects, params, id);
-//	if (!result) {
-//		LOG(string("Presenter::Could not create requirement"), LEVEL_3);
-//	}
-//
-//	return id;
-//}
-
 void Presenter::CleareScene() {
 	auto temp = mode->HandleEvent(ev_escape, Array<double>(0));
 	if (temp != nullptr) {
@@ -140,36 +116,9 @@ void Presenter::CleareScene() {
 	view->Update();
 }
 
-//void Presenter::ChangeParamRequirement(const ID& id, const double param) {
-//	Model::GetInstance()->ChangeRequirement(id, param);
-//}
-//
-//void Presenter::ChangeParamPrimitive(const ID& id, Array<double>& params)
-//{
-//	Model::GetInstance()->ChangePrimitive(id, params);
-//}
-//
-//void Presenter::ScaleObjects(const Array<ID>& primitiveID, const double koef) {
-//	if (!Model::GetInstance()->Scale(primitiveID, koef)) {
-//		LOG(string("could not Scale prim"), LEVEL_3);
-//	}
-//}
-//
 void Presenter::MoveObject(const Array<ID>& primitiveID,const Vector2& vector) {
 	model->Move(primitiveID, vector);
 }
-
-//void Presenter::GetComponent(const ID& id, Array<ID>& primID, Array<ID>& reqID) {
-//	if (!Model::GetInstance()->NewComponent(id, primID, reqID)) {
-//		LOG(string("could not get new component"), LEVEL_3);
-//	}
-//}
-
-//bool Presenter::GetObjectsOnArea(double x1, double y1, double x2, double y2, Array<ID>& obj_id)
-//{
-//	Array<object_type> types;
-//	return Model::GetInstance()->GetObjectsOnArea(x1, y1, x2, y2, obj_id, types);
-//}
 
 //void Presenter::DrawSelectedObjects(const Array<ID>& selectedObjects)
 //{
@@ -215,22 +164,22 @@ void Presenter::DrawSelectedObjects(const Array<ID>& selectedObjects)
 		}
 		case ot_segment: {
 			auto params = model->GetVariableObjParam(obj, VERTEX);
-			view->DrawLine(params, line);
+			view->DrawLine(params);
 			break;
 		}
 		case ot_arc: {
 			auto params = model->GetVariableObjParam(obj, VERTEX, CENTER, RADIUS, ANGLE);
-			view->DrawArc(params, line);
+			view->DrawArc(params);
 			break;
 		}
 		case ot_circle: {
 			auto params = model->GetVariableObjParam(obj, CENTER, RADIUS);
-			view->DrawCircle(params, line);
+			view->DrawCircle(params);
 			break;
 		}
 		case ot_curve: {
 			auto params = model->GetVariableObjParam(obj, VERTEX);
-			view->DrawCurve(params, line);
+			view->DrawCurve(params);
 			break;
 		}
 		default:
@@ -282,7 +231,6 @@ void Presenter::DrawSelectedObjects(const Array<ID>& selectedObjects)
 //	mode->DrawMode();
 //}
 
-
 void Presenter::DrawScene()
 {
 	auto objCtrl = ObjectController::GetInstance();
@@ -294,47 +242,36 @@ void Presenter::DrawScene()
 			continue;
 		}
 		if (model->GetObjType(obj) == ot_point) {
-			view->SetColor(col_Red);
+			view->SetTypeDrawing(col_Red);
 			auto params = model->GetVariableObjParam(obj, VERTEX);
 			view->DrawPoint(params);
 		}
 		if (model->GetObjType(obj) == ot_segment) {
-			view->SetColor(col_White);
+			view->SetTypeDrawing(col_White, solid);
 			auto params = model->GetVariableObjParam(obj, VERTEX);
-			view->DrawLine(params, line);
+			view->DrawLine(params);
 		}
 		if (model->GetObjType(obj) == ot_arc) {
-			view->SetColor(col_White);
+			view->SetTypeDrawing(col_White, solid);
 			auto params = model->GetVariableObjParam(obj, VERTEX, CENTER, RADIUS, ANGLE);
-			view->DrawArc(params, line);
+			view->DrawArc(params);
 		}
 		if (model->GetObjType(obj) == ot_circle) {
-			view->SetColor(col_White);
+			view->SetTypeDrawing(col_White, solid);
 			auto params = model->GetVariableObjParam(obj, CENTER, RADIUS);
-			view->DrawCircle(params, line);
+			view->DrawCircle(params);
 		}
 		if (model->GetObjType(obj) == ot_curve) {
-			view->SetColor(col_White);
+			view->SetTypeDrawing(col_White, solid);
 			auto params = model->GetVariableObjParam(obj, VERTEX);
-			view->DrawCurve(params, line);
+			view->DrawCurve(params);
 		}
 	}
 
 	mode->DrawMode();
 }
 
-void Presenter::SaveProject(const std::string& path) 
-{
-	model->Save(path);
-}
-
-void Presenter::DownloadFile(const std::string& path)
-{
-	model->Download(path);
-	view->Update();
-}
-
-void Presenter::Set_event(Event _ev, Array<double>& _params)
+void Presenter::Set_event(Event _ev, Array<double>& _params, const std::string& str)
 {
 	Mode* temp = mode->HandleEvent(_ev, _params);
 	if (temp != nullptr)
@@ -343,22 +280,22 @@ void Presenter::Set_event(Event _ev, Array<double>& _params)
 		mode = temp;
 	}
 	view->Update();
+	switch (_ev)
+	{
+	case ev_save:
+	{
+		model->Save(str);
+		break;
+	}
+		
+	case ev_download:
+	{
+		model->Download(str);
+		view->Update();
+		break;
+	}	
+	}
 }
-
-//void Presenter::GetRequirementsByID(const ID& id, Array<ID>& reqIDs)
-//{
-//	Model::GetInstance()->GetRequirementsByID(id, reqIDs);
-//}
-
-//bool Presenter::GetObjType(const ID& id, object_type& type)
-//{
-//	return Model::GetInstance()->GetObjType(id, type);
-//}
-//
-//bool Presenter::GetObjParam(const ID& id, Array<double>& params)
-//{
-//	return Model::GetInstance()->GetObjParam(id, params);
-//}
 
 void Presenter::Compile() {
 	Compiler* compiler = Compiler::GetInstance();

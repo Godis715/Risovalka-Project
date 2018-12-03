@@ -3,7 +3,7 @@
 #include "Vector2.h"
 #include "IWidjet.h"
 
-enum typeDrawing{points, line, polygon};
+enum typeDrawing{dot, dash, solid, null};
 enum statusCreate { drawPoint, drawSegment, drawArc, drawCircle };
 enum typeWidjet{displayParamPrim, displayParamReq, creatingToolbar, requirementInput, drawMode};
 
@@ -19,6 +19,7 @@ public:
 	virtual void DrawCurve(const Array<double>&) = 0;
 
 	virtual void SetStyleDrawing(const int, const int, const int, const typeDrawing) = 0;
+	virtual void SetTypeDrawing(int, int, int, typeDrawing type = null) = 0;
 	virtual int Run() = 0;
 	virtual void Update() = 0;
 	virtual void TranslateScene(const Vector2&) = 0;
