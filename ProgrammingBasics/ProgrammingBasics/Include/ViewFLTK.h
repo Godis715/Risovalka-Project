@@ -27,6 +27,8 @@ private:
 
 	static DrawWindow* drawWindow;
 
+	static Color* colorTheme;
+
 	ViewFLTK();
 	static ViewFLTK* instance;
 public:
@@ -49,7 +51,7 @@ public:
 	void DrawPoint(const Array<double>&);
 	void DrawCurve(const Array<double>&);
 
-	void SetStyleDrawing(const int, const int, const int, const typeDrawing = null);
+	void SetStyleDrawing(const rgbColor, const typeDrawing = null);
 	
 	void Update();
 

@@ -149,6 +149,8 @@ Mode* Mode::UnexpectedEvent(const Event e, const Array<double>& params) {
 		return nullptr;
 	case ev_enter:
 		return nullptr;
+	case ex_set_theme:
+		return nullptr;
 	case ev_undo: {
 		auto undo_redo = Undo_Redo::GetInstance();
 		undo_redo->Undo();
@@ -167,6 +169,7 @@ Mode* Mode::UnexpectedEvent(const Event e, const Array<double>& params) {
 Mode::Mode() {
 	model = Model::GetInstance();
 	view = Presenter::GetView();
+	color = Color::GetInstance();
 }
 #pragma endregion
 
@@ -175,6 +178,9 @@ ChangingProperties::ChangingProperties() : Mode()
 {
 	IDrawMode* outputWidjet = static_cast<IDrawMode*>(view->GetWidjet(drawMode));
 	outputWidjet->SetName("Mode: ChangingProperties");
+	state = none;
+	undo_redo = Undo_Redo::GetInstance();
+	isChanged = false;
 }
 
 ChangingProperties::ChangingProperties(const ID _selObject) : Mode(), selectedObject(_selObject)
@@ -183,6 +189,10 @@ ChangingProperties::ChangingProperties(const ID _selObject) : Mode(), selectedOb
 	outputWidjet->SetName("Mode: ChangingProperties");
 	widjetPrim = static_cast<IDisplayParamPrim*>(view->GetWidjet(displayParamPrim));
 	SetWidjetParamPrim();
+	model->CashNewComponent(CreateArr(selectedObject));
+	state = none;
+	undo_redo = Undo_Redo::GetInstance();
+	isChanged = false;
 }
 
 ChangingProperties::~ChangingProperties()
@@ -262,6 +272,50 @@ Mode* ChangingProperties::HandleEvent(const Event e, const Array<double>& params
 {
 	switch (e)
 	{
+	case ev_leftMouseDown:
+	{
+		if (params.GetSize() != 2) {
+			throw std::invalid_argument("Bad number of parameters");
+		}
+		state = click;
+		start.x = params[0];
+		start.y = params[1];
+		return nullptr;
+	}
+	case ev_mouseMove:
+	{
+		if (state == click) {
+			if (params.GetSize() != 2) {
+				throw std::invalid_argument("Bad number of parameters");
+			}
+
+			Vector2 shift = Vector2(params[0] - start.x, params[1] - start.y);
+			if (Vector2::Dot(shift, shift) < 4) {
+				return nullptr;
+			}
+			if (!isChanged) {
+				undo_redo->AddVersion(tfc_change, CreateArr(selectedObject));
+				isChanged = true;
+			}
+			start.x = params[0];
+			start.y = params[1];
+			model->Move(CreateArr(selectedObject), shift);
+		}
+		return nullptr;
+	}
+	case ev_leftMouseUp:
+	{
+		state = none;
+		SetWidjetParamPrim();
+		return nullptr;
+	}
+	}
+	if (isChanged) {
+		undo_redo->CompleteAddChange();
+		isChanged = false;
+	}
+	switch (e)
+	{
 	case ev_click_Req:
 	{
 		reqID = reqIDs[int(params[0])];
@@ -301,6 +355,7 @@ Mode* ChangingProperties::HandleEvent(const Event e, const Array<double>& params
 		default:
 			break;
 		}
+		model->Move(CreateArr(selectedObject), Vector2(0, 0));
 		undo_redo->CompleteAddChange();
 		SetWidjetParamPrim();
 		return nullptr;
@@ -334,20 +389,26 @@ Mode* ChangingProperties::HandleEvent(const Event e, const Array<double>& params
 			isNew = false;
 			delete widjetPrim;
 			delete widjetReq;
+			if (model->GetObjType(obj) == ot_curve) {
+				return new RedactionCurve(obj);
+			}
 			return new ChangingProperties(obj);
 		}
 		return nullptr;
 	}
-	case ev_delete_display_Prim: {
+	case ev_delete_display_Prim: 
+	{
 		return new Selection(selectedObject);
 	}
-	case ev_delete_display_Req: {
+	case ev_delete_display_Req:
+	{
 		reqID = ID();
 		delete widjetReq;
 		widjetReq = nullptr;
 		return nullptr;
 	}
-	case ev_escape: {
+	case ev_escape:
+	{
 		return new Selection(selectedObject);
 	}
 	default:
@@ -359,11 +420,10 @@ void ChangingProperties::DrawMode()
 {
 	Array<ID> selectedObjects;
 	selectedObjects.PushBack(selectedObject);
-	view->SetStyleDrawing(col_Blue);
+	view->SetStyleDrawing(color->DependentPrim());
 	Presenter::DrawSelectedObjects(primiOfReqIDs);
-	view->SetStyleDrawing(col_Orange);
+	view->SetStyleDrawing(color->ChangingPrim());
 	Presenter::DrawSelectedObjects(selectedObjects);
-	
 }
 #pragma endregion
 
@@ -418,6 +478,7 @@ DMDefualt::DMDefualt(Event e) : selectionObjects(0)
 	{
 		outputWidjet->SetName(nameMode + "::CreatingCurve");
 		stateCreate = create;
+		//createObject = new CreatingCurve();
 		createObject = new CreatingCurve();
 		break;
 	}
@@ -434,6 +495,15 @@ Mode* DMDefualt::HandleEvent(const Event ev, const Array<double>& params)
 {
 	switch (ev)
 	{
+	case ev_leftMouseUp:
+	{
+		if (createObject != nullptr)
+		{
+			Array<Vector2> points(0);
+			createObject->HandleEvent(ev_leftMouseUp, points);
+		}
+		return nullptr;
+	}
 	case ev_leftMouseDown:
 	{
 		if (params.GetSize() != 2) {
@@ -529,6 +599,7 @@ Mode* DMDefualt::HandleEvent(const Event ev, const Array<double>& params)
 		outputWidjet->SetName(nameMode + "::CreatingCurve");
 		selectionObjects.Clear();
 		stateCreate = create;
+		//createObject = new CreatingCurve();
 		createObject = new CreatingCurve();
 		return nullptr;
 	}
@@ -582,7 +653,7 @@ void DMDefualt::DrawMode()
 	{
 		createObject->DrawMode();
 	}
-	view->SetStyleDrawing(col_ForestGreen);
+	view->SetStyleDrawing(color->SelectedPrim());
 	if (selectionObjects.GetSize() != 0)
 	{
 		
@@ -723,6 +794,15 @@ Mode* DMSymmetrical::HandleEvent(const Event ev, const Array<double>& params)
 {
 	switch (ev)
 	{
+	case ev_leftMouseUp:
+	{
+		if (createObject != nullptr)
+		{
+			Array<Vector2> points(0);
+			createObject->HandleEvent(ev_leftMouseUp, points);
+		}
+		return nullptr;
+	}
 	case ev_leftMouseDown:
 	{
 		if (params.GetSize() != 2) {
@@ -822,6 +902,7 @@ Mode* DMSymmetrical::HandleEvent(const Event ev, const Array<double>& params)
 		outputWidjet->SetName(nameMode + "::CreatingCurve");
 		selectionObjects.Clear();
 		stateCreate = create;
+		//createObject = new CreatingCurve();
 		createObject = new CreatingCurve();
 		return nullptr;
 	}
@@ -871,7 +952,7 @@ void DMSymmetrical::DrawMode()
 {
 	if (pointRotate != nullptr)
 	{
-		view->SetStyleDrawing(col_Aqua, solid);
+		view->SetStyleDrawing(color->DependentPrim(), solid);
 		switch (stateMode)
 		{
 		case ox2:
@@ -902,10 +983,9 @@ void DMSymmetrical::DrawMode()
 	}
 	if (createObject != nullptr)
 	{
-
 		createObject->DrawMode();
 	}
-	view->SetStyleDrawing(col_ForestGreen);
+	view->SetStyleDrawing(color->SelectedPrim());
 	if (selectionObjects.GetSize() != 0)
 	{
 
@@ -935,14 +1015,14 @@ void DMSectorSymmetrical::DrawMode()
 {
 	if (pointRotate != nullptr)
 	{
-		view->SetStyleDrawing(col_Aqua);
+		view->SetStyleDrawing(color->DependentPrim());
 		view->DrawPoint(CreateArr(pointRotate->x, pointRotate->y));
 	}
 	if (createObject != nullptr)
 	{
 		createObject->DrawMode();
 	}
-	view->SetStyleDrawing(col_ForestGreen);
+	view->SetStyleDrawing(color->SelectedPrim());
 	if (selectionObjects.GetSize() != 0)
 	{
 		Presenter::DrawSelectedObjects(selectionObjects);
@@ -973,6 +1053,15 @@ Mode* DMSectorSymmetrical::HandleEvent(const Event ev, const Array<double>& para
 {
 	switch (ev)
 	{
+	case ev_leftMouseUp:
+	{
+		if (createObject != nullptr)
+		{
+			Array<Vector2> points(0);
+			createObject->HandleEvent(ev_leftMouseUp, points);
+		}
+		return nullptr;
+	}
 	case ev_leftMouseDown:
 	{
 		if (params.GetSize() != 2) {
@@ -1072,6 +1161,7 @@ Mode* DMSectorSymmetrical::HandleEvent(const Event ev, const Array<double>& para
 		outputWidjet->SetName(nameMode + "::CreatingCurve");
 		selectionObjects.Clear();
 		stateCreate = create;
+		//createObject = new CreatingCurve();
 		createObject = new CreatingCurve();
 		return nullptr;
 	}
@@ -1229,6 +1319,9 @@ Mode* Selection::HandleEvent(const Event e, const Array<double>& params) {
 		ID obj = model->GetObjectByClick(params[0], params[1]);
 		if (!IDGenerator::IsNullID(obj))
 		{
+			if (model->GetObjType(obj) == ot_curve) {
+				return new RedactionCurve(obj);
+			}
 			return new ChangingProperties(obj);
 		}
 		return nullptr;
@@ -1377,7 +1470,7 @@ Mode* Selection::HandleEvent(const Event e, const Array<double>& params) {
 
 void Selection::DrawMode()
 {
-	view->SetStyleDrawing(col_ForestGreen);
+	view->SetStyleDrawing(color->SelectedPrim());
 	Presenter::DrawSelectedObjects(selectedObjects);
 
 	if (state == area_selection)
@@ -1385,12 +1478,390 @@ void Selection::DrawMode()
 		Vector2 point1(infoArea2.x, infoArea1.y);
 		Vector2 point2(infoArea1.x, infoArea2.y);
 
-		view->SetStyleDrawing(col_Blue, dot);
+		view->SetStyleDrawing(color->DependentPrim(), dot);
 		view->DrawLine(CreateArr(infoArea1.x, infoArea1.y, point1.x, point1.y));
 		view->DrawLine(CreateArr(infoArea1.x, infoArea1.y, point2.x, point2.y));
 		view->DrawLine(CreateArr(infoArea2.x, infoArea2.y, point1.x, point1.y));
 		view->DrawLine(CreateArr(infoArea2.x, infoArea2.y, point2.x, point2.y));
 	}
+}
+#pragma endregion
+
+#pragma region RedactionCurve
+RedactionCurve::RedactionCurve(const ID& _obj) {
+	obj = _obj;
+	auto params = model->GetVariableObjParam(obj, CURVE_AS_IT_IS);
+	int countParams = (params.GetSize() + 4) / 6;
+	points = Array<Vector2>(countParams);
+	orts = Array<Vector2>(countParams);
+	coefControls_1 = Array<double>(countParams - 1);
+	coefControls_2 = Array<double>(countParams - 1);
+	int index = 0;
+	for (int i = 0; i < countParams; ++i) {
+		points[i] = Vector2(params[index], params[index + 1]);
+		++index;
+		++index;
+	}
+	for (int i = 0; i < countParams; ++i) {
+		orts[i] = Vector2(params[index], params[index + 1]);
+		++index;
+		++index;
+	}
+	for (int i = 0; i < countParams - 1; ++i) {
+		coefControls_1[i] = params[index];
+		++index;
+	}
+	for (int i = 0; i < countParams - 1; ++i) {
+		coefControls_2[i] = params[index];
+		++index;
+	}
+	state = none;
+	isChanged = false;
+	index = -1;
+	undo_redo = Undo_Redo::GetInstance();
+	model->CashNewComponent(CreateArr(obj));
+	ObjCtlr = ObjectController::GetInstance();
+	auto primCtrl = PrimController::GetInstance();
+	pointsID = primCtrl->GetChildren(obj);
+}
+RedactionCurve::~RedactionCurve() {
+	if (isChanged) {
+		ApplyChange();
+	}
+	ObjCtlr->MakeValid(obj);
+	points.Clear();
+	coefControls_1.Clear();
+	coefControls_2.Clear();
+	orts.Clear();
+}
+
+Mode* RedactionCurve::HandleEvent(const Event e , const Array<double>& params) {
+	switch (e)
+	{
+	case  ev_leftMouseDown: {
+		if (params.GetSize() != 2) {
+			throw std::invalid_argument("Bad number of parameters");
+		}
+		if (state == none) {
+			 index = GetPointOfCurve(params[0], params[1]);
+			if (index == -1) {
+				ID id = model->GetObjectByClick(params[0], params[1]);
+				if (!IDGenerator::IsNullID(id))
+				{
+					return new Selection(id);
+				}
+				return new Selection();
+			}
+			state = click;
+			start.x = params[0];
+			start.y = params[1];
+			if (index < points.GetSize()) {
+				selectedPoint = points[index];
+				return nullptr;
+			}
+			int t = index - points.GetSize();
+			if (t < coefControls_1.GetSize()) {
+				selectedPoint = orts[t + 1] * coefControls_1[t] + points[t + 1];
+				return nullptr;
+			}
+			t -= coefControls_1.GetSize();
+			selectedPoint = orts[t] * coefControls_2[t] + points[t];
+			return nullptr;
+		}
+		if (state == addPoint) {
+			int indexInsert = clickOnCurve(params[0], params[1]);
+			if (indexInsert > 0) {
+				if (isChanged) {
+					ApplyChange();
+				}
+				AddPoint(indexInsert, params[0], params[1]);
+			}
+			return nullptr;
+		}
+		
+	}
+	case ev_mouseMove: {
+		if (state == click)
+		{
+			if (params.GetSize() != 2) {
+				throw std::invalid_argument("Bad number of parameters");
+			}
+
+			Vector2 shift = Vector2(params[0] - start.x, params[1] - start.y);
+			if (Vector2::Dot(shift, shift) < 4) {
+				return nullptr;
+			}
+			if (!isChanged) {
+				undo_redo->AddVersion(tfc_change, CreateArr(obj));
+				isChanged = true;
+			}
+			start.x = params[0];
+			start.y = params[1];
+			selectedPoint += shift;
+			int temp = index;
+			if (temp < points.GetSize()) {
+				model->Move(CreateArr(pointsID[temp]), shift);
+				for (int i = 0; i < points.GetSize(); ++i) {
+					auto params = model->GETVARPARAMS(pointsID[i], VERTEX);
+					points[i].x = params[0];
+					points[i].y = params[1];
+				}
+				return nullptr;
+			}
+
+			if (temp < points.GetSize() + coefControls_1.GetSize()) {
+				temp -= points.GetSize();
+				orts[temp + 1] = (selectedPoint - points[temp + 1]).Normalized() * -1;
+				coefControls_1[temp] = (selectedPoint - points[temp + 1]).GetLength() * (-1);
+			}
+			else {
+				temp -= points.GetSize() + coefControls_1.GetSize();
+				orts[temp] = (selectedPoint - points[temp]).Normalized();
+				coefControls_2[temp] = (selectedPoint - points[temp]).GetLength();
+			}
+			int sizeOrt = orts.GetSize();
+			int sizeControl = coefControls_1.GetSize();
+			Array<double> params((sizeOrt + sizeControl) * 2);
+			
+			for (int i = 0; i < sizeOrt; ++i) {
+				params[i * 2] = orts[i].x;
+				params[i * 2 + 1] = orts[i].y;
+			}
+			sizeOrt *= 2;
+			for (int i = 0; i < sizeControl; ++i) {
+				params[sizeOrt + i] = coefControls_1[i];
+				params[sizeOrt + sizeControl + i] = coefControls_2[i];
+			}
+			model->SETVARPARAMS(obj, params, CURVE_PARAMS);
+			return nullptr;
+		}
+	}
+	case ev_leftMouseUp: {
+		if (state == click) {
+			
+			state = none;
+			index = -1;
+		}
+		return nullptr;
+	}
+	case ev_ctrlDown: {
+		if (state == none) {
+			state = addPoint;
+		}
+		return nullptr;
+	}
+	case ev_ctrlUp: {
+		if (state == addPoint) {
+			state = none;
+		}
+		return nullptr;
+	}
+	default:
+		return UnexpectedEvent(e, params);
+	}
+}
+
+void RedactionCurve::DrawMode() {
+	Vector2 Control1;
+	Vector2 Control2;
+	view->SetStyleDrawing(color->DependentPrim());
+	view->DrawPoint(CreateArr(points[0].x, points[0].y));
+	
+	for (size_t i = 0; i < points.GetSize() - 1; i++)
+	{
+		Vector2 Control1 = orts[i] * coefControls_2[i] + points[i];
+		Vector2 Control2 = orts[i + 1] * coefControls_1[i] + points[i + 1];
+		view->SetStyleDrawing(color->DependentPrim());
+		view->DrawPoint(CreateArr(points[i + 1].x, points[i + 1].y));
+		view->DrawPoint(CreateArr(Control1.x, Control1.y));
+		view->DrawPoint(CreateArr(Control2.x, Control2.y));
+		view->SetStyleDrawing(color->LineForCurve(), solid);
+		view->DrawLine(CreateArr(points[i].x, points[i].y, Control1.x, Control1.y));
+		view->DrawLine(CreateArr(points[i + 1].x, points[i + 1].y, Control2.x, Control2.y));
+
+	}
+	view->SetStyleDrawing(color->ChangingPrim(), solid);
+	view->DrawCurve(model->GETVARPARAMS(obj, VERTEX));
+	if (index != -1) {
+		view->SetStyleDrawing(color->SelectedPrim());
+		view->DrawPoint(CreateArr(selectedPoint.x, selectedPoint.y));
+	}
+}
+
+int RedactionCurve::GetPointOfCurve(const double x, const double y) {
+	int size = points.GetSize();
+	double dist = SEARCHING_AREA * SEARCHING_AREA;
+	int result = -1;
+	double px;
+	double py;
+	double dot;
+	for (size_t i = 0; i < points.GetSize(); i++)
+	{
+		if (i == 0)
+		{
+			px = orts[i].x * coefControls_2[i] + points[i].x - x;
+			py = orts[i].y * coefControls_2[i] + points[i].y - y;
+			dot = abs(px * px + py * py);
+			if (dot < dist) {
+				dist = dot;
+				result = i + size + size - 1;
+			}
+			px = points[i].x - x;
+			py = points[i].y - y;
+			dot = abs(px * px + py * py);
+			if (dot < dist) {
+				dist = dot;
+				result = i;
+			}
+		}
+		else if (i == points.GetSize() - 1)
+		{
+			px = orts[i].x * coefControls_1[i - 1] + points[i].x - x;
+			py = orts[i].y * coefControls_1[i - 1] + points[i].y - y;
+			dot = abs(px * px + py * py);
+			if (dot < dist) {
+				dist = dot;
+				result = i + size - 1;
+			}
+			px = points[i].x - x;
+			py = points[i].y - y;
+			dot = abs(px * px + py * py);
+			if (dot < dist) {
+				dist = dot;
+				result = i;
+			}
+		}
+		else
+		{
+			px = orts[i].x * coefControls_1[i - 1] + points[i].x - x;
+			py = orts[i].y * coefControls_1[i - 1] + points[i].y - y;
+			dot = abs(px * px + py * py);
+			if (dot < dist) {
+				dist = dot;
+				result = i + size - 1;
+			}
+			px = orts[i].x * coefControls_2[i] + points[i].x - x;
+			py = orts[i].y * coefControls_2[i] + points[i].y - y;
+			dot = abs(px * px + py * py);
+			if (dot < dist) {
+				dist = dot;
+				result = i + size + size - 1;
+			}
+		}
+		px = points[i].x - x;
+		py = points[i].y - y;
+		dot = abs(px * px + py * py);
+		if (dot < dist) {
+			dist = dot;
+			result = i;
+		}
+	}
+	return result;
+}
+
+int RedactionCurve::clickOnCurve(const double x, const double y) {
+	Vector2 P0;
+	Vector2 P1;
+	Vector2 P2;
+	Vector2 P3;
+	double dist = DBL_MAX;
+	int index = -1;
+	for (int i = 0; i < points.GetSize() - 1; ++i) {
+		P0 = points[i];
+		P1 = orts[i] * coefControls_2[i] + points[i];
+		P2 = orts[i + 1] * coefControls_1[i] + points[i + 1];
+		P3 = points[i + 1];
+		if (x < P0.x - SEARCHING_AREA && x < P1.x - SEARCHING_AREA &&
+			x < P2.x - SEARCHING_AREA && x < P3.x - SEARCHING_AREA) {
+			continue;
+		}
+		if (x > P0.x + SEARCHING_AREA && x > P1.x + SEARCHING_AREA &&
+			x > P2.x + SEARCHING_AREA && x > P3.x + SEARCHING_AREA) {
+			continue;
+		}
+		if (y < P0.y - SEARCHING_AREA && y < P1.y - SEARCHING_AREA &&
+			y < P2.y - SEARCHING_AREA && y < P3.y - SEARCHING_AREA) {
+			continue;
+		}
+		if (y > P0.y + SEARCHING_AREA && y > P1.y + SEARCHING_AREA &&
+			y > P2.y + SEARCHING_AREA && y > P3.y + SEARCHING_AREA) {
+			continue;
+		}
+
+		double tx[] = { DBL_MIN, DBL_MIN , DBL_MIN };
+		double ty[] = { DBL_MIN, DBL_MIN , DBL_MIN };
+		size_t countSolution = 3;
+		double Ax = (-P0.x + 3 * P1.x - 3 * P2.x + P3.x);
+		double Bx = (3 * P0.x - 6 * P1.x + 3 * P2.x);
+		double Cx = (-3 * P0.x + 3 * P1.x);
+		double Dx = (P0.x - x);
+
+		double Ay = (-P0.y + 3 * P1.y - 3 * P2.y + P3.y);
+		double By = (3 * P0.y - 6 * P1.y + 3 * P2.y);
+		double Cy = (-3 * P0.y + 3 * P1.y);
+		double Dy = (P0.y - y);
+		cubicEquotion(Ax, Bx, Cx, Dx, tx[0], tx[1], tx[2]);
+		cubicEquotion(Ay, By, Cy, Dy, ty[0], ty[1], ty[2]);
+
+		for (int j = 0; j < countSolution; ++j) {
+			if (ty[j] > -EPS && ty[j] < 1 + EPS) {
+				Vector2 Y = GetPoint(P0, P1, P2, P3, ty[j]);
+				Y.x -= x;
+				Y.y -= y;
+				double dot = Vector2::Dot(Y, Y);
+				if (dist > dot) {
+					dist = dot;
+					index = i;
+				}
+			}
+		}
+		for (int j = 0; j < countSolution; ++j) {
+			if (tx[i] > -EPS && tx[i] < 1 + EPS) {
+				Vector2 X = GetPoint(P0, P1, P2, P3, tx[i]);
+				X.x -= x;
+				X.y -= y;
+				double dot = Vector2::Dot(X, X);
+				if (dist > dot) {
+					dist = dot;
+					index = i;
+				}
+			}
+		}
+	}
+	++index;
+	return index;
+}
+
+void RedactionCurve::AddPoint(const int indexInsert, const double x, const double y) {
+	double a = -orts[indexInsert - 1].x;
+	double b = -orts[indexInsert - 1].y;
+	double c = 50;
+	
+	ID id = model->AddPointToCurve(obj, indexInsert, CreateArr(x, y, a, b, c));
+	undo_redo->AddVersion(tfc_creation, CreateArr(id));
+	points.Insert(indexInsert, Vector2(x, y));
+	pointsID.Insert(indexInsert, id);
+	orts.Insert(indexInsert, Vector2(a, b));
+	coefControls_1.Insert(indexInsert - 1, c * -1);
+	coefControls_2.Insert(indexInsert, c);
+}
+
+void RedactionCurve::ApplyChange() {
+	/*int size = points.GetSize();
+	Array<double> change = Array<double>(size * 4);
+	int index = 0;
+	for (int i = 0; i < size; ++i) {
+		change[index] = points[i].x;
+		change[index + 1] = points[i].y;
+		change[index + size * 2] = orts[i].x;
+		change[index + 1 + size * 2] = orts[i].y;
+		index += 2;
+	}
+	change += coefControls_1;
+	change += coefControls_2;
+	model->SETVARPARAMS(obj, change, CURVE_AS_IT_IS);*/
+	isChanged = false;
+	undo_redo->CompleteAddChange();
 }
 #pragma endregion
 
@@ -1643,10 +2114,10 @@ Mode* Redaction::HandleEvent(const Event e, const Array<double>& params)
 void Redaction::DrawMode() {
 	if (pointRotate != nullptr)
 	{
-		view->SetStyleDrawing(col_Blue);
+		view->SetStyleDrawing(color->DependentPrim());
 		view->DrawPoint(CreateArr(pointRotate->x, pointRotate->y));
 	}
-	view->SetStyleDrawing(col_ForestGreen);
+	view->SetStyleDrawing(color->SelectedPrim());
 	Presenter::DrawSelectedObjects(selectedObjects);
 }
 #pragma endregion
@@ -1757,9 +2228,8 @@ Mode* CreateRequirementWithParam::HandleEvent(const Event ev, const Array<double
 	}
 }
 	
-
 void CreateRequirementWithParam::DrawMode() {
-	view->SetStyleDrawing(col_ForestGreen);
+	view->SetStyleDrawing(color->SelectedPrim());
 	Presenter::DrawSelectedObjects(selectedObjects);
 }
 #pragma endregion
@@ -1867,8 +2337,8 @@ void CreateDistBetPointsReq::DrawMode() {
 	if (state == firstPointSelected) {
 		Array<double> pos1 = model->GETVARPARAMS(firstPoint, VERTEX);
 		Vector2 pointPos1 = Vector2(pos1[0], pos1[1]);
-		view->SetStyleDrawing(col_Yellow, dot);
-		view->DrawCircle(CreateArr(pointPos1.x, pointPos1.y, 5));
+		view->SetStyleDrawing(color->CreatingPrim(), dot);
+		view->DrawCircle(CreateArr(pointPos1.x, pointPos1.y, 5.0));
 		view->DrawLine(CreateArr(pointPos1.x, pointPos1.y, currentCursorPos.x, currentCursorPos.y));
 	}
 	if (state == secondPointSelected) {
@@ -1877,10 +2347,10 @@ void CreateDistBetPointsReq::DrawMode() {
 		Vector2 pointPos1 = Vector2(pos1[0], pos1[1]);
 		Vector2 pointPos2 = Vector2(pos2[0], pos2[1]);
 
-		view->SetStyleDrawing(col_Yellow, dot);
-		view->DrawCircle(CreateArr(pointPos1.x, pointPos1.y, 5));
+		view->SetStyleDrawing(color->CreatingPrim(), dot);
+		view->DrawCircle(CreateArr(pointPos1.x, pointPos1.y, 5.0));
 		view->DrawLine(CreateArr(pointPos1.x, pointPos1.y, pointPos2.x, pointPos2.y));
-		view->DrawCircle(CreateArr(pointPos2.x, pointPos2.y, 5));
+		view->DrawCircle(CreateArr(pointPos2.x, pointPos2.y, 5.0));
 	}
 }
 #pragma endregion 
@@ -1981,7 +2451,7 @@ Mode* NavigationOnScene::HandleEvent(const Event ev, const Array<double>& params
 }
 
 void NavigationOnScene::DrawMode() {
-	view->SetStyleDrawing(col_ForestGreen);
+	view->SetStyleDrawing(color->SelectedPrim());
 	Presenter::DrawSelectedObjects(selectedPrim);
 }
 #pragma endregion
@@ -1991,6 +2461,7 @@ CreateObject::CreateObject() {
 	model = Model::GetInstance();
 	view = Presenter::GetView();
 	undo_redo = Undo_Redo::GetInstance();
+	color = Color::GetInstance();
 }
 bool CreateObject::IsCreationFinish()
 {
@@ -2066,12 +2537,12 @@ Array<ID> CreatingSegment::HandleEvent(const Event ev, Array<Vector2>& params) {
 void CreatingSegment::DrawMode() {
 	if (stateClick == oneClick)
 	{
-		view->SetStyleDrawing(col_Red);
+		view->SetStyleDrawing(color->Points());
 		for (int i = 0; i < segmentStartPoints.GetSize(); i++)
 		{
 			view->DrawPoint(CreateArr(segmentStartPoints[i].x, segmentStartPoints[i].y));
 		}
-		view->SetStyleDrawing(col_Yellow, dot);
+		view->SetStyleDrawing(color->CreatingPrim(), dot);
 		for (int i = 0; i < imaginaryPoints.GetSize(); i++)
 		{
 			view->DrawLine(CreateArr(segmentStartPoints[i].x, segmentStartPoints[i].y,
@@ -2173,12 +2644,12 @@ Array<ID> CreatingStar::HandleEvent(const Event ev, Array<Vector2>& params) {
 void CreatingStar::DrawMode() {
 	if (stateClick == oneClick)
 	{
-		view->SetStyleDrawing(col_Red);
+		view->SetStyleDrawing(color->Points());
 		for (int i = 0; i < segmentStartPoints.GetSize(); i++)
 		{
 			view->DrawPoint(CreateArr(segmentStartPoints[i].x, segmentStartPoints[i].y));
 		}
-		view->SetStyleDrawing(col_Yellow, dot);
+		view->SetStyleDrawing(color->CreatingPrim(), dot);
 		for (int i = 0; i < imaginaryPoints.GetSize(); i++)
 		{
 			view->DrawLine(CreateArr(segmentStartPoints[i].x, segmentStartPoints[i].y,
@@ -2284,12 +2755,12 @@ Array<ID> CreatingBrokenLine::HandleEvent(const Event ev, Array<Vector2>& params
 void CreatingBrokenLine::DrawMode() {
 	if (stateClick == oneClick)
 	{
-		view->SetStyleDrawing(col_Red);
+		view->SetStyleDrawing(color->Points());
 		for (int i = 0; i < segmentStartPoints.GetSize(); i++)
 		{
 			view->DrawPoint(CreateArr(segmentStartPoints[i].x, segmentStartPoints[i].y));
 		}
-		view->SetStyleDrawing(col_Yellow, dot);
+		view->SetStyleDrawing(color->CreatingPrim(), dot);
 		for (int i = 0; i < imaginaryPoints.GetSize(); i++)
 		{
 			view->DrawLine(CreateArr(segmentStartPoints[i].x, segmentStartPoints[i].y,
@@ -2390,12 +2861,12 @@ Array<ID> CreatingCircle::HandleEvent(const Event ev, Array<Vector2>& params) {
 void CreatingCircle::DrawMode() {
 	if (stateClick == oneClick)
 	{
-		view->SetStyleDrawing(col_Red);
+		view->SetStyleDrawing(color->Points());
 		for (int i = 0; i < centerPoints.GetSize(); i++)
 		{
 			view->DrawPoint(CreateArr(centerPoints[i].x, centerPoints[i].y));
 		}
-		view->SetStyleDrawing(col_Yellow, dot);
+		view->SetStyleDrawing(color->CreatingPrim(), dot);
 		for (int i = 0; i < imaginaryPoints.GetSize(); i++)
 		{
 			double radius = (imaginaryPoints[i] - centerPoints[i]).GetLength();
@@ -2484,12 +2955,12 @@ Array<ID> CreatingArc::HandleEvent(const Event ev, Array<Vector2>& params) {
 void CreatingArc::DrawMode() {
 	if (stateClick == oneClick)
 	{
-		view->SetStyleDrawing(col_Red);
+		view->SetStyleDrawing(color->Points());
 		for (int i = 0; i < centerPoints.GetSize(); i++)
 		{
 			view->DrawPoint(CreateArr(centerPoints[i].x, centerPoints[i].y));
 		}
-		view->SetStyleDrawing(col_Yellow, dot);
+		view->SetStyleDrawing(color->CreatingPrim(), dot);
 		for (int i = 0; i < imaginaryPoints.GetSize(); i++)
 		{
 			double radius = (imaginaryPoints[i] - centerPoints[i]).GetLength();
@@ -2498,26 +2969,26 @@ void CreatingArc::DrawMode() {
 	}
 	if (stateClick == twoClick)
 	{
-		view->SetStyleDrawing(col_Red);
+		view->SetStyleDrawing(color->Points());
 		for (int i = 0; i < centerPoints.GetSize(); i++)
 		{
 			view->DrawPoint(CreateArr(centerPoints[i].x, centerPoints[i].y));
 		}
 
-		view->SetStyleDrawing(col_White, dot);
+		view->SetStyleDrawing(color->Primitives(), dot);
 		for (int i = 0; i < startPoints.GetSize(); i++)
 		{
 			double radius = (imaginaryPoints[i] - centerPoints[i]).GetLength();
 			view->DrawCircle(CreateArr(centerPoints[i].x, centerPoints[i].y, radius));
 		}
 
-		view->SetStyleDrawing(col_Red);
+		view->SetStyleDrawing(color->Points());
 		for (int i = 0; i < startPoints.GetSize(); i++)
 		{
 			view->DrawPoint(CreateArr(startPoints[i].x, startPoints[i].y));
 		}
 
-		view->SetStyleDrawing(col_Yellow, solid);
+		view->SetStyleDrawing(color->CreatingPrim(), solid);
 		for (int i = 0; i < imaginaryPoints.GetSize(); i++)
 		{
 
@@ -2538,10 +3009,13 @@ CreatingArc::~CreatingArc() {
 #pragma region CreatingCurve
 CreatingCurve::CreatingCurve() {
 	countClick = 0;
+	isDrag = false;
+	lastEvent = ev_mouseMove;
 }
 CreatingCurve::~CreatingCurve() {
-	if (PointsCurves.GetSize() != 0)
+	if (PointsCurves.GetSize() > 2)
 	{
+		PointsCurves.PopBack();
 		int countCurves = PointsCurves[0].GetSize();
 		Array<ID> createdCurves = Array<ID>(countCurves);
 		for (int i = 0; i < countCurves; i++)
@@ -2567,38 +3041,79 @@ Array<ID> CreatingCurve::HandleEvent(const Event ev, Array<Vector2>& params) {
 	{
 	case ev_leftMouseDown:
 	{
+		connectPoints.Clear();
+		connectPoints = params;
 		imaginaryPoints.Clear();
 		imaginaryPoints = params;
-		++countClick;
-		if (countClick == 1)
-		{
-			for (int i = 0; i < params.GetSize(); i++)
-			{
-				PointsCurves.PushBack(params);
-			}
-			return Array<ID>(0);
-		}
-		if (params.GetSize() != PointsCurves[0].GetSize())
-		{
-			throw std::invalid_argument("Bad number of parameters");
-		}
-		auto t = params;
-		PointsCurves.PushBack(t);
+		lastEvent = ev_leftMouseDown;
 		return Array<ID>(0);
 	}
 	case ev_mouseMove:
 	{
-		if (countClick != 0)
+		imaginaryPoints.Clear();
+		imaginaryPoints = params;
+		if (lastEvent == ev_leftMouseDown)
 		{
-			if (params.GetSize() != PointsCurves[0].GetSize())
-			{
-				throw std::invalid_argument("Bad number of parameters");
-			}
-			imaginaryPoints.Clear();
-			imaginaryPoints = params;
+			lastEvent = ev_mouseMove;
+			isDrag = true;
 		}
+		if (isDrag)
+		{
+			controlPoints2.Clear();
+			controlPoints2 = imaginaryPoints;
+			controlPoints1.Clear();
+			controlPoints1 = connectPoints;
+			if (countClick != 0)
+			{
+				for (size_t i = 0; i < controlPoints2.GetSize(); i++)
+				{
+					controlPoints1[i] = controlPoints1[i] * 2 - controlPoints2[i];
+				}
+			}
+		}
+		imaginaryPoints.Clear();
+		imaginaryPoints = params;
 		return Array<ID>(0);
 	}
+	case ev_leftMouseUp:
+	{
+		if (lastEvent == ev_leftMouseDown)
+		{
+			if (countClick == 0)
+			{
+				PointsCurves.PushBack(connectPoints);
+				PointsCurves.PushBack(connectPoints); // controlPoints2
+			}
+			else
+			{
+				PointsCurves.PushBack(connectPoints); // controlPoints1
+				PointsCurves.PushBack(connectPoints);
+				PointsCurves.PushBack(connectPoints); // controlPoints2
+			}
+		}
+		if (isDrag)
+		{
+			if (countClick == 0)
+			{
+				PointsCurves.PushBack(connectPoints);
+				PointsCurves.PushBack(controlPoints2);
+			}
+			else
+			{
+				PointsCurves.PushBack(controlPoints1);
+				PointsCurves.PushBack(connectPoints);
+				PointsCurves.PushBack(controlPoints2);
+			}
+		}
+		connectPoints.Clear();
+		connectPoints = params;
+		lastEvent = ev_leftMouseUp;
+		isDrag = false;
+		countClick++;
+		return Array<ID>(0);
+	}
+	default:
+		break;
 	}
 	return Array<ID>(0);
 }
@@ -2606,25 +3121,66 @@ Array<ID> CreatingCurve::HandleEvent(const Event ev, Array<Vector2>& params) {
 void CreatingCurve::DrawMode() {
 	if (countClick != 0)
 	{
-		view->SetStyleDrawing(col_Red);
+		view->SetStyleDrawing(color->Points());
 		for (int i = 0; i < PointsCurves.GetSize(); i++)
 		{
 			for (int j = 0; j < PointsCurves[i].GetSize(); ++j) {
-				view->DrawPoint(PointsCurves[i][j]);
+				view->DrawPoint(CreateArr(PointsCurves[i][j].x, PointsCurves[i][j].y));
 			}
 		}
-		view->SetStyleDrawing(col_Yellow, dot);
+		view->SetStyleDrawing(color->CreatingPrim(), dot);
 		int countCurves = PointsCurves[0].GetSize();
 		for (int i = 0; i < countCurves; i++)
 		{
-			Array<double> curve = Array<Vector2>((PointsCurves.GetSize() + 1)  * 2);
+			Array<double> curve((PointsCurves.GetSize() + 2) * 2);
 			for (int j = 0; j < PointsCurves.GetSize(); ++j) {
-				curve[2 * j] = PointsCurves[j][i].x;
-				curve[2 * j + 1] = PointsCurves[j][i].y;
+				curve[j * 2] = PointsCurves[j][i].x;
+				curve[j * 2 + 1] = PointsCurves[j][i].y;
 			}
-			curve[curve.GetSize() - 1] = imaginaryPoints[i].x;
-			curve[curve.GetSize() - 1] = imaginaryPoints[i].y;
+			if (isDrag)
+			{
+				if (countClick != 0)
+				{
+					curve[curve.GetSize() - 4] = controlPoints1[i].x;
+					curve[curve.GetSize() - 3] = controlPoints1[i].y;
+
+				}
+				else
+				{
+					curve[curve.GetSize() - 4] = connectPoints[i].x;
+					curve[curve.GetSize() - 3] = connectPoints[i].y;
+				}
+				curve[curve.GetSize() - 2] = connectPoints[i].x;
+				curve[curve.GetSize() - 1] = connectPoints[i].y;
+			}
+			else
+			{
+				curve[curve.GetSize() - 4] = imaginaryPoints[i].x;
+				curve[curve.GetSize() - 3] = imaginaryPoints[i].y;
+				curve[curve.GetSize() - 2] = imaginaryPoints[i].x;
+				curve[curve.GetSize() - 1] = imaginaryPoints[i].y;
+			}
 			view->DrawCurve(curve);
+		}
+	}
+	if (isDrag)
+	{
+		for (size_t i = 0; i < controlPoints2.GetSize(); i++)
+		{
+			view->SetStyleDrawing(color->Points());
+			view->DrawPoint(CreateArr(connectPoints[i].x, connectPoints[i].y));
+			view->DrawPoint(CreateArr(controlPoints2[i].x, controlPoints2[i].y));
+			view->SetStyleDrawing(color->LineForCurve(), solid);
+			view->DrawLine(CreateArr(connectPoints[i].x, connectPoints[i].y,
+				controlPoints2[i].x, controlPoints2[i].y));
+			if (countClick != 0)
+			{
+				view->DrawLine(CreateArr(connectPoints[i].x, connectPoints[i].y,
+					controlPoints1[i].x, controlPoints1[i].y));
+				view->SetStyleDrawing(color->Points());
+				view->DrawPoint(CreateArr(controlPoints1[i].x, controlPoints1[i].y));
+
+			}
 		}
 	}
 }

@@ -3,11 +3,15 @@
 
 ViewFLTK::ViewFLTK()
 {
+	colorTheme = Color::GetInstance();
+
 	dataWidjet = new DataWidjet();
 
 	inventory = inventory->GetInstance();
 
 	mainWindow = new MainWindow(1300, 660, "Main Window");
+	auto color = colorTheme->BackGround();
+	mainWindow->color(fl_rgb_color(color.r, color.g, color.b));
 	DisplayWidjet* mainWindowWidjet = mainWindow;
 	dataWidjet->Add("MainWindow", mainWindowWidjet);
 
@@ -53,9 +57,9 @@ int ViewFLTK::Run()
 	return Fl::run(); 
 }
 
-void SetStyleDrawing(const int r, const int g, const int b, const typeDrawing type = null)
+void ViewFLTK::SetStyleDrawing(const rgbColor color, const typeDrawing type)
 {
-	fl_color(fl_rgb_color(r, g, b));
+	fl_color(fl_rgb_color(color.r, color.g, color.b));
 	switch (type)
 	{
 	case dot:
@@ -71,7 +75,6 @@ void SetStyleDrawing(const int r, const int g, const int b, const typeDrawing ty
 		break;
 	}
 }
-
 
 void ViewFLTK::DrawLine(const Array<double>& params)
 {
@@ -100,10 +103,10 @@ void ViewFLTK::_DrawArc(const Vector2& center, double R, double angleStart, doub
 
 void ViewFLTK::DrawArc(const Array<double>& params)
 {
-	double EPS = 5.0;
+	double Eps = 5.0;
 	double r = params[6];
 	double angle = params[7] * (180 / PI);
-	double angleStart = (r < EPS) ? 0.0 : acos((params[0] - params[4]) / r) * (180 / PI);
+	double angleStart = (r < Eps) ? 0.0 : acos((params[0] - params[4]) / r) * (180 / PI);
 	if (params[5] - params[1] < 0) {
 		angleStart = 360.0 - angleStart;
 	}
@@ -119,64 +122,10 @@ void ViewFLTK::DrawPoint(const Array<double>& params)
 	fl_end_polygon();
 }
 
-void ViewFLTK::DrawCurve(const Array<double>& points) {
-	fl_begin_line();
-	if (points.GetSize() == 4) {
-		fl_vertex(points[0], points[1]);
-		fl_vertex(points[2], points[3]);
-		fl_end_line();
-		return;
-	}
-	double x0 = points[0];
-	double y0 = points[1];
-	double x1;
-	double y1;
-	double x2;
-	double y2;
-	double x3;
-	double y3;
-	double x4;
-	double y4;
-	int size = points.GetSize();
-	for (int i = 2; i < size; i += 2) {
-		if (size - i == 6) {
-			x1 = points[i];
-			y1 = points[i + 1];
-			x2 = points[i + 2];
-			y2 = points[i + 3];
-			x3 = points[i + 4];
-			y3 = points[i + 5];
-			fl_curve(x0, y0, x1, y1, x2, y2, x3, y3);
-			i += 4;
-		}
-		if (size - i == 4) {
-			x1 = points[i];
-			y1 = points[i + 1];
-			x2 = points[i + 2];
-			y2 = points[i + 3];
-			fl_curve(x0, y0, x1, y1, x2, y2, x2, y2);
-			i += 2;
-		}
-		if (size - i > 8) {
-			x1 = points[i];
-			y1 = points[i + 1];
-			x2 = points[i + 2];
-			y2 = points[i + 3];
-			x3 = points[i + 4];
-			y3 = points[i + 5];
-			x3 = (x2 + x3) / 2;
-			y3 = (y2 + y3) / 2;
-			fl_curve(x0, y0, x1, y1, x2, y2, x3, y3);
-			x0 = x3;
-			y0 = y3;
-			i += 2;
-		}
-	}
-	fl_end_line();
-}
-
 void ViewFLTK::Update()
 {
+	auto color = colorTheme->BackGround();
+	mainWindow->color(fl_rgb_color(color.r, color.g, color.b));
 	drawWindow->redraw();
 }
 
@@ -251,7 +200,7 @@ DisplayWidjet* ViewFLTK::GetWidjet(const string nameWidjet)
 {
 	auto markerDataWidjet = dataWidjet->Find(nameWidjet);
 
-	return *markerDataWidjet; // исключение!
+	return *markerDataWidjet; // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ!
 }
 
 void ViewFLTK::DeleteWidjet(const string nameWidjet) {
@@ -267,14 +216,33 @@ void ViewFLTK::DeleteWidjet(const string nameWidjet) {
 }
 
 
+void ViewFLTK::DrawCurve(const Array<double>& points) {
+	fl_begin_line();
 
+	for (size_t i = 0; i < points.GetSize() - 2; i = i + 6)
+
+	{
+
+		fl_curve(points[i], points[i + 1],
+
+			points[i + 2], points[i + 3],
+
+			points[i + 4], points[i + 5],
+
+			points[i + 6], points[i + 7]);
+
+	}
+
+	fl_end_line();
+}
 
 Inventory* ViewFLTK::inventory = nullptr;
 
 ViewLog* ViewFLTK::viewLog = nullptr;
 
 MainWindow* ViewFLTK::mainWindow;
-
 DrawWindow* ViewFLTK::drawWindow;
+
+Color* ViewFLTK::colorTheme = nullptr;
 
 ViewFLTK* ViewFLTK::instance = nullptr;

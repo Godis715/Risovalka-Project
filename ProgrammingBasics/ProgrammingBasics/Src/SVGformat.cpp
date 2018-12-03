@@ -55,7 +55,7 @@ Array<double> SVGformat::ScanParams(std::ifstream& file)
 			do
 			{
 				tempSymbol = file.get();
-				if ((tempSymbol == ' ' || tempSymbol == '"') && dig != "")
+				if ((tempSymbol == ' ' || tempSymbol == '"' || tempSymbol == ',') && dig != "")
 				{
 					params.PushBack(std::stod(dig));
 					dig.clear();
@@ -250,6 +250,18 @@ bool SVGformat::ParseCurveTag(std::ifstream& file)
 				}
 				else return false; //бросить исключение
 			}
+			if (attribute == "params")
+			{
+				obj.params.Resize(_params.GetSize());
+				if (_params.GetSize() >= 1)
+				{
+					for (size_t i = 0; i < _params.GetSize(); i++)
+					{
+						obj.params[i] = _params[i];
+					}
+				}
+				else return false; //бросить исключение
+			}
 		}
 		tempSymbol = file.get();
 	}
@@ -424,7 +436,6 @@ void SVGformat::ApplyDownloadData() {
 	}
 }
 
-
 bool SVGformat::Save(const std::string& path, bool withDrawProjectTags)
 {
 	std::ofstream file(path);
@@ -532,16 +543,17 @@ bool SVGformat::Save(const std::string& path, bool withDrawProjectTags)
 			file << "\n	/>";
 		}
 		if (tempType == ot_curve) {
+			Curve* tempCurve = dynamic_cast<Curve*>(primCtrl->GetPrimitive(tempID));
 			file << "\n	<path";
 			file << "\n		style = \"fill:none;stroke:#000000;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1\"";
 			file << "\n		d=\"";
-			for (size_t i = 0; i < children.GetSize(); i++)
+			Array<double> params = tempCurve->GetPointDoubles();
+			for (size_t i = 0; i < params.GetSize() - 1; i += 2)
 			{
-				Array<double> paramPoint = primCtrl->GetPrimitiveParamsAsValues(children[i]);
 				if (i == 0) file << "M ";
-				if (i == 1) file << "C ";
-				file << paramPoint[0] << ',' << paramPoint[1];
-				if (i + 1 < children.GetSize()) file << " ";
+				if (i == 2) file << "C ";
+				file << params[i] << ',' << params[i + 1];
+				if (i + 2 < params.GetSize() - 1) file << " ";
 			}
 			file << '"';
 			file << "\n		id=" << '"' << tempID.GetHash() << '"' << "\n	/>";
@@ -552,7 +564,17 @@ bool SVGformat::Save(const std::string& path, bool withDrawProjectTags)
 				for (size_t i = 0; i < children.GetSize(); i++)
 				{
 					file << children[i].GetHash();
-					if ( i + 1 < children.GetSize()) file << " ";
+					if ( i + 1 < children.GetSize()) file << ' ';
+				}
+				file << '"';
+				file << "\n		params=" << '"';
+				for (size_t i = 1; i < params.GetSize() - 1; i += 6)
+				{
+					file << params[i + 1] << ',';
+					file << params[i + 2] << ' ';
+					file << params[i + 3] << ',';
+					file << params[i + 4];
+					if (i + 4 != params.GetSize() - 3) file << ' ';
 				}
 				file << '"' << "\n	/>";
 			}

@@ -38,7 +38,7 @@ class MailBox {
 public:
 	void SendMessage(const Message&);
 	Message GetMessage();
-	bool HasMessages();
+	bool Empty();
 
 	static MailBox* GetInstance();
 private:

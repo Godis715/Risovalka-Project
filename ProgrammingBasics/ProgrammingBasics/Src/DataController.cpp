@@ -120,6 +120,7 @@ void DataController::Connect(const ID& head, Component* headLink) {
 	}
 }
 
+
 void DataController::DeleteObject(const ID& id) {
 	if ((!primData.Find(id).IsValid()) && (!reqData.Find(id).IsValid())){
 		return;
@@ -136,12 +137,20 @@ void DataController::DeleteObject(const ID& id) {
 		ID currID = queue.Pop();
 		auto linkIt = linkData.Find(currID);
 		if (linkIt.IsValid()) {
-			auto connectedNodes = (*linkIt);
+			Component* connectedNodes = (*linkIt);
 			auto connNodesIt = connectedNodes->GetMarker();
 
 			while (connNodesIt.IsValid()) {
 				
-				auto currConnNode = (*connNodesIt);
+				ID currConnNode = (*connNodesIt);
+				++connNodesIt;
+				if (objCtrl->GetType(currConnNode) == ot_curve) {
+					auto curve = dynamic_cast<Curve*>(primCtrl->GetPrimitive(currConnNode));
+					if (!curve->ItISExtremePoint(currID)) {
+						curve->DeletePoint(currID);
+						continue;
+					}// we have to delete point from  curve
+				}// if point don`t extreme point we heve NOT delete curve
 				bool isCurrConnNodeReq = reqCtrl->IsReq(currConnNode);
 				bool isCurrConnNodePrim = primCtrl->IsPrimitive(currConnNode);
 				bool isCurrObjPrim = primCtrl->IsPrimitive(currID);
@@ -153,9 +162,10 @@ void DataController::DeleteObject(const ID& id) {
 					}
 				}
 
+				// delete connect between currConnNode and currID
 				auto linkItOfConnNode = linkData.Find(currConnNode);
 				if (linkItOfConnNode.IsValid()) {
-					auto connOfConnNode = (*linkItOfConnNode);
+					Component* connOfConnNode = (*linkItOfConnNode);
 					auto connOfConnNodeIt = connOfConnNode->Find(currID);
 					if (connOfConnNodeIt.IsValid()) {
 						connOfConnNodeIt.Delete();
@@ -166,7 +176,7 @@ void DataController::DeleteObject(const ID& id) {
 					}
 				}
 
-				++connNodesIt;
+
 			}
 
 			delete connectedNodes;
@@ -190,7 +200,7 @@ void DataController::DeleteObject(const ID& id) {
 			primIter.Delete();
 		}
 		else if (isCurRequirement) {
-			auto reqIter = primData.Find(currID);
+			auto reqIter = reqData.Find(currID);
 			if (!reqIter.IsValid()) {
 				LOG("DeleteObject: requirement don't contained in data", LEVEL_2);
 			}
@@ -227,11 +237,17 @@ void DataController::MakeInValid(ID& id) {
 
 			while (connNodesIt.IsValid()) {
 
-				auto currIDLink = (*connNodesIt);
+				ID currIDLink = (*connNodesIt);
 				++connNodesIt;
 				if (!objCtrl->IsValid(currIDLink)) {
 					continue;
 				}
+				if (objCtrl->GetType(currIDLink) == ot_curve) {
+					auto curve = dynamic_cast<Curve*>(primCtrl->GetPrimitive(currIDLink));
+					if (!curve->ItISExtremePoint(id)) {
+						continue;
+					}
+				}// check Curve
 				objCtrl->MakeInValid(currIDLink);
 
 				if (reqCtrl->IsReq(currIDLink)) {

@@ -36,10 +36,11 @@ void ViewWPF::DrawCurve(const Array<double>& params) {
 	mailBox->SendMessage(message);
 }
 
-void ViewWPF::SetStyleDrawing(const int, const int, const int, const typeDrawing) {
+void ViewWPF::SetStyleDrawing(const rgbColor color, const typeDrawing type) {
 	Message messege;
 	messege.code = set_style;
-	messege.intArr = CreateArr(color.r, color.g, color.b, type);
+	int y = int(type);
+	messege.intArr = CreateArr(color.r, color.g, color.b, y);
 }
 
 int ViewWPF::Run() {

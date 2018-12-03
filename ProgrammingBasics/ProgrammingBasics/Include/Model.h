@@ -22,10 +22,13 @@ public:
 	static Model* GetInstance();
 
 	ID CreatePrimitive(object_type, const Array<double>&) const;
+	ID AddPointToCurve(const ID&, const int, const Array<double>&) const;
+	Array<ID> OrderedCreateRequirement(const Array<ID>& id_arr) const;
 	ID CreateRequirement(object_type, const Array<ID>&, const Array<double>&) const;
 
-	#define SEARCHING_AREA 5.0
+
 	ID GetObjectByClick(double, double) const;
+	Array<ID> GetObjectsByArea(double, double, double, double) const;
 
 	// with optimization
 	void ChangeRequirement(const ID&, const Array<double>&) const;
@@ -47,8 +50,6 @@ public:
 
 	bool IsPrim(const ID&) const;
 	bool IsReq(const ID&) const;
-
-	Array<ID> GetObjectsByArea(double, double, double, double) const;
 
 	Array<ID> GetRelatedObjects(const ID&) const;
 

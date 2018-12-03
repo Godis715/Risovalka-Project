@@ -128,6 +128,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\Src\Colors.cpp" />
     <ClCompile Include="..\Src\Compilator.cpp" />
     <ClCompile Include="..\Src\DataController.cpp" />
     <ClCompile Include="..\Src\ID.cpp" />
@@ -157,7 +158,6 @@
     <ClCompile Include="..\Src\ViewToolbar.cpp" />
     <ClCompile Include="..\Src\ViewWpf.cpp" />
     <ClCompile Include="..\Src\WPFWidjet.cpp" />
-    <ClCompile Include="Source.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Include\Array.h" />

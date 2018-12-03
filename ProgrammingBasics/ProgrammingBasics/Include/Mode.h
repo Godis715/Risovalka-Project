@@ -3,7 +3,6 @@
 
 #include "IView.h"
 #include "Model.h"
-#include "Colors.h"
 #include <sstream>
 #include <iomanip>
 
@@ -77,7 +76,9 @@ enum Event
 	ev_delete_display_Req,
 	// file work
 	ev_save,
-	ev_download
+	ev_download,
+	ev_compile,
+	ex_set_theme
 };
 
 class CreateObject {
@@ -86,6 +87,7 @@ protected:
 	IView* view;
 	Model* model;
 	Undo_Redo* undo_redo;
+	Color* color;
 	bool isCreationFinish = false;
 public:
 	bool IsCreationFinish();
@@ -202,8 +204,15 @@ public:
 class CreatingCurve : public CreateObject {
 private:
 	int countClick;
+	bool isDrag;
 	Array<Array<Vector2>> PointsCurves;
+
+	Array<Vector2> connectPoints;
+	Array<Vector2> controlPoints1;
+	Array<Vector2> controlPoints2;
 	Array<Vector2> imaginaryPoints;
+
+	Event lastEvent;
 public:
 	CreatingCurve();
 	~CreatingCurve();
@@ -224,6 +233,7 @@ protected:
 
 	IView* view;
 	Model* model;
+	Color* color;
 public:
 	Mode();
 	virtual ~Mode() {}
@@ -240,8 +250,12 @@ private:
 	ID reqID;
 	Array<ID> primiOfReqIDs;
 	bool isNew = true;
-	//enum State { single_selection, poly_selection, area_selection };
-	//State state;
+	enum State { none, click };
+	State state;
+
+	bool isChanged;
+	Undo_Redo* undo_redo;
+	Vector2 start;
 
 	void SetWidjetParamPrim();
 
@@ -368,6 +382,38 @@ class RotationControl : public Control {
 private:
 
 public:
+};
+
+class RedactionCurve : public Mode {
+public:
+	RedactionCurve(const ID&);
+	~RedactionCurve();
+	
+	Mode* HandleEvent(const Event, const Array<double>&);
+
+	void DrawMode();
+private:
+	ID obj;
+	Array<Vector2> points;
+	Array<ID> pointsID;
+	Array<Vector2> orts;
+	Array<double> coefControls_1;
+	Array<double> coefControls_2;
+
+	Vector2 selectedPoint;
+	int index;
+	Vector2 start;
+	Undo_Redo* undo_redo;
+	ObjectController* ObjCtlr;
+
+	enum State { none, addPoint, click, move };
+	State state;
+	bool isChanged;
+
+	int GetPointOfCurve(const double, const double);
+	int clickOnCurve(const double, const double);
+	void AddPoint(const int, const double, const double);
+	void ApplyChange();
 };
 
 class Redaction : public Mode {

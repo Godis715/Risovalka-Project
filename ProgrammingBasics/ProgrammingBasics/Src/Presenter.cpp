@@ -86,11 +86,6 @@ void Presenter::Initializer(IView* _view)
 	view = _view;
 	mode = new Selection();
 	model = Model::GetInstance();
-	// BinSearchTree<string, std::function<ID(const Array<ID>&, const Array<double>&)>> kek;
-	//std::function<ID(const Array<ID>&, const Array<double>&)> f = [model](const Array<ID>& a, const Array<double>& b) {
-	//	model->Move(a, Vector2(b[0], b[1]));
-	//	return ID();
-	//};
 	auto tree = new treeFunc;
 	tree->Add("Point", CreatePoint);
 	tree->Add("Segment", CreateSegment);
@@ -233,8 +228,10 @@ void Presenter::DrawSelectedObjects(const Array<ID>& selectedObjects)
 
 void Presenter::DrawScene()
 {
+	auto color = Color::GetInstance();
 	auto objCtrl = ObjectController::GetInstance();
 	auto iter = model->GetPrimIterator();
+	view->SetStyleDrawing(color->Primitives(), solid);
 	while (iter.IsValid()) {
 		ID obj = *iter;
 		++iter;
@@ -242,33 +239,29 @@ void Presenter::DrawScene()
 			continue;
 		}
 		if (model->GetObjType(obj) == ot_point) {
-			view->SetStyleDrawing(col_Red);
 			auto params = model->GetVariableObjParam(obj, VERTEX);
 			view->DrawPoint(params);
 		}
 		if (model->GetObjType(obj) == ot_segment) {
-			view->SetStyleDrawing(col_White, solid);
 			auto params = model->GetVariableObjParam(obj, VERTEX);
 			view->DrawLine(params);
 		}
 		if (model->GetObjType(obj) == ot_arc) {
-			view->SetStyleDrawing(col_White, solid);
 			auto params = model->GetVariableObjParam(obj, VERTEX, CENTER, RADIUS, ANGLE);
 			view->DrawArc(params);
 		}
 		if (model->GetObjType(obj) == ot_circle) {
-			view->SetStyleDrawing(col_White, solid);
 			auto params = model->GetVariableObjParam(obj, CENTER, RADIUS);
 			view->DrawCircle(params);
 		}
 		if (model->GetObjType(obj) == ot_curve) {
-			view->SetStyleDrawing(col_White, solid);
 			auto params = model->GetVariableObjParam(obj, VERTEX);
 			view->DrawCurve(params);
 		}
 	}
 
 	mode->DrawMode();
+	view->Update();
 }
 
 void Presenter::Set_event(Event _ev, Array<double>& _params, const std::string& str)
@@ -279,7 +272,7 @@ void Presenter::Set_event(Event _ev, Array<double>& _params, const std::string& 
 		delete mode;
 		mode = temp;
 	}
-	view->Update();
+
 	switch (_ev)
 	{
 	case ev_save:
@@ -287,14 +280,23 @@ void Presenter::Set_event(Event _ev, Array<double>& _params, const std::string& 
 		model->Save(str);
 		break;
 	}
-		
 	case ev_download:
 	{
 		model->Download(str);
-		view->Update();
 		break;
 	}	
+	case ev_compile:
+	{
+		Presenter::Compile();
+		break;
 	}
+	case ex_set_theme:
+	{
+		Color::GetInstance()->SetTheme(int(_params[0]));
+		break;
+	}
+	}
+	view->Update();
 }
 
 void Presenter::Compile() {

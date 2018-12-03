@@ -28,6 +28,7 @@ int MainWindow::handle(int e)
 		{
 			Presenter::Set_event(ev_arrowDown, params);
 		}
+		
 		if (Fl::event_key() == FL_Up)
 		{
 			Presenter::Set_event(ev_arrowUp, params);

@@ -2,6 +2,7 @@
 #define __IVIEW
 #include "Vector2.h"
 #include "IWidjet.h"
+#include "Colors.h"
 
 enum typeDrawing{dot, dash, solid, null};
 enum statusCreate { drawPoint, drawSegment, drawArc, drawCircle };
@@ -18,7 +19,7 @@ public:
 	virtual void DrawCircle(const Array<double>&) = 0;
 	virtual void DrawCurve(const Array<double>&) = 0;
 
-	virtual void SetStyleDrawing(const int, const int, const int, const typeDrawing = null) = 0;
+	virtual void SetStyleDrawing(const rgbColor, const typeDrawing = null) = 0;
 	virtual int Run() = 0;
 	virtual void Update() = 0;
 	virtual void TranslateScene(const Vector2&) = 0;

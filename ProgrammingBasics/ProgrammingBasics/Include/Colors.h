@@ -1,5 +1,50 @@
 #define col___COLORS
 #ifndef _COLORS
+struct rgbColor
+{
+	int r;
+	int g;
+	int b;
+};
+
+class Color
+{
+private:
+
+	rgbColor colors[9];
+
+	const int size = 9;
+
+	static Color* instance;
+	Color();
+
+	void SaveFile();
+public:
+	void DrowWindow(const int, const int, const int);
+	void BackGround(const int, const int, const int);
+	void Primitives(const int, const int, const int);
+	void Points(const int, const int, const int);
+	void SelectedPrim(const int, const int, const int);
+	void DependentPrim(const int, const int, const int);
+	void ChangingPrim(const int, const int, const int);
+	void CreatingPrim(const int, const int, const int);
+	void LineForCurve(const int, const int, const int);
+
+	const rgbColor DrowWindow() const;
+	const rgbColor BackGround() const;
+	const rgbColor Primitives() const;
+	const rgbColor Points() const;
+	const rgbColor SelectedPrim() const;
+	const rgbColor DependentPrim() const;
+	const rgbColor ChangingPrim() const;
+	const rgbColor CreatingPrim() const;
+	const rgbColor LineForCurve() const;
+
+	void SetTheme(const int);
+
+	static Color* GetInstance();
+
+};
 
 #define col_IndianRed 205, 92, 92
 #define col_LightCoral	240, 128, 128
@@ -84,10 +129,11 @@
 #define col_Olive 240, 128, 128
 #define col_Aqua 102, 217, 255
 #define col_Tea	240, 128, 128
-#define col_Blue 66, 170, 255
+#define col_Blue 0, 0, 255
+#define col_AvarageBlue 66, 170, 255
 #define col_Navy 233, 150, 122
 //«елЄные тона :
-#define col_Green 233, 150, 122
+#define col_Green 0, 255, 0
 #define col_GreenYellow	173, 255, 47
 #define col_Chartreuse 127, 255, 0
 #define col_LawnGreen 124, 252, 0

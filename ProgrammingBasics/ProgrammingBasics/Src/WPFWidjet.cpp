@@ -79,7 +79,7 @@ WPFRequirementInput::~WPFRequirementInput() {
 WPFDrawMode::WPFDrawMode(){ }
 WPFDrawMode::~WPFDrawMode(){ }
 
-void SetName(const std::string) {
+void WPFDrawMode::SetName(const std::string) {
 	auto mailBox = MailBox::GetInstance();
 	Message massage;
 	massage.code = current_draw_mode;

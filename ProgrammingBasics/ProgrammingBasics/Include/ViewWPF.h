@@ -5,12 +5,6 @@
 #include "Presenter.h"
 #include "WPFWidget.h"
 
-struct rgbColor {
-	int r;
-	int g;
-	int b;
-};
-
 class ViewWPF : public IView {
 
 public:
@@ -20,7 +14,7 @@ public:
 	void DrawCircle(const Array<double>&);
 	void DrawCurve(const Array<double>&);
 
-	void SetStyleDrawing(const int, const int, const int, const typeDrawing);
+	void SetStyleDrawing(const rgbColor, const typeDrawing = null);
 
 	int Run();
 	void Update();
@@ -34,9 +28,6 @@ public:
 	static ViewWPF* GetInstance();
 private:
 	ViewWPF();
-
-	rgbColor color;
-	typeDrawing type;
 
 	MailBox* mailBox;
 

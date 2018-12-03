@@ -4,7 +4,6 @@
 
 #pragma region Version
 Version::Version(const TypeOFCange _type) : type(_type) {}
-Version::~Version() {}
 #pragma endregion 
 
 #pragma region VersionChange
@@ -16,34 +15,47 @@ VersionChange::VersionChange(const TypeOFCange _type, const Array<ID>& _data) :
 
 void VersionChange::Undo() {
 	auto primCtrl = PrimController::GetInstance();
+	auto objctlr = ObjectController::GetInstance();
+	auto reqCtrl = ReqController::GetInstance();
 
 	for (int i = 0; i < IDs.GetSize(); ++i) {
 		if (primCtrl->IsPrimitive(IDs[i])) {
+			if (objctlr->GetType(IDs[i]) == ot_curve) {
+				auto curve = dynamic_cast<Curve*>(primCtrl->GetPrimitive(IDs[i]));
+				curve->SetCurveParams(dataBefore[i]);
+				continue;
+			}
 			primCtrl->SetPrimitiveParams(IDs[i], dataBefore[i]);
-		} else {
-			auto reqCtrl = ReqController::GetInstance();
+		}
+		else {
 			reqCtrl->SetReqParams(IDs[i], dataBefore[i]);
 		}
 	}
 }
 
 void VersionChange::Redo() {
+	auto objctlr = ObjectController::GetInstance();
 	auto primCtrl = PrimController::GetInstance();
+	auto reqCtrl = ReqController::GetInstance();
 
 	for (int i = 0; i < IDs.GetSize(); ++i) {
 		if (primCtrl->IsPrimitive(IDs[i])) {
+			if (objctlr->GetType(IDs[i]) == ot_curve) {
+				auto curve = dynamic_cast<Curve*>(primCtrl->GetPrimitive(IDs[i]));
+				curve->SetCurveParams(dataAfter[i]);
+				continue;
+			}
 			primCtrl->SetPrimitiveParams(IDs[i], dataAfter[i]);
 		}
 		else {
-			auto reqCtrl = ReqController::GetInstance();
 			reqCtrl->SetReqParams(IDs[i], dataAfter[i]);
 		}
 	}
-	
 }
 
 VersionChange::~VersionChange() {
-
+	dataAfter.Clear();
+	dataBefore.Clear();
 }
 #pragma endregion 
 
@@ -58,8 +70,9 @@ void VersionCreateReq::Undo() {
 	auto objectController = ObjectController::GetInstance();
 	objectController->MakeInValid(idReq);
 
+	auto primCtrl = PrimController::GetInstance();
 	for (int i = 0; i < IDs.GetSize(); ++i) {
-		objectController->SetObjParam(IDs[i], dataBefore[i]);
+		primCtrl->SetPrimitiveParams(IDs[i], dataBefore[i]);
 	}
 }
 
@@ -67,8 +80,9 @@ void VersionCreateReq::Redo() {
 	auto objectController = ObjectController::GetInstance();
 	objectController->MakeValid(idReq);
 
+	auto primCtrl = PrimController::GetInstance();
 	for (int i = 0; i < IDs.GetSize(); ++i) {
-		objectController->SetObjParam(IDs[i], dataAfter[i]);
+		primCtrl->SetPrimitiveParams(IDs[i], dataAfter[i]);
 	}
 }
 
@@ -80,6 +94,8 @@ VersionCreateReq::~VersionCreateReq() {
 		dataController->DeleteObject(idReq);
 
 	}
+	dataAfter.Clear();
+	dataBefore.Clear();
 }
 #pragma endregion
 
@@ -168,20 +184,18 @@ void Undo_Redo::AddVersion(const TypeOFCange type, const Array<ID>& IDs) {
 		}
 	}
 	Array<ID> data(IDs.GetSize() + AllChildren.GetSize());
-	for (int i = 0; i < IDs.GetSize(); ++i) {
+	int i = 0;
+	for (; i < IDs.GetSize(); ++i) {
 		data[i] = IDs[i];
 	}
-
-	
 	auto iter = AllChildren.Begin();
-	
 	if (iter.IsValid()) {
-		int i = IDs.GetSize();
 		do {
 			data[i] = *iter;
 			++i;
 		} while (++iter);
-	}
+	}	
+	
 	Version* version = new VersionCreat_Del(type, data);
 
 	versions.Push(version);
@@ -189,6 +203,7 @@ void Undo_Redo::AddVersion(const TypeOFCange type, const Array<ID>& IDs) {
 }
 
 void Undo_Redo::AddDeleting(const Array<ID>& IDs) {
+	auto objController = ObjectController::GetInstance();
 	auto dataController = DataController::GetInstance();
 	auto primController = PrimController::GetInstance();
 	auto reqController = ReqController::GetInstance();
@@ -203,6 +218,10 @@ void Undo_Redo::AddDeleting(const Array<ID>& IDs) {
 	while (!queue.IsEmpty())
 	{
 		ID currentID = queue.Pop();
+		if (objController->IsValid(currentID)) {
+				continue;
+				
+		}// check CURVE
 		set.Add(currentID);
 
 		
@@ -240,15 +259,20 @@ void Undo_Redo::AddChange(const Array<ID>& IDs) {
 	auto objectController = ObjectController::GetInstance();
 	auto dataController = DataController::GetInstance();
 	auto reqController = ReqController::GetInstance();
-	auto componentIDs = dataController->GetPrimitiveFromComponents(IDs);
+	auto primController = PrimController::GetInstance();
+	Array<ID> componentIDs = dataController->GetPrimitiveFromComponents(IDs);
 	if (reqController->IsReq(IDs[0])) {
 		componentIDs.PushBack(IDs[0]);
 	}
 
 	auto version = new VersionChange(tfc_change, componentIDs);
 
-	Array<std::pair<ID, Array<double>>> data(componentIDs.GetSize());
 	for (int i = 0; i < componentIDs.GetSize(); ++i) {
+		if (objectController->GetType(componentIDs[i]) == ot_curve) {
+			auto curve = dynamic_cast<Curve*>(primController->GetPrimitive(componentIDs[i]));
+			version->dataBefore[i] = curve->GetCurveParams();
+			continue;
+		}
 		version->dataBefore[i] = objectController->GetObjParam(componentIDs[i]);
 	}
 
@@ -258,6 +282,7 @@ void Undo_Redo::AddChange(const Array<ID>& IDs) {
 
 void Undo_Redo::CompleteAddChange() {
 	auto objectController = ObjectController::GetInstance();
+	auto primController = PrimController::GetInstance();
 
 	VersionChange* version;
 	if (versions.GetTail()->type == tfc_change) {
@@ -268,12 +293,15 @@ void Undo_Redo::CompleteAddChange() {
 		return;
 	}
 	
-	Array<Array<double>> dataAfter(version->IDs.GetSize());
 	for (int i = 0; i < version->IDs.GetSize(); ++i) {
-		dataAfter[i] = objectController->GetObjParam(version->IDs[i]);
+		if (objectController->GetType(version->IDs[i]) == ot_curve) {
+			auto curve = dynamic_cast<Curve*>(primController->GetPrimitive(version->IDs[i]));
+			version->dataAfter[i] = curve->GetCurveParams();
+			continue;
+		}
+		version->dataAfter[i] = objectController->GetObjParam(version->IDs[i]);
 
 	}
-	version->dataAfter = dataAfter;
 }
 
 void Undo_Redo::AddCreatingReq(const Array<ID>& IDs) {
@@ -352,7 +380,7 @@ void Undo_Redo::DeleteLastVersion() {
 }
 
 void Undo_Redo::DeleteVersionAfterIt() {
-	while ((it.IsValid()) && (versions.End() != it) && (versions.GetSize() != 0)) {
+	while ((it.IsValid()) && (versions.GetSize() != 0) && (versions.End() != it)) {
 		delete versions.GetTail();
 		versions.End().DeleteCurrent();
 	}
