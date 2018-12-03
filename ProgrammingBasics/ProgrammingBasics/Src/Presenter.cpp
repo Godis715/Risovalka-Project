@@ -242,27 +242,27 @@ void Presenter::DrawScene()
 			continue;
 		}
 		if (model->GetObjType(obj) == ot_point) {
-			view->SetTypeDrawing(col_Red);
+			view->SetStyleDrawing(col_Red);
 			auto params = model->GetVariableObjParam(obj, VERTEX);
 			view->DrawPoint(params);
 		}
 		if (model->GetObjType(obj) == ot_segment) {
-			view->SetTypeDrawing(col_White, solid);
+			view->SetStyleDrawing(col_White, solid);
 			auto params = model->GetVariableObjParam(obj, VERTEX);
 			view->DrawLine(params);
 		}
 		if (model->GetObjType(obj) == ot_arc) {
-			view->SetTypeDrawing(col_White, solid);
+			view->SetStyleDrawing(col_White, solid);
 			auto params = model->GetVariableObjParam(obj, VERTEX, CENTER, RADIUS, ANGLE);
 			view->DrawArc(params);
 		}
 		if (model->GetObjType(obj) == ot_circle) {
-			view->SetTypeDrawing(col_White, solid);
+			view->SetStyleDrawing(col_White, solid);
 			auto params = model->GetVariableObjParam(obj, CENTER, RADIUS);
 			view->DrawCircle(params);
 		}
 		if (model->GetObjType(obj) == ot_curve) {
-			view->SetTypeDrawing(col_White, solid);
+			view->SetStyleDrawing(col_White, solid);
 			auto params = model->GetVariableObjParam(obj, VERTEX);
 			view->DrawCurve(params);
 		}

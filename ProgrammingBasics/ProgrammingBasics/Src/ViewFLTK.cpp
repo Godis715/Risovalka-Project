@@ -53,7 +53,7 @@ int ViewFLTK::Run()
 	return Fl::run(); 
 }
 
-void ViewFLTK::SetTypeDrawing(int r, int g, int b, typeDrawing type)
+void SetStyleDrawing(const int r, const int g, const int b, const typeDrawing type = null)
 {
 	fl_color(fl_rgb_color(r, g, b));
 	switch (type)
@@ -72,13 +72,7 @@ void ViewFLTK::SetTypeDrawing(int r, int g, int b, typeDrawing type)
 	}
 }
 
-void ViewFLTK::DrawLine(const Vector2& start, const Vector2& end)
-{
-	fl_begin_line();
-	fl_vertex(start.x, start.y);
-	fl_vertex(end.x, end.y);
-	fl_end_line();
-}
+
 void ViewFLTK::DrawLine(const Array<double>& params)
 {
 	fl_begin_line();
@@ -87,13 +81,6 @@ void ViewFLTK::DrawLine(const Array<double>& params)
 	fl_end_line();
 }
 
-void ViewFLTK::DrawCircle(const Vector2& center, const Vector2& pointForCircle)
-{
-	double r = (pointForCircle - center).GetLength();
-	fl_begin_line();
-	fl_arc(center.x, center.y, r, 0.0, 360.0);
-	fl_end_line();
-}
 void ViewFLTK::DrawCircle(const Array<double>& params)
 {
 	fl_begin_line();
@@ -111,25 +98,6 @@ void ViewFLTK::_DrawArc(const Vector2& center, double R, double angleStart, doub
 	}
 }
 
-void ViewFLTK::DrawArc(const Vector2& center, const Vector2& start, const Vector2& end)
-{
-	double EPS = 5.0;
-	double r1 = (center - start).GetLength();
-	double angleStart = (abs(r1) < EPS) ? 0.0 : acos((start.x - center.x) / r1) * (180 / PI);
-	if (center.y - start.y < 0) {
-		angleStart = 360.0 - angleStart;
-	}
-
-	double r2 = (center - end).GetLength();
-	double angleEnd = (abs(r2) < EPS) ? 360.0 : acos((end.x - center.x) / r2) * (180 / PI);
-	if (center.y - end.y < 0) {
-		angleEnd = 360.0 - angleEnd;
-	}
-
-	fl_begin_line();
-	_DrawArc(center, r1, angleStart, angleEnd);
-	fl_end_line();
-}
 void ViewFLTK::DrawArc(const Array<double>& params)
 {
 	double EPS = 5.0;
@@ -144,13 +112,6 @@ void ViewFLTK::DrawArc(const Array<double>& params)
 	fl_end_line();
 }
 
-void ViewFLTK::DrawPoint(const Vector2& pos)
-{
-	int size = 2;
-	fl_begin_polygon();
-	fl_arc(pos.x, pos.y, size, 0.0, 360.0);
-	fl_end_polygon();
-}
 void ViewFLTK::DrawPoint(const Array<double>& params)
 {
 	fl_begin_polygon();
@@ -158,62 +119,6 @@ void ViewFLTK::DrawPoint(const Array<double>& params)
 	fl_end_polygon();
 }
 
-void ViewFLTK::DrawCurve(const Array<Vector2>& points)
-{
-	fl_begin_line();
-	if (points.GetSize() == 2) {
-		fl_vertex(points[0].x, points[0].y);
-		fl_vertex(points[1].x, points[1].y);
-		fl_end_line();
-		return;
-	}
-	double x0 = points[0].x;
-	double y0 = points[0].y;
-	double x1;
-	double y1;
-	double x2;
-	double y2;
-	double x3;
-	double y3;
-	double x4;
-	double y4;
-	int size = points.GetSize();
-	for (int i = 0; i < size; ++i) {
-		if (size - i == 4) {
-			x1 = points[i + 1].x;
-			y1 = points[i + 1].y;
-			x2 = points[i + 2].x;
-			y2 = points[i + 2].y;
-			x3 = points[i + 3].x;
-			y3 = points[i + 3].y;
-			fl_curve(x0, y0, x1, y1, x2, y2, x3, y3);
-			i += 2;
-		}
-		if (size - i == 3) {
-			x1 = points[i + 1].x;
-			y1 = points[i + 1].y;
-			x2 = points[i + 2].x;
-			y2 = points[i + 2].y;
-			fl_curve(x0, y0, x1, y1, x2, y2, x2, y2);
-			i += 1;
-		}
-		if (size - i > 4) {
-			x1 = points[i + 1].x;
-			y1 = points[i + 1].y;
-			x2 = points[i + 2].x;
-			y2 = points[i + 2].y;
-			x3 = points[i + 3].x;
-			y3 = points[i + 3].y;
-			x3 = (x2 + x3) / 2;
-			y3 = (y2 + y3) / 2;
-			fl_curve(x0, y0, x1, y1, x2, y2, x3, y3);
-			x0 = x3;
-			y0 = y3;
-			i += 1;
-		}
-	}
-	fl_end_line();
-}
 void ViewFLTK::DrawCurve(const Array<double>& points) {
 	fl_begin_line();
 	if (points.GetSize() == 4) {

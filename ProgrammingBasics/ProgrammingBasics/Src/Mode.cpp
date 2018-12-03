@@ -359,9 +359,9 @@ void ChangingProperties::DrawMode()
 {
 	Array<ID> selectedObjects;
 	selectedObjects.PushBack(selectedObject);
-	view->SetTypeDrawing(col_Blue);
+	view->SetStyleDrawing(col_Blue);
 	Presenter::DrawSelectedObjects(primiOfReqIDs);
-	view->SetTypeDrawing(col_Orange);
+	view->SetStyleDrawing(col_Orange);
 	Presenter::DrawSelectedObjects(selectedObjects);
 	
 }
@@ -582,7 +582,7 @@ void DMDefualt::DrawMode()
 	{
 		createObject->DrawMode();
 	}
-	view->SetTypeDrawing(col_ForestGreen);
+	view->SetStyleDrawing(col_ForestGreen);
 	if (selectionObjects.GetSize() != 0)
 	{
 		
@@ -871,31 +871,31 @@ void DMSymmetrical::DrawMode()
 {
 	if (pointRotate != nullptr)
 	{
-		view->SetTypeDrawing(col_Aqua, solid);
+		view->SetStyleDrawing(col_Aqua, solid);
 		switch (stateMode)
 		{
 		case ox2:
 		{
-			view->DrawLine(Vector2(-1000, pointRotate->y), Vector2(1000, pointRotate->y));
+			view->DrawLine(CreateArr(-1000.0, pointRotate->y, 1000.0, pointRotate->y));
 			break;
 		}
 		case oy2:
 		{
-			view->DrawLine(Vector2(pointRotate->x, -1000), Vector2(pointRotate->x, 1000));
+			view->DrawLine(CreateArr(pointRotate->x, -1000.0, pointRotate->x, 1000.0));
 			break;	
 		}
 		case o4:
 		{
-			view->DrawLine(Vector2(-1000, pointRotate->y), Vector2(1000, pointRotate->y));
-			view->DrawLine(Vector2(pointRotate->x, -1000), Vector2(pointRotate->x, 1000));
+			view->DrawLine(CreateArr(-1000.0, pointRotate->y, 1000.0, pointRotate->y));
+			view->DrawLine(CreateArr(pointRotate->x, -1000.0, pointRotate->x, 1000.0));
 			break;		
 		}
 		case o8:
 		{
-			view->DrawLine(Vector2(pointRotate->x-1000, pointRotate->y-1000), 
-				Vector2(pointRotate->x+1000, pointRotate->y+1000));
-			view->DrawLine(Vector2(pointRotate->x + 1000, pointRotate->y - 1000),
-				Vector2(pointRotate->x - 1000, pointRotate->y + 1000));
+			view->DrawLine(CreateArr(pointRotate->x-1000, pointRotate->y-1000,
+				pointRotate->x+1000, pointRotate->y+1000));
+			view->DrawLine(CreateArr(pointRotate->x + 1000, pointRotate->y - 1000,
+				pointRotate->x - 1000, pointRotate->y + 1000));
 			break;
 		}
 		}
@@ -905,7 +905,7 @@ void DMSymmetrical::DrawMode()
 
 		createObject->DrawMode();
 	}
-	view->SetTypeDrawing(col_ForestGreen);
+	view->SetStyleDrawing(col_ForestGreen);
 	if (selectionObjects.GetSize() != 0)
 	{
 
@@ -935,14 +935,14 @@ void DMSectorSymmetrical::DrawMode()
 {
 	if (pointRotate != nullptr)
 	{
-		view->SetTypeDrawing(col_Aqua);
-		view->DrawPoint(Vector2(pointRotate->x, pointRotate->y));
+		view->SetStyleDrawing(col_Aqua);
+		view->DrawPoint(CreateArr(pointRotate->x, pointRotate->y));
 	}
 	if (createObject != nullptr)
 	{
 		createObject->DrawMode();
 	}
-	view->SetTypeDrawing(col_ForestGreen);
+	view->SetStyleDrawing(col_ForestGreen);
 	if (selectionObjects.GetSize() != 0)
 	{
 		Presenter::DrawSelectedObjects(selectionObjects);
@@ -1377,7 +1377,7 @@ Mode* Selection::HandleEvent(const Event e, const Array<double>& params) {
 
 void Selection::DrawMode()
 {
-	view->SetTypeDrawing(col_ForestGreen);
+	view->SetStyleDrawing(col_ForestGreen);
 	Presenter::DrawSelectedObjects(selectedObjects);
 
 	if (state == area_selection)
@@ -1385,11 +1385,11 @@ void Selection::DrawMode()
 		Vector2 point1(infoArea2.x, infoArea1.y);
 		Vector2 point2(infoArea1.x, infoArea2.y);
 
-		view->SetTypeDrawing(col_Blue, dot);
-		view->DrawLine(infoArea1, point1);
-		view->DrawLine(infoArea1, point2);
-		view->DrawLine(infoArea2, point1);
-		view->DrawLine(infoArea2, point2);
+		view->SetStyleDrawing(col_Blue, dot);
+		view->DrawLine(CreateArr(infoArea1.x, infoArea1.y, point1.x, point1.y));
+		view->DrawLine(CreateArr(infoArea1.x, infoArea1.y, point2.x, point2.y));
+		view->DrawLine(CreateArr(infoArea2.x, infoArea2.y, point1.x, point1.y));
+		view->DrawLine(CreateArr(infoArea2.x, infoArea2.y, point2.x, point2.y));
 	}
 }
 #pragma endregion
@@ -1643,10 +1643,10 @@ Mode* Redaction::HandleEvent(const Event e, const Array<double>& params)
 void Redaction::DrawMode() {
 	if (pointRotate != nullptr)
 	{
-		view->SetTypeDrawing(col_Blue);
-		view->DrawPoint(Vector2(pointRotate->x, pointRotate->y));
+		view->SetStyleDrawing(col_Blue);
+		view->DrawPoint(CreateArr(pointRotate->x, pointRotate->y));
 	}
-	view->SetTypeDrawing(col_ForestGreen);
+	view->SetStyleDrawing(col_ForestGreen);
 	Presenter::DrawSelectedObjects(selectedObjects);
 }
 #pragma endregion
@@ -1759,7 +1759,7 @@ Mode* CreateRequirementWithParam::HandleEvent(const Event ev, const Array<double
 	
 
 void CreateRequirementWithParam::DrawMode() {
-	view->SetTypeDrawing(col_ForestGreen);
+	view->SetStyleDrawing(col_ForestGreen);
 	Presenter::DrawSelectedObjects(selectedObjects);
 }
 #pragma endregion
@@ -1867,9 +1867,9 @@ void CreateDistBetPointsReq::DrawMode() {
 	if (state == firstPointSelected) {
 		Array<double> pos1 = model->GETVARPARAMS(firstPoint, VERTEX);
 		Vector2 pointPos1 = Vector2(pos1[0], pos1[1]);
-		view->SetTypeDrawing(col_Yellow, dot);
-		view->DrawCircle(pointPos1, Vector2(pos1[0], pos1[1] + 5));
-		view->DrawLine(pointPos1, currentCursorPos);
+		view->SetStyleDrawing(col_Yellow, dot);
+		view->DrawCircle(CreateArr(pointPos1.x, pointPos1.y, 5));
+		view->DrawLine(CreateArr(pointPos1.x, pointPos1.y, currentCursorPos.x, currentCursorPos.y));
 	}
 	if (state == secondPointSelected) {
 		Array<double> pos1 = model->GETVARPARAMS(firstPoint, VERTEX);
@@ -1877,10 +1877,10 @@ void CreateDistBetPointsReq::DrawMode() {
 		Vector2 pointPos1 = Vector2(pos1[0], pos1[1]);
 		Vector2 pointPos2 = Vector2(pos2[0], pos2[1]);
 
-		view->SetTypeDrawing(col_Yellow, dot);
-		view->DrawCircle(pointPos1, Vector2(pos1[0], pos1[1] + 5));
-		view->DrawLine(pointPos1, pointPos2);
-		view->DrawCircle(pointPos2, Vector2(pos2[0], pos2[1] + 5));
+		view->SetStyleDrawing(col_Yellow, dot);
+		view->DrawCircle(CreateArr(pointPos1.x, pointPos1.y, 5));
+		view->DrawLine(CreateArr(pointPos1.x, pointPos1.y, pointPos2.x, pointPos2.y));
+		view->DrawCircle(CreateArr(pointPos2.x, pointPos2.y, 5));
 	}
 }
 #pragma endregion 
@@ -1981,7 +1981,7 @@ Mode* NavigationOnScene::HandleEvent(const Event ev, const Array<double>& params
 }
 
 void NavigationOnScene::DrawMode() {
-	view->SetTypeDrawing(col_ForestGreen);
+	view->SetStyleDrawing(col_ForestGreen);
 	Presenter::DrawSelectedObjects(selectedPrim);
 }
 #pragma endregion
@@ -2066,15 +2066,16 @@ Array<ID> CreatingSegment::HandleEvent(const Event ev, Array<Vector2>& params) {
 void CreatingSegment::DrawMode() {
 	if (stateClick == oneClick)
 	{
-		view->SetTypeDrawing(col_Red);
+		view->SetStyleDrawing(col_Red);
 		for (int i = 0; i < segmentStartPoints.GetSize(); i++)
 		{
-			view->DrawPoint(segmentStartPoints[i]);
+			view->DrawPoint(CreateArr(segmentStartPoints[i].x, segmentStartPoints[i].y));
 		}
-		view->SetTypeDrawing(col_Yellow, dot);
+		view->SetStyleDrawing(col_Yellow, dot);
 		for (int i = 0; i < imaginaryPoints.GetSize(); i++)
 		{
-			view->DrawLine(segmentStartPoints[i], imaginaryPoints[i]);
+			view->DrawLine(CreateArr(segmentStartPoints[i].x, segmentStartPoints[i].y,
+				imaginaryPoints[i].x, imaginaryPoints[i].y));
 		}
 	}
 }
@@ -2172,21 +2173,17 @@ Array<ID> CreatingStar::HandleEvent(const Event ev, Array<Vector2>& params) {
 void CreatingStar::DrawMode() {
 	if (stateClick == oneClick)
 	{
-		view->SetTypeDrawing(col_Red);
+		view->SetStyleDrawing(col_Red);
 		for (int i = 0; i < segmentStartPoints.GetSize(); i++)
 		{
-			view->DrawPoint(segmentStartPoints[i]);
+			view->DrawPoint(CreateArr(segmentStartPoints[i].x, segmentStartPoints[i].y));
 		}
-		view->SetTypeDrawing(col_Yellow, dot);
+		view->SetStyleDrawing(col_Yellow, dot);
 		for (int i = 0; i < imaginaryPoints.GetSize(); i++)
 		{
-			view->DrawLine(segmentStartPoints[i], imaginaryPoints[i]);
+			view->DrawLine(CreateArr(segmentStartPoints[i].x, segmentStartPoints[i].y,
+				imaginaryPoints[i].x, imaginaryPoints[i].y));
 		}
-		/*view->SetColor(col_ForestGreen);
-		if (createdSegments.GetSize() != 0)
-		{
-			Presenter::DrawSelectedObjects(createdSegments);
-		}*/
 	}
 }
 
@@ -2287,15 +2284,16 @@ Array<ID> CreatingBrokenLine::HandleEvent(const Event ev, Array<Vector2>& params
 void CreatingBrokenLine::DrawMode() {
 	if (stateClick == oneClick)
 	{
-		view->SetTypeDrawing(col_Red);
+		view->SetStyleDrawing(col_Red);
 		for (int i = 0; i < segmentStartPoints.GetSize(); i++)
 		{
-			view->DrawPoint(segmentStartPoints[i]);
+			view->DrawPoint(CreateArr(segmentStartPoints[i].x, segmentStartPoints[i].y));
 		}
-		view->SetTypeDrawing(col_Yellow, dot);
+		view->SetStyleDrawing(col_Yellow, dot);
 		for (int i = 0; i < imaginaryPoints.GetSize(); i++)
 		{
-			view->DrawLine(segmentStartPoints[i], imaginaryPoints[i]);
+			view->DrawLine(CreateArr(segmentStartPoints[i].x, segmentStartPoints[i].y,
+				imaginaryPoints[i].x, imaginaryPoints[i].y));
 		}
 		/*view->SetColor(col_ForestGreen);
 		if (createdSegments.GetSize() != 0)
@@ -2392,15 +2390,16 @@ Array<ID> CreatingCircle::HandleEvent(const Event ev, Array<Vector2>& params) {
 void CreatingCircle::DrawMode() {
 	if (stateClick == oneClick)
 	{
-		view->SetTypeDrawing(col_Red);
+		view->SetStyleDrawing(col_Red);
 		for (int i = 0; i < centerPoints.GetSize(); i++)
 		{
-			view->DrawPoint(centerPoints[i]);
+			view->DrawPoint(CreateArr(centerPoints[i].x, centerPoints[i].y));
 		}
-		view->SetTypeDrawing(col_Yellow, dot);
+		view->SetStyleDrawing(col_Yellow, dot);
 		for (int i = 0; i < imaginaryPoints.GetSize(); i++)
 		{
-			view->DrawCircle(centerPoints[i], imaginaryPoints[i]);
+			double radius = (imaginaryPoints[i] - centerPoints[i]).GetLength();
+			view->DrawCircle(CreateArr(centerPoints[i].x, centerPoints[i].y, radius));
 		}
 	}
 }
@@ -2485,41 +2484,49 @@ Array<ID> CreatingArc::HandleEvent(const Event ev, Array<Vector2>& params) {
 void CreatingArc::DrawMode() {
 	if (stateClick == oneClick)
 	{
-		view->SetTypeDrawing(col_Red);
+		view->SetStyleDrawing(col_Red);
 		for (int i = 0; i < centerPoints.GetSize(); i++)
 		{
-			view->DrawPoint(centerPoints[i]);
+			view->DrawPoint(CreateArr(centerPoints[i].x, centerPoints[i].y));
 		}
-		view->SetTypeDrawing(col_Yellow, dot);
+		view->SetStyleDrawing(col_Yellow, dot);
 		for (int i = 0; i < imaginaryPoints.GetSize(); i++)
 		{
-			view->DrawCircle(centerPoints[i], imaginaryPoints[i]);
+			double radius = (imaginaryPoints[i] - centerPoints[i]).GetLength();
+			view->DrawCircle(CreateArr(centerPoints[i].x, centerPoints[i].y, radius));
 		}
 	}
 	if (stateClick == twoClick)
 	{
-		view->SetTypeDrawing(col_Red);
+		view->SetStyleDrawing(col_Red);
 		for (int i = 0; i < centerPoints.GetSize(); i++)
 		{
-			view->DrawPoint(centerPoints[i]);
+			view->DrawPoint(CreateArr(centerPoints[i].x, centerPoints[i].y));
 		}
 
-		view->SetTypeDrawing(col_White, dot);
+		view->SetStyleDrawing(col_White, dot);
 		for (int i = 0; i < startPoints.GetSize(); i++)
 		{
-			view->DrawCircle(centerPoints[i], startPoints[i]);
+			double radius = (imaginaryPoints[i] - centerPoints[i]).GetLength();
+			view->DrawCircle(CreateArr(centerPoints[i].x, centerPoints[i].y, radius));
 		}
 
-		view->SetTypeDrawing(col_Red);
+		view->SetStyleDrawing(col_Red);
 		for (int i = 0; i < startPoints.GetSize(); i++)
 		{
-			view->DrawPoint(startPoints[i]);
+			view->DrawPoint(CreateArr(startPoints[i].x, startPoints[i].y));
 		}
 
-		view->SetTypeDrawing(col_Yellow, solid);
+		view->SetStyleDrawing(col_Yellow, solid);
 		for (int i = 0; i < imaginaryPoints.GetSize(); i++)
 		{
-			view->DrawArc(centerPoints[i], startPoints[i], imaginaryPoints[i]);
+
+			double radius = (imaginaryPoints[i] - centerPoints[i]).GetLength();
+			double angle = Vector2::Angle(startPoints[i] - centerPoints[i], imaginaryPoints[i] - centerPoints[i]);
+			view->DrawArc(CreateArr( startPoints[i].x, startPoints[i].y,
+				imaginaryPoints[i].x, imaginaryPoints[i].y,
+				centerPoints[i].x, centerPoints[i].y,
+				radius, angle));
 		}
 	}
 }
@@ -2599,22 +2606,24 @@ Array<ID> CreatingCurve::HandleEvent(const Event ev, Array<Vector2>& params) {
 void CreatingCurve::DrawMode() {
 	if (countClick != 0)
 	{
-		view->SetTypeDrawing(col_Red);
+		view->SetStyleDrawing(col_Red);
 		for (int i = 0; i < PointsCurves.GetSize(); i++)
 		{
 			for (int j = 0; j < PointsCurves[i].GetSize(); ++j) {
 				view->DrawPoint(PointsCurves[i][j]);
 			}
 		}
-		view->SetTypeDrawing(col_Yellow, dot);
+		view->SetStyleDrawing(col_Yellow, dot);
 		int countCurves = PointsCurves[0].GetSize();
 		for (int i = 0; i < countCurves; i++)
 		{
-			Array<Vector2> curve = Array<Vector2>(PointsCurves.GetSize() +1 );
+			Array<double> curve = Array<Vector2>((PointsCurves.GetSize() + 1)  * 2);
 			for (int j = 0; j < PointsCurves.GetSize(); ++j) {
-				curve[j] = PointsCurves[j][i];
+				curve[2 * j] = PointsCurves[j][i].x;
+				curve[2 * j + 1] = PointsCurves[j][i].y;
 			}
-			curve[curve.GetSize() - 1] = imaginaryPoints[i];
+			curve[curve.GetSize() - 1] = imaginaryPoints[i].x;
+			curve[curve.GetSize() - 1] = imaginaryPoints[i].y;
 			view->DrawCurve(curve);
 		}
 	}
