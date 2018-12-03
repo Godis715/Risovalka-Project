@@ -76,7 +76,8 @@ enum Event
 	ev_delete_display_Prim,
 	ev_delete_display_Req,
 	// file work
-	ev_save
+	ev_save,
+	ev_download
 };
 
 class CreateObject {
