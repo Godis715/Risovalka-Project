@@ -16,30 +16,35 @@
 		py="124"
 		id="3"
 	/>
+	<drawProject:point
+		px="793"
+		py="110"
+		id="4"
+	/>
+	<drawProject:point
+		px="790.297"
+		py="147.707"
+		id="5"
+	/>
+	<drawProject:point
+		px="479"
+		py="170"
+		id="6"
+	/>
 	<line
 		x1="539"
 		y1="69"
 		x2="542"
 		y2="124"
-		id="4"
+		id="7"
 		childIds="2 3"
 		stroke="red"
 		stroke-width="5"
 	/>
-	<drawProject:point
-		px="793"
-		py="110"
-		id="5"
-	/>
-	<drawProject:point
-		px="790.297"
-		py="147.707"
-		id="6"
-	/>
 	<path
 		d="M793,110 A672.439,672.439 0 1,0 790.297,147.707"
-		id="7"
-		childIds="5 6"
+		id="8"
+		childIds="4 5"
 		stroke="red"
 		stroke-width="5"
 		fill="none"
@@ -50,20 +55,15 @@
 		x2="790.297"
 		y2="147.707"
 		angle="5.82932"
-		id="7"
-		childIds="5 6"
-	/>
-	<drawProject:point
-		px="479"
-		py="170"
 		id="8"
+		childIds="4 5"
 	/>
 	<circle
 		cx="479"
 		cy="170"
 		r="24.7588"
 		id="9"
-		childIds="8"
+		childIds="6"
 		stroke="red"
 		stroke-width="5"
 		fill="none"

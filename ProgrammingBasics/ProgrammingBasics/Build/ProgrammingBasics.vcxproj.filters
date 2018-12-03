@@ -117,6 +117,9 @@
     <ClCompile Include="..\Src\Vector2.cpp">
       <Filter>Исходные файлы\Support</Filter>
     </ClCompile>
+    <ClCompile Include="..\Src\Colors.cpp">
+      <Filter>Исходные файлы\Support</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Include\ViewFLTK.h">
@@ -147,9 +150,6 @@
       <Filter>Файлы заголовков\View</Filter>
     </ClInclude>
     <ClInclude Include="..\Include\IWidjet.h">
-      <Filter>Файлы заголовков\View</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Include\Colors.h">
       <Filter>Файлы заголовков\View</Filter>
     </ClInclude>
     <ClInclude Include="..\Include\DataController.h">
@@ -204,6 +204,9 @@
       <Filter>Файлы заголовков\Support</Filter>
     </ClInclude>
     <ClInclude Include="..\Include\Vector2.h">
+      <Filter>Файлы заголовков\Support</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Include\Colors.h">
       <Filter>Файлы заголовков\Support</Filter>
     </ClInclude>
   </ItemGroup>

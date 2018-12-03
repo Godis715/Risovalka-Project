@@ -2,11 +2,15 @@
 
 ViewFLTK::ViewFLTK()
 {
+	colorTheme = Color::GetInstance();
+
 	dataWidjet = new DataWidjet();
 
 	inventory = inventory->GetInstance();
 
 	mainWindow = new MainWindow(1300, 660, "Main Window");
+	auto color = colorTheme->BackGround();
+	mainWindow->color(fl_rgb_color(color.r, color.g, color.b));
 	DisplayWidjet* mainWindowWidjet = mainWindow;
 	dataWidjet->Add("MainWindow", mainWindowWidjet);
 
@@ -229,178 +233,10 @@ void ViewFLTK::DrawArc(const Array<double>& params, typeDrawing type)
 
 void ViewFLTK::DrawPoint(const Vector2& pos)
 {
-
 	int size = 2;
-	/*fl_begin_line();
-	fl_vertex(pos.x - size, pos.y - size);
-	fl_vertex(pos.x + size, pos.y + size);
-	fl_end_line();
-
-	fl_begin_line();
-	fl_vertex(pos.x + size, pos.y - size);
-	fl_vertex(pos.x - size, pos.y + size);
-	fl_end_line();*/
 	fl_begin_polygon();
 	fl_arc(pos.x, pos.y, size, 0.0, 360.0);
 	fl_end_polygon();
-
-	//double x0 = 0;
-	//double y0 = 0;
-	//double x1 = 500;
-	//double y1 = 400;
-	//double x2 = 100;
-	//double y2 = 250;
-	//double x3 = 150;
-	//double y3 = 200;
-
-	//double x4 = x3;
-	//double y4 = y3;
-	//double x5 = 2 * x3 - x2;
-	//double y5 = 2 * y3 - y2;
-	//double x6 = x1 - 2 * x2 - 2 * x5;
-	//double y6 = y1 - 2 * y2 - 2 * y5;
-	//x6 = 400;
-	//y6 = 100;
-	//double x7 = 600;
-	//double y7 = 300;
-
-	//double x8 = x7;
-	//double y8 = y7;
-	//double x9 = 2 * x7 - x6;
-	//double y9 = 2 * y7 - y6;
-	//double x10 = x5 - 2 * x6 - 2 * x9;
-	//double y10 = y5 - 2 * y6 - 2 * y9;
-	//double x11= 800;
-	//double y11 = 100;
-	//x10 = x11;
-	//y10 = y11;
-	//SetColor(col_White);
-	//fl_begin_line();
-	//fl_vertex(x0, y0);
-	//fl_vertex(x1, y1);
-	//fl_end_line();
-
-	//fl_begin_line();
-	//fl_vertex(x1, y1);
-	//fl_vertex(x2, y2);
-	//fl_end_line();
-
-	//fl_begin_line();
-	//fl_vertex(x2, y2);
-	//fl_vertex(x3, y3);
-	//fl_end_line();
-
-	//fl_begin_line();
-	//fl_vertex(x4, y4);
-	//fl_vertex(x3, y3);
-	//fl_end_line();
-
-	//fl_begin_line();
-	//fl_vertex(x4, y4);
-	//fl_vertex(x5, y5);
-	//fl_end_line();
-
-	//fl_begin_line();
-	//fl_vertex(x5, y5);
-	//fl_vertex(x6, y6);
-	//fl_end_line();
-
-	//fl_begin_line();
-	//fl_vertex(x7, y7);
-	//fl_vertex(x6, y6);
-	//fl_end_line();
-
-	//fl_begin_line();
-	//fl_vertex(x7, y7);
-	//fl_vertex(x8, y8);
-	//fl_end_line();
-
-	//fl_begin_line();
-	//fl_vertex(x9, y9);
-	//fl_vertex(x8, y8);
-	//fl_end_line();
-
-	//fl_begin_line();
-	//fl_vertex(x9, y9);
-	//fl_vertex(x10, y10);
-	//fl_end_line();
-
-	//fl_begin_line();
-	//fl_vertex(x11, y11);
-	//fl_vertex(x10, y10);
-	//fl_end_line();
-
-	//SetColor(col_Red);
-	//fl_begin_line();
-	//fl_curve(x0, y0, x1, y1, x2, y2, x3, y3);
-	//fl_end_line();
-	//SetColor(col_ForestGreen);
-	//fl_begin_line();
-	//fl_curve(x4, y4, x5, y5, x6, y6, x7, y7);
-	//fl_end_line();
-	//SetColor(col_Blue);
-	//fl_begin_line();
-	//fl_curve(x8, y8, x9, y9, x10, y10, x11, y11);
-	//fl_end_line();
-	//SetColor(col_Orange);
-	//fl_begin_line();
-	//fl_curve(x1, y1, x2, y2, x5, y5, x6, y6);
-	//fl_end_line();
-
-	/*double x0 = 0;
-	double y0 = 0;
-	double x1 = 160;
-	double y1 = 550;
-	double x2 = 380;
-	double y2 = 100;
-	double x3 = 540;
-	double y3 = 0;
-
-	double x4 = (x0 + x1) * 3 / 4;
-	double y4 = (y0 + y1) * 3 / 4;
-	double x5 = (x3 - x2) / 4 + x2;
-	double y5 = (y2 + y3) * 3 / 4;
-	double x6 = (x4 + x5) / 2;
-	double y6 = (y4 + y5) / 2;
-
-	SetColor(col_White);
-	fl_begin_line();
-	fl_vertex(x0, y0);
-	fl_vertex(x1, y1);
-	fl_end_line();
-
-	fl_begin_line();
-	fl_vertex(x1, y1);
-	fl_vertex(x2, y2);
-	fl_end_line();
-
-	fl_begin_line();
-	fl_vertex(x2, y2);
-	fl_vertex(x3, y3);
-	fl_end_line();
-
-	fl_begin_line();
-	fl_vertex(x4, y4);
-	fl_vertex(x5, y5);
-	fl_end_line();
-
-	fl_begin_line();
-	fl_vertex(x5, y5);
-	fl_vertex(x6, y6);
-	fl_end_line();
-
-	SetColor(col_Red);
-	fl_begin_line();
-	fl_curve(x0, y0, x4, y4, x6, y6, x6, y6);
-	fl_end_line();
-	SetColor(col_ForestGreen);
-	fl_begin_line();
-	fl_curve(x6, y6, x6, y6, x5, y5, x3, y3);
-	fl_end_line();
-	SetColor(col_Blue);
-	fl_begin_line();
-	fl_curve(x0, y0, x1, y1, x2, y2, x3, y3);
-	fl_end_line();*/
 }
 void ViewFLTK::DrawPoint(const Array<double>& params)
 {
@@ -557,13 +393,20 @@ void ViewFLTK::DrawCurveNew(const Array<double>& points, typeDrawing type) {
 	fl_end_line();
 }
 
-void ViewFLTK::SetColor(int r, int g, int b)
+void ViewFLTK::SetColor(const int r, const int g, const int b)
 {
 	fl_color(fl_rgb_color(r, g, b));
 }
 
+void ViewFLTK::SetColor(const rgbColor color)
+{
+	fl_color(fl_rgb_color(color.r, color.g, color.b));
+}
+
 void ViewFLTK::Update()
 {
+	auto color = colorTheme->BackGround();
+	mainWindow->color(fl_rgb_color(color.r, color.g, color.b));
 	drawWindow->redraw();
 }
 
@@ -663,5 +506,7 @@ ViewLog* ViewFLTK::viewLog = nullptr;
 MainWindow* ViewFLTK::mainWindow;
 
 DrawWindow* ViewFLTK::drawWindow;
+
+Color* ViewFLTK::colorTheme = nullptr;
 
 ViewFLTK* ViewFLTK::instance = nullptr;
