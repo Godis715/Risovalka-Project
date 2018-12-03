@@ -8,6 +8,8 @@
 #include "Model.h"
 #include "ViewFLTK.h"
 
+#include "MailBox.h"
+
 void LoggerInit() {
 	Logger::InitLogger(&std::cout, 4);
 }

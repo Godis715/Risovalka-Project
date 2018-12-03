@@ -120,6 +120,9 @@
     <ClCompile Include="..\Src\Mode.cpp">
       <Filter>Исходные файлы\Presenter</Filter>
     </ClCompile>
+    <ClCompile Include="..\Src\MailBox.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Include\ViewFLTK.h">
@@ -214,6 +217,9 @@
     </ClInclude>
     <ClInclude Include="..\Include\Mode.h">
       <Filter>Файлы заголовков\Presenter</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Include\MailBox.h">
+      <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
