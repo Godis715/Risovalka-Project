@@ -164,22 +164,22 @@ void Presenter::DrawSelectedObjects(const Array<ID>& selectedObjects)
 		}
 		case ot_segment: {
 			auto params = model->GetVariableObjParam(obj, VERTEX);
-			view->DrawLine(params, line);
+			view->DrawLine(params);
 			break;
 		}
 		case ot_arc: {
 			auto params = model->GetVariableObjParam(obj, VERTEX, CENTER, RADIUS, ANGLE);
-			view->DrawArc(params, line);
+			view->DrawArc(params);
 			break;
 		}
 		case ot_circle: {
 			auto params = model->GetVariableObjParam(obj, CENTER, RADIUS);
-			view->DrawCircle(params, line);
+			view->DrawCircle(params);
 			break;
 		}
 		case ot_curve: {
 			auto params = model->GetVariableObjParam(obj, VERTEX);
-			view->DrawCurve(params, line);
+			view->DrawCurve(params);
 			break;
 		}
 		default:
@@ -242,29 +242,29 @@ void Presenter::DrawScene()
 			continue;
 		}
 		if (model->GetObjType(obj) == ot_point) {
-			view->SetColor(col_Red);
+			view->SetTypeDrawing(col_Red);
 			auto params = model->GetVariableObjParam(obj, VERTEX);
 			view->DrawPoint(params);
 		}
 		if (model->GetObjType(obj) == ot_segment) {
-			view->SetColor(col_White);
+			view->SetTypeDrawing(col_White, solid);
 			auto params = model->GetVariableObjParam(obj, VERTEX);
-			view->DrawLine(params, line);
+			view->DrawLine(params);
 		}
 		if (model->GetObjType(obj) == ot_arc) {
-			view->SetColor(col_White);
+			view->SetTypeDrawing(col_White, solid);
 			auto params = model->GetVariableObjParam(obj, VERTEX, CENTER, RADIUS, ANGLE);
-			view->DrawArc(params, line);
+			view->DrawArc(params);
 		}
 		if (model->GetObjType(obj) == ot_circle) {
-			view->SetColor(col_White);
+			view->SetTypeDrawing(col_White, solid);
 			auto params = model->GetVariableObjParam(obj, CENTER, RADIUS);
-			view->DrawCircle(params, line);
+			view->DrawCircle(params);
 		}
 		if (model->GetObjType(obj) == ot_curve) {
-			view->SetColor(col_White);
+			view->SetTypeDrawing(col_White, solid);
 			auto params = model->GetVariableObjParam(obj, VERTEX);
-			view->DrawCurve(params, line);
+			view->DrawCurve(params);
 		}
 	}
 
