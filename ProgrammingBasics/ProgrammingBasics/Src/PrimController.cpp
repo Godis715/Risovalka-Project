@@ -600,3 +600,4 @@ double PrimController::GetDistanceToPoint(const ID& obj, double x, double y) con
 	Primitive* prim = GetPrimitive(obj);
 	return prim->GetDist(Vector2(x, y));
 }
+

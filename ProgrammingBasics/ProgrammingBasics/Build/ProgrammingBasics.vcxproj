@@ -134,6 +134,7 @@
     <ClCompile Include="..\Src\ID.cpp" />
     <ClCompile Include="..\Src\IWidjet.cpp" />
     <ClCompile Include="..\Src\Logger.cpp" />
+    <ClCompile Include="..\Src\MailBox.cpp" />
     <ClCompile Include="..\Src\main.cpp" />
     <ClCompile Include="..\Src\Mode.cpp" />
     <ClCompile Include="..\Src\Model.cpp" />
@@ -155,6 +156,8 @@
     <ClCompile Include="..\Src\ViewLog.cpp" />
     <ClCompile Include="..\Src\ViewMainWindow.cpp" />
     <ClCompile Include="..\Src\ViewToolbar.cpp" />
+    <ClCompile Include="..\Src\ViewWpf.cpp" />
+    <ClCompile Include="..\Src\WPFWidjet.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Include\Array.h" />
@@ -163,12 +166,14 @@
     <ClInclude Include="..\Include\DataController.h" />
     <ClInclude Include="..\Include\Dequeue.h" />
     <ClInclude Include="..\Include\Dictionary.h" />
+    <ClInclude Include="..\Include\FLTKWidget.h" />
     <ClInclude Include="..\Include\ID.h" />
     <ClInclude Include="..\Include\IDGenerator.h" />
     <ClInclude Include="..\Include\IView.h" />
     <ClInclude Include="..\Include\IWidjet.h" />
     <ClInclude Include="..\Include\List.h" />
     <ClInclude Include="..\Include\Logger.h" />
+    <ClInclude Include="..\Include\MailBox.h" />
     <ClInclude Include="..\Include\Mode.h" />
     <ClInclude Include="..\Include\Model.h" />
     <ClInclude Include="..\Include\Optimizer.h" />
@@ -186,6 +191,8 @@
     <ClInclude Include="..\Include\ViewLog.h" />
     <ClInclude Include="..\Include\ViewMainWindow.h" />
     <ClInclude Include="..\Include\ViewToolbar.h" />
+    <ClInclude Include="..\Include\ViewWPF.h" />
+    <ClInclude Include="..\Include\WPFWidget.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\..\Debug\script.txt" />

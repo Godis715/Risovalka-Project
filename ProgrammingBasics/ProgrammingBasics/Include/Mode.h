@@ -75,7 +75,10 @@ enum Event
 	ev_delete_display_Prim,
 	ev_delete_display_Req,
 	// file work
-	ev_save
+	ev_save,
+	ev_download,
+	ev_compile,
+	ex_set_theme
 };
 
 class CreateObject {
@@ -201,20 +204,6 @@ public:
 class CreatingCurve : public CreateObject {
 private:
 	int countClick;
-	Array<Array<Vector2>> PointsCurves;
-	Array<Vector2> imaginaryPoints;
-public:
-	CreatingCurve();
-	~CreatingCurve();
-
-	Array<ID> HandleEvent(const Event, Array<Vector2>&);
-
-	void DrawMode();
-};
-
-class CreatingCurveNew : public CreateObject {
-private:
-	int countClick;
 	bool isDrag;
 	Array<Array<Vector2>> PointsCurves;
 
@@ -225,8 +214,8 @@ private:
 
 	Event lastEvent;
 public:
-	CreatingCurveNew();
-	~CreatingCurveNew();
+	CreatingCurve();
+	~CreatingCurve();
 
 	Array<ID> HandleEvent(const Event, Array<Vector2>&);
 

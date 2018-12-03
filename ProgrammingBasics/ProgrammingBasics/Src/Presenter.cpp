@@ -70,7 +70,6 @@ Array<ID> Delete(const Array<ID>& obj, const Array<double>& params) {
 	return Array<ID>(0);
 }
 
-
 Mode* Presenter::mode(nullptr);
 IView* Presenter::view(nullptr);
 Model* Presenter::model(nullptr);
@@ -116,7 +115,6 @@ void Presenter::MoveObject(const Array<ID>& primitiveID,const Vector2& vector) {
 	model->Move(primitiveID, vector);
 }
 
-
 //void Presenter::DrawSelectedObjects(const Array<ID>& selectedObjects)
 //{
 //	for (int i = 0; i < selectedObjects.GetSize(); i++)
@@ -161,22 +159,22 @@ void Presenter::DrawSelectedObjects(const Array<ID>& selectedObjects)
 		}
 		case ot_segment: {
 			auto params = model->GetVariableObjParam(obj, VERTEX);
-			view->DrawLine(params, line);
+			view->DrawLine(params);
 			break;
 		}
 		case ot_arc: {
 			auto params = model->GetVariableObjParam(obj, VERTEX, CENTER, RADIUS, ANGLE);
-			view->DrawArc(params, line);
+			view->DrawArc(params);
 			break;
 		}
 		case ot_circle: {
 			auto params = model->GetVariableObjParam(obj, CENTER, RADIUS);
-			view->DrawCircle(params, line);
+			view->DrawCircle(params);
 			break;
 		}
 		case ot_curve: {
 			auto params = model->GetVariableObjParam(obj, VERTEX);
-			view->DrawCurveNew(params, line);
+			view->DrawCurve(params);
 			break;
 		}
 		default:
@@ -228,12 +226,12 @@ void Presenter::DrawSelectedObjects(const Array<ID>& selectedObjects)
 //	mode->DrawMode();
 //}
 
-
 void Presenter::DrawScene()
 {
 	auto color = Color::GetInstance();
 	auto objCtrl = ObjectController::GetInstance();
 	auto iter = model->GetPrimIterator();
+	view->SetStyleDrawing(color->Primitives(), solid);
 	while (iter.IsValid()) {
 		ID obj = *iter;
 		++iter;
@@ -241,30 +239,24 @@ void Presenter::DrawScene()
 			continue;
 		}
 		if (model->GetObjType(obj) == ot_point) {
-			view->SetColor(color->Points());
 			auto params = model->GetVariableObjParam(obj, VERTEX);
 			view->DrawPoint(params);
 		}
 		if (model->GetObjType(obj) == ot_segment) {
-			view->SetColor(color->Primitives());
 			auto params = model->GetVariableObjParam(obj, VERTEX);
-			view->DrawLine(params, line);
+			view->DrawLine(params);
 		}
 		if (model->GetObjType(obj) == ot_arc) {
-			view->SetColor(color->Primitives());
 			auto params = model->GetVariableObjParam(obj, VERTEX, CENTER, RADIUS, ANGLE);
-			view->DrawArc(params, line);
+			view->DrawArc(params);
 		}
 		if (model->GetObjType(obj) == ot_circle) {
-			view->SetColor(color->Primitives());
 			auto params = model->GetVariableObjParam(obj, CENTER, RADIUS);
-			view->DrawCircle(params, line);
+			view->DrawCircle(params);
 		}
 		if (model->GetObjType(obj) == ot_curve) {
-			view->SetColor(color->Primitives());
 			auto params = model->GetVariableObjParam(obj, VERTEX);
-			//view->DrawCurve(params, line);
-			view->DrawCurveNew(params, line);
+			view->DrawCurve(params);
 		}
 	}
 
@@ -272,19 +264,7 @@ void Presenter::DrawScene()
 	view->Update();
 }
 
-void Presenter::SaveProject(const std::string& path) 
-{
-	model->Save(path);
-}
-
-
-void Presenter::DownloadFile(const std::string& path)
-{
-	model->Download(path);
-	view->Update();
-}
-
-void Presenter::Set_event(Event _ev, Array<double>& _params)
+void Presenter::Set_event(Event _ev, Array<double>& _params, const std::string& str)
 {
 	Mode* temp = mode->HandleEvent(_ev, _params);
 	if (temp != nullptr)
@@ -292,23 +272,32 @@ void Presenter::Set_event(Event _ev, Array<double>& _params)
 		delete mode;
 		mode = temp;
 	}
+
+	switch (_ev)
+	{
+	case ev_save:
+	{
+		model->Save(str);
+		break;
+	}
+	case ev_download:
+	{
+		model->Download(str);
+		break;
+	}	
+	case ev_compile:
+	{
+		Presenter::Compile();
+		break;
+	}
+	case ex_set_theme:
+	{
+		Color::GetInstance()->SetTheme(int(_params[0]));
+		break;
+	}
+	}
 	view->Update();
 }
-
-//void Presenter::GetRequirementsByID(const ID& id, Array<ID>& reqIDs)
-//{
-//	Model::GetInstance()->GetRequirementsByID(id, reqIDs);
-//}
-
-//bool Presenter::GetObjType(const ID& id, object_type& type)
-//{
-//	return Model::GetInstance()->GetObjType(id, type);
-//}
-//
-//bool Presenter::GetObjParam(const ID& id, Array<double>& params)
-//{
-//	return Model::GetInstance()->GetObjParam(id, params);
-//}
 
 void Presenter::Compile() {
 	Compiler* compiler = Compiler::GetInstance();

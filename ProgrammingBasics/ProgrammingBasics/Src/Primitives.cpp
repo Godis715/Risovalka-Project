@@ -40,7 +40,7 @@ void quadro흎uation(double a, double b, double c, double& x1, double &x2) {
 	}
 }
 
-void cubic흎uation(double a, double b, double c, double d, double& x1, double &x2, double &x3) {
+void cubicEquotion(double a, double b, double c, double d, double& x1, double &x2, double &x3) {
 	if (abs(a) < EPS) {
 		quadro흎uation(b, c, d, x1, x2);
 		return;
@@ -497,8 +497,8 @@ double Curve::GetDist(const Vector2& click) const {
 		double By = (3 * P0.y - 6 * P1.y + 3 * P2.y);
 		double Cy = (-3 * P0.y + 3 * P1.y);
 		double Dy = (P0.y - click.y);
-		cubic흎uation(Ax, Bx, Cx, Dx, tx[0], tx[1], tx[2]);
-		cubic흎uation(Ay, By, Cy, Dy, ty[0], ty[1], ty[2]);
+		cubicEquotion(Ax, Bx, Cx, Dx, tx[0], tx[1], tx[2]);
+		cubicEquotion(Ay, By, Cy, Dy, ty[0], ty[1], ty[2]);
 		
 		for (int i = 0; i < countSolution; ++i) {
 			if (ty[i] > -EPS && ty[i] < 1 + EPS) {

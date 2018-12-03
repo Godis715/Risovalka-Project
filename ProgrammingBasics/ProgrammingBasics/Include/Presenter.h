@@ -12,23 +12,22 @@ private:
 	static IView* view;
 	static Model* model;
 public:
-	static void SaveProject(const std::string&);
-	static void DownloadFile(const std::string&);
 	static IView* GetView();
+
 	static void DrawScene();
+
 	static void DrawSelectedObjects(const Array<ID>&);
 
 	static void Initializer(IView* _view);
 
 	static void CleareScene();
 
-
-
 	static void MoveObject(const Array<ID>&, const Vector2&);
 
 	static void Compile();
 
-	static void Set_event(Event, Array<double>&);
+	//function for view
+	static void Set_event(Event, Array<double>&, const std::string& str = "");
 };
 
 

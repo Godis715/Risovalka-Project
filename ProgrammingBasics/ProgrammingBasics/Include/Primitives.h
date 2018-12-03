@@ -19,7 +19,7 @@
 int sign(double);
 void line≈quation(double, double, double&);
 void quadro≈quation(double, double, double, double&, double&);
-void cubic≈quation(double, double, double, double, double&, double&, double&);
+void cubicEquotion(double, double, double, double, double&, double&, double&);
 Vector2 GetPoint(const Vector2&, const Vector2&, const Vector2&, const Vector2&, const double);
 
 class Primitive;

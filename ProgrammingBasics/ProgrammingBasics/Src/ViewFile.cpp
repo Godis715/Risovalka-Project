@@ -47,19 +47,9 @@ void ViewFile::Initializer()
 
 void ViewFile::cl_theme_b(Fl_Widget* o, void*)
 {
-	Array<double> params(0);
-	if (((Fl_Menu_Button*)o)->mvalue()->label() == "Dark")
-	{
-		colorThemes->SetTheme(1);
-	}
-	if (((Fl_Menu_Button*)o)->mvalue()->label() == "Light")
-	{
-		colorThemes->SetTheme(2);
-	}
-	if (((Fl_Menu_Button*)o)->mvalue()->label() == "Neutral")
-	{
-		colorThemes->SetTheme(3);
-	}
+	Array<double> params(1);
+	params[0] = ((Fl_Menu_Button *)o)->value();
+	Presenter::Set_event(ex_set_theme, params);
 	Presenter::Set_event(ev_createPoint, params);
 	Presenter::Set_event(ev_escape, params);
 }
@@ -67,23 +57,26 @@ void ViewFile::cl_theme_b(Fl_Widget* o, void*)
 void ViewFile::cl_execute_script_b(Fl_Widget* o, void*)
 {
 	viewLog->Push("Log:Download script");
-	Presenter::Compile();
+	Array<double> params(0);
+	Presenter::Set_event(ev_compile, params);
 	((Fl_Button*)o)->deactivate();
 	((Fl_Button*)o)->activate();
 }
 
 void ViewFile::cl_SaveProject(Fl_Widget* o, void*)
 {
+	Array<double> params(0);
 	viewLog->Push("Log:Save file");
-	Presenter::SaveProject("project.svg");
+	Presenter::Set_event(ev_save, params, "project.svg");
 	((Fl_Button*)o)->deactivate();
 	((Fl_Button*)o)->activate();
 }
 
 void ViewFile::cl_DownloadFile(Fl_Widget* o, void*)
 {
+	Array<double> params(0);
 	viewLog->Push("Log:Download file");
-	Presenter::DownloadFile("project.svg");
+	Presenter::Set_event(ev_download, params, "project.svg");
 	((Fl_Button*)o)->deactivate();
 	((Fl_Button*)o)->activate();
 }

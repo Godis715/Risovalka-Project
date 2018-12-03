@@ -128,8 +128,9 @@ public:
 
 std::ostream& operator<<(std::ostream&, const ID&);
 
+
 template<typename T, typename ...Args> Array<T> CreateArr(const T& val, const Args& ... args) {
-	int numargs = sizeof...(args)+1;
+	int numargs = sizeof...(args) + 1;
 	Array<T> arr(numargs);
 	arr[0] = val;
 	int i = 1;
