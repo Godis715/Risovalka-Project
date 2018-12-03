@@ -74,16 +74,18 @@ void ViewFile::cl_execute_script_b(Fl_Widget* o, void*)
 
 void ViewFile::cl_SaveProject(Fl_Widget* o, void*)
 {
+	Array<double> params(0);
 	viewLog->Push("Log:Save file");
-	Presenter::SaveProject("project.svg");
+	Presenter::Set_event(ev_save, params, "project.svg");
 	((Fl_Button*)o)->deactivate();
 	((Fl_Button*)o)->activate();
 }
 
 void ViewFile::cl_DownloadFile(Fl_Widget* o, void*)
 {
+	Array<double> params(0);
 	viewLog->Push("Log:Download file");
-	Presenter::DownloadFile("project.svg");
+	Presenter::Set_event(ev_download, params, "project.svg");
 	((Fl_Button*)o)->deactivate();
 	((Fl_Button*)o)->activate();
 }

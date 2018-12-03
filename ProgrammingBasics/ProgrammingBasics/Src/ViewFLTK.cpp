@@ -1,4 +1,5 @@
 #include "ViewFLTK.h"
+#include "FLTKWidget.h"
 
 ViewFLTK::ViewFLTK()
 {
@@ -56,102 +57,39 @@ int ViewFLTK::Run()
 	return Fl::run(); 
 }
 
-void ViewFLTK::DrawLine(const Vector2& start, const Vector2& end, typeDrawing type)
+void SetStyleDrawing(const int r, const int g, const int b, const typeDrawing type = null)
 {
+	fl_color(fl_rgb_color(r, g, b));
 	switch (type)
 	{
-	case points:
+	case dot:
 		fl_line_style(FL_DOT, 2);
-		fl_begin_line();
-		fl_vertex(start.x, start.y);
-		fl_vertex(end.x, end.y);
-		fl_end_line();
 		break;
-	case line:
-		fl_begin_line();
-		fl_vertex(start.x, start.y);
-		fl_vertex(end.x, end.y);
-		fl_end_line();
+	case dash:
+		fl_line_style(FL_DASH, 1);
+		break;
+	case solid:
+		fl_line_style(FL_SOLID, 1);
 		break;
 	default:
-		fl_begin_line();
-		fl_vertex(start.x, start.y);
-		fl_vertex(end.x, end.y);
-		fl_end_line();
-		break;
-	}
-}
-void ViewFLTK::DrawLine(const Array<double>& params, typeDrawing type)
-{
-	switch (type)
-	{
-	case points:
-		fl_line_style(FL_DOT, 2);
-		fl_begin_line();
-		fl_vertex(params[0], params[1]);
-		fl_vertex(params[2], params[3]);
-		fl_end_line();
-		break;
-	case line:
-		fl_begin_line();
-		fl_vertex(params[0], params[1]);
-		fl_vertex(params[2], params[3]);
-		fl_end_line();
-		break;
-	default:
-		fl_begin_line();
-		fl_vertex(params[0], params[1]);
-		fl_vertex(params[2], params[3]);
-		fl_end_line();
 		break;
 	}
 }
 
-void ViewFLTK::DrawCircle(const Vector2& center, const Vector2& pointForCircle, typeDrawing type)
-{
-	double r = (pointForCircle - center).GetLength();
 
-	switch (type)
-	{
-	case points:
-		fl_line_style(FL_DOT, 2);
-		fl_begin_line();
-		fl_arc(center.x, center.y, r, 0.0, 360.0);
-		fl_end_line();
-		break;
-	case line:
-		fl_begin_line();
-		fl_arc(center.x, center.y, r, 0.0, 360.0);
-		fl_end_line();
-		break;
-	case polygon:
-		fl_begin_polygon();
-		fl_arc(center.x, center.y, r, 0.0, 360.0);
-		fl_end_polygon();
-		break;
-	}
-}
-void ViewFLTK::DrawCircle(const Array<double>& params, typeDrawing type)
+void ViewFLTK::DrawLine(const Array<double>& params)
 {
-	switch (type)
-	{
-	case points:
-		fl_line_style(FL_DOT, 2);
-		fl_begin_line();
-		fl_arc(params[0], params[1], params[2], 0.0, 360.0);
-		fl_end_line();
-		break;
-	case line:
-		fl_begin_line();
-		fl_arc(params[0], params[1], params[2], 0.0, 360.0);
-		fl_end_line();
-		break;
-	case polygon:
-		fl_begin_polygon();
-		fl_arc(params[0], params[1], params[2], 0.0, 360.0);
-		fl_end_polygon();
-		break;
-	}
+	fl_begin_line();
+	fl_vertex(params[0], params[1]);
+	fl_vertex(params[2], params[3]);
+	fl_end_line();
+}
+
+void ViewFLTK::DrawCircle(const Array<double>& params)
+{
+	fl_begin_line();
+	fl_arc(params[0], params[1], params[2], 0.0, 360.0);
+	fl_end_line();
 }
 
 void ViewFLTK::_DrawArc(const Vector2& center, double R, double angleStart, double angleEnd) {
@@ -164,80 +102,20 @@ void ViewFLTK::_DrawArc(const Vector2& center, double R, double angleStart, doub
 	}
 }
 
-void ViewFLTK::DrawArc(const Vector2& center, const Vector2& start, const Vector2& end, typeDrawing type)
+void ViewFLTK::DrawArc(const Array<double>& params)
 {
-	double Eps = 5.0;
-	double r1 = (center - start).GetLength();
-	double angleStart = (abs(r1) < Eps) ? 0.0 : acos((start.x - center.x) / r1) * (180 / PI);
-	if (center.y - start.y < 0) {
-		angleStart = 360.0 - angleStart;
-	}
-
-	double r2 = (center - end).GetLength();
-	double angleEnd = (abs(r2) < Eps) ? 360.0 : acos((end.x - center.x) / r2) * (180 / PI);
-	if (center.y - end.y < 0) {
-		angleEnd = 360.0 - angleEnd;
-	}
-
-	switch (type)
-	{
-	case points:
-		fl_line_style(FL_DOT, 1);
-		fl_begin_line();
-		_DrawArc(center, r1, angleStart, angleEnd);
-		fl_end_line();
-		break;
-	case line:
-		fl_line_style(FL_SOLID, 2);
-		fl_begin_line();
-		_DrawArc(center, r1, angleStart, angleEnd);
-		fl_end_line();
-		break;
-	case polygon:
-		fl_begin_polygon();
-		_DrawArc(center, r1, angleStart, angleEnd);
-		fl_end_polygon();
-		break;
-	}
-}
-void ViewFLTK::DrawArc(const Array<double>& params, typeDrawing type)
-{
-	double Eps = 5.0;
+	double EPS = 5.0;
 	double r = params[6];
 	double angle = params[7] * (180 / PI);
 	double angleStart = (r < Eps) ? 0.0 : acos((params[0] - params[4]) / r) * (180 / PI);
 	if (params[5] - params[1] < 0) {
 		angleStart = 360.0 - angleStart;
 	}
-	switch (type)
-	{
-	case points:
-		fl_line_style(FL_DOT, 1);
-		fl_begin_line();
-		_DrawArc(Vector2(params[4], params[5]), r, angleStart, angleStart + angle);
-		fl_end_line();
-		break;
-	case line:
-		fl_line_style(FL_SOLID, 2);
-		fl_begin_line();
-		_DrawArc(Vector2(params[4], params[5]), r, angleStart, angleStart + angle);
-		fl_end_line();
-		break;
-	case polygon:
-		fl_begin_polygon();
-		_DrawArc(Vector2(params[4], params[5]), r, angleStart, angleStart + angle);
-		fl_end_polygon();
-		break;
-	}
+	fl_begin_line();
+	_DrawArc(Vector2(params[4], params[5]), r, angleStart, angleStart + angle);
+	fl_end_line();
 }
 
-void ViewFLTK::DrawPoint(const Vector2& pos)
-{
-	int size = 2;
-	fl_begin_polygon();
-	fl_arc(pos.x, pos.y, size, 0.0, 360.0);
-	fl_end_polygon();
-}
 void ViewFLTK::DrawPoint(const Array<double>& params)
 {
 	fl_begin_polygon();
@@ -245,69 +123,7 @@ void ViewFLTK::DrawPoint(const Array<double>& params)
 	fl_end_polygon();
 }
 
-void ViewFLTK::DrawCurve(const Array<Vector2>& points, typeDrawing type)
-{
-	if (type == typeDrawing::points) {
-		fl_line_style(FL_DOT, 2);
-	}
-	fl_begin_line();
-	if (points.GetSize() == 2) {
-		fl_vertex(points[0].x, points[0].y);
-		fl_vertex(points[1].x, points[1].y);
-		fl_end_line();
-		return;
-	}
-	double x0 = points[0].x;
-	double y0 = points[0].y;
-	double x1;
-	double y1;
-	double x2;
-	double y2;
-	double x3;
-	double y3;
-	double x4;
-	double y4;
-	int size = points.GetSize();
-	for (int i = 0; i < size; ++i) {
-		if (size - i == 4) {
-			x1 = points[i + 1].x;
-			y1 = points[i + 1].y;
-			x2 = points[i + 2].x;
-			y2 = points[i + 2].y;
-			x3 = points[i + 3].x;
-			y3 = points[i + 3].y;
-			fl_curve(x0, y0, x1, y1, x2, y2, x3, y3);
-			i += 2;
-		}
-		if (size - i == 3) {
-			x1 = points[i + 1].x;
-			y1 = points[i + 1].y;
-			x2 = points[i + 2].x;
-			y2 = points[i + 2].y;
-			fl_curve(x0, y0, x1, y1, x2, y2, x2, y2);
-			i += 1;
-		}
-		if (size - i > 4) {
-			x1 = points[i + 1].x;
-			y1 = points[i + 1].y;
-			x2 = points[i + 2].x;
-			y2 = points[i + 2].y;
-			x3 = points[i + 3].x;
-			y3 = points[i + 3].y;
-			x3 = (x2 + x3) / 2;
-			y3 = (y2 + y3) / 2;
-			fl_curve(x0, y0, x1, y1, x2, y2, x3, y3);
-			x0 = x3;
-			y0 = y3;
-			i += 1;
-		}
-	}
-	fl_end_line();
-}
-void ViewFLTK::DrawCurve(const Array<double>& points, typeDrawing type) {
-	if (type == typeDrawing::points) {
-		fl_line_style(FL_DOT, 2);
-	}
+void ViewFLTK::DrawCurve(const Array<double>& points) {
 	fl_begin_line();
 	if (points.GetSize() == 4) {
 		fl_vertex(points[0], points[1]);
@@ -363,46 +179,6 @@ void ViewFLTK::DrawCurve(const Array<double>& points, typeDrawing type) {
 	fl_end_line();
 }
 
-void ViewFLTK::DrawCurveNew(const Array<Vector2>& points, typeDrawing type)
-{
-	if (type == typeDrawing::points) {
-		fl_line_style(FL_DOT, 2);
-	}
-	fl_begin_line();
-	for (size_t i = 0; i < points.GetSize() - 1; i = i + 3)
-	{
-		fl_curve(points[i].x, points[i].y, 
-			points[i + 1].x, points[i + 1].y,
-			points[i + 2].x, points[i + 2].y,
-			points[i + 3].x, points[i + 3].y);
-	}
-	fl_end_line();
-}
-void ViewFLTK::DrawCurveNew(const Array<double>& points, typeDrawing type) {
-	if (type == typeDrawing::points) {
-		fl_line_style(FL_DOT, 2);
-	}
-	fl_begin_line();
-	for (size_t i = 0; i < points.GetSize() - 2; i = i + 6)
-	{
-		fl_curve(points[i], points[i + 1],
-			points[i + 2], points[i + 3],
-			points[i + 4], points[i + 5],
-			points[i + 6], points[i + 7]);
-	}
-	fl_end_line();
-}
-
-void ViewFLTK::SetColor(const int r, const int g, const int b)
-{
-	fl_color(fl_rgb_color(r, g, b));
-}
-
-void ViewFLTK::SetColor(const rgbColor color)
-{
-	fl_color(fl_rgb_color(color.r, color.g, color.b));
-}
-
 void ViewFLTK::Update()
 {
 	auto color = colorTheme->BackGround();
@@ -436,7 +212,7 @@ IWidjet* ViewFLTK::GetWidjet(const typeWidjet typeW)
 	{
 		DisplayParamsPrim* displayParamsPrim = new DisplayParamsPrim();
 		dataWidjet->Add("DisplayParamsPrim", displayParamsPrim);
-		widjet = new IDisplayParamPrim("DisplayParamsPrim");
+		widjet = new FLTKDisplayParamPrim("DisplayParamsPrim");
 		break;
 	}
 	case displayParamReq:
@@ -448,24 +224,24 @@ IWidjet* ViewFLTK::GetWidjet(const typeWidjet typeW)
 		int coordY = paramsDisp[1] + paramsDisp[3] + 20;
 		DisplayParamsReq* displayParamsReq = new DisplayParamsReq(coordX, coordY);
 		dataWidjet->Add("DisplayParamsReq", displayParamsReq);
-		widjet = new IDisplayParamReq("DisplayParamsReq");
+		widjet = new FLTKDisplayParamReq("DisplayParamsReq");
 		break;
 	}
 	case creatingToolbar:
 	{
-		widjet = new ICreatingToolbar("ToolBar");
+		widjet = new FLTKCreatingToolbar("ToolBar");
 		break;
 	}
 	case requirementInput:
 	{
 		RequirementInput* requirementInput = new RequirementInput();
 		dataWidjet->Add("RequirementInput", requirementInput);
-		widjet = new IRequirementInput("RequirementInput");
+		widjet = new FLTKRequirementInput("RequirementInput");
 		break;
 	}
 	case drawMode:
 	{
-		widjet = new IRequirementInput("DrawMode");
+		widjet = new FLTKDrawMode("DrawMode");
 		break;
 	}
 	default:
@@ -481,7 +257,7 @@ DisplayWidjet* ViewFLTK::GetWidjet(const string nameWidjet)
 {
 	auto markerDataWidjet = dataWidjet->Find(nameWidjet);
 
-	return *markerDataWidjet; // исключение!
+	return *markerDataWidjet; // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ!
 }
 
 void ViewFLTK::DeleteWidjet(const string nameWidjet) {
