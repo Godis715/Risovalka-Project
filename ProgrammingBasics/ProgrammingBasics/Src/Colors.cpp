@@ -79,7 +79,7 @@ Color* Color::GetInstance() {
 void Color::SetTheme(const int theme) {
 	switch (theme)
 	{
-	case 1:
+	case 0:
 	{
 		colors[0] = rgbColor{ col_Silver };
 		colors[1] = rgbColor{ col_Black };
@@ -92,7 +92,7 @@ void Color::SetTheme(const int theme) {
 		colors[8] = rgbColor{ col_Purple };
 		break;
 	}
-	case 2:
+	case 1:
 	{
 		colors[0] = rgbColor{ col_Black };
 		colors[1] = rgbColor{ col_White };
@@ -105,7 +105,7 @@ void Color::SetTheme(const int theme) {
 		colors[8] = rgbColor{ col_Purple };
 		break;
 	}
-	case 3:
+	case 2:
 	{
 		colors[0] = rgbColor{ col_Blue };
 		colors[1] = rgbColor{ col_DarkBlue };

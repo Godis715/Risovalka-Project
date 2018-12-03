@@ -51,15 +51,7 @@ public:
 	void DrawPoint(const Array<double>&);
 	void DrawCurve(const Array<double>&);
 
-	void DrawCurve(const Array<Vector2>& points, typeDrawing type);
-	void DrawCurve(const Array<double>& points, typeDrawing type);
-
-	void DrawCurveNew(const Array<Vector2>& points, typeDrawing type);
-	void DrawCurveNew(const Array<double>& points, typeDrawing type);
-
-	void SetColor(const int, const int, const int);
-	void SetColor(const rgbColor);
-	void SetStyleDrawing(const int, const int, const int, const typeDrawing = null);
+	void SetStyleDrawing(const rgbColor, const typeDrawing = null);
 	
 	void Update();
 

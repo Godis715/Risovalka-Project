@@ -19,18 +19,7 @@ public:
 	virtual void DrawCircle(const Array<double>&) = 0;
 	virtual void DrawCurve(const Array<double>&) = 0;
 
-	virtual void DrawCircle(const Vector2&, const Vector2&, typeDrawing) = 0;
-	virtual void DrawCircle(const Array<double>&, typeDrawing) = 0;
-
-	virtual void DrawCurve(const Array<Vector2>&, typeDrawing) = 0;
-	virtual void DrawCurve(const Array<double>&, typeDrawing) = 0;
-
-	virtual void DrawCurveNew(const Array<Vector2>&, typeDrawing) = 0;
-	virtual void DrawCurveNew(const Array<double>&, typeDrawing) = 0;
-
-	virtual void SetColor(const int, const int, const int) = 0;
-	virtual void SetColor(const rgbColor) = 0;
-	virtual void SetStyleDrawing(const int, const int, const int, const typeDrawing = null) = 0;
+	virtual void SetStyleDrawing(const rgbColor, const typeDrawing = null) = 0;
 	virtual int Run() = 0;
 	virtual void Update() = 0;
 	virtual void TranslateScene(const Vector2&) = 0;
