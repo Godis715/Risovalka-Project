@@ -10,14 +10,36 @@ WPFDisplayParamPrim::~WPFDisplayParamPrim() {
 	mailBox->SendMessage(massage);
 }
 
-void WPFDisplayParamPrim::SetParam(const Array<std::string>& params, const Array<std::string>& names) {
+void WPFDisplayParamPrim::SetParam(const object_type type, const Array<double>& params, const Array<std::string>& names) {
 	auto mailBox = MailBox::GetInstance();
 	Message massage;
-	massage.code = properties_point;
-	Array<std::string> strArr(0);
-	strArr += params;
-	strArr += names;
-	massage.strArr = strArr;
+	switch (type)
+	{
+	case ot_point:
+	{
+		massage.code = properties_point;
+		break;
+	}
+	case ot_segment:
+	{
+		massage.code = properties_segment;
+		break;
+	}
+	case ot_arc:
+	{
+		massage.code = properties_arc;
+		break;
+	}
+	case ot_circle:
+	{
+		massage.code = properties_circle;
+		break;
+	}
+	default:
+		break;
+	}
+	massage.doubleArr = params;
+	massage.strArr = names;
 	mailBox->SendMessage(massage);
 }
 #pragma endregion
@@ -32,15 +54,13 @@ WPFDisplayParamReq::~WPFDisplayParamReq() {
 	mailBox->SendMessage(massage);
 }
 
-void WPFDisplayParamReq::SetParam(const Array<std::string>& params, const std::string reqName) {
+void WPFDisplayParamReq::SetParam(const Array<double>& params, const std::string reqName) {
 	auto mailBox = MailBox::GetInstance();
-	Message massage;
-	massage.code = properties_req;
-	Array<std::string> strArr(0);
-	strArr += params;
-	strArr.PushBack(reqName);
-	massage.strArr = strArr;
-	mailBox->SendMessage(massage);
+	Message message;
+	message.code = properties_req;
+	message.doubleArr = params;
+	message.strArr = CreateArr(reqName);
+	mailBox->SendMessage(message);
 }
 #pragma endregion
 

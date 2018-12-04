@@ -77,26 +77,26 @@ void DisplayParamsPrim::cl_req(Fl_Widget* ob_req, void*) {
 	Presenter::Set_event(ev_click_Req, params);
 }
 
-void DisplayParamsPrim::Inizializatoin(const Array<string>& params, const Array<string>& nameReqs)
+void DisplayParamsPrim::Inizializatoin(const object_type type, const Array<string>& params, const Array<string>& nameReqs)
 {
-	switch (params.GetSize())
+	switch (type)
 	{
-	case 2:
+	case ot_point:
 	{
 		sizeY = 80;
 		break;
 	}
-	case 4:
+	case ot_segment:
 	{
 		sizeY = 140;
 		break;
 	}
-	case 5:
+	case ot_arc:
 	{
 		sizeY = 170;
 		break;
 	}
-	case 3:
+	case ot_circle:
 	{
 		sizeY = 110;
 		break;
@@ -106,21 +106,25 @@ void DisplayParamsPrim::Inizializatoin(const Array<string>& params, const Array<
 	}
 	group = new Fl_Group(coordX, coordY, sizeX, sizeY);
 	{
-		switch (params.GetSize())
+		switch (type)
 		{
-		case 2: {
+		case ot_point:
+		{
 			DisplayPoint(params);
 			break;
 		}
-		case 4: {
+		case ot_segment: 
+		{
 			DisplaySegment(params);
 			break;
 		}
-		case 5: {
+		case ot_arc:
+		{
 			DisplayArc(params);
 			break;
 		}
-		case 3: {
+		case ot_circle:
+		{
 			DisplayCircle(params);
 			break;
 		}

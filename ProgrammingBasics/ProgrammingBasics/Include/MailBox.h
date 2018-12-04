@@ -15,7 +15,7 @@ enum Code
 	properties_point = 10,
 	properties_segment,
 	properties_circle,
-	properties_curve,
+	properties_arc,
 	properties_req,
 	set_style = 20,
 	possible_req,

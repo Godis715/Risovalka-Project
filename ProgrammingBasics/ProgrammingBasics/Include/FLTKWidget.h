@@ -13,7 +13,7 @@ public:
 
 	~FLTKDisplayParamPrim();
 
-	void SetParam(const Array<std::string>&, const Array<std::string>&);
+	void SetParam(const object_type, const Array<double>&, const Array<std::string>&);
 };
 
 class FLTKDisplayParamReq : public IDisplayParamReq
@@ -25,7 +25,7 @@ public:
 
 	~FLTKDisplayParamReq();
 
-	void SetParam(const Array<std::string>&, const std::string);
+	void SetParam(const Array<double>&, const std::string);
 };
 
 class FLTKCreatingToolbar : public ICreatingToolbar

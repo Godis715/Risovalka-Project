@@ -235,10 +235,7 @@ void ChangingProperties::SetWidjetParamPrim() {
 	default:
 		break;
 	}
-	paramsString = Array<string>(params.GetSize());
-	for (int i = 0; i < params.GetSize(); ++i) {
-		paramsString[i] = ReverseParse(params[i]);
-	}
+
 
 	reqIDs.Clear();
 	reqIDs = model->GetRelatedObjects(selectedObject);
@@ -250,7 +247,7 @@ void ChangingProperties::SetWidjetParamPrim() {
 		nameReqs.PushBack(objTypeToString(typeReq) + '#' + int(reqIDs[i].GetHash()));
 	}
 
-	widjetPrim->SetParam(paramsString, nameReqs);
+	widjetPrim->SetParam(typePrim, params, nameReqs);
 }
 
 void ChangingProperties::SetWidjetParamReq() {
@@ -258,14 +255,9 @@ void ChangingProperties::SetWidjetParamReq() {
 
 	Array<double> reqParams = model->GetObjParam(reqID);
 
-	auto reqStringParams = Array<string>(reqParams.GetSize());
-	for (int i = 0; i < reqParams.GetSize(); ++i) {
-		reqStringParams[i] = ReverseParse(reqParams[i]);
-	}
-
 	object_type type = model->GetObjType(reqID);
 
-	widjetReq->SetParam(reqStringParams, objTypeToString(type));
+	widjetReq->SetParam(reqParams, objTypeToString(type));
 }
 
 Mode* ChangingProperties::HandleEvent(const Event e, const Array<double>& params)
@@ -2889,10 +2881,8 @@ CreatingArc::CreatingArc() {
 Array<ID> CreatingArc::HandleEvent(const Event ev, Array<Vector2>& params) {
 	if (ev == ev_leftMouseDown) {
 		if (stateClick == noClick) {
-			for (int i = 0; i < params.GetSize(); i++)
-			{
-				centerPoints.PushBack(params[i]);
-			}
+			centerPoints = params;
+			imaginaryPoints = params;
 			stateClick = oneClick;
 			return Array<ID>(0);
 		}
@@ -2901,10 +2891,7 @@ Array<ID> CreatingArc::HandleEvent(const Event ev, Array<Vector2>& params) {
 			{
 				throw std::invalid_argument("Bad number of parameters");
 			}
-			for (int i = 0; i < params.GetSize(); i++)
-			{
-				startPoints.PushBack(params[i]);
-			}
+			startPoints = params;
 			stateClick = twoClick;
 			return Array<ID>(0);
 		}
@@ -2953,47 +2940,44 @@ Array<ID> CreatingArc::HandleEvent(const Event ev, Array<Vector2>& params) {
 }
 
 void CreatingArc::DrawMode() {
+	int size = centerPoints.GetSize();
 	if (stateClick == oneClick)
 	{
+		double radius = (imaginaryPoints[0] - centerPoints[0]).GetLength();
 		view->SetStyleDrawing(color->Points());
-		for (int i = 0; i < centerPoints.GetSize(); i++)
+		for (int i = 0; i < size; i++)
 		{
 			view->DrawPoint(CreateArr(centerPoints[i].x, centerPoints[i].y));
 		}
 		view->SetStyleDrawing(color->CreatingPrim(), dot);
-		for (int i = 0; i < imaginaryPoints.GetSize(); i++)
+		for (int i = 0; i < size; i++)
 		{
-			double radius = (imaginaryPoints[i] - centerPoints[i]).GetLength();
 			view->DrawCircle(CreateArr(centerPoints[i].x, centerPoints[i].y, radius));
 		}
 	}
 	if (stateClick == twoClick)
 	{
+		double radius = (startPoints[0] - centerPoints[0]).GetLength();
+		double angle = Vector2::Angle(startPoints[0] - centerPoints[0], imaginaryPoints[0] - centerPoints[0]);
+
 		view->SetStyleDrawing(color->Points());
-		for (int i = 0; i < centerPoints.GetSize(); i++)
+		for (int i = 0; i < size; i++)
 		{
 			view->DrawPoint(CreateArr(centerPoints[i].x, centerPoints[i].y));
-		}
-
-		view->SetStyleDrawing(color->Primitives(), dot);
-		for (int i = 0; i < startPoints.GetSize(); i++)
-		{
-			double radius = (imaginaryPoints[i] - centerPoints[i]).GetLength();
-			view->DrawCircle(CreateArr(centerPoints[i].x, centerPoints[i].y, radius));
-		}
-
-		view->SetStyleDrawing(color->Points());
-		for (int i = 0; i < startPoints.GetSize(); i++)
-		{
 			view->DrawPoint(CreateArr(startPoints[i].x, startPoints[i].y));
 		}
 
-		view->SetStyleDrawing(color->CreatingPrim(), solid);
-		for (int i = 0; i < imaginaryPoints.GetSize(); i++)
+		view->SetStyleDrawing(color->Primitives(), dot);
+		for (int i = 0; i < size; i++)
 		{
+			view->DrawCircle(CreateArr(centerPoints[i].x, centerPoints[i].y, radius));
+		}
 
-			double radius = (imaginaryPoints[i] - centerPoints[i]).GetLength();
-			double angle = Vector2::Angle(startPoints[i] - centerPoints[i], imaginaryPoints[i] - centerPoints[i]);
+
+
+		view->SetStyleDrawing(color->CreatingPrim(), solid);
+		for (int i = 0; i < size; i++)
+		{
 			view->DrawArc(CreateArr( startPoints[i].x, startPoints[i].y,
 				imaginaryPoints[i].x, imaginaryPoints[i].y,
 				centerPoints[i].x, centerPoints[i].y,

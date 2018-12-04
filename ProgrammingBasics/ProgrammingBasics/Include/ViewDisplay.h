@@ -32,7 +32,7 @@ class DisplayParamsPrim : public DisplayWidjet
 
 		static void cl_req(Fl_Widget*, void*);
 	public:
-		void Inizializatoin(const Array<string>&,const Array<string>&);
+		void Inizializatoin(const object_type, const Array<string>&,const Array<string>&);
 
 		void GetParamDisplay(Array<int>&);
 

@@ -1,7 +1,7 @@
 #ifndef __IWIDJET
 #define __IWIDJET
 #include <string>
-#include "Array.h"
+#include "ID.h"
 
 class IWidjet
 {
@@ -11,16 +11,15 @@ public:
 class IDisplayParamPrim : public IWidjet
 {
 public:
-	virtual void SetParam(const Array<std::string>&, const Array<std::string>&) = 0;
+	virtual void SetParam(const object_type, const Array<double>&, const Array<std::string>&) = 0;
 	virtual ~IDisplayParamPrim() { }
 };
 
 class IDisplayParamReq : public IWidjet
 {
 public:
-	virtual void SetParam(const Array<std::string>&, const std::string) = 0;
+	virtual void SetParam(const Array<double>&, const std::string) = 0;
 	virtual ~IDisplayParamReq() { }
-
 };
 
 class ICreatingToolbar : public IWidjet

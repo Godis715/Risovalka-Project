@@ -15,13 +15,17 @@ FLTKDisplayParamPrim::~FLTKDisplayParamPrim() {
 	view->DeleteWidjet(password);
 }
 
-void FLTKDisplayParamPrim::SetParam(const Array<std::string>& params, const Array<std::string>& names) {
+void FLTKDisplayParamPrim::SetParam(const object_type type, const Array<double>& params, const Array<std::string>& names) {
 	auto view = ViewFLTK::GetInstance();
 	auto widjet = dynamic_cast<DisplayParamsPrim*>(view->GetWidjet(password));
 	auto mainWindow = dynamic_cast<MainWindow*>(view->GetWidjet("MainWindow"));
 	mainWindow->begin();
 	widjet->Clear();
-	widjet->Inizializatoin(params, names);
+	Array<string> paramsString(params.GetSize());
+	for (int i = 0; i < params.GetSize(); ++i) {
+		paramsString[i] = ReverseParse(params[i]);
+	}
+	widjet->Inizializatoin(type, paramsString, names);
 	mainWindow->end();
 	mainWindow->redraw();
 }
@@ -35,13 +39,17 @@ FLTKDisplayParamReq::~FLTKDisplayParamReq() {
 	view->DeleteWidjet(password);
 }
 
-void FLTKDisplayParamReq::SetParam(const Array<std::string>& params, const std::string name) {
+void FLTKDisplayParamReq::SetParam(const Array<double>& params, const std::string name) {
 	auto view = ViewFLTK::GetInstance();
 	auto widjet = dynamic_cast<DisplayParamsReq*>(view->GetWidjet(password));
 	auto mainWindow = dynamic_cast<MainWindow*>(view->GetWidjet("MainWindow"));
 	mainWindow->begin();
 	widjet->Clear();
-	widjet->Inizializatoin(params, name);
+	Array<string> paramsString(params.GetSize());
+	for (int i = 0; i < params.GetSize(); ++i) {
+		paramsString[i] = ReverseParse(params[i]);
+	}
+	widjet->Inizializatoin(paramsString, name);
 	mainWindow->end();
 	mainWindow->redraw();
 }
