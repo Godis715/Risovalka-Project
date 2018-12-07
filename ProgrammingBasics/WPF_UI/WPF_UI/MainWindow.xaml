@@ -21,94 +21,92 @@
                     <RowDefinition Height="auto"/>
                     <RowDefinition Height="auto"/>
                 </Grid.RowDefinitions>
-                <Grid Grid.Row="0">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="auto"/>
-                        <ColumnDefinition Width="auto"/>
-                        <ColumnDefinition Width="auto"/>
-                        <ColumnDefinition Width="auto"/>
-                        <ColumnDefinition Width="auto"/>
-                    </Grid.ColumnDefinitions>
-                    
-                    
-                    <Button Grid.Column="0" Height="25" Content="Script" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="1"/>
-                    <Button Grid.Column="1" Height="25" Content="Save" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="1"/>
-                    <Button Grid.Column="2" Height="25" Content="Download" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="1"/>
-                    <Button Grid.Column="3" Height="25" Content="Undo" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="1"/>
-                    <Button Grid.Column="4" Height="25" Content="Redo" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="1"/>
-                </Grid>
-                <TabControl Grid.Row="1">
-                    <TabItem Header="DrawingModes" Margin="1">
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="auto"/>
-                                <ColumnDefinition Width="auto"/>
-                                <ColumnDefinition Width="auto"/>
-                                <ColumnDefinition Width="auto"/>
-                            </Grid.ColumnDefinitions>
-                            <Button Grid.Column="0"  Height="25" Content="Default" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="1"/>
-                            <Button Grid.Column="1"  Height="25" Content="Symmetrical" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="1"/>
-                            <Button Grid.Column="2"  Height="25" Content="Rotation" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="1"/>
-                        </Grid>
-                        
-                    </TabItem>
-                    <TabItem Header="Object" Margin="1">
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="auto"/>
-                                <ColumnDefinition Width="auto"/>
-                                <ColumnDefinition Width="auto"/>
-                                <ColumnDefinition Width="auto"/>
-                                <ColumnDefinition Width="auto"/>
-                                <ColumnDefinition Width="auto"/>
-                                <ColumnDefinition Width="auto"/>
-                            </Grid.ColumnDefinitions>
-                            <Button Grid.Column="0"  Height="25" Content="Point" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="1"/>
-                            <Button Grid.Column="1"  Height="25" Content="Segment" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="1"/>
-                            <Button Grid.Column="2"  Height="25" Content="Star" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="1"/>
-                            <Button Grid.Column="3"  Height="25" Content="Broken" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="1"/>
-                            <Button Grid.Column="4"  Height="25" Content="Ark" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="1"/>
-                            <Button Grid.Column="5"  Height="25" Content="Circle" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="1"/>
-                            <Button Grid.Column="6"  Height="25" Content="Curve" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="1"/>
-                        </Grid>
-                    </TabItem>
-                    <TabItem Header="Redaction" Margin="1">
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="auto"/>
-                                <ColumnDefinition Width="auto"/>
-                                <ColumnDefinition Width="auto"/>
-                                <ColumnDefinition Width="auto"/>
-                                <ColumnDefinition Width="auto"/>
-                            </Grid.ColumnDefinitions>
-                            <Button Grid.Column="0"  Height="25" Content="Move" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="1"/>
-                            <Button Grid.Column="1"  Height="25" Content="Scale" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="1"/>
-                            <Button Grid.Column="2"  Height="25" Content="Rotate" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="1"/>
-                            <Button Grid.Column="3"  Height="25" Content="Delete" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="1"/>
-                            <Button Grid.Column="4"  Height="25" Content="Delete All" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="1"/>
-                        </Grid>
-                    </TabItem>
-                    <TabItem Header="Requirement" Margin="1">
-                        <Button  Height="25" Content="idk" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
-                    </TabItem>
-                    <TabItem Header="FastTool" Margin="1">
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="auto"/>
-                                <ColumnDefinition Width="auto"/>
-                            </Grid.ColumnDefinitions>
-                            <Button Grid.Column="0"  Height="25" Content="Points Distance" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="1"/>
-                            <Button Grid.Column="1"  Height="25" Content="Merge Points" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="1"/>
-                        </Grid>
-                    </TabItem>
 
+                <Menu Grid.Row="0" Height="25" VerticalAlignment="Top">
+                    <MenuItem Header="File">
+                        <MenuItem Header="New Project" />
+                        <MenuItem Header="Open Project" />
+                        <MenuItem Header="Add Project" />
+                        <Separator />
+                        <MenuItem Header="Run Script" />
+                    </MenuItem>
+                    <MenuItem Header="View" >
+                        <MenuItem Header="Dark" />
+                        <MenuItem Header="Light" />
+                        <MenuItem Header="Neutral" />
+                        <MenuItem Header="Gradient" />
+                        <Separator />
+                        <MenuItem Header="More..." />
+                    </MenuItem>
+                    <MenuItem Header="Info">
+                        <MenuItem Header="Help"/>
+                        <Separator/>
+                        <MenuItem Header="About..."/>
+                    </MenuItem>
 
-
-                </TabControl>
+                </Menu>
+                <ToolBar Grid.Row="1">
+                    <Button Content="Undo" Margin="2" Click="Button_Undo_Click"/>
+                    <Button Content="Redo" Margin="2" Click="Button_Redo_Click"/>
+                    <Separator/>
+                    <ComboBox x:Name="DrawMode">
+                        <ComboBoxItem IsSelected="True">
+                            <Label Content="Default"/>
+                        </ComboBoxItem>
+                        <StackPanel>
+                            <Label Content="Rotation"/>
+                        </StackPanel>
+                        <StackPanel>
+                            <Label Content="Symmetrical"/>
+                        </StackPanel>
+                    </ComboBox>
+                    <ComboBox x:Name="Rot_Sym_Conf">
+                        <ComboBoxItem IsSelected="True">
+                            <Label Content="--"/>
+                        </ComboBoxItem>
+                        <StackPanel>
+                            <Label Content="x2"/>
+                        </StackPanel>
+                        <StackPanel>
+                            <Label Content="x4"/>
+                        </StackPanel>
+                        <StackPanel>
+                            <Label Content="x8"/>
+                        </StackPanel>
+                    </ComboBox>
+                    <Separator/>
+                    <ToggleButton Content="Point" Margin="1" />
+                    <ToggleButton Content="Segment" Margin="1" />
+                    <ToggleButton Content="Star" Margin="1" />
+                    <ToggleButton Content="Broken" Margin="1" />
+                    <ToggleButton Content="Circle" Margin="1" />
+                    <ToggleButton Content="Arc" Margin="1" />
+                    <ToggleButton Content="Curve" Margin="1" />
+                    <Separator/>
+                    <Menu>
+                        <MenuItem x:Name="Reqs" Header="Requirments" />
+                    </Menu>
+                    <Separator/>
+                    <Button Content="___show params" Click="Button_showParams_Click"/>
+                    <Button Content="___show reqs" Click="Button_showReqs_Click"/>
+                </ToolBar>
                 
                 
             </Grid>
             <Canvas Grid.Row="1" HorizontalAlignment="Left" Height="600"  VerticalAlignment="Top" Width="900"/>
+        </Grid>
+        <Grid x:Name="test" Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition x:Name="ParamsRow" Height="auto"/>
+                <RowDefinition x:Name="ReqsRow" Height="auto"/>
+            </Grid.RowDefinitions>
+            <DataGrid x:Name="datagr" Grid.Row="0">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Name" Width="100"/>
+                    <DataGridTextColumn Header="Value" Width="100"/>
+
+                </DataGrid.Columns>
+            </DataGrid>
         </Grid>
         
 
