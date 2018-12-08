@@ -100,7 +100,19 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="Resources\CreateFile.ico" />
     <Resource Include="Resources\MainIcon.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\SaveFile.ico" />
+    <Resource Include="Resources\Setting.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\ImportFile.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\OpenFile.ico" />
+    <Resource Include="Resources\RunSript.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
