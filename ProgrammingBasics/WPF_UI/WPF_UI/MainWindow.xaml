@@ -5,7 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WPF_UI"
         mc:Ignorable="d"
-        Title="MainWindow" Height="720" Width="1280">
+        Title="MainWindow" Height="720" Width="1280"
+        MinHeight="720" MinWidth="1280">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="auto"/>
@@ -24,7 +25,12 @@
 
                 <Menu Grid.Row="0" Height="25" VerticalAlignment="Top">
                     <MenuItem Header="File">
-                        <MenuItem Header="New Project" />
+                        <MenuItem Header="New Project">
+                            <MenuItem.Icon>
+                                <Image Source="iconFile.ico" />
+                            </MenuItem.Icon>
+                        </MenuItem>
+                        <MenuItem Header="Save Project" />
                         <MenuItem Header="Open Project" />
                         <MenuItem Header="Add Project" />
                         <Separator />
@@ -75,27 +81,31 @@
                         </StackPanel>
                     </ComboBox>
                     <Separator/>
-                    <ToggleButton Content="Point" Margin="1" />
-                    <ToggleButton Content="Segment" Margin="1" />
-                    <ToggleButton Content="Star" Margin="1" />
-                    <ToggleButton Content="Broken" Margin="1" />
-                    <ToggleButton Content="Circle" Margin="1" />
-                    <ToggleButton Content="Arc" Margin="1" />
-                    <ToggleButton Content="Curve" Margin="1" />
+                    <RadioButton Content="Point" Margin="1" />
+                    <RadioButton Content="Segment" Margin="0,4" VerticalAlignment="Stretch" />
+                    <RadioButton Content="Star" Margin="1" />
+                    <RadioButton Content="Broken" Margin="1" />
+                    <RadioButton Content="Circle" Margin="1" />
+                    <RadioButton Content="Arc" Margin="1" />
+                    <RadioButton Content="Curve" Margin="1" />
                     <Separator/>
-                    <Menu>
-                        <MenuItem x:Name="Reqs" Header="Requirments" />
-                    </Menu>
+                    <Button>
+                        <Menu>
+                            <MenuItem x:Name="Reqs" Header="Requirments" />
+                        </Menu>
+                    </Button>
                     <Separator/>
                     <Button Content="___show params" Click="Button_showParams_Click"/>
                     <Button Content="___show reqs" Click="Button_showReqs_Click"/>
                 </ToolBar>
-                
-                
+
+
             </Grid>
             <Canvas Grid.Row="1" HorizontalAlignment="Left" Height="600"  VerticalAlignment="Top" Width="900"/>
         </Grid>
-        <Grid x:Name="test" Grid.Column="1">
+        
+        <!-->Test Grid</!-->
+            <Grid x:Name="test" Grid.Column="1">
             <Grid.RowDefinitions>
                 <RowDefinition x:Name="ParamsRow" Height="auto"/>
                 <RowDefinition x:Name="ReqsRow" Height="auto"/>
@@ -104,11 +114,8 @@
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Name" Width="100"/>
                     <DataGridTextColumn Header="Value" Width="100"/>
-
                 </DataGrid.Columns>
             </DataGrid>
         </Grid>
-        
-
     </Grid>
 </Window>

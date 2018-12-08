@@ -18,10 +18,10 @@ namespace WPF_UI
     /// <summary>
     /// Логика взаимодействия для MainWindow.xaml
     /// </summary>
-    public class paramet
+    public class Paramet
     {
-        public string name;
-        public double value;
+        public string Name { get; set; }
+        public double Value { get; set; }
     }
     public partial class MainWindow : Window
     {
@@ -47,7 +47,6 @@ namespace WPF_UI
 
         private void Button_Undo_Click(object sender, RoutedEventArgs e)
         {
-            
             Reqs.Items.Add(new MenuItem
             {
                 Header = "1"
@@ -84,16 +83,16 @@ namespace WPF_UI
             DataGrid paramtable = new DataGrid();
             paramtable.AutoGenerateColumns = true;
             paramtable.ColumnWidth = 10;
-            List<paramet> plist = new List<paramet>
+            List<Paramet> plist = new List<Paramet>
             {
-                new paramet {name = "x1", value = 0},
-                new paramet {name = "y1", value = 1},
-                new paramet {name = "x2", value = 2},
-                new paramet {name = "y2", value = 3},
-                new paramet {name = "x1", value = 0},
-                new paramet {name = "y1", value = 1},
-                new paramet {name = "x2", value = 2},
-                new paramet {name = "y2", value = 3}
+                new Paramet {Name = "x1", Value = 0},
+                new Paramet {Name = "y1", Value = 1},
+                new Paramet {Name = "x2", Value = 2},
+                new Paramet {Name = "y2", Value = 3},
+                new Paramet {Name = "x1", Value = 0},
+                new Paramet {Name = "y1", Value = 1},
+                new Paramet {Name = "x2", Value = 2},
+                new Paramet {Name = "y2", Value = 3}
             };
             datagr.ItemsSource = plist;
             //test.Children.Add(paramtable);
