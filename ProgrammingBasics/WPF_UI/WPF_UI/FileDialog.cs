@@ -53,16 +53,40 @@ namespace WPF_UI
 			return false;
 		}
 
-		public bool SaveFileDialog()
+		public bool AddFileDialog()
 		{
-			SaveFileDialog saveFileDialog = new SaveFileDialog();
-
-			//saveFileDialog.Title = "Kek";
-			saveFileDialog.Filter = "(*.svg)|*.svg";
-			if (saveFileDialog.ShowDialog() == true)
+			OpenFileDialog addFileDialog = new OpenFileDialog();
+			addFileDialog.Title = "Добавление";
+			addFileDialog.Filter = "(*.svg)|*.svg";
+			if (addFileDialog.ShowDialog() == true)
 			{
-				//string name = saveFileDialog.SafeFileName;
-				FilePath = saveFileDialog.FileName;
+				FilePath = addFileDialog.FileName;
+				return true;
+			}
+			return false;
+		}
+
+		public bool SaveAsFileDialog()
+		{
+			SaveFileDialog saveAsFileDialog = new SaveFileDialog();
+
+			saveAsFileDialog.Filter = "(*.svg)|*.svg";
+			if (saveAsFileDialog.ShowDialog() == true)
+			{
+				FilePath = saveAsFileDialog.FileName;
+				return true;
+			}
+			return false;
+		}
+
+		public bool NewFileDialog()
+		{
+			SaveFileDialog newFileDialog = new SaveFileDialog();
+			newFileDialog.Title = "Создание";
+			newFileDialog.Filter = "(*.svg)|*.svg";
+			if (newFileDialog.ShowDialog() == true)
+			{
+				FilePath = newFileDialog.FileName;
 				return true;
 			}
 			return false;
@@ -77,6 +101,32 @@ namespace WPF_UI
 	public class FileDialog : INotifyPropertyChanged
 	{
 		DialogService dialogService;
+
+		// команда сохранения файла в новый файл
+		private RelayCommand saveAsCommand;
+		public RelayCommand SaveAsCommand
+		{
+			get
+			{
+				return saveAsCommand ??
+				  (saveAsCommand = new RelayCommand(obj =>
+				  {
+					  try
+					  {
+						  if (dialogService.SaveAsFileDialog() == true)
+						  {
+							  //Presenter->SaveAsFile(dialogService.FilePath);
+							  dialogService.ShowMessage("File is save!");
+						  }
+					  }
+					  catch (Exception ex)
+					  {
+						  dialogService.ShowMessage(ex.Message);
+					  }
+				  }));
+			}
+		}
+
 		// команда сохранения файла
 		private RelayCommand saveCommand;
 		public RelayCommand SaveCommand
@@ -88,10 +138,32 @@ namespace WPF_UI
 				  {
 					  try
 					  {
-						  if (dialogService.SaveFileDialog() == true)
+						  //Presenter->SaveFile();
+						  dialogService.ShowMessage("File is save!");
+					  }
+					  catch (Exception ex)
+					  {
+						  dialogService.ShowMessage(ex.Message);
+					  }
+				  }));
+			}
+		}
+
+		// команда создания файла
+		private RelayCommand newCommand;
+		public RelayCommand NewCommand
+		{
+			get
+			{
+				return newCommand ??
+				  (newCommand = new RelayCommand(obj =>
+				  {
+					  try
+					  {
+						  if (dialogService.NewFileDialog() == true)
 						  {
-							  //to Presenter a dialogService.FilePath
-							  dialogService.ShowMessage("File is save!");
+							  //Presenter->NewFile(dialogService.FilePath);
+							  dialogService.ShowMessage("File is created!");
 						  }
 					  }
 					  catch (Exception ex)
@@ -115,8 +187,33 @@ namespace WPF_UI
 					  {
 						  if (dialogService.OpenFileDialog() == true)
 						  {
-							  //to Presenter a dialogService.FilePath
-							  dialogService.ShowMessage("File is open!");
+							  //Presenter->OpenFile(dialogService.FilePath)
+							  dialogService.ShowMessage("File is opened!");
+						  }
+					  }
+					  catch (Exception ex)
+					  {
+						  dialogService.ShowMessage(ex.Message);
+					  }
+				  }));
+			}
+		}
+
+		// команда добавления файла
+		private RelayCommand addCommand;
+		public RelayCommand AddCommand
+		{
+			get
+			{
+				return addCommand ??
+				  (addCommand = new RelayCommand(obj =>
+				  {
+					  try
+					  {
+						  if (dialogService.AddFileDialog() == true)
+						  {
+							  //Presenter->AddFile(dialogService.FilePath)
+							  dialogService.ShowMessage("File is added!");
 						  }
 					  }
 					  catch (Exception ex)

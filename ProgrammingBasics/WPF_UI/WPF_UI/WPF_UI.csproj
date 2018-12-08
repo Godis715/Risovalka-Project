@@ -116,5 +116,11 @@
     <Resource Include="Resources\OpenFile.ico" />
     <Resource Include="Resources\RunSript.ico" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\segment.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Themes.ico" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

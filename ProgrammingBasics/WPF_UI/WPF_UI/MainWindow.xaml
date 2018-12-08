@@ -25,12 +25,13 @@
 
                 <Menu Grid.Row="0" Height="25" VerticalAlignment="Top">
                     <MenuItem Header="File" x:Name="File">
-                        <MenuItem Header="New Project">
+                        <MenuItem Header="New Project" Command="{Binding NewCommand}">
                             <MenuItem.Icon>
                                 <Image Source="Resources/CreateFile.ico" />
                             </MenuItem.Icon>
                         </MenuItem>
-                        <MenuItem  Header="Save Project" Command="{Binding SaveCommand}">
+                        <MenuItem  Header="Save Project" Command="{Binding SaveCommand}" />
+                        <MenuItem  Header="Save Project as..." Command="{Binding SaveAsCommand}">
                             <MenuItem.Icon>
                                 <Image Source="Resources/SaveFile.ico" />
                             </MenuItem.Icon>
@@ -40,7 +41,7 @@
                                 <Image Source="Resources/OpenFile.ico" />
                             </MenuItem.Icon>
                         </MenuItem>
-                        <MenuItem Header="Add Project">
+                        <MenuItem Header="Add Project" Command="{Binding AddCommand}">
                             <MenuItem.Icon>
                                 <Image Source="Resources/ImportFile.ico" />
                             </MenuItem.Icon>
@@ -54,6 +55,9 @@
                     </MenuItem>
                     <MenuItem Header="View" >
                         <MenuItem Header="Themes">
+                            <MenuItem.Icon>
+                                <Image Source="Resources/Themes.ico" />
+                            </MenuItem.Icon>
                             <MenuItem Header="Dark" />
                             <MenuItem Header="Light" />
                             <MenuItem Header="Neutral" />
@@ -103,8 +107,14 @@
                         </StackPanel>
                     </ComboBox>
                     <Separator/>
-                    <RadioButton Content="Point" Margin="1" />
-                    <RadioButton Content="Segment" Margin="0,4" VerticalAlignment="Stretch" />
+                    <RadioButton Content="Point" Margin="1" >
+                      
+                    </RadioButton>
+                    <RadioButton Margin="0,4" VerticalAlignment="Stretch">
+                        <RadioButton.Content>
+                            <Image  Source="Resources/segment.png"  Width="20" Height="20" />
+                        </RadioButton.Content>
+                    </RadioButton>
                     <RadioButton Content="Star" Margin="1" />
                     <RadioButton Content="Broken" Margin="1" />
                     <RadioButton Content="Circle" Margin="1" />
