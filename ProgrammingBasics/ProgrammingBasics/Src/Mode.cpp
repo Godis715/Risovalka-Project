@@ -1,7 +1,8 @@
 #include "Mode.h"
 #include "Presenter.h"
 
-using namespace DrawProject;
+namespace DrawProject {
+	Presenter* presenter = nullptr;
 
 #pragma region OtherFunction
 string objTypeToString(const object_type type)
@@ -168,9 +169,12 @@ Mode* Mode::UnexpectedEvent(const Event e, const Array<double>& params) {
 	}
 }
 
+void Mode::Init() {
+	presenter = Presenter::GetInstance();
+}
+
 Mode::Mode() {
 	model = Model::GetInstance();
-	presenter = Presenter::GetInstance();
 	view = presenter->GetView();
 	color = Color::GetInstance();
 }
@@ -3173,3 +3177,4 @@ void CreatingCurve::DrawMode() {
 	}
 }
 #pragma endregion
+}

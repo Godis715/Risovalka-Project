@@ -5,8 +5,6 @@ VisualStudioVersion = 15.0.27004.2009
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ProgrammingBasics", "ProgrammingBasics\Build\ProgrammingBasics.vcxproj", "{12921B73-F815-4FA4-A943-889E3CD34A99}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UnitTests", "ProgrammingBasics\UnitTests\UnitTests.vcxproj", "{97A86CE8-0E08-4136-8603-28F90CAADCDF}"
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "KernelWrapper", "KernelWrapper\KernelWrapper.vcxproj", "{8F3DCBA5-AC6C-4049-9823-3BAD625469CB}"
 EndProject
 Global
@@ -25,14 +23,6 @@ Global
 		{12921B73-F815-4FA4-A943-889E3CD34A99}.Release|x64.Build.0 = Release|x64
 		{12921B73-F815-4FA4-A943-889E3CD34A99}.Release|x86.ActiveCfg = Release|Win32
 		{12921B73-F815-4FA4-A943-889E3CD34A99}.Release|x86.Build.0 = Release|Win32
-		{97A86CE8-0E08-4136-8603-28F90CAADCDF}.Debug|x64.ActiveCfg = Debug|Win32
-		{97A86CE8-0E08-4136-8603-28F90CAADCDF}.Debug|x64.Build.0 = Debug|Win32
-		{97A86CE8-0E08-4136-8603-28F90CAADCDF}.Debug|x86.ActiveCfg = Debug|Win32
-		{97A86CE8-0E08-4136-8603-28F90CAADCDF}.Debug|x86.Build.0 = Debug|Win32
-		{97A86CE8-0E08-4136-8603-28F90CAADCDF}.Release|x64.ActiveCfg = Release|x64
-		{97A86CE8-0E08-4136-8603-28F90CAADCDF}.Release|x64.Build.0 = Release|x64
-		{97A86CE8-0E08-4136-8603-28F90CAADCDF}.Release|x86.ActiveCfg = Release|Win32
-		{97A86CE8-0E08-4136-8603-28F90CAADCDF}.Release|x86.Build.0 = Release|Win32
 		{8F3DCBA5-AC6C-4049-9823-3BAD625469CB}.Debug|x64.ActiveCfg = Debug|x64
 		{8F3DCBA5-AC6C-4049-9823-3BAD625469CB}.Debug|x64.Build.0 = Debug|x64
 		{8F3DCBA5-AC6C-4049-9823-3BAD625469CB}.Debug|x86.ActiveCfg = Debug|Win32

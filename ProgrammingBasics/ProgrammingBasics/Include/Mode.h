@@ -1,14 +1,11 @@
 #ifndef __MODE
 #define __MODE
-
 #include "IView.h"
 #include "Model.h"
 #include <sstream>
 #include <iomanip>
 
 namespace DrawProject {
-
-
 	double Parse(string);
 
 	const char* ReverseParse(const double, int&);
@@ -89,7 +86,6 @@ namespace DrawProject {
 		//enum TypeCreate { tCreate_segment, tCreate_point, tCreate_arc, tCreate_circle, tCreate };
 		IView * view;
 		Model* model;
-		Presenter* presenter;
 		Undo_Redo* undo_redo;
 		Color* color;
 		bool isCreationFinish = false;
@@ -236,11 +232,11 @@ namespace DrawProject {
 		Mode* UnexpectedEvent(const Event e, const Array<double>&);
 
 		IView* view;
-		Presenter* presenter;
 		Model* model;
 		Color* color;
 	public:
 		Mode();
+		void Init();
 		virtual ~Mode() {}
 		virtual Mode* HandleEvent(const Event, const Array<double>&) = 0;
 		virtual void DrawMode() { }

@@ -1,14 +1,11 @@
 #include "MailBox.h"
 #include "ViewWPF.h";
 
-using namespace Kernel;
-using namespace DrawProject;
-
-void MailBox::SendMessage(const Message& message) {
+void MailBox::SendMessage(const Message* message) {
 	messageQueue.push(message);
 }
 
-Message MailBox::GetMessage() {
+const Message* MailBox::GetMessage() {
 	if (messageQueue.empty()) {
 		throw std::exception("messageQueue is empty");
 	}
@@ -34,7 +31,7 @@ MailBox::MailBox() {
 
 void MailBox::InitKernel() {
 	// initializing viewWPF -> initializing presenter -> initializing Model
-	ViewWPF::GetInstance();
+	ViewWPF::GetInstance()->Run();
 }
 
 MailBox* MailBox::instance = nullptr;

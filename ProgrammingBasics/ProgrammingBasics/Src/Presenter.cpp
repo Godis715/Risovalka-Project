@@ -81,8 +81,7 @@ namespace DrawProject {
 		return Array<ID>(0);
 	}
 
-	Presenter* Presenter::instance = nullptr;
-	//temp
+
 	Presenter::Presenter() {
 
 	}
@@ -96,6 +95,7 @@ namespace DrawProject {
 		if (instance = nullptr) {
 			instance = new Presenter();
 		}
+		return instance;
 	}
 
 	void Presenter::Initializer(IView* _view)
@@ -103,6 +103,7 @@ namespace DrawProject {
 		LOG("Initializing presenter", LEVEL_3);
 		view = _view;
 		mode = new Selection();
+		mode->Init();
 		model = Model::GetInstance();
 		auto tree = new treeFunc;
 		tree->Add("Point", CreatePoint);
@@ -128,39 +129,6 @@ namespace DrawProject {
 		model->Clear();
 		view->Update();
 	}
-
-	void Presenter::MoveObject(const Array<ID>& primitiveID, const Vector2& vector) {
-		model->Move(primitiveID, vector);
-	}
-
-	//void Presenter::DrawSelectedObjects(const Array<ID>& selectedObjects)
-	//{
-	//	for (int i = 0; i < selectedObjects.GetSize(); i++)
-	//	{
-	//		Array<double> params = model->GetPrimParamsForDrawing(selectedObjects[i]);
-	//		object_type type = model->GetObjType(selectedObjects[i]);
-	//
-	//		switch (type)
-	//		{
-	//		case ot_point:
-	//			GetView()->DrawPoint(Vector2(params[0], params[1]));
-	//			break;
-	//		case ot_segment:
-	//			GetView()->DrawLine(Vector2(params[0], params[1]),
-	//				Vector2(params[2], params[3]), line);
-	//			break;
-	//		case ot_arc:
-	//			GetView()->DrawArc(Vector2(params[5], params[6]),
-	//				Vector2(params[0], params[1]),
-	//				Vector2(params[2], params[3]), line);
-	//			break;
-	//		case ot_circle:
-	//			GetView()->DrawCircle(Vector2(params[0], params[1]),
-	//				Vector2(params[0] + params[2], params[1]), line);
-	//			break;
-	//		}
-	//	}
-	//}
 
 	void Presenter::DrawSelectedObjects(const Array<ID>& selectedObjects)
 	{
@@ -201,48 +169,6 @@ namespace DrawProject {
 		}
 	}
 
-	//void Presenter::DrawScene()
-	//{
-	//	auto objCtrl = ObjectController::GetInstance();
-	//	auto primCtrl = PrimController::GetInstance();
-	//	auto iter = model->GetPrimIterator();
-	//	while (iter.IsValid()) {
-	//		ID obj = *iter;
-	//		++iter;
-	//		if (!objCtrl->IsValid(obj)) {
-	//			continue;
-	//		}
-	//		Array<double> params = model->GetPrimParamsForDrawing(obj);
-	//
-	//		if (model->GetObjType(obj) == ot_point) {
-	//			view->SetColor(col_Red);
-	//			view->DrawPoint(Vector2(params[0], params[1]));
-	//		}
-	//		if (model->GetObjType(obj) == ot_segment) {
-	//			view->SetColor(col_White);
-	//			view->DrawLine(Vector2(params[0], params[1]),
-	//				Vector2(params[2], params[3]), line);
-	//		}
-	//		if (model->GetObjType(obj) == ot_arc) {
-	//			view->SetColor(col_White);
-	//			view->DrawArc(Vector2(params[5], params[6]),
-	//				Vector2(params[0], params[1]),
-	//				Vector2(params[2], params[3]), line);
-	//		}
-	//		if (model->GetObjType(obj) == ot_circle) {
-	//			view->SetColor(col_White);
-	//			view->DrawCircle(Vector2(params[0], params[1]),
-	//				Vector2(params[0] + params[2], params[1]), line);
-	//		}
-	//		if (model->GetObjType(obj) == ot_curve) {
-	//			view->SetColor(col_White);
-	//			view->DrawCurve(params, line);
-	//		}
-	//
-	//	}
-	//
-	//	mode->DrawMode();
-	//}
 
 	void Presenter::DrawScene()
 	{
@@ -329,4 +255,6 @@ namespace DrawProject {
 		}
 		view->Update();
 	}
+
+	Presenter* Presenter::instance = nullptr;
 }

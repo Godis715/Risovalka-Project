@@ -27,8 +27,6 @@ namespace DrawProject {
 
 		void DrawSelectedObjects(const Array<ID>&);
 
-
-
 		void CleareScene();
 
 		void MoveObject(const Array<ID>&, const Vector2&);
@@ -38,7 +36,6 @@ namespace DrawProject {
 		//function for view
 		void Set_event(Event, Array<double>&, const std::string& str = "");
 	};
-
 }
 
 #endif
