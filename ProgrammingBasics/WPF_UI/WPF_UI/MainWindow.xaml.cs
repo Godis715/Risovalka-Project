@@ -106,5 +106,76 @@ namespace WPF_UI
         {
 
         }
-    }
+
+		private Path gridPath;
+		private void DrawGridOnScene()
+		{
+			gridPath = new Path();
+			gridPath.Tag = "Grid";
+			gridPath.Stroke = Brushes.Bisque;
+			gridPath.StrokeThickness = 0.2;
+			var step = 20;
+			var grid = new GeometryGroup();
+			for (var coordX = 0; coordX < Scene.Width; coordX += step)
+			{
+				var lineHor = new LineGeometry();
+				lineHor.StartPoint = new Point(coordX, 0);
+				lineHor.EndPoint = new Point(coordX, Scene.Height);
+				grid.Children.Add(lineHor);
+			}
+			for (var coordY = 0; coordY < Scene.Height; coordY += step)
+			{
+				var lineVert = new LineGeometry();
+				lineVert.StartPoint = new Point(0, coordY);
+				lineVert.EndPoint = new Point(Scene.Width, coordY);
+				grid.Children.Add(lineVert);
+			}
+			gridPath.Data = grid;
+			Scene.Children.Add(gridPath);
+		}
+		private void Grid_OnOff(object sender, RoutedEventArgs e)
+		{
+			if (gridPath == null)
+			{
+				DrawGridOnScene();
+			}
+			else
+			{
+				Scene.Children.Remove(gridPath);
+				gridPath = null;
+			}
+		}
+
+		private Vector click1;
+		private Boolean isClick = false;
+		private void Canvas_OnMouseDown(object sender, MouseEventArgs e)
+		{
+			if (!isClick)
+			{
+				click1.X = e.GetPosition(Scene).X;
+				click1.Y = e.GetPosition(Scene).Y;
+				isClick = true;
+			}
+			else
+			{
+				isClick = false;
+				//Scene.Children.Clear();
+				Scene.Children.Add(new Line
+				{
+					X1 = click1.X,
+					Y1 = click1.Y,
+					X2 = e.GetPosition(Scene).X,
+					Y2 = e.GetPosition(Scene).Y,
+					StrokeStartLineCap = PenLineCap.Round,
+					StrokeEndLineCap = PenLineCap.Round,
+					StrokeThickness = 1,
+					Stroke = Brushes.White
+				});
+			}
+			
+			if (e.MouseDevice.LeftButton == MouseButtonState.Pressed)
+			{
+			}
+		}
+	}
 }

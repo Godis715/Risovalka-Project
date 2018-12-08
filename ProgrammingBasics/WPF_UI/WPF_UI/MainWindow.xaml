@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WPF_UI"
         mc:Ignorable="d"
-        Title="MainWindow" Height="720" Width="1280"
+        Title="DrawProject" Height="720" Width="1280"
         MinHeight="720" MinWidth="1280">
     <Grid>
         <Grid.ColumnDefinitions>
@@ -63,6 +63,7 @@
                             <MenuItem Header="Neutral" />
                             <MenuItem Header="Gradient" />
                         </MenuItem>
+                        <MenuItem Header="Grid On/Off" Click="Grid_OnOff" />
                         <Separator />
                         <MenuItem Header="More...">
                             <MenuItem.Icon>
@@ -133,7 +134,12 @@
 
 
             </Grid>
-            <Canvas Grid.Row="1" HorizontalAlignment="Left" Height="600"  VerticalAlignment="Top" Width="900"/>
+            <Canvas x:Name="Scene" MouseDown="Canvas_OnMouseDown" Grid.Row="1" HorizontalAlignment="Left" Height="600"  VerticalAlignment="Top" Width="900" Background="Black">
+
+                
+                
+                
+            </Canvas>
         </Grid>
         
         <!-->Test Grid</!-->
