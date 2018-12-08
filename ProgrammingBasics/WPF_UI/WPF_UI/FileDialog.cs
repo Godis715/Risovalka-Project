@@ -44,6 +44,7 @@ namespace WPF_UI
 		public bool OpenFileDialog()
 		{
 			OpenFileDialog openFileDialog = new OpenFileDialog();
+			openFileDialog.Filter = "(*.svg)|*.svg";
 			if (openFileDialog.ShowDialog() == true)
 			{
 				FilePath = openFileDialog.FileName;
@@ -55,8 +56,12 @@ namespace WPF_UI
 		public bool SaveFileDialog()
 		{
 			SaveFileDialog saveFileDialog = new SaveFileDialog();
+
+			//saveFileDialog.Title = "Kek";
+			saveFileDialog.Filter = "(*.svg)|*.svg";
 			if (saveFileDialog.ShowDialog() == true)
 			{
+				//string name = saveFileDialog.SafeFileName;
 				FilePath = saveFileDialog.FileName;
 				return true;
 			}
@@ -85,6 +90,7 @@ namespace WPF_UI
 					  {
 						  if (dialogService.SaveFileDialog() == true)
 						  {
+							  //to Presenter a dialogService.FilePath
 							  dialogService.ShowMessage("File is save!");
 						  }
 					  }
@@ -109,8 +115,8 @@ namespace WPF_UI
 					  {
 						  if (dialogService.OpenFileDialog() == true)
 						  {
+							  //to Presenter a dialogService.FilePath
 							  dialogService.ShowMessage("File is open!");
-							 // Console.WriteLine(dialogService.FilePath);
 						  }
 					  }
 					  catch (Exception ex)
