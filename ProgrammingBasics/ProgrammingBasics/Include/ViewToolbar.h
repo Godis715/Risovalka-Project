@@ -2,6 +2,8 @@
 #define __VIEW_TOOLBAR
 #include "ViewHeaders.h"
 #include "ViewLog.h"
+using namespace DrawProject;
+
 class ViewToolbar : public DisplayWidjet
 {
 private:
@@ -54,6 +56,8 @@ private:
 	static void cl_FastRequirement(Fl_Widget*, void*);
 
 	static void cl_Button(Fl_Widget*, void*);
+
+	static Presenter* presenter;
 
 	void Initializer();
 public:

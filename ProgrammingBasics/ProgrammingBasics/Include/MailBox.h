@@ -5,6 +5,8 @@
 #include <string>
 #include "Array.h"
 
+using namespace DrawProject;
+
 enum Code
 {
 	draw_point = 0,

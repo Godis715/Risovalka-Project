@@ -63,18 +63,18 @@ void DisplayParamsPrim::cl_OK(Fl_Widget* o, void*)
 	{
 		params.PushBack(Parse(inputs[i]->value()));
 	}
-	Presenter::Set_event(ev_change_Prim, params);
+	presenter->Set_event(ev_change_Prim, params);
 }
 
 void DisplayParamsPrim::cl_Close(Fl_Widget* _b_close, void*) {
 	Array<double> params(0);
-	Presenter::Set_event(ev_delete_display_Prim, params);
+	presenter->Set_event(ev_delete_display_Prim, params);
 }
 
 void DisplayParamsPrim::cl_req(Fl_Widget* ob_req, void*) {
 	Array<double> params;
 	params.PushBack(((Fl_Menu_Button*)ob_req)->value());
-	Presenter::Set_event(ev_click_Req, params);
+	presenter->Set_event(ev_click_Req, params);
 }
 
 void DisplayParamsPrim::Inizializatoin(const object_type type, const Array<string>& params, const Array<string>& nameReqs)
@@ -168,7 +168,9 @@ void DisplayParamsPrim::GetParamDisplay(Array<int>& paramDisp)
 	paramDisp.PushBack(sizeY);
 }
 
-DisplayParamsPrim::DisplayParamsPrim(){}
+DisplayParamsPrim::DisplayParamsPrim(){
+	presenter = Presenter::GetInstance();
+}
 
 DisplayParamsPrim::~DisplayParamsPrim()
 {
@@ -188,11 +190,13 @@ void DisplayParamsPrim::Clear() {
 }
 
 Array<Fl_Float_Input*> DisplayParamsPrim::inputs;
+Presenter* DisplayParamsPrim::presenter = nullptr;
 #pragma endregion
 
 #pragma region RequirementInput
 RequirementInput::RequirementInput()
 {
+	presenter = Presenter::GetInstance();
 	textBuffer = new Fl_Float_Input(1010, 60, 100, 30);
 	textBuffer->when(FL_WHEN_ENTER_KEY);
 	textBuffer->callback(cl_Input);
@@ -211,8 +215,9 @@ void RequirementInput::cl_Input(Fl_Widget* o, void*) {
 	string numbers = ((Fl_Float_Input*)o)->value();
 	((Fl_Float_Input*)o)->value("");
 	params[0] = Parse(numbers);
-	Presenter::Set_event(ev_input, params);
+	presenter->Set_event(ev_input, params);
 }
+Presenter* RequirementInput::presenter = nullptr;
 #pragma endregion
 
 #pragma region DisplayParamsReq
@@ -223,18 +228,18 @@ void DisplayParamsReq::cl_OK(Fl_Widget* _b_ok, void*)
 	{
 		params.PushBack(Parse(inputs[i]->value()));
 	}
-	Presenter::Set_event(ev_change_Req, params);
+	presenter->Set_event(ev_change_Req, params);
 }
 
 void DisplayParamsReq::cl_Close(Fl_Widget* _b_close, void*) {
 	Array<double> params(0);
-	Presenter::Set_event(ev_delete_display_Req, params);
+	presenter->Set_event(ev_delete_display_Req, params);
 }
 
 void DisplayParamsReq::cl_Delete(Fl_Widget* _b_delete, void*)
 {
 	Array<double> params(0);
-	Presenter::Set_event(ev_delete_Req, params);
+	presenter->Set_event(ev_delete_Req, params);
 }
 
 void DisplayParamsReq::CreateInputs(const Array<string>& params)
@@ -300,7 +305,9 @@ void DisplayParamsReq::Inizializatoin(const Array<string>& params, const string 
 	}
 }
 
-DisplayParamsReq::DisplayParamsReq(int _coordX, int _coordY) : coordX(_coordX), coordY(_coordY){}
+DisplayParamsReq::DisplayParamsReq(int _coordX, int _coordY) : coordX(_coordX), coordY(_coordY) {
+	presenter = Presenter::GetInstance();
+}
 
 DisplayParamsReq::~DisplayParamsReq()
 {
@@ -320,11 +327,13 @@ void DisplayParamsReq::Clear() {
 }
 
 Array<Fl_Float_Input*> DisplayParamsReq::inputs;
+Presenter* DisplayParamsReq::presenter = nullptr;
 #pragma endregion
 
 #pragma region DrawMode
 DrawMode::DrawMode()
 {
+	presenter = Presenter::GetInstance();
 	if (output == nullptr)
 	{
 		output = new Fl_Output(10, 630, 500, 30);
@@ -345,4 +354,6 @@ void DrawMode::SetName(const std::string name)
 
 DrawMode* DrawMode::instance = nullptr;
 Fl_Output* DrawMode::output = nullptr;
+
+Presenter* DrawMode::presenter = nullptr;
 #pragma endregion

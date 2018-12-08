@@ -11,13 +11,14 @@ void DrawWindow::draw()
 	fl_translate(translateScene->x, translateScene->y);
 	fl_scale(scaleScene);
 	fl_rotate(rotateScene);
-	Presenter::DrawScene();
+	presenter->DrawScene();
 	fl_pop_matrix();
 }
 
 DrawWindow::DrawWindow(int x, int y, int w, int h, const char *l)
 	: Fl_Double_Window(x, y, w, h, l)
 {
+	presenter = Presenter::GetInstance();
 	colorScene = Color::GetInstance();
 	rgbColor colorSc = colorScene->DrowWindow();
 	box(FL_UP_BOX);
@@ -43,11 +44,11 @@ int DrawWindow::handle(int e)
 		params.PushBack((Fl::event_y() - translateScene->y) / scaleScene);
 		if (Fl::event_button() == FL_RIGHT_MOUSE)
 		{
-			Presenter::Set_event(ev_rightMouseDown, params);
+			presenter->Set_event(ev_rightMouseDown, params);
 		}
 		if (Fl::event_button() == FL_LEFT_MOUSE)
 		{
-			Presenter::Set_event(ev_leftMouseDown, params);
+			presenter->Set_event(ev_leftMouseDown, params);
 		}
 		break;
 	}
@@ -55,12 +56,12 @@ int DrawWindow::handle(int e)
 		fl_cursor(FL_CURSOR_DEFAULT);
 		params.PushBack((Fl::event_x() - translateScene->x) / scaleScene);
 		params.PushBack((Fl::event_y() - translateScene->y) / scaleScene);
-		Presenter::Set_event(ev_leftMouseUp, params);
+		presenter->Set_event(ev_leftMouseUp, params);
 		break;
 	}
 	case FL_MOUSEWHEEL: {
 		params.PushBack(Fl::event_dy());
-		Presenter::Set_event(ev_scroll, params);
+		presenter->Set_event(ev_scroll, params);
 		break;
 	}
 	case FL_ENTER: {
@@ -77,7 +78,7 @@ int DrawWindow::handle(int e)
 		params.PushBack((Fl::event_y() - translateScene->y) / scaleScene);
 		std::string out = "x:" + ReverseParse(params[0]) + " y: " + ReverseParse(params[1]);
 		OutputCoord::Push(str_ch(out));
-		Presenter::Set_event(ev_mouseMove, params);
+		presenter->Set_event(ev_mouseMove, params);
 		break;
 	}
 	case FL_DRAG: {
@@ -87,7 +88,7 @@ int DrawWindow::handle(int e)
 		}*/
 		params.PushBack((Fl::event_x() - translateScene->x) / scaleScene);
 		params.PushBack((Fl::event_y() - translateScene->y) / scaleScene);
-		Presenter::Set_event(ev_mouseMove, params);
+		presenter->Set_event(ev_mouseMove, params);
 		break;
 	}
 	}
@@ -125,3 +126,5 @@ Vector2* DrawWindow::translateScene = new Vector2(0.0, 0.0);
 double DrawWindow::scaleScene = 1.0;
 
 double DrawWindow::rotateScene = 0.0;
+
+Presenter* DrawWindow::presenter;

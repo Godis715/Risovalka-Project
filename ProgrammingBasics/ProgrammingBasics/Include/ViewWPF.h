@@ -4,6 +4,7 @@
 #include "IView.h"
 #include "Presenter.h"
 #include "WPFWidget.h"
+using namespace DrawProject;
 
 class ViewWPF : public IView {
 

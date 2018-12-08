@@ -1,6 +1,7 @@
 #ifndef __VIEWLOG
 #define __VIEWLOG
 #include "ViewHeaders.h"
+using namespace DrawProject;
 class ViewLog
 {
 private:

@@ -4,6 +4,8 @@
 #include "ViewHeaders.h"
 #include "ViewLog.h"
 
+using namespace DrawProject;
+
 class ViewFile : public DisplayWidjet
 {
 private:

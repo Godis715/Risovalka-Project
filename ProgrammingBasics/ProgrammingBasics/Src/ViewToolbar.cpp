@@ -5,7 +5,7 @@ void ViewToolbar::cl_DefualtDrawMode(Fl_Widget* o, void*)
 	delete inventory->lastCursor;
 	inventory->lastCursor = new Fl_Cursor(FL_CURSOR_DEFAULT);
 	Array<double> params(0);
-	Presenter::Set_event(ev_defualtDraw, params);
+	presenter->Set_event(ev_defualtDraw, params);
 }
 
 void ViewToolbar::cl_xSymmetricDrawMode(Fl_Widget* o, void*)
@@ -17,7 +17,7 @@ void ViewToolbar::cl_xSymmetricDrawMode(Fl_Widget* o, void*)
 	}
 	nameMode[0] = '0';
 	params.PushBack(std::stod(nameMode));
-	Presenter::Set_event(ev_symmetricalDraw, params);
+	presenter->Set_event(ev_symmetricalDraw, params);
 }
 
 void ViewToolbar::cl_xRotateDrawMode(Fl_Widget* o, void*)
@@ -26,7 +26,7 @@ void ViewToolbar::cl_xRotateDrawMode(Fl_Widget* o, void*)
 	string nameMode = ((Fl_Menu_Button*)o)->mvalue()->label();
 	nameMode[0] = '0';
 	params.PushBack(std::stod(nameMode));
-	Presenter::Set_event(ev_rotationDraw, params);
+	presenter->Set_event(ev_rotationDraw, params);
 }
 
 void ViewToolbar::cl_FastRequirement(Fl_Widget* o, void*) {
@@ -35,10 +35,10 @@ void ViewToolbar::cl_FastRequirement(Fl_Widget* o, void*) {
 	Array<double> params(0);
 	const string nameMode = ((Fl_Menu_Button*)o)->mvalue()->label();
 	if (nameMode == "Points distance") {
-		Presenter::Set_event(ev_req_D_point_fast, params);
+		presenter->Set_event(ev_req_D_point_fast, params);
 	}
 	if (nameMode == "Merge points") {
-		Presenter::Set_event(ev_req_Eq_point_fast, params);
+		presenter->Set_event(ev_req_Eq_point_fast, params);
 	}
 }
 
@@ -50,43 +50,43 @@ void ViewToolbar::cl_Create(Fl_Widget* o, void*)
 	if (((Fl_Menu_Button*)o)->mvalue()->label() == "Point")
 	{
 		viewLog->Push("Log::Create point");
-		Presenter::Set_event(ev_createPoint, params);
+		presenter->Set_event(ev_createPoint, params);
 		inventory->lastEvent = ev_createPoint;
 	}
 	if (((Fl_Menu_Button*)o)->mvalue()->label() == "Segment")
 	{
 		viewLog->Push("Log::Create segment");
-		Presenter::Set_event(ev_createSegment, params);
+		presenter->Set_event(ev_createSegment, params);
 		inventory->lastEvent = ev_createSegment;
 	}
 	if (((Fl_Menu_Button*)o)->mvalue()->label() == "Star")
 	{
 		viewLog->Push("Log::Create Star line");
-		Presenter::Set_event(ev_createStar, params);
+		presenter->Set_event(ev_createStar, params);
 		inventory->lastEvent = ev_createStar;
 	}
 	if (((Fl_Menu_Button*)o)->mvalue()->label() == "Broken")
 	{
 		viewLog->Push("Log::Create broken line");
-		Presenter::Set_event(ev_createBrokenLine, params);
+		presenter->Set_event(ev_createBrokenLine, params);
 		inventory->lastEvent = ev_createBrokenLine;
 	}
 	if (((Fl_Menu_Button*)o)->mvalue()->label() == "Arc")
 	{
 		viewLog->Push("Log::Create arc");
-		Presenter::Set_event(ev_createArc, params);
+		presenter->Set_event(ev_createArc, params);
 		inventory->lastEvent = ev_createArc;
 	}
 	if (((Fl_Menu_Button*)o)->mvalue()->label() == "Curve")
 	{
 		viewLog->Push("Log::Create Curve");
-		Presenter::Set_event(ev_createCurve, params);
+		presenter->Set_event(ev_createCurve, params);
 		inventory->lastEvent = ev_createCurve;
 	}
 	if (((Fl_Menu_Button*)o)->mvalue()->label() == "Circle")
 	{
 		viewLog->Push("Log::Create circle");
-		Presenter::Set_event(ev_createCircle, params);
+		presenter->Set_event(ev_createCircle, params);
 		inventory->lastEvent = ev_createCircle;
 	}
 }
@@ -103,32 +103,32 @@ void ViewToolbar::cl_Redaction(Fl_Widget* o, void*)
 		viewLog->Push("Log::Move selection");
 		delete inventory->lastCursor;
 		inventory->lastCursor = new Fl_Cursor(FL_CURSOR_MOVE);
-		Presenter::Set_event(ev_moveObjects, params);
+		presenter->Set_event(ev_moveObjects, params);
 	}
 
 	if (name == "Scale selection")
 	{
 		viewLog->Push("Log::Scale selection");
-		Presenter::Set_event(ev_scaleObjects, params);
+		presenter->Set_event(ev_scaleObjects, params);
 	}
 
 	if (name == "Rotate selection")
 	{
 		viewLog->Push("Log::Scale selection");
-		Presenter::Set_event(ev_rotateObjects, params);
+		presenter->Set_event(ev_rotateObjects, params);
 	}
 
 	if (name == "Delete selection")
 	{
 		viewLog->Push("Log::Delete selection");
-		Presenter::Set_event(ev_del, params);
+		presenter->Set_event(ev_del, params);
 	}
 
 	if (name == "Delete all scene")
 	{
 		viewLog->Push("Log::Delete all scene");
-		Presenter::Set_event(ev_delAll, params);
-		Presenter::CleareScene();
+		presenter->Set_event(ev_delAll, params);
+		presenter->CleareScene();
 	}
 }
 
@@ -141,32 +141,32 @@ void ViewToolbar::cl_Requirement(Fl_Widget* b_Req, void*)
 	if (nameReq == "Dist points")
 	{
 		viewLog->Push("Log::Create requirement: Dist points");
-		Presenter::Set_event(ev_req_D_point, params);
+		presenter->Set_event(ev_req_D_point, params);
 	}
 	if (nameReq == "Equal segment")
 	{
 		viewLog->Push("Log::Create requirement: Equal segment");
-		Presenter::Set_event(ev_req_Eq_Segment, params);
+		presenter->Set_event(ev_req_Eq_Segment, params);
 	}
 	if (nameReq == "Points on one hand")
 	{
 		viewLog->Push("Log::Create requirement: Points on one hand");
-		Presenter::Set_event(ev_req_on_one_hand, params);
+		presenter->Set_event(ev_req_on_one_hand, params);
 	}
 	if (nameReq == "Dist point segment")
 	{
 		viewLog->Push("Log::Create requirement: Dist point segment");
-		Presenter::Set_event(ev_req_D_point_segment, params);
+		presenter->Set_event(ev_req_D_point_segment, params);
 	}
 	if (nameReq == "Dist point arc")
 	{
 		viewLog->Push("Log::Create requirement: Dist point arc");
-		Presenter::Set_event(ev_req_D_point_arc, params);
+		presenter->Set_event(ev_req_D_point_arc, params);
 	}
 	if (nameReq == "Angle between segment")
 	{
 		viewLog->Push("Log::Create requirement: Angle between segment");
-		Presenter::Set_event(ev_req_angle_segment, params);
+		presenter->Set_event(ev_req_angle_segment, params);
 	}
 
 }
@@ -175,8 +175,8 @@ void ViewToolbar::cl_Button(Fl_Widget* but, void*)
 {
 	Array<double> params(0);
 	const string nameBut = ((Fl_Button*)but)->label();
-	if (nameBut == "<--")Presenter::Set_event(ev_undo, params);
-	if (nameBut == "-->")Presenter::Set_event(ev_redu, params);
+	if (nameBut == "<--")presenter->Set_event(ev_undo, params);
+	if (nameBut == "-->")presenter->Set_event(ev_redu, params);
 }
 
 void ViewToolbar::Initializer()
@@ -284,6 +284,7 @@ void ViewToolbar::Initializer()
 
 ViewToolbar::ViewToolbar()
 {
+	presenter = Presenter::GetInstance();
 	viewLog = viewLog->GetInstance();
 	inventory = inventory->GetInstance();
 	Initializer();
@@ -326,3 +327,5 @@ void ViewToolbar::ClearRequirements()
 ViewLog* ViewToolbar::viewLog = nullptr;
 
 Inventory* ViewToolbar::inventory = nullptr;
+
+Presenter* ViewToolbar::presenter = nullptr;

@@ -3,10 +3,10 @@
 #include <string>
 #include "ID.h"
 
+using namespace DrawProject;
+
 class IWidjet
-{
-public:
-};
+{};
 
 class IDisplayParamPrim : public IWidjet
 {

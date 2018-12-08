@@ -170,7 +170,8 @@ Mode* Mode::UnexpectedEvent(const Event e, const Array<double>& params) {
 
 Mode::Mode() {
 	model = Model::GetInstance();
-	view = Presenter::GetView();
+	presenter = Presenter::GetInstance();
+	view = presenter->GetView();
 	color = Color::GetInstance();
 }
 #pragma endregion
@@ -415,9 +416,9 @@ void ChangingProperties::DrawMode()
 	Array<ID> selectedObjects;
 	selectedObjects.PushBack(selectedObject);
 	view->SetStyleDrawing(color->DependentPrim());
-	Presenter::DrawSelectedObjects(primiOfReqIDs);
+	presenter->DrawSelectedObjects(primiOfReqIDs);
 	view->SetStyleDrawing(color->ChangingPrim());
-	Presenter::DrawSelectedObjects(selectedObjects);
+	presenter->DrawSelectedObjects(selectedObjects);
 }
 #pragma endregion
 
@@ -651,7 +652,7 @@ void DMDefualt::DrawMode()
 	if (selectionObjects.GetSize() != 0)
 	{
 		
-		Presenter::DrawSelectedObjects(selectionObjects);
+		presenter->DrawSelectedObjects(selectionObjects);
 	}
 }
 #pragma endregion
@@ -983,7 +984,7 @@ void DMSymmetrical::DrawMode()
 	if (selectionObjects.GetSize() != 0)
 	{
 
-		Presenter::DrawSelectedObjects(selectionObjects);
+		presenter->DrawSelectedObjects(selectionObjects);
 	}
 }
 #pragma endregion
@@ -1019,7 +1020,7 @@ void DMSectorSymmetrical::DrawMode()
 	view->SetStyleDrawing(color->SelectedPrim());
 	if (selectionObjects.GetSize() != 0)
 	{
-		Presenter::DrawSelectedObjects(selectionObjects);
+		presenter->DrawSelectedObjects(selectionObjects);
 	}
 }
 
@@ -1465,7 +1466,7 @@ Mode* Selection::HandleEvent(const Event e, const Array<double>& params) {
 void Selection::DrawMode()
 {
 	view->SetStyleDrawing(color->SelectedPrim());
-	Presenter::DrawSelectedObjects(selectedObjects);
+	presenter->DrawSelectedObjects(selectedObjects);
 
 	if (state == area_selection)
 	{
@@ -2112,7 +2113,7 @@ void Redaction::DrawMode() {
 		view->DrawPoint(CreateArr(pointRotate->x, pointRotate->y));
 	}
 	view->SetStyleDrawing(color->SelectedPrim());
-	Presenter::DrawSelectedObjects(selectedObjects);
+	presenter->DrawSelectedObjects(selectedObjects);
 }
 #pragma endregion
 
@@ -2224,7 +2225,7 @@ Mode* CreateRequirementWithParam::HandleEvent(const Event ev, const Array<double
 	
 void CreateRequirementWithParam::DrawMode() {
 	view->SetStyleDrawing(color->SelectedPrim());
-	Presenter::DrawSelectedObjects(selectedObjects);
+	presenter->DrawSelectedObjects(selectedObjects);
 }
 #pragma endregion
 
@@ -2446,14 +2447,15 @@ Mode* NavigationOnScene::HandleEvent(const Event ev, const Array<double>& params
 
 void NavigationOnScene::DrawMode() {
 	view->SetStyleDrawing(color->SelectedPrim());
-	Presenter::DrawSelectedObjects(selectedPrim);
+	presenter->DrawSelectedObjects(selectedPrim);
 }
 #pragma endregion
 
 #pragma region CreateObject
 CreateObject::CreateObject() {
 	model = Model::GetInstance();
-	view = Presenter::GetView();
+	presenter = Presenter::GetInstance();
+	view = presenter->GetView();
 	undo_redo = Undo_Redo::GetInstance();
 	color = Color::GetInstance();
 }
@@ -2763,7 +2765,7 @@ void CreatingBrokenLine::DrawMode() {
 		/*view->SetColor(col_ForestGreen);
 		if (createdSegments.GetSize() != 0)
 		{
-			Presenter::DrawSelectedObjects(createdSegments);
+			presenter->DrawSelectedObjects(createdSegments);
 		}*/
 	}
 }

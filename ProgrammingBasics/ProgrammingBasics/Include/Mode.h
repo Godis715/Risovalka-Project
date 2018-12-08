@@ -89,6 +89,7 @@ namespace DrawProject {
 		//enum TypeCreate { tCreate_segment, tCreate_point, tCreate_arc, tCreate_circle, tCreate };
 		IView * view;
 		Model* model;
+		Presenter* presenter;
 		Undo_Redo* undo_redo;
 		Color* color;
 		bool isCreationFinish = false;
@@ -235,6 +236,7 @@ namespace DrawProject {
 		Mode* UnexpectedEvent(const Event e, const Array<double>&);
 
 		IView* view;
+		Presenter* presenter;
 		Model* model;
 		Color* color;
 	public:

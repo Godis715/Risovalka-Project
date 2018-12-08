@@ -3,6 +3,7 @@
 
 ViewFLTK::ViewFLTK()
 {
+	presenter = Presenter::GetInstance();
 	colorTheme = Color::GetInstance();
 
 	dataWidjet = new DataWidjet();
@@ -39,7 +40,6 @@ ViewFLTK::ViewFLTK()
 	mainWindow->show();
 	drawWindow->show();
 
-
 }
 
 ViewFLTK::~ViewFLTK(){}
@@ -53,7 +53,7 @@ ViewFLTK* ViewFLTK::GetInstance() {
 
 int ViewFLTK::Run() 
 {
-	Presenter::Initializer(this);
+	presenter->Initializer(this);
 	return Fl::run(); 
 }
 
@@ -246,3 +246,5 @@ DrawWindow* ViewFLTK::drawWindow;
 Color* ViewFLTK::colorTheme = nullptr;
 
 ViewFLTK* ViewFLTK::instance = nullptr;
+
+Presenter* ViewFLTK::presenter = nullptr;

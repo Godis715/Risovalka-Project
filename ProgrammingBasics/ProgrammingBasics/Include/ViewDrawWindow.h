@@ -2,6 +2,7 @@
 #define __VIEW_DRAWWINDOW
 #include "ViewHeaders.h"
 #include "ViewLog.h"
+using namespace DrawProject;
 
 class DrawWindow : public Fl_Double_Window, public DisplayWidjet
 {
@@ -13,6 +14,8 @@ private:
 	static Color* colorScene;
 
 	static Vector2* translateScene;
+
+	static Presenter* presenter;
 	
 	static double scaleScene;
 

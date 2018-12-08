@@ -4,7 +4,7 @@
 #include "IWidjet.h"
 #include "MailBox.h"
 
-
+using namespace DrawProject;
 
 class WPFDisplayParamPrim : public IDisplayParamPrim
 {
