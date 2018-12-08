@@ -25,10 +25,14 @@ namespace WPF_UI
     }
     public partial class MainWindow : Window
     {
+		private FileDialog fileDialog;
+			
         public MainWindow()
         {
             InitializeComponent();
-        }
+			fileDialog = new FileDialog();
+			File.DataContext = fileDialog;
+		}
 
         private void Button_Save_Click(object sender, RoutedEventArgs e)
         {

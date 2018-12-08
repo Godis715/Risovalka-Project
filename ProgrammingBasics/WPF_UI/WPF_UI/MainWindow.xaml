@@ -24,18 +24,18 @@
                 </Grid.RowDefinitions>
 
                 <Menu Grid.Row="0" Height="25" VerticalAlignment="Top">
-                    <MenuItem Header="File">
+                    <MenuItem Header="File" x:Name="File">
                         <MenuItem Header="New Project">
                             <MenuItem.Icon>
                                 <Image Source="Resources/CreateFile.ico" />
                             </MenuItem.Icon>
                         </MenuItem>
-                        <MenuItem  Header="Save Project">
+                        <MenuItem  Header="Save Project" Command="{Binding SaveCommand}">
                             <MenuItem.Icon>
                                 <Image Source="Resources/SaveFile.ico" />
                             </MenuItem.Icon>
                         </MenuItem>
-                        <MenuItem Header="Open Project">
+                        <MenuItem Header="Open Project" Command="{Binding OpenCommand}">
                             <MenuItem.Icon>
                                 <Image Source="Resources/OpenFile.ico" />
                             </MenuItem.Icon>
