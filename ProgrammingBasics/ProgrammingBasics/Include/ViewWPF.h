@@ -6,33 +6,38 @@
 #include "WPFWidget.h"
 using namespace DrawProject;
 
-class ViewWPF : public IView {
+using namespace Kernel;
 
-public:
-	void DrawPoint(const Array<double>&);
-	void DrawLine(const Array<double>&);
-	void DrawArc(const Array<double>&);
-	void DrawCircle(const Array<double>&);
-	void DrawCurve(const Array<double>&);
+namespace DrawProject {
 
-	void SetStyleDrawing(const rgbColor, const typeDrawing = null);
+	class ViewWPF : public IView {
 
-	int Run();
-	void Update();
+	public:
+		void DrawPoint(const Array<double>&);
+		void DrawLine(const Array<double>&);
+		void DrawArc(const Array<double>&);
+		void DrawCircle(const Array<double>&);
+		void DrawCurve(const Array<double>&);
 
-	void TranslateScene(const Vector2&);
-	void ScaleScene(const double&);
-	void RotateScene(const double&);
+		void SetStyleDrawing(const rgbColor, const typeDrawing = null);
 
-	IWidjet* GetWidjet(const typeWidjet);
+		int Run();
+		void Update();
 
-	static ViewWPF* GetInstance();
-private:
-	ViewWPF();
+		void TranslateScene(const Vector2&);
+		void ScaleScene(const double&);
+		void RotateScene(const double&);
 
-	MailBox* mailBox;
+		IWidjet* GetWidjet(const typeWidjet);
 
-	static ViewWPF* instance;
-};
+		static ViewWPF* GetInstance();
+	private:
+		ViewWPF();
+
+		MailBox* mailBox;
+
+		static ViewWPF* instance;
+	};
+}
 
 #endif

@@ -3,7 +3,6 @@
 
 using namespace DrawProject;
 
-
 void Color::DrowWindow(const int r, const int g, const int b) {
 	colors[0] = rgbColor{ r, g ,b };
 	SaveFile();

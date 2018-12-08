@@ -26,7 +26,7 @@
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v141</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
@@ -86,6 +86,7 @@
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <PrecompiledHeaderFile />
     </ClCompile>
     <Link>
       <AdditionalDependencies>fltk.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -193,6 +194,7 @@
     <ClInclude Include="..\Include\ViewToolbar.h" />
     <ClInclude Include="..\Include\ViewWPF.h" />
     <ClInclude Include="..\Include\WPFWidget.h" />
+    <ClInclude Include="Kernel.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\..\Debug\script.txt" />

@@ -236,6 +236,9 @@
     <ClInclude Include="..\Include\ViewWPF.h">
       <Filter>Файлы заголовков\ViewWPF</Filter>
     </ClInclude>
+    <ClInclude Include="Kernel.h">
+      <Filter>Файлы заголовков\ViewWPF</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\..\Debug\script.txt">
