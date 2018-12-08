@@ -10,6 +10,8 @@
 
 #include "MailBox.h"
 
+using namespace DrawProject;
+
 void LoggerInit() {
 	Logger::InitLogger(&std::cout, 4);
 }

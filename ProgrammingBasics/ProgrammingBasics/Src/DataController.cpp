@@ -1,6 +1,8 @@
 #include "DataController.h"
 #include "ID.h"
 
+using namespace DrawProject;
+
 DataController* DataController::instance = nullptr;
 
 DataController::DataController() {

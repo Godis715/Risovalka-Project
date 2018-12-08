@@ -1,5 +1,7 @@
 #include "Primitives.h"
 
+using namespace DrawProject;
+
 PrimController* PrimController::instance = nullptr;
 
 PrimController::PrimController() {

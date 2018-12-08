@@ -1,5 +1,7 @@
 #include <Requirement.h>
 
+using namespace DrawProject;
+
 #pragma region Requirement
 Requirement::Requirement(object_type _type, const Array<double>& _params, const Array<ID>& _children) :
 	Object(_type, _params, _children), args(0)

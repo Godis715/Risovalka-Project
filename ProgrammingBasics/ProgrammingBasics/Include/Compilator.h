@@ -7,45 +7,48 @@
 #include <functional>
 #include <regex>
 
-typedef BinSearchTree<string, std::function<Array<ID>(const Array<ID>&, const Array<double>&)>> treeFunc;
-typedef void(*kik)(const Array<ID>&, const Array<double>&);
+namespace DrawProject {
+
+	typedef BinSearchTree<string, std::function<Array<ID>(const Array<ID>&, const Array<double>&)>> treeFunc;
+	typedef void(*kik)(const Array<ID>&, const Array<double>&);
 
 
-class Compiler {
-public:
-	static void Initializer(treeFunc*);
+	class Compiler {
+	public:
+		static void Initializer(treeFunc*);
 
-	static Compiler* GetInstance();
+		static Compiler* GetInstance();
 
-	~Compiler();
+		~Compiler();
 
-	void Parse(std::istream& input);
-private:
-	static Compiler* _instance;
+		void Parse(std::istream& input);
+	private:
+		static Compiler* _instance;
 
-	Compiler(treeFunc* _Tree);
+		Compiler(treeFunc* _Tree);
 
-	bool Command(string& str);
+		bool Command(string& str);
 
-	bool IsSymbol(char s);
+		bool IsSymbol(char s);
 
-	string GetNameFunction(string& input);
+		string GetNameFunction(string& input);
 
-	bool ParseNumber(const string& number, double& num);
+		bool ParseNumber(const string& number, double& num);
 
-	Array<string> GetVaribles(string&  input);
+		Array<string> GetVaribles(string&  input);
 
-	Array<double> GetPararms(string& input, bool& flag);
+		Array<double> GetPararms(string& input, bool& flag);
 
-	Array<ID> Complete(const string& func, const Array<string>& variables, const Array<double>& params, bool& flag);
+		Array<ID> Complete(const string& func, const Array<string>& variables, const Array<double>& params, bool& flag);
 
-	bool CommandCreatePrim(string& input);
-	bool CommandCreateReq(string& input);
-	bool CommandChange(string& input);
-	bool CommandDel(string& input);
+		bool CommandCreatePrim(string& input);
+		bool CommandCreateReq(string& input);
+		bool CommandChange(string& input);
+		bool CommandDel(string& input);
 
-	treeFunc* Tree;
+		treeFunc* Tree;
 
-	BinSearchTree<string, ID> varible;
-};
+		BinSearchTree<string, ID> varible;
+	};
+}
 #endif

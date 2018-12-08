@@ -1,50 +1,53 @@
 #define col___COLORS
 #ifndef _COLORS
-struct rgbColor
-{
-	int r;
-	int g;
-	int b;
-};
 
-class Color
-{
-private:
+namespace DrawProject {
 
-	rgbColor colors[9];
+	struct rgbColor
+	{
+		int r;
+		int g;
+		int b;
+	};
 
-	const int size = 9;
+	class Color
+	{
+	private:
 
-	static Color* instance;
-	Color();
+		rgbColor colors[9];
 
-	void SaveFile();
-public:
-	void DrowWindow(const int, const int, const int);
-	void BackGround(const int, const int, const int);
-	void Primitives(const int, const int, const int);
-	void Points(const int, const int, const int);
-	void SelectedPrim(const int, const int, const int);
-	void DependentPrim(const int, const int, const int);
-	void ChangingPrim(const int, const int, const int);
-	void CreatingPrim(const int, const int, const int);
-	void LineForCurve(const int, const int, const int);
+		const int size = 9;
 
-	const rgbColor DrowWindow() const;
-	const rgbColor BackGround() const;
-	const rgbColor Primitives() const;
-	const rgbColor Points() const;
-	const rgbColor SelectedPrim() const;
-	const rgbColor DependentPrim() const;
-	const rgbColor ChangingPrim() const;
-	const rgbColor CreatingPrim() const;
-	const rgbColor LineForCurve() const;
+		static Color* instance;
+		Color();
 
-	void SetTheme(const int);
+		void SaveFile();
+	public:
+		void DrowWindow(const int, const int, const int);
+		void BackGround(const int, const int, const int);
+		void Primitives(const int, const int, const int);
+		void Points(const int, const int, const int);
+		void SelectedPrim(const int, const int, const int);
+		void DependentPrim(const int, const int, const int);
+		void ChangingPrim(const int, const int, const int);
+		void CreatingPrim(const int, const int, const int);
+		void LineForCurve(const int, const int, const int);
 
-	static Color* GetInstance();
+		const rgbColor DrowWindow() const;
+		const rgbColor BackGround() const;
+		const rgbColor Primitives() const;
+		const rgbColor Points() const;
+		const rgbColor SelectedPrim() const;
+		const rgbColor DependentPrim() const;
+		const rgbColor ChangingPrim() const;
+		const rgbColor CreatingPrim() const;
+		const rgbColor LineForCurve() const;
 
-};
+		void SetTheme(const int);
+
+		static Color* GetInstance();
+
+	};
 
 #define col_IndianRed 205, 92, 92
 #define col_LightCoral	240, 128, 128
@@ -55,7 +58,7 @@ public:
 #define col_Red	255, 0, 0
 #define col_FireBrick 178, 34, 34
 #define col_DarkRed	139, 0, 0
-//Розовые тона 
+	//Розовые тона 
 #define col_Pink 255, 192, 203
 #define col_LightPink 255, 182, 193
 #define col_HotPink	255, 105, 180
@@ -212,3 +215,4 @@ public:
 #define col_DarkSlateGrey 47, 79, 79
 #endif // !_COLORS
 
+}

@@ -1,5 +1,7 @@
 #include "Requirement.h"
 
+using namespace DrawProject;
+
 ReqController* ReqController::instance = nullptr;
 
 ReqController::ReqController() {

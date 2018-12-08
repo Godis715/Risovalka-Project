@@ -1,5 +1,7 @@
 #include "Vector2.h"
 
+using namespace DrawProject;
+
 Vector2::Vector2(double _x, double _y) {
 	x = _x;
 	y = _y;

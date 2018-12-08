@@ -1,6 +1,8 @@
 #include "Presenter.h"
 #include "Mode.h"
 
+using namespace DrawProject;
+
 Array<ID> CreatePoint(const Array<ID>& obj, const Array<double>& params) {
 	if (params.GetSize() != 2) {
 		return Array<ID>(0);

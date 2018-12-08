@@ -1,6 +1,8 @@
 ﻿#include "Model.h"
 #include <list>
 
+using namespace DrawProject;
+
 Model* Model::instance = nullptr;
 
 Model* Model::GetInstance() {

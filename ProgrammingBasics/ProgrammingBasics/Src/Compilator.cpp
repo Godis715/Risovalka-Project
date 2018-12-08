@@ -1,5 +1,7 @@
 #include "Compilator.h"
 
+using namespace DrawProject;
+
 Compiler::Compiler(treeFunc* _Tree) : Tree(_Tree) {}
 
 Compiler::~Compiler() {

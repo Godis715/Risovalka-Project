@@ -4,152 +4,154 @@
 #include "Primitives.h"
 #define DELTA_X 10e-6
 
-class Requirement;
+namespace DrawProject {
 
-class ReqController {
-private:
-	ReqController();
-	static ReqController* instance;
+	class Requirement;
 
-	ObjectController* objCtrl;
+	class ReqController {
+	private:
+		ReqController();
+		static ReqController* instance;
 
-	PrimController* primCtrl;
+		ObjectController* objCtrl;
 
-	Requirement* GetReq(const ID&) const;
-	Requirement* ConvertToReq(Object*) const;
-public:
-	static ReqController* GetInstance();
+		PrimController* primCtrl;
 
-	bool IsReq(object_type) const;
+		Requirement* GetReq(const ID&) const;
+		Requirement* ConvertToReq(Object*) const;
+	public:
+		static ReqController* GetInstance();
 
-	bool IsReq(const ID&) const;
+		bool IsReq(object_type) const;
 
-	double GetReqError(const ID&) const;
-	double GetReqError(const Array<ID>&) const;
+		bool IsReq(const ID&) const;
 
-	Array<double> GetReqParamsAsValues(const ID&) const;
-	Array<double> GetGradient(const ID&) const;
-	
-	Array<double*> GetReqArgsAsPointers(const ID&) const;
+		double GetReqError(const ID&) const;
+		double GetReqError(const Array<ID>&) const;
 
-	void SetReqParams(const ID&, const Array<double>&) const;
-	void ApplyChanges(const ID&) const;
+		Array<double> GetReqParamsAsValues(const ID&) const;
+		Array<double> GetGradient(const ID&) const;
 
-	ID CreateReq(object_type, const Array<ID>&, const Array<double>&) const;
-};
+		Array<double*> GetReqArgsAsPointers(const ID&) const;
 
-class Requirement : public Object {
-private:
-	Array<double*> GetArgs() const;
-protected:
+		void SetReqParams(const ID&, const Array<double>&) const;
+		void ApplyChanges(const ID&) const;
 
-	Array<double*> args;
+		ID CreateReq(object_type, const Array<ID>&, const Array<double>&) const;
+	};
 
-	PrimController* primCtrl;
+	class Requirement : public Object {
+	private:
+		Array<double*> GetArgs() const;
+	protected:
 
-	Array<ID> objects;
-	
-	friend class ReqController;
-public:
-	Requirement(object_type, const Array<double>&, const Array<ID>&);
-	virtual double error() = 0;
-	virtual Array<double> Gradient();
-};
+		Array<double*> args;
+
+		PrimController* primCtrl;
+
+		Array<ID> objects;
+
+		friend class ReqController;
+	public:
+		Requirement(object_type, const Array<double>&, const Array<ID>&);
+		virtual double error() = 0;
+		virtual Array<double> Gradient();
+	};
 
 
-class DistBetPointsReq : public Requirement
-{
-private:
-public:
-	DistBetPointsReq(const Array<ID>&, const Array<double>&);
-	virtual Array<double> Gradient() override;
-	double error();
-};
+	class DistBetPointsReq : public Requirement
+	{
+	private:
+	public:
+		DistBetPointsReq(const Array<ID>&, const Array<double>&);
+		virtual Array<double> Gradient() override;
+		double error();
+	};
 
-class EqualPointsPositionReq : public Requirement {
-private:
-public:
-	EqualPointsPositionReq(const Array<ID>&, const Array<double>&);
-	virtual Array<double> Gradient() override;
-	double error();
-};
+	class EqualPointsPositionReq : public Requirement {
+	private:
+	public:
+		EqualPointsPositionReq(const Array<ID>&, const Array<double>&);
+		virtual Array<double> Gradient() override;
+		double error();
+	};
 
-class EqualSegmentLenReq : public Requirement {
-private:
-public:
-	EqualSegmentLenReq(const Array<ID>&, const Array<double>&);
+	class EqualSegmentLenReq : public Requirement {
+	private:
+	public:
+		EqualSegmentLenReq(const Array<ID>&, const Array<double>&);
 
-	double error();
+		double error();
 
-	virtual Array<double> Gradient();
-};
+		virtual Array<double> Gradient();
+	};
 
-class PointPosReq : public Requirement {
-private:
+	class PointPosReq : public Requirement {
+	private:
 
-public:
-	PointPosReq(const Array<ID>&, const Array<double>&);
+	public:
+		PointPosReq(const Array<ID>&, const Array<double>&);
 
-	double error();
-};
+		double error();
+	};
 
-class PointsOnTheOneHand : public Requirement
-{
-public:
-	PointsOnTheOneHand(const Array<ID>&, const Array<double>&);
+	class PointsOnTheOneHand : public Requirement
+	{
+	public:
+		PointsOnTheOneHand(const Array<ID>&, const Array<double>&);
 
-	double error();
-};
+		double error();
+	};
 
-class DistanceBetweenPointSegment : public Requirement
-{
-public:
-	// _objects = <segment, point>
-	DistanceBetweenPointSegment(const Array<ID>&, const Array<double>&);
+	class DistanceBetweenPointSegment : public Requirement
+	{
+	public:
+		// _objects = <segment, point>
+		DistanceBetweenPointSegment(const Array<ID>&, const Array<double>&);
 
-	double error();
+		double error();
 
-	Array<double> gradient();
-};
+		Array<double> gradient();
+	};
 
-class AngleBetweenSegments : public Requirement
-{
-public:
-	AngleBetweenSegments(const Array<ID>&, const Array<double>&);
+	class AngleBetweenSegments : public Requirement
+	{
+	public:
+		AngleBetweenSegments(const Array<ID>&, const Array<double>&);
 
-	double error();
+		double error();
 
-	void ChangeParams();
-private:
-	double cosinus;
-	double sinus;
-	double angle;
-};
+		void ChangeParams();
+	private:
+		double cosinus;
+		double sinus;
+		double angle;
+	};
 
-class DistanceBetweenPointArc : public Requirement
-{
-public:
-	DistanceBetweenPointArc(const Array<ID>&, const Array<double>&);
+	class DistanceBetweenPointArc : public Requirement
+	{
+	public:
+		DistanceBetweenPointArc(const Array<ID>&, const Array<double>&);
 
-	double error();
-}; 
+		double error();
+	};
 
-class SegmentTouchCircle : public Requirement {
-public:
-	SegmentTouchCircle(const Array<ID>&, const Array<double>&);
+	class SegmentTouchCircle : public Requirement {
+	public:
+		SegmentTouchCircle(const Array<ID>&, const Array<double>&);
 
-	double error();
-};
+		double error();
+	};
 
-// needed to fix
+	// needed to fix
 
-class PointInArc : public Requirement
-{
-public:
-	PointInArc(const Array<ID>&, const Array<double>&);
+	class PointInArc : public Requirement
+	{
+	public:
+		PointInArc(const Array<ID>&, const Array<double>&);
 
-	// return distance to arc and angle
-	double error();
-};
-
+		// return distance to arc and angle
+		double error();
+	};
+}
 #endif // REQUIREMENT_H

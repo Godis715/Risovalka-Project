@@ -3,15 +3,18 @@
 
 #include "DataController.h"
 
-class Optimizer {
-private:
-	ReqController* reqCtrl;
+namespace DrawProject {
 
-	void OptimizeByGradient(const Array<ID>&, const Array<double*>, const Array<double>&);
-	double ErrorByAlpha(const Array<ID>&, const Array<double*>, const Array<double>&, double);
-public:
-	Optimizer();
-	void OptimizeRequirements(const Array<ID>&);
-};
 
+	class Optimizer {
+	private:
+		ReqController * reqCtrl;
+
+		void OptimizeByGradient(const Array<ID>&, const Array<double*>, const Array<double>&);
+		double ErrorByAlpha(const Array<ID>&, const Array<double*>, const Array<double>&, double);
+	public:
+		Optimizer();
+		void OptimizeRequirements(const Array<ID>&);
+	};
+}
 #endif

@@ -1,6 +1,8 @@
 #include "Mode.h"
 #include "Presenter.h"
 
+using namespace DrawProject;
+
 #pragma region OtherFunction
 string objTypeToString(const object_type type)
 {

@@ -2,6 +2,8 @@
 
 #define count_vers 10
 
+using namespace DrawProject;
+
 #pragma region Version
 Version::Version(const TypeOFCange _type) : type(_type) {}
 #pragma endregion 

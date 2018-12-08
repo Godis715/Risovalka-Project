@@ -1,5 +1,7 @@
 #include "ID.h"
 
+using namespace DrawProject;
+
 ObjectController* ObjectController::GetInstance() {
 	if (instance == nullptr) {
 		instance = new ObjectController;

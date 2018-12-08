@@ -4,6 +4,8 @@
 #include "Array.h"
 #include "Queue.h"
 
+namespace DrawProject {
+
 // class - parent of all Nodes
 template <class Type> class Node {
 public:
@@ -1365,5 +1367,5 @@ public:
 	}
 };
 
-
+}
 #endif

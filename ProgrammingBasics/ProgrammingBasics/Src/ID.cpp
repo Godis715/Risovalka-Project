@@ -2,6 +2,8 @@
 
 // ID FUNCTIONS
 
+using namespace DrawProject;
+
 ID::ID(unsigned long long h) {
 	hash = h;
 	object = nullptr;

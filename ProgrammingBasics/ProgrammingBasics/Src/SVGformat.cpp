@@ -1,5 +1,7 @@
 #include "DataController.h"
 
+using namespace DrawProject;
+
 //private
 #define STROKE_WIDTH 5
 #define STROKE_COLOR "red"

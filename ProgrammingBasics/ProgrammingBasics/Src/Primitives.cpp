@@ -1,6 +1,7 @@
 #include "Primitives.h"
 #include <stdexcept>
 
+using namespace DrawProject;
 
 #pragma region someFunc
 int sign(double x) {

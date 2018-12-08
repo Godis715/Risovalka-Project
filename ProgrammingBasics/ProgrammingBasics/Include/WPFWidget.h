@@ -5,6 +5,7 @@
 #include "MailBox.h"
 
 
+
 class WPFDisplayParamPrim : public IDisplayParamPrim
 {
 public:

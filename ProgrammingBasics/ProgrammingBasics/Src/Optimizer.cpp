@@ -3,6 +3,7 @@
 #define OPTIM_GRAD_EPS 1e-2
 #define OPTIM_EPS 1e-2
 
+using namespace DrawProject;
 
 Optimizer::Optimizer() {
 	reqCtrl = ReqController::GetInstance();

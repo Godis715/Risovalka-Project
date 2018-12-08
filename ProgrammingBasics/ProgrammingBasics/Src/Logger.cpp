@@ -1,5 +1,7 @@
 #include "Logger.h"
 
+using namespace DrawProject;
+
 int Logger::minLevel = LEVEL_3;
 std::ostream* Logger::output = nullptr;
 
