@@ -146,14 +146,109 @@ namespace WPF_UI
 			}
 		}
 
+		private void DrawArc(Vector center, Vector startPoint, Vector endPoint)
+		{
+
+			var arcPath = new Path();
+			arcPath.Stroke = Brushes.White;
+			arcPath.StrokeThickness = 1;
+
+			var arcGeometry = new PathGeometry();
+
+			var arc = new PathFigure();
+			arc.StartPoint = new Point(startPoint.X, startPoint.Y);
+			var segmentArc = new ArcSegment();
+			segmentArc.Point = new Point(endPoint.X, endPoint.Y);
+			var radius = (startPoint - center).Length;
+			segmentArc.Size = new Size(radius, radius);
+			arc.Segments.Add(segmentArc);
+
+			arcGeometry.Figures.Add(arc);
+			arcPath.Data = arcGeometry;
+			Scene.Children.Add(arcPath);
+		}
+
+		private void DrawCurve(Vector[] points)
+		{
+			var curvePath = new Path();
+			curvePath.Stroke = Brushes.White;
+			curvePath.StrokeThickness = 1;
+
+			var curveGeometry = new PathGeometry();
+
+			var curve = new PathFigure();
+			curve.StartPoint = new Point(points[0].X, points[0].Y);
+			for (int i = 1; i < points.Length; i += 3)
+			{
+				var segmentCurve = new BezierSegment();
+				segmentCurve.Point1 = new Point(points[i].X, points[i].Y);
+				segmentCurve.Point2 = new Point(points[i + 1].X, points[i + 1].Y);
+				segmentCurve.Point3 = new Point(points[i + 2].X, points[i + 2].Y);
+				curve.Segments.Add(segmentCurve);
+			}
+
+			curveGeometry.Figures.Add(curve);
+			curvePath.Data = curveGeometry;
+			Scene.Children.Add(curvePath);
+		}
+
+		private void DrawLine(Vector pointStart, Vector pointEnd)
+		{
+			Scene.Children.Add(new Line
+			{
+				X1 = pointStart.X,
+				Y1 = pointStart.Y,
+				X2 = pointEnd.X,
+				Y2 = pointEnd.Y,
+				StrokeStartLineCap = PenLineCap.Round,
+				StrokeEndLineCap = PenLineCap.Round,
+				StrokeThickness = 1,
+				Stroke = Brushes.White
+			});
+		}
+
+		private void DrawPoint(Vector position)
+		{
+			var pointPath = new Path();
+			pointPath.Stroke = Brushes.White;
+			pointPath.Fill = Brushes.Red;
+			pointPath.StrokeThickness = 1;
+			EllipseGeometry point = new EllipseGeometry();
+			point.Center = new System.Windows.Point(position.X, position.Y);
+			point.RadiusX = 2;
+			point.RadiusY = 2;
+			pointPath.Data = point;
+			Scene.Children.Add(pointPath);
+		}
+
+		private void DrawCircle(Vector center, double radius)
+		{
+			var circlePath = new Path();
+			circlePath.Stroke = Brushes.White;
+			circlePath.StrokeThickness = 1;
+			EllipseGeometry circle = new EllipseGeometry();
+			circle.Center = new System.Windows.Point(center.X, center.Y);
+			circle.RadiusX = radius;
+			circle.RadiusY = radius;
+			circlePath.Data = circle;
+			Scene.Children.Add(circlePath);
+		}
+
 		private Vector click1;
 		private Boolean isClick = false;
 		private void Canvas_OnMouseDown(object sender, MouseEventArgs e)
 		{
+
+			DrawArc(new Vector(150, 150), new Vector(250, 150), new Vector(150, 50));
+			//Vector[] points = { new Vector(0, 100), new Vector(50, 50), new Vector(100, 150), new Vector(150, 100),
+			//new Vector(200, 50), new Vector(250, 150), new Vector(300, 100)};
+			//DrawCurve(points);
 			if (!isClick)
 			{
+				//DrawCircle(new Vector(e.GetPosition(Scene).X, e.GetPosition(Scene).Y), 100);
 				click1.X = e.GetPosition(Scene).X;
 				click1.Y = e.GetPosition(Scene).Y;
+				DrawPoint(new Vector(click1.X, click1.Y));
 				isClick = true;
 			}
 			else
@@ -171,6 +266,7 @@ namespace WPF_UI
 					StrokeThickness = 1,
 					Stroke = Brushes.White
 				});
+				DrawPoint(new Vector(e.GetPosition(Scene).X, e.GetPosition(Scene).Y));
 			}
 			
 			if (e.MouseDevice.LeftButton == MouseButtonState.Pressed)

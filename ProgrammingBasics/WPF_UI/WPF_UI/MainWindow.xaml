@@ -79,8 +79,16 @@
 
                 </Menu>
                 <ToolBar Grid.Row="1">
-                    <Button Content="Undo" Margin="2" Click="Button_Undo_Click"/>
-                    <Button Content="Redo" Margin="2" Click="Button_Redo_Click"/>
+                    <Button Margin="2" Click="Button_Undo_Click">
+                        <Button.Content>
+                            <Image Source="Resources/Undo.ico" Width="15" Height="15"/>
+                        </Button.Content>
+                    </Button>
+                    <Button Margin="2" Click="Button_Redo_Click">
+                        <Button.Content>
+                            <Image Source="Resources/Redo.ico" Width="15" Height="15"/>
+                        </Button.Content>
+                    </Button>
                     <Separator/>
                     <ComboBox x:Name="DrawMode">
                         <ComboBoxItem IsSelected="True">

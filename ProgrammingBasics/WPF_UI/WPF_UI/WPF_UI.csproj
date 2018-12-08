@@ -124,5 +124,11 @@
   <ItemGroup>
     <Resource Include="MainIcon.ico" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Undo.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Redo.ico" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
