@@ -4,6 +4,7 @@
 #include <queue>
 #include <string>
 #include "Array.h"
+#include <exception>
 
 #include "Presenter.h"
 
@@ -45,7 +46,17 @@ namespace Kernel {
 
 		void SendEvent(int code, DrawProject::Array<double>& doubleArr, const std::string& str = "") {
 			auto presenter = DrawProject::Presenter::GetInstance();
-			presenter->Set_event(DrawProject::Event(code), doubleArr, str);
+			std::cout << doubleArr.GetSize();
+			std::cout << "string is" << str;
+
+			std::ofstream log("logs.txt");
+			try {
+				presenter->Set_event(DrawProject::Event(code), doubleArr, str);
+			}
+			catch (std::exception e) {
+				log << e.what();
+			}
+			log.close();
 		}
 
 		Message* GetMessage();

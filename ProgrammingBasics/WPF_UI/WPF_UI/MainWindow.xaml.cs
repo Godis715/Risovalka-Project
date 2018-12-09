@@ -108,7 +108,7 @@ namespace WPF_UI
 
 		private void Button_Undo_Click(object sender, RoutedEventArgs e)
 		{
-			//viewModel.SetEvent()
+			viewModel.SetEvent(ViewModel.Event.ev_undo, new double[0]);
 			Reqs.Items.Add(new MenuItem
 			{
 				Header = "1"

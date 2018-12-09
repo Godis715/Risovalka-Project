@@ -15,7 +15,8 @@ namespace KernelWrapper {
 	public:
 		MailBoxWrapper() : ManagedObject(MailBox::GetInstance()) 
 		{
-			
+			auto mailBox = MailBox::GetInstance();
+			mailBox->InitKernel();
 		}
 		// 		void Set_event(Event, Array<double>&, const std::string& str = "");
 

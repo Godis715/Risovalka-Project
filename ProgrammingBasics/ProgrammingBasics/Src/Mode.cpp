@@ -174,9 +174,16 @@ void Mode::Init() {
 }
 
 Mode::Mode() {
+	// temp comment
 	model = Model::GetInstance();
+	presenter = Presenter::GetInstance();
 	view = presenter->GetView();
-	color = Color::GetInstance();
+	try {
+		color = Color::GetInstance();
+	}
+	catch (std::exception e) {
+		/* */
+	}
 }
 #pragma endregion
 
@@ -1224,10 +1231,15 @@ Selection::Selection(Array<ID> _selObjects) : Mode(), selectedObjects(_selObject
 }
 
 Selection::Selection() : Mode(), selectedObjects(0) {
+
 	IDrawMode* outputWidjet = static_cast<IDrawMode*>(view->GetWidjet(drawMode));
+	
 	outputWidjet->SetName("Mode: Selection");
+	
 	widjet = static_cast<ICreatingToolbar*>(view->GetWidjet(creatingToolbar));
+
 	state = single_selection;
+
 	widjet->Clear();
 }
 

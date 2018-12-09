@@ -201,7 +201,7 @@ namespace WPF_UI
 		public FileDialog()
 		{
 			dialogService = new DialogService();
-			viewModel = ViewModel.GetInstance(;
+			viewModel = ViewModel.GetInstance();
 		}
 
 		public event PropertyChangedEventHandler PropertyChanged;

@@ -7,8 +7,8 @@
         mc:Ignorable="d"
         Title="DrawProject" Height="720" Width="1280"
         MinHeight="720" MinWidth="1280"
-        KeyDown="Window_KeyDown"
-        KeyUp="Window_KeyDown">
+        KeyDown="Window_KeyEvent"
+        KeyUp="Window_KeyEvent">
     <Grid x:Name="DrawProject" Background="{Binding colors[6]}">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="auto"/>

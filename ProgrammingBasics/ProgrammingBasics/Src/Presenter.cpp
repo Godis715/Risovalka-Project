@@ -1,5 +1,7 @@
 #include "Presenter.h"
 
+#include <fstream>
+
 namespace DrawProject {
 
 	Array<ID> CreatePoint(const Array<ID>& obj, const Array<double>& params) {
@@ -92,7 +94,7 @@ namespace DrawProject {
 	}
 
 	Presenter* Presenter::GetInstance() {
-		if (instance = nullptr) {
+		if (instance == nullptr) {
 			instance = new Presenter();
 		}
 		return instance;
@@ -100,11 +102,12 @@ namespace DrawProject {
 
 	void Presenter::Initializer(IView* _view)
 	{
-		LOG("Initializing presenter", LEVEL_3);
 		view = _view;
+		
 		mode = new Selection();
-		mode->Init();
+
 		model = Model::GetInstance();
+		
 		auto tree = new treeFunc;
 		tree->Add("Point", CreatePoint);
 		tree->Add("Segment", CreateSegment);
@@ -117,6 +120,7 @@ namespace DrawProject {
 		tree->Add("Distance_bet_point_segment", DistanceBetPointSegment);
 		tree->Add("Delete", Delete);
 		Compiler::Initializer(tree);
+
 	}
 
 	void Presenter::CleareScene() {

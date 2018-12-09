@@ -103,6 +103,9 @@ void WPFDrawMode::SetName(const std::string) {
 	auto mailBox = MailBox::GetInstance();
 	auto message = new Message;
 	message->code = current_draw_mode;
+
+	/*message->strArray..*/
+
 	mailBox->SendMessage(message);
 }
 #pragma endregion

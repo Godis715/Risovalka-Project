@@ -6,11 +6,15 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Controls;
 
+using KernelWrapper;
+
 namespace WPF_UI
 {
 	class ViewModel : INotifyPropertyChanged
 	{
 		public event PropertyChangedEventHandler PropertyChanged;
+
+		private MailBoxWrapper mailBox;
 
 		public enum Event
 		{
@@ -84,7 +88,7 @@ namespace WPF_UI
 
 		private ViewModel()
 		{
-			
+			mailBox = new MailBoxWrapper();
 		}
 
 		private static ViewModel instance = null;
@@ -100,7 +104,14 @@ namespace WPF_UI
 
 		public void SetEvent(Event ev, double[] arrParams, string str = "")
 		{
-
+			if (str.Equals(""))
+			{
+				mailBox.SendEvent(ev.GetHashCode(), arrParams);
+			}
+			else
+			{
+				mailBox.SendEvent(ev.GetHashCode(), arrParams, str);
+			}
 		}
 
 

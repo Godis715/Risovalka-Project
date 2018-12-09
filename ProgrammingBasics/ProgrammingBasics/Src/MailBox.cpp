@@ -33,9 +33,8 @@ MailBox::MailBox() {
 
 void MailBox::InitKernel() {
 	// initializing viewWPF -> initializing presenter -> initializing Model
-	ViewWPF::GetInstance()->Run();
+	auto viewWPF = ViewWPF::GetInstance();
+	viewWPF->Run();
 }
-
-
 MailBox* MailBox::instance = nullptr;
 
