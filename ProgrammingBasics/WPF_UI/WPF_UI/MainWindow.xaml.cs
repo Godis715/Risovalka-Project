@@ -26,28 +26,44 @@ namespace WPF_UI
     public partial class MainWindow : Window
     {
 		private FileDialog fileDialog;
-			
-        public MainWindow()
+
+		private Themes themes;
+
+		public MainWindow()
         {
             InitializeComponent();
 			fileDialog = new FileDialog();
 			File.DataContext = fileDialog;
+			themes = new Themes();
+			DrawProject.DataContext = themes;
 		}
 
-        private void Button_Save_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private void Button_Script_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private void Button_Download_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
+		private void ChangedTheme(object sender, RoutedEventArgs e)
+		{
+			switch (((MenuItem)sender).Header.ToString())
+			{
+				case "Dark":
+					{
+						themes.SetTheme(Themes.NameTheme.Dark);
+						break;
+					}
+				case "Light":
+					{
+						themes.SetTheme(Themes.NameTheme.Light);
+						break;
+					}
+				case "Neutral":
+					{
+						themes.SetTheme(Themes.NameTheme.Neutral);
+						break;
+					}
+				case "Gradient":
+					{
+						themes.SetTheme(Themes.NameTheme.Gradient);
+						break;
+					}
+			}
+		}
 
 		private void Button_DrawMode(object sender, RoutedEventArgs e)
 		{
@@ -88,66 +104,66 @@ namespace WPF_UI
 						break;
 					}
 			}
+			//Rot_Sym_Conf.Height = ((Label)sender).Height * 2;
 		}
 
-
 		private void Button_Undo_Click(object sender, RoutedEventArgs e)
-        {
-            Reqs.Items.Add(new MenuItem
-            {
-                Header = "1"
-            });
-            Reqs.Items.Add(new MenuItem
-            {
-                Header = "2"
-            });
-            Reqs.Items.Add(new MenuItem
-            {
-                Header = "3"
-            });
-        }
+		{
+			Reqs.Items.Add(new MenuItem
+			{
+				Header = "1"
+			});
+			Reqs.Items.Add(new MenuItem
+			{
+				Header = "2"
+			});
+			Reqs.Items.Add(new MenuItem
+			{
+				Header = "3"
+			});
+		}
 
-        private void Button_Redo_Click(object sender, RoutedEventArgs e)
-        {
-            Reqs.Items.Clear();
-            Reqs.Items.Add(new MenuItem
-            {
-                Header = "1"
-            });
-            Reqs.Items.Add(new MenuItem
-            {
-                Header = "2"
-            });
-            Reqs.Items.Add(new MenuItem
-            {
-                Header = "3"
-            });
-        }
+		private void Button_Redo_Click(object sender, RoutedEventArgs e)
+		{
+			Reqs.Items.Clear();
+			Reqs.Items.Add(new MenuItem
+			{
+				Header = "1"
+			});
+			Reqs.Items.Add(new MenuItem
+			{
+				Header = "2"
+			});
+			Reqs.Items.Add(new MenuItem
+			{
+				Header = "3"
+			});
+		}
 
-        private void Button_showParams_Click(object sender, RoutedEventArgs e)
-        {
-            DataGrid paramtable = new DataGrid();
-            paramtable.AutoGenerateColumns = true;
-            paramtable.ColumnWidth = 10;
-            List<Paramet> plist = new List<Paramet>
-            {
-                new Paramet {Name = "x1", Value = 0},
-                new Paramet {Name = "y1", Value = 1},
-                new Paramet {Name = "x2", Value = 2},
-                new Paramet {Name = "y2", Value = 3},
-                new Paramet {Name = "x1", Value = 0},
-                new Paramet {Name = "y1", Value = 1},
-                new Paramet {Name = "x2", Value = 2},
-                new Paramet {Name = "y2", Value = 3}
-            };
-            datagr.ItemsSource = plist;
-            //test.Children.Add(paramtable);
-        }
+		private void Button_showParams_Click(object sender, RoutedEventArgs e)
+		{
+			DataGrid paramtable = new DataGrid();
+			paramtable.AutoGenerateColumns = true;
+			paramtable.ColumnWidth = 10;
+			List<Paramet> plist = new List<Paramet>
+			{
+				new Paramet {Name = "x1", Value = 0},
+				new Paramet {Name = "y1", Value = 1},
+				new Paramet {Name = "x2", Value = 2},
+				new Paramet {Name = "y2", Value = 3},
+				new Paramet {Name = "x1", Value = 0},
+				new Paramet {Name = "y1", Value = 1},
+				new Paramet {Name = "x2", Value = 2},
+				new Paramet {Name = "y2", Value = 3}
+			};
+			datagr.ItemsSource = plist;
+			//test.Children.Add(paramtable);
+		}
 
-        private void Button_showReqs_Click(object sender, RoutedEventArgs e)
-        {
+		private void Button_showReqs_Click(object sender, RoutedEventArgs e)
+		{
 
-        }
+		}
 
 		private Path gridPath;
 		private void DrawGridOnScene()
@@ -192,7 +208,7 @@ namespace WPF_UI
 		{
 
 			var arcPath = new Path();
-			arcPath.Stroke = Brushes.White;
+			arcPath.Stroke = themes.Primitives();
 			arcPath.StrokeThickness = 1;
 
 			var arcGeometry = new PathGeometry();
@@ -213,7 +229,7 @@ namespace WPF_UI
 		private void DrawCurve(Vector[] points)
 		{
 			var curvePath = new Path();
-			curvePath.Stroke = Brushes.White;
+			curvePath.Stroke = themes.Primitives();
 			curvePath.StrokeThickness = 1;
 
 			var curveGeometry = new PathGeometry();
@@ -245,14 +261,14 @@ namespace WPF_UI
 				StrokeStartLineCap = PenLineCap.Round,
 				StrokeEndLineCap = PenLineCap.Round,
 				StrokeThickness = 1,
-				Stroke = Brushes.White
+				Stroke = themes.Primitives()
 			});
 		}
 
 		private void DrawPoint(Vector position)
 		{
 			var pointPath = new Path();
-			pointPath.Stroke = Brushes.White;
+			pointPath.Stroke = themes.Primitives();
 			pointPath.Fill = Brushes.Red;
 			pointPath.StrokeThickness = 1;
 			EllipseGeometry point = new EllipseGeometry();
@@ -266,7 +282,7 @@ namespace WPF_UI
 		private void DrawCircle(Vector center, double radius)
 		{
 			var circlePath = new Path();
-			circlePath.Stroke = Brushes.White;
+			circlePath.Stroke = themes.Primitives();
 			circlePath.StrokeThickness = 1;
 			EllipseGeometry circle = new EllipseGeometry();
 			circle.Center = new System.Windows.Point(center.X, center.Y);
@@ -280,7 +296,6 @@ namespace WPF_UI
 		private Boolean isClick = false;
 		private void Canvas_OnMouseDown(object sender, MouseEventArgs e)
 		{
-
 			//DrawArc(new Vector(150, 150), new Vector(250, 150), new Vector(150, 50));
 			//Vector[] points = { new Vector(0, 100), new Vector(50, 50), new Vector(100, 150), new Vector(150, 100),
 			//new Vector(200, 50), new Vector(250, 150), new Vector(300, 100)};
@@ -306,7 +321,7 @@ namespace WPF_UI
 					StrokeStartLineCap = PenLineCap.Round,
 					StrokeEndLineCap = PenLineCap.Round,
 					StrokeThickness = 1,
-					Stroke = Brushes.White
+					Stroke = themes.Primitives()
 				});
 				DrawPoint(new Vector(e.GetPosition(Scene).X, e.GetPosition(Scene).Y));
 			}

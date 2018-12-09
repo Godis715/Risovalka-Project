@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         Title="DrawProject" Height="720" Width="1280"
         MinHeight="720" MinWidth="1280">
-    <Grid>
+    <Grid x:Name="DrawProject" Background="{Binding colors[6]}">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="auto"/>
             <ColumnDefinition Width="auto"/>
@@ -23,7 +23,7 @@
                     <RowDefinition Height="auto"/>
                 </Grid.RowDefinitions>
 
-                <Menu Grid.Row="0" Height="25" VerticalAlignment="Top">
+                <Menu Grid.Row="0" Height="25" VerticalAlignment="Top" Background="{Binding colors[8]}">
                     <MenuItem Header="File" x:Name="File">
                         <MenuItem Header="New Project" Command="{Binding NewCommand}">
                             <MenuItem.Icon>
@@ -58,10 +58,10 @@
                             <MenuItem.Icon>
                                 <Image Source="Resources/Themes.ico" />
                             </MenuItem.Icon>
-                            <MenuItem Header="Dark" />
-                            <MenuItem Header="Light" />
-                            <MenuItem Header="Neutral" />
-                            <MenuItem Header="Gradient" />
+                            <MenuItem Header="Dark" Click="ChangedTheme"/>
+                            <MenuItem Header="Light" Click="ChangedTheme"/>
+                            <MenuItem Header="Neutral" Click="ChangedTheme"/>
+                            <MenuItem Header="Gradient" Click="ChangedTheme"/>
                         </MenuItem>
                         <MenuItem Header="Grid On/Off" Click="Grid_OnOff" />
                         <Separator />
@@ -78,7 +78,7 @@
                     </MenuItem>
 
                 </Menu>
-                <ToolBar Grid.Row="1">
+                <ToolBar Grid.Row="1" Background="{Binding colors[9]}">
                     <Button Margin="2" Click="Button_Undo_Click">
                         <Button.Content>
                             <Image Source="Resources/Undo.ico" Width="15" Height="15"/>
@@ -135,12 +135,7 @@
 
 
             </Grid>
-            <Canvas x:Name="Scene" MouseDown="Canvas_OnMouseDown" Grid.Row="1" HorizontalAlignment="Left" Height="600"  VerticalAlignment="Top" Width="900" Background="Black">
-
-                
-                
-                
-            </Canvas>
+            <Canvas x:Name="Scene" MouseDown="Canvas_OnMouseDown" Grid.Row="1" HorizontalAlignment="Left" Height="600"  VerticalAlignment="Top" Width="900" Background="{Binding colors[7]}"/>
         </Grid>
         
         <!-->Test Grid</!-->

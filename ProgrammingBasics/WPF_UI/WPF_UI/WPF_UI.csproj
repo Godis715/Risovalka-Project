@@ -59,6 +59,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Themes.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -102,7 +103,6 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\CreateFile.ico" />
-    <Resource Include="Resources\MainIcon.ico" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\SaveFile.ico" />
