@@ -92,28 +92,21 @@
                     <Separator/>
                     <ComboBox x:Name="DrawMode">
                         <ComboBoxItem IsSelected="True">
-                            <Label Content="Default"/>
+                            <StackPanel>
+                                <Label Content="Default" MouseLeftButtonDown="Button_DrawMode"/>
+                            </StackPanel>
                         </ComboBoxItem>
                         <StackPanel>
-                            <Label Content="Rotation"/>
+                            <Label Content="Rotation" MouseLeftButtonDown="Button_DrawMode"/>
                         </StackPanel>
                         <StackPanel>
-                            <Label Content="Symmetrical"/>
+                            <Label Content="Symmetrical" MouseLeftButtonDown="Button_DrawMode"/>
                         </StackPanel>
                     </ComboBox>
                     <ComboBox x:Name="Rot_Sym_Conf">
                         <ComboBoxItem IsSelected="True">
                             <Label Content="--"/>
                         </ComboBoxItem>
-                        <StackPanel>
-                            <Label Content="x2"/>
-                        </StackPanel>
-                        <StackPanel>
-                            <Label Content="x4"/>
-                        </StackPanel>
-                        <StackPanel>
-                            <Label Content="x8"/>
-                        </StackPanel>
                     </ComboBox>
                     <Separator/>
                     <RadioButton Content="Point" Margin="1" >

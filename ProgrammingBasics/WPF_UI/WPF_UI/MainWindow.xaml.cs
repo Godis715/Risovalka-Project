@@ -49,7 +49,49 @@ namespace WPF_UI
 
         }
 
-        private void Button_Undo_Click(object sender, RoutedEventArgs e)
+		private void Button_DrawMode(object sender, RoutedEventArgs e)
+		{
+			var NameMode = ((Label)sender).Content.ToString();
+			switch (NameMode)
+			{
+				case "Default":
+					{
+						Rot_Sym_Conf.Items.Clear();
+						Rot_Sym_Conf.Items.Add(" -- ");
+						Rot_Sym_Conf.SelectedItem = " -- ";
+						break;
+					}
+				case "Rotation":
+					{
+						Rot_Sym_Conf.Items.Clear();
+						Rot_Sym_Conf.Items.Add(" -- ");
+						Rot_Sym_Conf.Items.Add(" x2 ");
+						Rot_Sym_Conf.Items.Add(" x3 ");
+						Rot_Sym_Conf.Items.Add(" x4 ");
+						Rot_Sym_Conf.Items.Add(" x5 ");
+						Rot_Sym_Conf.Items.Add(" x6 ");
+						Rot_Sym_Conf.Items.Add(" x8 ");
+						Rot_Sym_Conf.Items.Add(" x9 ");
+						Rot_Sym_Conf.Items.Add(" x10 ");
+						Rot_Sym_Conf.SelectedItem = " -- ";
+						break;
+					}
+				case "Symmetrical":
+					{
+						Rot_Sym_Conf.Items.Clear();
+						Rot_Sym_Conf.Items.Add(" -- ");
+						Rot_Sym_Conf.Items.Add(" y2 ");
+						Rot_Sym_Conf.Items.Add(" x2 ");
+						Rot_Sym_Conf.Items.Add(" x4 ");
+						Rot_Sym_Conf.Items.Add(" x8 ");
+						Rot_Sym_Conf.SelectedItem = " -- ";
+						break;
+					}
+			}
+		}
+
+
+		private void Button_Undo_Click(object sender, RoutedEventArgs e)
         {
             Reqs.Items.Add(new MenuItem
             {
@@ -239,7 +281,7 @@ namespace WPF_UI
 		private void Canvas_OnMouseDown(object sender, MouseEventArgs e)
 		{
 
-			DrawArc(new Vector(150, 150), new Vector(250, 150), new Vector(150, 50));
+			//DrawArc(new Vector(150, 150), new Vector(250, 150), new Vector(150, 50));
 			//Vector[] points = { new Vector(0, 100), new Vector(50, 50), new Vector(100, 150), new Vector(150, 100),
 			//new Vector(200, 50), new Vector(250, 150), new Vector(300, 100)};
 			//DrawCurve(points);
