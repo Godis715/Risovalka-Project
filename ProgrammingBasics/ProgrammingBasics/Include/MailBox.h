@@ -7,8 +7,6 @@
 
 #include "Presenter.h"
 
-using namespace DrawProject;
-
 namespace Kernel {
 
 	enum Code
@@ -33,9 +31,9 @@ namespace Kernel {
 	};
 
 	struct Message {
-		Array<double> doubleArr;
-		Array<int> intArr;
-		Array<std::string> strArr;
+		DrawProject::Array<double> doubleArr;
+		DrawProject::Array<int> intArr;
+		DrawProject::Array<std::string> strArr;
 
 		int code;
 	};
@@ -44,7 +42,7 @@ namespace Kernel {
 	public:
 		void InitKernel();
 		void SendMessage(const Message*);
-		void SendEvent(/**/);
+		void SendEvent(/**/) { /**/ }
 		const Message* GetMessage();
 		bool Empty();
 

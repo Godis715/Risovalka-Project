@@ -3,10 +3,12 @@
 #include "ManagedObject.h"
 #include "MailBox.h"
 
+using namespace System;
+
 using namespace Kernel;
 
 namespace KernelWrapper {
-	ref class MailBoxWrapper : public ManagedObject<MailBox> {
+	public ref class MailBoxWrapper : public ManagedObject<MailBox> {
 	public:
 		MailBoxWrapper() : ManagedObject(MailBox::GetInstance()) 
 		{

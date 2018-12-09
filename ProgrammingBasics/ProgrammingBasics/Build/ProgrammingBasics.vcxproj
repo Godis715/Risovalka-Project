@@ -87,6 +87,7 @@
       <ConformanceMode>true</ConformanceMode>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <PrecompiledHeaderFile />
+      <PreprocessorDefinitions>WIN32;_DEBUG;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <AdditionalDependencies>fltk.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -133,7 +134,6 @@
     <ClCompile Include="..\Src\Compilator.cpp" />
     <ClCompile Include="..\Src\DataController.cpp" />
     <ClCompile Include="..\Src\ID.cpp" />
-    <ClCompile Include="..\Src\IWidjet.cpp" />
     <ClCompile Include="..\Src\Logger.cpp" />
     <ClCompile Include="..\Src\MailBox.cpp" />
     <ClCompile Include="..\Src\main.cpp" />
@@ -149,14 +149,6 @@
     <ClCompile Include="..\Src\SVGformat.cpp" />
     <ClCompile Include="..\Src\Undo-Redo.cpp" />
     <ClCompile Include="..\Src\Vector2.cpp" />
-    <ClCompile Include="..\Src\ViewDisplay.cpp" />
-    <ClCompile Include="..\Src\ViewDrawWindow.cpp" />
-    <ClCompile Include="..\Src\ViewFile.cpp" />
-    <ClCompile Include="..\Src\ViewFLTK.cpp" />
-    <ClCompile Include="..\Src\ViewHeaders.cpp" />
-    <ClCompile Include="..\Src\ViewLog.cpp" />
-    <ClCompile Include="..\Src\ViewMainWindow.cpp" />
-    <ClCompile Include="..\Src\ViewToolbar.cpp" />
     <ClCompile Include="..\Src\ViewWpf.cpp" />
     <ClCompile Include="..\Src\WPFWidjet.cpp" />
   </ItemGroup>
@@ -167,7 +159,6 @@
     <ClInclude Include="..\Include\DataController.h" />
     <ClInclude Include="..\Include\Dequeue.h" />
     <ClInclude Include="..\Include\Dictionary.h" />
-    <ClInclude Include="..\Include\FLTKWidget.h" />
     <ClInclude Include="..\Include\ID.h" />
     <ClInclude Include="..\Include\IDGenerator.h" />
     <ClInclude Include="..\Include\IView.h" />
@@ -184,14 +175,6 @@
     <ClInclude Include="..\Include\Requirement.h" />
     <ClInclude Include="..\Include\Undo-Redo.h" />
     <ClInclude Include="..\Include\Vector2.h" />
-    <ClInclude Include="..\Include\ViewDisplay.h" />
-    <ClInclude Include="..\Include\ViewDrawWindow.h" />
-    <ClInclude Include="..\Include\ViewFile.h" />
-    <ClInclude Include="..\Include\ViewFLTK.h" />
-    <ClInclude Include="..\Include\ViewHeaders.h" />
-    <ClInclude Include="..\Include\ViewLog.h" />
-    <ClInclude Include="..\Include\ViewMainWindow.h" />
-    <ClInclude Include="..\Include\ViewToolbar.h" />
     <ClInclude Include="..\Include\ViewWPF.h" />
     <ClInclude Include="..\Include\WPFWidget.h" />
     <ClInclude Include="Kernel.h" />

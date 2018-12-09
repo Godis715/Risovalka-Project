@@ -251,7 +251,8 @@ void ChangingProperties::SetWidjetParamPrim() {
 	for (int i = 0; i < reqIDs.GetSize(); i++)
 	{
 		object_type typeReq = model->GetObjType(reqIDs[i]);
-		nameReqs.PushBack(objTypeToString(typeReq) + '#' + int(reqIDs[i].GetHash()));
+		// temp comment
+		//nameReqs.PushBack(objTypeToString(typeReq) + '#' + (int)(reqIDs[i].GetHash()));
 	}
 
 	widjetPrim->SetParam(typePrim, params, nameReqs);

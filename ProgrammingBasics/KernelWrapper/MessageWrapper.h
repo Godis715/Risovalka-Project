@@ -3,7 +3,7 @@
 #include "ManagedObject.h"
 #include "MailBox.h"
 
-using namespace Kernel;
+using namespace System;
 
 /*		Array<double> doubleArr;
 		Array<int> intArr;
@@ -11,8 +11,10 @@ using namespace Kernel;
 
 		int code;*/
 
+using namespace Kernel;
+
 namespace KernelWrapper {
-	ref class MessageWrapper : public ManagedObject<Message> {
+	public ref class MessageWrapper : public ManagedObject<Message> {
 	private:
 		array<double>^ doubleArr;
 		array<int>^ intArr;
