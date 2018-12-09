@@ -44,7 +44,7 @@ namespace KernelWrapper {
 		MessageWrapper^ GetMessage() 
 		{
 			Message* mess = instance->GetMessage();
-			return gcnew MessageWrapper(instance->GetMessage());
+			return gcnew MessageWrapper(mess);
 		}
 
 	private:

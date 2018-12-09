@@ -96,7 +96,14 @@ WPFRequirementInput::~WPFRequirementInput() {
 #pragma endregion
 
 #pragma region WPFDrawMode
-WPFDrawMode::WPFDrawMode(){ }
+WPFDrawMode::WPFDrawMode(){
+	auto mess = new Message;
+	(mess->code) = 4;
+
+
+	(mess->doubleArr) = CreateArr(1.0, 2.0);
+	MailBox::GetInstance()->SendMessage(mess);
+}
 WPFDrawMode::~WPFDrawMode(){ }
 
 void WPFDrawMode::SetName(const std::string) {

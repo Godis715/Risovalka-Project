@@ -4,14 +4,23 @@
 using namespace DrawProject;
 
 void MailBox::SendMessage(Message* message) {
+
 	messageQueue.push(message);
+	std::ofstream log("logs.txt", std::ios::app);
+	log << "push(" << message->code << ")\n";
+	log.close();
 }
 
 Message* MailBox::GetMessage() {
 	if (messageQueue.empty()) {
 		throw std::exception("messageQueue is empty");
 	}
-	auto message = messageQueue.back();
+	auto message = messageQueue.front();
+
+	std::ofstream log("logs.txt", std::ios::app);
+	log << "pop(" << message->code << ")\n";
+	log.close();
+
 	messageQueue.pop();
 	return message;
 }

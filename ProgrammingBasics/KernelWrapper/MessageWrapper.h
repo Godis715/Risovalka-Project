@@ -2,6 +2,7 @@
 
 #include "ManagedObject.h"
 #include "MailBox.h"
+#include "Converter.h"
 
 using namespace System;
 
@@ -17,11 +18,15 @@ namespace KernelWrapper
 		array<double>^ doubleArr;
 		array<int>^ intArr;
 		String^ str;
+		int code;
 	public:
 		
 		MessageWrapper(Message* mess) : ManagedObject(mess) 
 		{
-			
+			doubleArr = Helpers::Converter::ToDotNetArray(instance->doubleArr);
+			intArr = Helpers::Converter::ToDotNetArray(instance->intArr);
+
+			code = instance->code;
 		}
 
 		array<double>^ GetDoubleArr() 
@@ -34,6 +39,10 @@ namespace KernelWrapper
 			return intArr;
 		}
 
+		int GetCode() 
+		{
+			return code;
+		}
 
 	};
 }

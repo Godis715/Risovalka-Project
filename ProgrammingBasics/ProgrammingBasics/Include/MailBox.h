@@ -49,14 +49,12 @@ namespace Kernel {
 			std::cout << doubleArr.GetSize();
 			std::cout << "string is" << str;
 
-			std::ofstream log("logs.txt");
 			try {
 				presenter->Set_event(DrawProject::Event(code), doubleArr, str);
 			}
 			catch (std::exception e) {
-				log << e.what();
+				/*exception from colors*/
 			}
-			log.close();
 		}
 
 		Message* GetMessage();

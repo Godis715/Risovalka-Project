@@ -113,7 +113,5 @@ namespace WPF_UI
 				mailBox.SendEvent(ev.GetHashCode(), arrParams, str);
 			}
 		}
-
-
 	}
 }
