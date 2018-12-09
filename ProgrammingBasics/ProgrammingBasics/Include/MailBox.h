@@ -41,16 +41,21 @@ namespace Kernel {
 	class MailBox {
 	public:
 		void InitKernel();
-		void SendMessage(const Message*);
-		void SendEvent(/**/) { /**/ }
-		const Message* GetMessage();
+		void SendMessage(Message*);
+
+		void SendEvent(int code, DrawProject::Array<double>& doubleArr, const std::string& str = "") {
+			auto presenter = DrawProject::Presenter::GetInstance();
+			presenter->Set_event(DrawProject::Event(code), doubleArr, str);
+		}
+
+		Message* GetMessage();
 		bool Empty();
 
 		static MailBox* GetInstance();
 	private:
 		MailBox();
 
-		std::queue<const Message*> messageQueue;
+		std::queue<Message*> messageQueue;
 		static MailBox* instance;
 	};
 }

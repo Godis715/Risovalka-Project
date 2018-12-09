@@ -136,12 +136,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Converter.h" />
     <ClInclude Include="ManagedObject.h" />
     <ClInclude Include="MailBoxWrapper.h" />
     <ClInclude Include="MessageWrapper.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AssemblyInfo.cpp" />
+    <ClCompile Include="Converter.cpp" />
     <ClCompile Include="MailBoxWrapper.cpp" />
     <ClCompile Include="MessageWrapper.cpp" />
   </ItemGroup>

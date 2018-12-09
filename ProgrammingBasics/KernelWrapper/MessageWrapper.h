@@ -5,30 +5,35 @@
 
 using namespace System;
 
-/*		Array<double> doubleArr;
-		Array<int> intArr;
-		Array<std::string> strArr;
-
-		int code;*/
-
 using namespace Kernel;
 
-namespace KernelWrapper {
-	public ref class MessageWrapper : public ManagedObject<Message> {
+using namespace System::Runtime::InteropServices;
+
+namespace KernelWrapper 
+{
+	public ref class MessageWrapper : public ManagedObject<Message> 
+	{
 	private:
 		array<double>^ doubleArr;
 		array<int>^ intArr;
+		String^ str;
 	public:
-		MessageWrapper(Message* mess) : ManagedObject(mess) {
+		
+		MessageWrapper(Message* mess) : ManagedObject(mess) 
+		{
 			
 		}
 
-		array<double>^ GetDoubleArr() {
+		array<double>^ GetDoubleArr() 
+		{
 			return doubleArr;
 		}
-		array<int>^ GetIntArr() {
+
+		array<int>^ GetIntArr() 
+		{
 			return intArr;
 		}
+
 
 	};
 }
