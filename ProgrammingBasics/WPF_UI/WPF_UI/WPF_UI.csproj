@@ -62,7 +62,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="RealayCommand.cs" />
+    <Compile Include="SceneBack.cs" />
     <Compile Include="Themes.cs" />
+    <Compile Include="ViewModel.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -134,10 +137,6 @@
     <Resource Include="Resources\Redo.ico" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\ClassLibrary1\ClassLibrary1.vcxproj">
-      <Project>{6780e83f-5ae8-4d4c-b8ad-cd52afa2a62c}</Project>
-      <Name>ClassLibrary1</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\KernelWrapper\KernelWrapper.vcxproj">
       <Project>{8f3dcba5-ac6c-4049-9823-3bad625469cb}</Project>
       <Name>KernelWrapperProject</Name>

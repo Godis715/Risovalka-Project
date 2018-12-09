@@ -6,7 +6,9 @@
         xmlns:local="clr-namespace:WPF_UI"
         mc:Ignorable="d"
         Title="DrawProject" Height="720" Width="1280"
-        MinHeight="720" MinWidth="1280">
+        MinHeight="720" MinWidth="1280"
+        KeyDown="Window_KeyDown"
+        KeyUp="Window_KeyDown">
     <Grid x:Name="DrawProject" Background="{Binding colors[6]}">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="auto"/>
@@ -135,7 +137,9 @@
 
 
             </Grid>
-            <Canvas x:Name="Scene" MouseDown="Canvas_OnMouseDown" Grid.Row="1" HorizontalAlignment="Left" Height="600"  VerticalAlignment="Top" Width="900" Background="{Binding colors[7]}"/>
+            <Canvas x:Name="Scene" MouseDown="Canvas_OnMouseDown" Grid.Row="1" HorizontalAlignment="Left" Height="600"  VerticalAlignment="Top" Width="900" Background="{Binding colors[7]}"
+                    MouseMove="Scene_MouseMove"/>
+
         </Grid>
         
         <!-->Test Grid</!-->

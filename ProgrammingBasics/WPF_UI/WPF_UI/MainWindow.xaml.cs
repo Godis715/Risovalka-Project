@@ -23,6 +23,8 @@ namespace WPF_UI
     {
 		private FileDialog fileDialog;
 
+		private ViewModel viewModel;
+
 		private Themes themes;
 
 		public MainWindow()
@@ -32,6 +34,7 @@ namespace WPF_UI
 			File.DataContext = fileDialog;
 			themes = new Themes();
 			DrawProject.DataContext = themes;
+			viewModel = ViewModel.GetInstance();
 		}
 
 		private void ChangedTheme(object sender, RoutedEventArgs e)
@@ -105,6 +108,7 @@ namespace WPF_UI
 
 		private void Button_Undo_Click(object sender, RoutedEventArgs e)
 		{
+			//viewModel.SetEvent()
 			Reqs.Items.Add(new MenuItem
 			{
 				Header = "1"
@@ -288,43 +292,64 @@ namespace WPF_UI
 			Scene.Children.Add(circlePath);
 		}
 
+
+		Key lastKeyEvent;
+		Boolean IsDown;
+		private void Window_KeyEvent(object sender, KeyEventArgs e)
+		{
+			lastKeyEvent = e.Key;
+			IsDown = e.IsDown;
+		}
+		
+
 		private Vector click1;
 		private Boolean isClick = false;
 		private void Canvas_OnMouseDown(object sender, MouseEventArgs e)
 		{
+			if (lastKeyEvent == Key.LeftCtrl && IsDown)
+			{
+				if (!isClick)
+				{
+					//DrawCircle(new Vector(e.GetPosition(Scene).X, e.GetPosition(Scene).Y), 100);
+					click1.X = e.GetPosition(Scene).X;
+					click1.Y = e.GetPosition(Scene).Y;
+					DrawPoint(new Vector(click1.X, click1.Y));
+					isClick = true;
+				}
+				else
+				{
+					isClick = false;
+					//Scene.Children.Clear();
+					Scene.Children.Add(new Line
+					{
+						X1 = click1.X,
+						Y1 = click1.Y,
+						X2 = e.GetPosition(Scene).X,
+						Y2 = e.GetPosition(Scene).Y,
+						StrokeStartLineCap = PenLineCap.Round,
+						StrokeEndLineCap = PenLineCap.Round,
+						StrokeThickness = 1,
+						Stroke = themes.Primitives()
+					});
+					DrawPoint(new Vector(e.GetPosition(Scene).X, e.GetPosition(Scene).Y));
+				}
+			}
 			//DrawArc(new Vector(150, 150), new Vector(250, 150), new Vector(150, 50));
 			//Vector[] points = { new Vector(0, 100), new Vector(50, 50), new Vector(100, 150), new Vector(150, 100),
 			//new Vector(200, 50), new Vector(250, 150), new Vector(300, 100)};
 			//DrawCurve(points);
-			if (!isClick)
-			{
-				//DrawCircle(new Vector(e.GetPosition(Scene).X, e.GetPosition(Scene).Y), 100);
-				click1.X = e.GetPosition(Scene).X;
-				click1.Y = e.GetPosition(Scene).Y;
-				DrawPoint(new Vector(click1.X, click1.Y));
-				isClick = true;
-			}
-			else
-			{
-				isClick = false;
-				//Scene.Children.Clear();
-				Scene.Children.Add(new Line
-				{
-					X1 = click1.X,
-					Y1 = click1.Y,
-					X2 = e.GetPosition(Scene).X,
-					Y2 = e.GetPosition(Scene).Y,
-					StrokeStartLineCap = PenLineCap.Round,
-					StrokeEndLineCap = PenLineCap.Round,
-					StrokeThickness = 1,
-					Stroke = themes.Primitives()
-				});
-				DrawPoint(new Vector(e.GetPosition(Scene).X, e.GetPosition(Scene).Y));
-			}
 			
+			
+			/*
 			if (e.MouseDevice.LeftButton == MouseButtonState.Pressed)
 			{
-			}
+			
+			}*/
+		}
+
+		private void Scene_MouseMove(object sender, MouseEventArgs e)
+		{
+			
 		}
 	}
 }
