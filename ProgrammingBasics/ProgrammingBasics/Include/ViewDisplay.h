@@ -2,6 +2,8 @@
 #define __DISPLAY
 #include "ViewHeaders.h"
 
+using namespace DrawProject;
+
 class DisplayParamsPrim : public DisplayWidjet
 {
 	private:
@@ -12,6 +14,9 @@ class DisplayParamsPrim : public DisplayWidjet
 
 		Fl_Group* group;
 		static Array<Fl_Float_Input*> inputs;
+
+		static Presenter* presenter;
+
 		Fl_Button* b_OK;
 		Fl_Button* b_close;
 
@@ -48,6 +53,8 @@ private:
 	Fl_Float_Input* textBuffer;
 
 	static void cl_Input(Fl_Widget*, void*);
+
+	static Presenter* presenter;
 public:
 	RequirementInput();
 
@@ -64,6 +71,7 @@ private:
 
 	Fl_Group* group;
 	static Array<Fl_Float_Input*> inputs;
+	static Presenter* presenter;
 	Fl_Button* b_OK;
 	Fl_Button* b_close;
 	Fl_Button* b_delete;
@@ -90,6 +98,7 @@ class DrawMode : public DisplayWidjet
 private:
 	static Fl_Output* output;
 	static DrawMode* instance;
+	static Presenter* presenter;
 	DrawMode();
 public:
 	static DrawMode* GetInstance();

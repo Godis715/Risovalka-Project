@@ -4,6 +4,8 @@
 #include "IWidjet.h"
 #include "Colors.h"
 
+using namespace DrawProject;
+
 enum typeDrawing{dot, dash, solid, null};
 enum statusCreate { drawPoint, drawSegment, drawArc, drawCircle };
 enum typeWidjet{displayParamPrim, displayParamReq, creatingToolbar, requirementInput, drawMode};

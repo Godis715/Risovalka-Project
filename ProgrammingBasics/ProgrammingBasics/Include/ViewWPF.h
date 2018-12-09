@@ -4,7 +4,7 @@
 #include "IView.h"
 #include "Presenter.h"
 #include "WPFWidget.h"
-
+using namespace DrawProject;
 using namespace Kernel;
 
 namespace DrawProject {
@@ -30,6 +30,8 @@ namespace DrawProject {
 		IWidjet* GetWidjet(const typeWidjet);
 
 		static ViewWPF* GetInstance();
+
+		Presenter* presenter;
 	private:
 		ViewWPF();
 

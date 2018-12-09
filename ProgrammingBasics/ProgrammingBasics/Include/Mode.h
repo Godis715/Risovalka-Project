@@ -1,14 +1,11 @@
 #ifndef __MODE
 #define __MODE
-
 #include "IView.h"
 #include "Model.h"
 #include <sstream>
 #include <iomanip>
 
 namespace DrawProject {
-
-
 	double Parse(string);
 
 	const char* ReverseParse(const double, int&);
@@ -239,6 +236,7 @@ namespace DrawProject {
 		Color* color;
 	public:
 		Mode();
+		void Init();
 		virtual ~Mode() {}
 		virtual Mode* HandleEvent(const Event, const Array<double>&) = 0;
 		virtual void DrawMode() { }

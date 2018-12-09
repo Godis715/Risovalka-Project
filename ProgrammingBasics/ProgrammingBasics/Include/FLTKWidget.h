@@ -3,6 +3,7 @@
 
 #include "IWidjet.h"
 
+using namespace DrawProject;
 
 class FLTKDisplayParamPrim : public IDisplayParamPrim
 {

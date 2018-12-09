@@ -4,7 +4,8 @@
 #include "IWidjet.h"
 #include "MailBox.h"
 
-
+using namespace Kernel;
+using namespace DrawProject;
 
 class WPFDisplayParamPrim : public IDisplayParamPrim
 {

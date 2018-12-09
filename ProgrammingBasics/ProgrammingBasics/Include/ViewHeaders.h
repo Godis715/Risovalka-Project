@@ -14,6 +14,8 @@
 
 #include "Presenter.h"
 
+using namespace DrawProject;
+
 class DisplayWidjet
 {
 public:

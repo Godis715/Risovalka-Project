@@ -2,68 +2,69 @@
 
 
 void ViewWPF::DrawPoint(const Array<double>& params) {
-	Message message;
-	message.code = draw_point;
-	message.doubleArr = params;
+	auto message = new Message;
+	message->code = draw_point;
+	message->doubleArr = params;
 	mailBox->SendMessage(message);
 }
 
 void ViewWPF::DrawLine(const Array<double>& params) {
-	Message message;
-	message.code = draw_segment;
-	message.doubleArr = params;
+	auto message = new Message;
+	message->code = draw_segment;
+	message->doubleArr = params;
 	mailBox->SendMessage(message);
 }
 
 void ViewWPF::DrawCircle(const Array<double>& params) {
-	Message message;
-	message.code = draw_circle;
-	message.doubleArr = params;
+	auto message = new Message;
+	message->code = draw_circle;
+	message->doubleArr = params;
 	mailBox->SendMessage(message);
 }
 
 void ViewWPF::DrawArc(const Array<double>& params) {
-	Message message;
-	message.code = draw_arc;
-	message.doubleArr = params;
+	auto message = new Message;
+	message->code = draw_arc;
+	message->doubleArr = params;
 	mailBox->SendMessage(message);
 }
 
 void ViewWPF::DrawCurve(const Array<double>& params) {
-	Message message;
-	message.code = draw_curve;
-	message.doubleArr = params;
+	auto message = new Message;
+	message->code = draw_curve;
+	message->doubleArr = params;
 	mailBox->SendMessage(message);
 }
 
 void ViewWPF::SetStyleDrawing(const rgbColor color, const typeDrawing type) {
-	Message messege;
-	messege.code = set_style;
+	auto message = new Message;
+	message->code = set_style;
 	int y = int(type);
-	messege.intArr = CreateArr(color.r, color.g, color.b, y);
+	message->intArr = CreateArr(color.r, color.g, color.b, y);
 }
 
 int ViewWPF::Run() {
+	presenter->Initializer(this);
 	return 0;
 }
 void ViewWPF::Update() {
-	Presenter::DrawScene();
+	presenter->DrawScene();
 }
 
 void ViewWPF::TranslateScene(const Vector2& vector) {
-	Message messege;
-	messege.code = translate_scene;
-	messege.doubleArr = CreateArr(vector.x, vector.y);
+	auto message = new Message;
+	message->code = translate_scene;
+	message->doubleArr = CreateArr(vector.x, vector.y);
 }
 void ViewWPF::ScaleScene(const double& coef) {
-	Message messege;
-	messege.code = scale_scene;
-	messege.doubleArr = CreateArr(coef);
+	auto message = new Message;
+	message->code = scale_scene;
+	message->doubleArr = CreateArr(coef);
 }
 void ViewWPF::RotateScene(const double& coef) {
-	Message messege;
-	messege.code = rotate_scene;
-	messege.doubleArr = CreateArr(coef);
+	auto message = new Message;
+	message->code = rotate_scene;
+	message->doubleArr = CreateArr(coef);
 }
 
 IWidjet* ViewWPF::GetWidjet(const typeWidjet _type) {
@@ -111,6 +112,7 @@ ViewWPF* ViewWPF::GetInstance() {
 
 ViewWPF::ViewWPF() : IView() {
 	mailBox = MailBox::GetInstance();
+	presenter = Presenter::GetInstance();
 }
 
 ViewWPF* ViewWPF::instance = nullptr;

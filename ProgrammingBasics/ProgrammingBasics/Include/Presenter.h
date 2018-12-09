@@ -10,28 +10,32 @@ namespace DrawProject {
 
 	class Presenter {
 	private:
-		static Mode* mode;
-		static IView* view;
-		static Model* model;
+		Mode* mode;
+		IView* view;
+		Model* model;
+		static Presenter* instance;
+
+		Presenter();
 	public:
-		static IView* GetView();
+		static Presenter* GetInstance();
 
-		static void DrawScene();
+		void Initializer(IView* _view);
 
-		static void DrawSelectedObjects(const Array<ID>&);
+		IView* GetView();
 
-		static void Initializer(IView* _view);
+		void DrawScene();
 
-		static void CleareScene();
+		void DrawSelectedObjects(const Array<ID>&);
 
-		static void MoveObject(const Array<ID>&, const Vector2&);
+		void CleareScene();
 
-		static void Compile();
+		void MoveObject(const Array<ID>&, const Vector2&);
+
+		void Compile();
 
 		//function for view
-		static void Set_event(Event, Array<double>&, const std::string& str = "");
+		void Set_event(Event, Array<double>&, const std::string& str = "");
 	};
-
 }
 
 #endif

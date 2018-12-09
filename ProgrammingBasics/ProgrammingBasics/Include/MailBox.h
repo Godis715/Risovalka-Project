@@ -43,16 +43,16 @@ namespace Kernel {
 	class MailBox {
 	public:
 		void InitKernel();
-		void SendMessage(const Message&);
+		void SendMessage(const Message*);
 		void SendEvent(/**/);
-		Message GetMessage();
+		const Message* GetMessage();
 		bool Empty();
 
 		static MailBox* GetInstance();
 	private:
 		MailBox();
 
-		std::queue<Message> messageQueue;
+		std::queue<const Message*> messageQueue;
 		static MailBox* instance;
 	};
 }

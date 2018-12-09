@@ -12,6 +12,8 @@
 #include "ViewFile.h"
 #include "ViewDisplay.h"
 
+using namespace DrawProject;
+
 typedef BinSearchTree<string, DisplayWidjet*> DataWidjet;
 
 class ViewFLTK : public IView
@@ -28,6 +30,8 @@ private:
 	static DrawWindow* drawWindow;
 
 	static Color* colorTheme;
+
+	static Presenter* presenter;
 
 	ViewFLTK();
 	static ViewFLTK* instance;

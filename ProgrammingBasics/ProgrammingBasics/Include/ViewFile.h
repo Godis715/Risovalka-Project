@@ -4,11 +4,13 @@
 #include "ViewHeaders.h"
 #include "ViewLog.h"
 
+using namespace DrawProject;
+
 class ViewFile : public DisplayWidjet
 {
 private:
 	static ViewLog* viewLog;
-	
+	static Presenter* presenter;
 	static Color* colorThemes;
 
 	const int positionX = 10;
