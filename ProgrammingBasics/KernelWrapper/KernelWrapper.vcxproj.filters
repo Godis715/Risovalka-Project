@@ -24,6 +24,9 @@
     <ClInclude Include="ManagedObject.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="MessageWrapper.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="KernelWrapper.cpp">

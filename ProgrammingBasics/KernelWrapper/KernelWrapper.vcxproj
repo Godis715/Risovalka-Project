@@ -137,6 +137,7 @@
   <ItemGroup>
     <ClInclude Include="ManagedObject.h" />
     <ClInclude Include="MailBoxWrapper.h" />
+    <ClInclude Include="MessageWrapper.h" />
     <ClInclude Include="Resource.h" />
   </ItemGroup>
   <ItemGroup>
