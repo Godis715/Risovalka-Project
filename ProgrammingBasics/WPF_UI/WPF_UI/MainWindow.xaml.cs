@@ -21,24 +21,24 @@ namespace WPF_UI
     }
     public partial class MainWindow : Window
     {
-		private FileDialog fileDialog;
-
 		private ViewModel viewModel;
 
-		private Themes themes;
+		private ControlScene controlScene;
 
 		public MainWindow()
         {
             InitializeComponent();
-			fileDialog = new FileDialog();
-			File.DataContext = fileDialog;
-			themes = new Themes();
-			DrawProject.DataContext = themes;
+
+			File.DataContext = FileDialog.GetInstance();
+			DrawProject.DataContext = Themes.GetInstance();
 			viewModel = ViewModel.GetInstance();
+			controlScene = ControlScene.GetInstance();
+			controlScene.Initializated(Scene);
 		}
 
 		private void ChangedTheme(object sender, RoutedEventArgs e)
 		{
+			var themes = Themes.GetInstance();
 			switch (((MenuItem)sender).Header.ToString())
 			{
 				case "Dark":
@@ -108,37 +108,12 @@ namespace WPF_UI
 
 		private void Button_Undo_Click(object sender, RoutedEventArgs e)
 		{
-			viewModel.SetEvent(ViewModel.Event.ev_undo, new double[] { 2018.25, 2019.777}, "Undo");
-
-			Reqs.Items.Add(new MenuItem
-			{
-				Header = "1"
-			});
-			Reqs.Items.Add(new MenuItem
-			{
-				Header = "2"
-			});
-			Reqs.Items.Add(new MenuItem
-			{
-				Header = "3"
-			});
+			viewModel.SetEvent(ViewModel.Event.ev_undo, new double[0]);
 		}
 
 		private void Button_Redo_Click(object sender, RoutedEventArgs e)
 		{
-			Reqs.Items.Clear();
-			Reqs.Items.Add(new MenuItem
-			{
-				Header = "1"
-			});
-			Reqs.Items.Add(new MenuItem
-			{
-				Header = "2"
-			});
-			Reqs.Items.Add(new MenuItem
-			{
-				Header = "3"
-			});
+			viewModel.SetEvent(ViewModel.Event.ev_redu, new double[0]);
 		}
 
 		private void Button_showParams_Click(object sender, RoutedEventArgs e)
@@ -166,134 +141,6 @@ namespace WPF_UI
 
 		}
 
-		private Path gridPath;
-		private void DrawGridOnScene()
-		{
-			gridPath = new Path();
-			gridPath.Tag = "Grid";
-			gridPath.Stroke = Brushes.Bisque;
-			gridPath.StrokeThickness = 0.2;
-			var step = 20;
-			var grid = new GeometryGroup();
-			for (var coordX = 0; coordX < Scene.Width; coordX += step)
-			{
-				var lineHor = new LineGeometry();
-				lineHor.StartPoint = new Point(coordX, 0);
-				lineHor.EndPoint = new Point(coordX, Scene.Height);
-				grid.Children.Add(lineHor);
-			}
-			for (var coordY = 0; coordY < Scene.Height; coordY += step)
-			{
-				var lineVert = new LineGeometry();
-				lineVert.StartPoint = new Point(0, coordY);
-				lineVert.EndPoint = new Point(Scene.Width, coordY);
-				grid.Children.Add(lineVert);
-			}
-			gridPath.Data = grid;
-			Scene.Children.Add(gridPath);
-		}
-		private void Grid_OnOff(object sender, RoutedEventArgs e)
-		{
-			if (gridPath == null)
-			{
-				DrawGridOnScene();
-			}
-			else
-			{
-				Scene.Children.Remove(gridPath);
-				gridPath = null;
-			}
-		}
-
-		private void DrawArc(Vector center, Vector startPoint, Vector endPoint)
-		{
-
-			var arcPath = new Path();
-			arcPath.Stroke = themes.Primitives();
-			arcPath.StrokeThickness = 1;
-
-			var arcGeometry = new PathGeometry();
-
-			var arc = new PathFigure();
-			arc.StartPoint = new Point(startPoint.X, startPoint.Y);
-			var segmentArc = new ArcSegment();
-			segmentArc.Point = new Point(endPoint.X, endPoint.Y);
-			var radius = (startPoint - center).Length;
-			segmentArc.Size = new Size(radius, radius);
-			arc.Segments.Add(segmentArc);
-
-			arcGeometry.Figures.Add(arc);
-			arcPath.Data = arcGeometry;
-			Scene.Children.Add(arcPath);
-		}
-
-		private void DrawCurve(Vector[] points)
-		{
-			var curvePath = new Path();
-			curvePath.Stroke = themes.Primitives();
-			curvePath.StrokeThickness = 1;
-
-			var curveGeometry = new PathGeometry();
-
-			var curve = new PathFigure();
-			curve.StartPoint = new Point(points[0].X, points[0].Y);
-			for (int i = 1; i < points.Length; i += 3)
-			{
-				var segmentCurve = new BezierSegment();
-				segmentCurve.Point1 = new Point(points[i].X, points[i].Y);
-				segmentCurve.Point2 = new Point(points[i + 1].X, points[i + 1].Y);
-				segmentCurve.Point3 = new Point(points[i + 2].X, points[i + 2].Y);
-				curve.Segments.Add(segmentCurve);
-			}
-
-			curveGeometry.Figures.Add(curve);
-			curvePath.Data = curveGeometry;
-			Scene.Children.Add(curvePath);
-		}
-
-		private void DrawLine(Vector pointStart, Vector pointEnd)
-		{
-			Scene.Children.Add(new Line
-			{
-				X1 = pointStart.X,
-				Y1 = pointStart.Y,
-				X2 = pointEnd.X,
-				Y2 = pointEnd.Y,
-				StrokeStartLineCap = PenLineCap.Round,
-				StrokeEndLineCap = PenLineCap.Round,
-				StrokeThickness = 1,
-				Stroke = themes.Primitives()
-			});
-		}
-
-		private void DrawPoint(Vector position)
-		{
-			var pointPath = new Path();
-			pointPath.Stroke = themes.Primitives();
-			pointPath.Fill = Brushes.Red;
-			pointPath.StrokeThickness = 1;
-			EllipseGeometry point = new EllipseGeometry();
-			point.Center = new System.Windows.Point(position.X, position.Y);
-			point.RadiusX = 2;
-			point.RadiusY = 2;
-			pointPath.Data = point;
-			Scene.Children.Add(pointPath);
-		}
-
-		private void DrawCircle(Vector center, double radius)
-		{
-			var circlePath = new Path();
-			circlePath.Stroke = themes.Primitives();
-			circlePath.StrokeThickness = 1;
-			EllipseGeometry circle = new EllipseGeometry();
-			circle.Center = new System.Windows.Point(center.X, center.Y);
-			circle.RadiusX = radius;
-			circle.RadiusY = radius;
-			circlePath.Data = circle;
-			Scene.Children.Add(circlePath);
-		}
-
-
 		Key lastKeyEvent;
 		Boolean IsDown;
 		private void Window_KeyEvent(object sender, KeyEventArgs e)
@@ -303,38 +150,28 @@ namespace WPF_UI
 		}
 		
 
-		private Vector click1;
-		private Boolean isClick = false;
-		private void Canvas_OnMouseDown(object sender, MouseEventArgs e)
+		//private Vector click1;
+		//private Boolean isClick = false;
+		private void Scene_OnMouseDown(object sender, MouseEventArgs e)
 		{
-			if (lastKeyEvent == Key.LeftCtrl && IsDown)
-			{
-				if (!isClick)
-				{
-					//DrawCircle(new Vector(e.GetPosition(Scene).X, e.GetPosition(Scene).Y), 100);
-					click1.X = e.GetPosition(Scene).X;
-					click1.Y = e.GetPosition(Scene).Y;
-					DrawPoint(new Vector(click1.X, click1.Y));
-					isClick = true;
-				}
-				else
-				{
-					isClick = false;
-					//Scene.Children.Clear();
-					Scene.Children.Add(new Line
-					{
-						X1 = click1.X,
-						Y1 = click1.Y,
-						X2 = e.GetPosition(Scene).X,
-						Y2 = e.GetPosition(Scene).Y,
-						StrokeStartLineCap = PenLineCap.Round,
-						StrokeEndLineCap = PenLineCap.Round,
-						StrokeThickness = 1,
-						Stroke = themes.Primitives()
-					});
-					DrawPoint(new Vector(e.GetPosition(Scene).X, e.GetPosition(Scene).Y));
-				}
-			}
+			viewModel.SetEvent(ViewModel.Event.ev_leftMouseDown,
+				new double[] { e.GetPosition(Scene).X, e.GetPosition(Scene).Y });
+			//if (lastKeyEvent == Key.LeftCtrl && IsDown)
+			//{
+			//	if (!isClick)
+			//	{
+			//		click1.X = e.GetPosition(Scene).X;
+			//		click1.Y = e.GetPosition(Scene).Y;
+			//		controlScene.DrawPoint(new Vector(click1.X, click1.Y));
+			//		isClick = true;
+			//	}
+			//	else
+			//	{
+			//		isClick = false;
+			//		controlScene.DrawLine(click1, new Vector(e.GetPosition(Scene).X, e.GetPosition(Scene).Y));
+			//		controlScene.DrawPoint(new Vector(e.GetPosition(Scene).X, e.GetPosition(Scene).Y));
+			//	}
+			//}
 			//DrawArc(new Vector(150, 150), new Vector(250, 150), new Vector(150, 50));
 			//Vector[] points = { new Vector(0, 100), new Vector(50, 50), new Vector(100, 150), new Vector(150, 100),
 			//new Vector(200, 50), new Vector(250, 150), new Vector(300, 100)};
@@ -350,7 +187,51 @@ namespace WPF_UI
 
 		private void Scene_MouseMove(object sender, MouseEventArgs e)
 		{
-			
+			//viewModel.SetEvent(ViewModel.Event.ev_mouseMove,
+			//	new double[] { e.GetPosition(Scene).X, e.GetPosition(Scene).Y });
+		}
+
+		private void Primitive_click(object sender, RoutedEventArgs e)
+		{
+			var namePrim = ((RadioButton)sender).Tag.ToString(); 
+			switch (namePrim)
+			{
+				case "Point":
+					{
+						viewModel.SetEvent(ViewModel.Event.ev_createPoint, new double[0]);
+						break;
+					}
+				case "Segment":
+					{
+						viewModel.SetEvent(ViewModel.Event.ev_createSegment, new double[0]);
+						break;
+					}
+				case "Star":
+					{
+						viewModel.SetEvent(ViewModel.Event.ev_createStar, new double[0]);
+						break;
+					}
+				case "Broken":
+					{
+						viewModel.SetEvent(ViewModel.Event.ev_createBrokenLine, new double[0]);
+						break;
+					}
+				case "Circle":
+					{
+						viewModel.SetEvent(ViewModel.Event.ev_createCircle, new double[0]);
+						break;
+					}
+				case "Arc":
+					{
+						viewModel.SetEvent(ViewModel.Event.ev_createArc, new double[0]);
+						break;
+					}
+				case "Curve":
+					{
+						viewModel.SetEvent(ViewModel.Event.ev_createCurve, new double[0]);
+						break;
+					}
+			}
 		}
 	}
 }

@@ -22,7 +22,7 @@ namespace WPF_UI
 			BackGround, Scene, SystemBar, ToolBar
 		};
 		
-		public Themes()
+		private Themes()
 		{
 			colors = new SolidColorBrush[11];
 			colors[NameColors.SelectedPrim.GetHashCode()] = Brushes.Green;
@@ -35,6 +35,17 @@ namespace WPF_UI
 			colors[NameColors.Scene.GetHashCode()] = Brushes.Black;
 			colors[NameColors.SystemBar.GetHashCode()] = Brushes.LightBlue;
 			colors[NameColors.ToolBar.GetHashCode()] = Brushes.White;
+		}
+
+		private static Themes instance = null;
+
+		public static Themes GetInstance()
+		{
+			if (instance == null)
+			{
+				instance = new Themes();
+			}
+			return instance;
 		}
 
 		public void SystemBar(SolidColorBrush color) => colors[NameColors.SystemBar.GetHashCode()] = color;

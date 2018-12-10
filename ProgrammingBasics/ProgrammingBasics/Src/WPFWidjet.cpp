@@ -97,12 +97,6 @@ WPFRequirementInput::~WPFRequirementInput() {
 
 #pragma region WPFDrawMode
 WPFDrawMode::WPFDrawMode(){
-	auto mess = new Message;
-	(mess->code) = 4;
-
-
-	(mess->doubleArr) = CreateArr(1.0, 2.0);
-	MailBox::GetInstance()->SendMessage(mess);
 }
 WPFDrawMode::~WPFDrawMode(){ }
 

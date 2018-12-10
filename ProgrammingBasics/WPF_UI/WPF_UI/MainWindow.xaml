@@ -65,7 +65,7 @@
                             <MenuItem Header="Neutral" Click="ChangedTheme"/>
                             <MenuItem Header="Gradient" Click="ChangedTheme"/>
                         </MenuItem>
-                        <MenuItem Header="Grid On/Off" Click="Grid_OnOff" />
+                        <MenuItem Header="Grid On/Off" Command="{Binding GridOnOffCommand}" />
                         <Separator />
                         <MenuItem Header="More...">
                             <MenuItem.Icon>
@@ -111,19 +111,19 @@
                         </ComboBoxItem>
                     </ComboBox>
                     <Separator/>
-                    <RadioButton Content="Point" Margin="1" >
+                    <RadioButton Tag="Point" Content="Point" Margin="1" Click="Primitive_click">
                       
                     </RadioButton>
-                    <RadioButton Margin="0,4" VerticalAlignment="Stretch">
+                    <RadioButton Tag="Segment" Margin="0,4" VerticalAlignment="Stretch" Click="Primitive_click">
                         <RadioButton.Content>
                             <Image  Source="Resources/segment.png"  Width="20" Height="20" />
                         </RadioButton.Content>
                     </RadioButton>
-                    <RadioButton Content="Star" Margin="1" />
-                    <RadioButton Content="Broken" Margin="1" />
-                    <RadioButton Content="Circle" Margin="1" />
-                    <RadioButton Content="Arc" Margin="1" />
-                    <RadioButton Content="Curve" Margin="1" />
+                    <RadioButton Tag="Star" Content="Star" Margin="1" Click="Primitive_click"/>
+                    <RadioButton Tag="Broken" Content="Broken" Margin="1" Click="Primitive_click"/>
+                    <RadioButton Tag="Circle" Content="Circle" Margin="1" Click="Primitive_click"/>
+                    <RadioButton Tag="Arc" Content="Arc" Margin="1" Click="Primitive_click"/>
+                    <RadioButton Tag="Curve" Content="Curve" Margin="1" Click="Primitive_click"/>
                     <Separator/>
                     <Button>
                         <Menu>
@@ -137,8 +137,9 @@
 
 
             </Grid>
-            <Canvas x:Name="Scene" MouseDown="Canvas_OnMouseDown" Grid.Row="1" HorizontalAlignment="Left" Height="600"  VerticalAlignment="Top" Width="900" Background="{Binding colors[7]}"
-                    MouseMove="Scene_MouseMove"/>
+            <Canvas x:Name="Scene" Grid.Row="1" HorizontalAlignment="Left" Height="600"  VerticalAlignment="Top" Width="900" Background="{Binding colors[7]}"
+                    MouseMove="Scene_MouseMove"
+                    MouseDown="Scene_OnMouseDown"/>
 
         </Grid>
         

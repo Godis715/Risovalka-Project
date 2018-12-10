@@ -89,7 +89,7 @@ namespace WPF_UI
 					  {
 						  if (dialogService.SaveAsFileDialog() == true)
 						  {
-							  //Presenter->SaveAsFile(dialogService.FilePath);
+							  //viewModel.SetEvent(ViewModel.Event.ev_saveFile, new double[0], dialogService.FilePath);
 							  dialogService.ShowMessage("File is save!");
 						  }
 					  }
@@ -112,7 +112,7 @@ namespace WPF_UI
 				  {
 					  try
 					  {
-						  //Presenter->SaveFile();
+						  //viewModel.SetEvent(ViewModel.Event.ev_save, new double[0]);
 						  dialogService.ShowMessage("File is save!");
 					  }
 					  catch (Exception ex)
@@ -136,7 +136,7 @@ namespace WPF_UI
 					  {
 						  if (dialogService.NewFileDialog() == true)
 						  {
-							  //Presenter->NewFile(dialogService.FilePath);
+							  //viewModel.SetEvent(ViewModel.Event.ev_newFile, new double[0], dialogService.FilePath);
 							  dialogService.ShowMessage("File is created!");
 						  }
 					  }
@@ -161,7 +161,7 @@ namespace WPF_UI
 					  {
 						  if (dialogService.OpenFileDialog() == true)
 						  {
-							  //Presenter->OpenFile(dialogService.FilePath)
+							  //viewModel.SetEvent(ViewModel.Event.ev_openFile, new double[0], dialogService.FilePath);
 							  dialogService.ShowMessage("File is opened!");
 						  }
 					  }
@@ -186,7 +186,7 @@ namespace WPF_UI
 					  {
 						  if (dialogService.AddFileDialog() == true)
 						  {
-							  //Presenter->AddFile(dialogService.FilePath)
+							  //viewModel.SetEvent(ViewModel.Event.ev_addFile, new double[0], dialogService.FilePath);
 							  dialogService.ShowMessage("File is added!");
 						  }
 					  }
@@ -198,10 +198,21 @@ namespace WPF_UI
 			}
 		}
 
-		public FileDialog()
+		private FileDialog()
 		{
 			dialogService = new DialogService();
 			viewModel = ViewModel.GetInstance();
+		}
+
+		private static FileDialog instance = null;
+
+		public static FileDialog GetInstance()
+		{
+			if (instance == null)
+			{
+				instance = new FileDialog();
+			}
+			return instance;
 		}
 
 		public event PropertyChangedEventHandler PropertyChanged;
