@@ -231,12 +231,7 @@
                         <RowDefinition x:Name="ReqsRow" Height="auto"/>
                         <RowDefinition Height="auto" />
                     </Grid.RowDefinitions>
-                    <DataGrid x:Name="datagr" Grid.Row="0" Width="auto">
-                        <DataGrid.Columns>
-                            <DataGridTextColumn Header="Name" Width="auto"/>
-                            <DataGridTextColumn Header="Value" Width="auto"/>
-                        </DataGrid.Columns>
-                    </DataGrid>
+
                     <Grid Grid.Row="2" x:Name="FieldForDisplays" Width="150" HorizontalAlignment="Left">
 
                     </Grid>

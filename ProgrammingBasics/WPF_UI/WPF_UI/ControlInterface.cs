@@ -42,7 +42,7 @@ namespace WPF_UI
 			var value = Double.Parse(((TextBox)((StackPanel)((Button)sender).Parent).Children[0]).Text);
 			viewModel.SetEvent(ViewModel.Event.ev_input, new double[] { value });
 			fieldForDisplays.Children.Remove(inputDisplay);
-			}
+		}
 
 		private void CreateInputDisplay()
 		{

@@ -83,14 +83,14 @@ namespace WPF_UI
 
 		private void RotationMode_handler(object sender, RoutedEventArgs e)
 		{
-			var value = Double.Parse(((Label)sender).Content.ToString()[1].ToString());
+			var value = Double.Parse(((Label)sender).Content.ToString().Substring(1));
 			viewModel.SetEvent(ViewModel.Event.ev_rotationDraw, new double[] { value });
 		}
 
 		private void SymmetricalMode_handler(object sender, RoutedEventArgs e)
 		{
 			var content = ((Label)sender).Content.ToString();
-			var value = (content[1] == 'y') ? 1.0 : Double.Parse(content[2].ToString());
+			var value = (content[1] == 'y') ? 1.0 : Double.Parse(content.Substring(2));
 			viewModel.SetEvent(ViewModel.Event.ev_symmetricalDraw, new double[] { value });
 		}
 
@@ -152,22 +152,7 @@ namespace WPF_UI
 
 		private void Button_showParams_Click(object sender, RoutedEventArgs e)
 		{
-			DataGrid paramtable = new DataGrid();
-			paramtable.AutoGenerateColumns = true;
-			paramtable.ColumnWidth = 10;
-			List<Paramet> plist = new List<Paramet>
-			{
-				new Paramet {Name = "x1", Value = 0},
-				new Paramet {Name = "y1", Value = 1},
-				new Paramet {Name = "x2", Value = 2},
-				new Paramet {Name = "y2", Value = 3},
-				new Paramet {Name = "x1", Value = 0},
-				new Paramet {Name = "y1", Value = 1},
-				new Paramet {Name = "x2", Value = 2},
-				new Paramet {Name = "y2", Value = 3}
-			};
-			datagr.ItemsSource = plist;
-			//test.Children.Add(paramtable);
+			
 		}
 
 		private void Button_showReqs_Click(object sender, RoutedEventArgs e)

@@ -64,6 +64,7 @@
     </ApplicationDefinition>
     <Compile Include="ControlInterface.cs" />
     <Compile Include="ControlScene.cs" />
+    <Compile Include="Properties.cs" />
     <Compile Include="RealayCommand.cs" />
     <Compile Include="Themes.cs" />
     <Compile Include="ViewModel.cs" />
