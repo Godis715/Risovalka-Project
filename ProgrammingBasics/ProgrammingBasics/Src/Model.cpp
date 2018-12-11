@@ -17,6 +17,8 @@ Model::Model() {
 	primCtrl = PrimController::GetInstance();
 	reqCtrl = ReqController::GetInstance();
 	objCtrl = ObjectController::GetInstance();
+
+	svgFormat = SVGformat::GetInstance();
 }
 
 ID Model::CreatePrimitive(object_type type, const Array<double>& params) const {
@@ -107,7 +109,6 @@ ID Model::CreateRequirement(object_type type, const Array<ID>& IDs, const Array<
 	ID obj = reqCtrl->CreateReq(type, children, params);
 	dataCtrl->AddObject(obj);
 	dataCtrl->Connect(obj, children);
-
 	OptimizeByID(obj);
 
 	return obj;
@@ -136,14 +137,24 @@ void Model::ChangeRequirement(const ID& req, const Array<double>& params) const 
 	OptimizeByID(req);
 }
 
-void Model::Save(const std::string& path) const {
-	SVGformat downloader;
-	downloader.Save(path, true);
+void Model::NewFile(const std::string& path) const {
+	svgFormat->NewFile(path);
 }
 
-void Model::Download(const std::string& path) const {
-	SVGformat downloader;
-	downloader.Download(path);
+void Model::OpenFile(const std::string& path) const {
+	svgFormat->OpenFile(path);
+}
+
+void Model::AddFile(const std::string& path) const {
+	svgFormat->AddFile(path);
+}
+
+void Model::SaveAs(const std::string& path) const {
+	svgFormat->SaveAs(path, true);
+}
+
+void Model::Save() const {
+	svgFormat->Save(true);
 }
 
 Array<ID> Model::GetRelatedObjects(const ID& obj) const {

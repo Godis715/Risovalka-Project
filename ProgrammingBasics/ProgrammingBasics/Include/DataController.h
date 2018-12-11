@@ -12,6 +12,7 @@ namespace DrawProject {
 
 	class SVGformat {
 	private:
+		static SVGformat* instance;
 
 		class SVGObject {
 		private:
@@ -45,16 +46,25 @@ namespace DrawProject {
 		void AddObject(const SVGObject&);
 		void ApplyDownloadData();
 
+		string pathToFile = "";
+
 		PrimController* primCtrl;
 		ReqController* reqCtrl;
 		DataController* dataCtrl;
 		ObjectController* objCtrl;
-
-	public:
+		
 		SVGformat();
-		~SVGformat();
+
 		bool Download(const std::string&);
 		bool Save(const std::string&, bool);
+	public:
+		static SVGformat* GetInstance();
+
+		void NewFile(const std::string&);
+		bool OpenFile(const std::string&);
+		bool AddFile(const std::string&);
+		bool SaveAs(const std::string&, bool withDrawProjectTags);
+		bool Save(bool withDrawProjectTags);
 	};
 
 	typedef Set<ID> Component;

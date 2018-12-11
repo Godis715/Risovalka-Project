@@ -41,6 +41,7 @@ void ViewWPF::SetStyleDrawing(const rgbColor color, const typeDrawing type) {
 	message->code = set_style;
 	int y = int(type);
 	message->intArr = CreateArr(color.r, color.g, color.b, y);
+	mailBox->SendMessage(message);
 }
 
 int ViewWPF::Run() {

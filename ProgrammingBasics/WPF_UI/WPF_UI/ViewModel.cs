@@ -19,14 +19,26 @@ namespace WPF_UI
 
 		private ControlScene controlScene;
 
+		private ControlInterface controlInterface;
+
 		public void Initializated(){}
 
 		public string CurrentState { get; set; }
 
+		public string CursorPosition { get; set; }
+
+		public void SetNewCursorPosition(double X, double Y)
+		{
+			CursorPosition = "X: " + X.ToString() + " | Y: " + Y.ToString();
+			PropertyChanged(this, new PropertyChangedEventArgs(nameof(CursorPosition)));
+		}
+
 		private ViewModel()
 		{
 			mailBox = new MailBoxWrapper();
+			controlInterface = ControlInterface.GetInstance();
 			controlScene = ControlScene.GetInstance();
+			CursorPosition = "X: | Y: ";
 		}
 
 		private static ViewModel instance = null;
@@ -67,6 +79,7 @@ namespace WPF_UI
 			{
 				case Code.draw_point:
 					{
+						controlScene.DrawPoint(new Vector(message.GetDoubleArr()[0], message.GetDoubleArr()[1]));
 						break;
 					}
 				case Code.draw_segment:
@@ -77,10 +90,17 @@ namespace WPF_UI
 					}
 				case Code.draw_circle:
 					{
+						controlScene.DrawCircle(message.GetDoubleArr());
 						break;
 					}
 				case Code.draw_arc:
 					{
+						controlScene.DrawArc(message.GetDoubleArr());
+						break;
+					}
+				case Code.draw_curve:
+					{
+						controlScene.DrawCurve(message.GetDoubleArr());
 						break;
 					}
 				case Code.properties_point:
@@ -105,11 +125,13 @@ namespace WPF_UI
 					}
 				case Code.set_style:
 					{
+						int[] rgb = message.GetIntArr();
+						controlScene.SetColor(rgb[0], rgb[1], rgb[2]);
 						break;
 					}
 				case Code.possible_req:
 					{
-						
+						controlInterface.SetRequirments(message.GetStrArr());
 						break; 
 					}
 				case Code.translate_scene:
@@ -126,6 +148,8 @@ namespace WPF_UI
 					}
 				case Code.current_draw_mode:
 					{
+						CurrentState = message.GetStrArr()[0];
+						PropertyChanged(this, new PropertyChangedEventArgs(nameof(CurrentState)));
 						break;
 					}
 				case Code.delete_req_input:
@@ -197,14 +221,13 @@ namespace WPF_UI
 			ev_delete_display_Prim,
 			ev_delete_display_Req,
 			// file work
-			ev_save,
-			//ev_saveFile,
-			//ev_newFile,
-			//ev_addFile,
-			//ev_openFile,
-			ev_download,
+			ev_newFile,
+			ev_openFile,
+			ev_addFile,
+			ev_saveAsFile,
+			ev_saveFile,
 			ev_compile,
-			ex_set_theme
+			ev_set_theme
 		};
 
 		public void SetEvent(Event ev, double[] arrParams, string str = "")
@@ -217,6 +240,7 @@ namespace WPF_UI
 			{
 				mailBox.SendEvent(ev.GetHashCode(), arrParams, str);
 			}
+			controlScene.CleareScene();
 			while(!mailBox.IsEmpty())
 			{
 				MessageHandling(mailBox.GetMessage());

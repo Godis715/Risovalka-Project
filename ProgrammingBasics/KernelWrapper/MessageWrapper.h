@@ -17,7 +17,7 @@ namespace KernelWrapper
 	private:
 		array<double>^ doubleArr;
 		array<int>^ intArr;
-		String^ str;
+		array <String^>^ strArr;
 		int code;
 	public:
 		
@@ -25,7 +25,7 @@ namespace KernelWrapper
 		{
 			doubleArr = Helpers::Converter::ToDotNetArray(instance->doubleArr);
 			intArr = Helpers::Converter::ToDotNetArray(instance->intArr);
-
+			strArr = Helpers::Converter::ToDotNetArrayStr(instance->strArr);
 			code = instance->code;
 		}
 
@@ -37,6 +37,11 @@ namespace KernelWrapper
 		array<int>^ GetIntArr() 
 		{
 			return intArr;
+		}
+
+		array<String^>^ GetStrArr()
+		{
+			return strArr;
 		}
 
 		int GetCode() 

@@ -62,6 +62,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="ControlInterface.cs" />
     <Compile Include="ControlScene.cs" />
     <Compile Include="RealayCommand.cs" />
     <Compile Include="Themes.cs" />
@@ -111,6 +112,7 @@
     <Resource Include="Resources\CreateFile.ico" />
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="Resources\Point.png" />
     <Resource Include="Resources\SaveFile.ico" />
     <Resource Include="Resources\Setting.ico" />
   </ItemGroup>
@@ -125,6 +127,7 @@
     <Resource Include="Resources\segment.png" />
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="Resources\Star.png" />
     <Resource Include="Resources\Themes.ico" />
   </ItemGroup>
   <ItemGroup>
@@ -141,6 +144,28 @@
       <Project>{8f3dcba5-ac6c-4049-9823-3bad625469cb}</Project>
       <Name>KernelWrapperProject</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\arc.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\BrokenLine.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Circle .png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Move.png" />
+    <Resource Include="Resources\Scale.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Curve.png" />
+    <Resource Include="Resources\Delete.png" />
+    <Resource Include="Resources\DeleteAll.png" />
+    <Resource Include="Resources\Rotate.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\save.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

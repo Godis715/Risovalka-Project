@@ -75,10 +75,13 @@ namespace DrawProject {
 		ev_delete_display_Prim,
 		ev_delete_display_Req,
 		// file work
-		ev_save,
-		ev_download,
+		ev_newFile,
+		ev_openFile,
+		ev_addFile,
+		ev_saveAsFile,
+		ev_saveFile,
 		ev_compile,
-		ex_set_theme
+		ev_set_theme
 	};
 
 	class CreateObject {

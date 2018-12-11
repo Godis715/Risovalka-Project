@@ -64,6 +64,19 @@ namespace WPF_UI
 			return false;
 		}
 
+		public bool ScriptDialog()
+		{
+			OpenFileDialog scriptDialog = new OpenFileDialog();
+			scriptDialog.Title = "Загрузка скрипта";
+			scriptDialog.Filter = "(*.dps)|*.dps";
+			if (scriptDialog.ShowDialog() == true)
+			{
+				FilePath = scriptDialog.FileName;
+				return true;
+			}
+			return false;
+		}
+
 		public void ShowMessage(string message)
 		{
 			MessageBox.Show(message);
@@ -89,7 +102,7 @@ namespace WPF_UI
 					  {
 						  if (dialogService.SaveAsFileDialog() == true)
 						  {
-							  //viewModel.SetEvent(ViewModel.Event.ev_saveFile, new double[0], dialogService.FilePath);
+							  viewModel.SetEvent(ViewModel.Event.ev_saveAsFile, new double[0], dialogService.FilePath);
 							  dialogService.ShowMessage("File is save!");
 						  }
 					  }
@@ -112,7 +125,7 @@ namespace WPF_UI
 				  {
 					  try
 					  {
-						  //viewModel.SetEvent(ViewModel.Event.ev_save, new double[0]);
+						  viewModel.SetEvent(ViewModel.Event.ev_saveFile, new double[0]);
 						  dialogService.ShowMessage("File is save!");
 					  }
 					  catch (Exception ex)
@@ -136,7 +149,7 @@ namespace WPF_UI
 					  {
 						  if (dialogService.NewFileDialog() == true)
 						  {
-							  //viewModel.SetEvent(ViewModel.Event.ev_newFile, new double[0], dialogService.FilePath);
+							  viewModel.SetEvent(ViewModel.Event.ev_newFile, new double[0], dialogService.FilePath);
 							  dialogService.ShowMessage("File is created!");
 						  }
 					  }
@@ -161,7 +174,7 @@ namespace WPF_UI
 					  {
 						  if (dialogService.OpenFileDialog() == true)
 						  {
-							  //viewModel.SetEvent(ViewModel.Event.ev_openFile, new double[0], dialogService.FilePath);
+							  viewModel.SetEvent(ViewModel.Event.ev_openFile, new double[0], dialogService.FilePath);
 							  dialogService.ShowMessage("File is opened!");
 						  }
 					  }
@@ -186,8 +199,33 @@ namespace WPF_UI
 					  {
 						  if (dialogService.AddFileDialog() == true)
 						  {
-							  //viewModel.SetEvent(ViewModel.Event.ev_addFile, new double[0], dialogService.FilePath);
+							  viewModel.SetEvent(ViewModel.Event.ev_addFile, new double[0], dialogService.FilePath);
 							  dialogService.ShowMessage("File is added!");
+						  }
+					  }
+					  catch (Exception ex)
+					  {
+						  dialogService.ShowMessage(ex.Message);
+					  }
+				  }));
+			}
+		}
+
+		// команда добавления скрипта
+		private RelayCommand scriptCommand;
+		public RelayCommand ScriptCommand
+		{
+			get
+			{
+				return scriptCommand ??
+				  (scriptCommand = new RelayCommand(obj =>
+				  {
+					  try
+					  {
+						  if (dialogService.ScriptDialog() == true)
+						  {
+							  viewModel.SetEvent(ViewModel.Event.ev_compile, new double[0], dialogService.FilePath);
+							  dialogService.ShowMessage("Script is loaded!");
 						  }
 					  }
 					  catch (Exception ex)

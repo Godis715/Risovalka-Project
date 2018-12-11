@@ -97,6 +97,7 @@ ID ReqController::CreateReq
 	const Array<ID>& objects,
 	const Array<double>& params) const
 {
+
 	Object* obj = nullptr;
 	switch (type) {
 	case ot_distBetPoints: {

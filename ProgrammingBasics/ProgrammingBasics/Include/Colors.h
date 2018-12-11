@@ -14,17 +14,15 @@ namespace DrawProject {
 	{
 	private:
 
-		rgbColor colors[9];
+		rgbColor colors[6];
 
-		const int size = 9;
+		const int size = 6;
 
 		static Color* instance;
 		Color();
 
 		void SaveFile();
 	public:
-		void DrowWindow(const int, const int, const int);
-		void BackGround(const int, const int, const int);
 		void Primitives(const int, const int, const int);
 		void Points(const int, const int, const int);
 		void SelectedPrim(const int, const int, const int);
@@ -33,8 +31,6 @@ namespace DrawProject {
 		void CreatingPrim(const int, const int, const int);
 		void LineForCurve(const int, const int, const int);
 
-		const rgbColor DrowWindow() const;
-		const rgbColor BackGround() const;
 		const rgbColor Primitives() const;
 		const rgbColor Points() const;
 		const rgbColor SelectedPrim() const;

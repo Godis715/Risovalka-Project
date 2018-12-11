@@ -124,14 +124,8 @@ namespace DrawProject {
 	}
 
 	void Presenter::CleareScene() {
-		auto temp = mode->HandleEvent(ev_escape, Array<double>(0));
-		if (temp != nullptr) {
-			delete mode;
-			mode = temp;
-		}
 		Undo_Redo::GetInstance()->Clear();
 		model->Clear();
-		view->Update();
 	}
 
 	void Presenter::DrawSelectedObjects(const Array<ID>& selectedObjects)
@@ -176,10 +170,16 @@ namespace DrawProject {
 
 	void Presenter::DrawScene()
 	{
+		/*std::ofstream log("Log.txt", std::ios_base::app);
+		log << "DrawScene" << std::endl;
+		log.close();*/
 		auto color = Color::GetInstance();
 		auto objCtrl = ObjectController::GetInstance();
 		auto iter = model->GetPrimIterator();
-		view->SetStyleDrawing(color->Primitives(), solid);
+		if (iter.IsValid()) {
+		
+			view->SetStyleDrawing(color->Primitives(), solid);
+		}
 		while (iter.IsValid()) {
 			ID obj = *iter;
 			++iter;
@@ -209,36 +209,65 @@ namespace DrawProject {
 		}
 
 		mode->DrawMode();
-		view->Update();
 	}
 
 	void Presenter::Set_event(Event _ev, Array<double>& _params, const std::string& str)
 	{
+	/*	std::ofstream log("Log.txt", std::ios_base::app);
+		log.close();*/
+		/*std::ofstream log("Log.txt", std::ios_base::app);
+		log << "Set_event" << std::endl;
+		log.close();*/
 		Mode* temp = mode->HandleEvent(_ev, _params);
+	/*	log.open("Log.txt", std::ios_base::app);
+		log << ((int)temp) << std::endl;
+		log.close();*/
 		if (temp != nullptr)
 		{
 			delete mode;
 			mode = temp;
 		}
-
+		
 		switch (_ev)
 		{
-		case ev_save:
+		case ev_newFile:
 		{
-			model->Save(str);
+			CleareScene();
+			model->NewFile(str);
 			break;
 		}
-		case ev_download:
+		case ev_addFile:
 		{
-			model->Download(str);
+			model->AddFile(str);
+			break;
+		}
+		case ev_openFile:
+		{
+			CleareScene();
+			model->OpenFile(str);
+			break;
+		}
+		case ev_saveAsFile:
+		{
+			model->SaveAs(str);
+			break;
+		}
+		case ev_saveFile:
+		{
+			model->Save();
 			break;
 		}
 		case ev_compile:
 		{
-			Presenter::Compile();
+			Presenter::Compile(str);
 			break;
 		}
-		case ex_set_theme:
+		case ev_delAll:
+		{
+			CleareScene();
+			break;
+		}
+		case ev_set_theme:
 		{
 			Color::GetInstance()->SetTheme(int(_params[0]));
 			break;
@@ -247,17 +276,16 @@ namespace DrawProject {
 		view->Update();
 	}
 
-	void Presenter::Compile() {
+	void Presenter::Compile(const std::string& path) {
 		Compiler* compiler = Compiler::GetInstance();
 		std::ifstream file;
-		file.open("script.txt");
+		file.open(path);
 		if (file.is_open()) {
 			if (!file.eof()) {
 				compiler->Parse(file);
 			}
 			file.close();
 		}
-		view->Update();
 	}
 
 	Presenter* Presenter::instance = nullptr;

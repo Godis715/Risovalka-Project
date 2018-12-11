@@ -18,7 +18,6 @@ namespace KernelWrapper {
 			auto mailBox = MailBox::GetInstance();
 			mailBox->InitKernel();
 		}
-		// 		void Set_event(Event, Array<double>&, const std::string& str = "");
 
 		void SendEvent(int code, array<double>^ doubleArr, String^ str) 
 		{

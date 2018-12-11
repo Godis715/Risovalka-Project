@@ -66,7 +66,9 @@ void WPFDisplayParamReq::SetParam(const Array<double>& params, const std::string
 
 #pragma region WPFCreatingToolbar
 WPFCreatingToolbar::WPFCreatingToolbar() { }
-WPFCreatingToolbar::~WPFCreatingToolbar() { }
+WPFCreatingToolbar::~WPFCreatingToolbar() {
+	Clear();
+}
 
 void WPFCreatingToolbar::SetParam(const Array<std::string>& names) {
 	auto mailBox = MailBox::GetInstance();
@@ -100,13 +102,13 @@ WPFDrawMode::WPFDrawMode(){
 }
 WPFDrawMode::~WPFDrawMode(){ }
 
-void WPFDrawMode::SetName(const std::string) {
+void WPFDrawMode::SetName(const std::string _name) {
 	auto mailBox = MailBox::GetInstance();
 	auto message = new Message;
 	message->code = current_draw_mode;
-
-	/*message->strArray..*/
-
+	Array<string> name(1);
+	name[0] = _name;
+	message->strArr = name;
 	mailBox->SendMessage(message);
 }
 #pragma endregion

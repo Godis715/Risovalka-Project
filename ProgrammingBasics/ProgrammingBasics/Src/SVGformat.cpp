@@ -21,7 +21,15 @@ SVGformat::SVGformat() {
 	objCtrl = ObjectController::GetInstance();
 }
 
-SVGformat::~SVGformat() {}
+SVGformat* SVGformat::GetInstance()
+{
+	if (instance == nullptr)
+	{
+		instance = new SVGformat();
+	}
+	return instance;
+}
+
 
 bool SVGformat::IsContains(IDMap& idMap, unsigned long long hash) {
 	auto it = idMap.Find(hash);
@@ -311,11 +319,11 @@ bool SVGformat::ParseRequirementTag(std::ifstream& file, object_type typeReq)
 }
 
 //public
-bool SVGformat::Download(const std::string& nameFile)
+bool SVGformat::Download(const std::string& _pathToFile)
 {
 	objMap.DeleteDict();
 
-	std::ifstream file(nameFile);
+	std::ifstream file(_pathToFile);
 	if (!file.is_open())
 	{
 		LOGERROR("SVGformat::Download: couldn't open the file", LEVEL_3);
@@ -438,9 +446,9 @@ void SVGformat::ApplyDownloadData() {
 	}
 }
 
-bool SVGformat::Save(const std::string& path, bool withDrawProjectTags)
+bool SVGformat::Save(const std::string& _pathToFile, bool withDrawProjectTags)
 {
-	std::ofstream file(path);
+	std::ofstream file(_pathToFile);
 	if (!file.is_open())
 	{
 		return false;
@@ -669,3 +677,39 @@ bool SVGformat::Save(const std::string& path, bool withDrawProjectTags)
 	file.close();
 	return true;
 }
+
+void SVGformat::NewFile(const std::string& _pathToFile)
+{
+	pathToFile = _pathToFile;
+	std::ofstream log("LogFile.txt");
+	log << _pathToFile;
+}
+
+bool SVGformat::OpenFile(const std::string& _pathToFile)
+{
+	pathToFile = _pathToFile;
+	return Download(_pathToFile);
+}
+
+bool SVGformat::AddFile(const std::string& _pathToFile) {
+	return Download(_pathToFile);
+}
+
+bool SVGformat::SaveAs(const std::string& _pathToFile, bool withDrawProjectTags) {
+	pathToFile = _pathToFile;
+	return Save(_pathToFile, withDrawProjectTags);
+}
+
+bool SVGformat::Save(bool withDrawProjectTags)
+{
+	if (pathToFile != "")
+	{
+		return Save(pathToFile, withDrawProjectTags);
+	}
+	else
+	{
+		return false;
+	}
+}
+
+SVGformat* SVGformat::instance = nullptr;

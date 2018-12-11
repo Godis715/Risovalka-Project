@@ -5,34 +5,40 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WPF_UI"
         mc:Ignorable="d"
-        Title="DrawProject" Height="720" Width="1280"
+        Title="DrawProject" Height="740" Width="1280"
         MinHeight="720" MinWidth="1280"
         KeyDown="Window_KeyEvent"
-        KeyUp="Window_KeyEvent">
-    <Grid x:Name="DrawProject" Background="{Binding colors[6]}">
+        KeyUp="Window_KeyEvent"
+        x:Name="Main_Window">
+    <Grid x:Name="DrawProject" Background="{Binding colors[0]}">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="auto"/>
-            <ColumnDefinition Width="auto"/>
+            <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
         <Grid Grid.Column="0">
             <Grid.RowDefinitions>
                 <RowDefinition Height="auto"/>
                 <RowDefinition Height="auto"/>
+                <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
-            <Grid Grid.Row="0">
+            <Grid Grid.Row="0" Panel.ZIndex="1">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="auto"/>
                     <RowDefinition Height="auto"/>
                 </Grid.RowDefinitions>
 
-                <Menu Grid.Row="0" Height="25" VerticalAlignment="Top" Background="{Binding colors[8]}">
+                <Menu Grid.Row="0" Height="25" VerticalAlignment="Top" Background="{Binding colors[2]}">
                     <MenuItem Header="File" x:Name="File">
                         <MenuItem Header="New Project" Command="{Binding NewCommand}">
                             <MenuItem.Icon>
                                 <Image Source="Resources/CreateFile.ico" />
                             </MenuItem.Icon>
                         </MenuItem>
-                        <MenuItem  Header="Save Project" Command="{Binding SaveCommand}" />
+                        <MenuItem  Header="Save Project" Command="{Binding SaveCommand}">
+                            <MenuItem.Icon>
+                                <Image Source="Resources/save.png" />
+                            </MenuItem.Icon>
+                        </MenuItem>
                         <MenuItem  Header="Save Project as..." Command="{Binding SaveAsCommand}">
                             <MenuItem.Icon>
                                 <Image Source="Resources/SaveFile.ico" />
@@ -49,7 +55,7 @@
                             </MenuItem.Icon>
                         </MenuItem>
                         <Separator />
-                        <MenuItem Header="Run Script">
+                        <MenuItem Header="Run Script" Command="{Binding ScriptCommand}">
                             <MenuItem.Icon>
                                 <Image Source="Resources/RunSript.ico" />
                             </MenuItem.Icon>
@@ -65,9 +71,9 @@
                             <MenuItem Header="Neutral" Click="ChangedTheme"/>
                             <MenuItem Header="Gradient" Click="ChangedTheme"/>
                         </MenuItem>
-                        <MenuItem Header="Grid On/Off" Command="{Binding GridOnOffCommand}" />
+                        <MenuItem x:Name="GridOnOff" Header="Grid On/Off" Command="{Binding GridOnOffCommand}" />
                         <Separator />
-                        <MenuItem Header="More...">
+                        <MenuItem Header="More soon...">
                             <MenuItem.Icon>
                                 <Image Source="Resources/Setting.ico" />
                             </MenuItem.Icon>
@@ -80,7 +86,7 @@
                     </MenuItem>
 
                 </Menu>
-                <ToolBar Grid.Row="1" Background="{Binding colors[9]}">
+                <ToolBar Grid.Row="1" Background="{Binding colors[3]}">
                     <Button Margin="2" Click="Button_Undo_Click">
                         <Button.Content>
                             <Image Source="Resources/Undo.ico" Width="15" Height="15"/>
@@ -111,23 +117,78 @@
                         </ComboBoxItem>
                     </ComboBox>
                     <Separator/>
-                    <RadioButton Tag="Point" Content="Point" Margin="1" Click="Primitive_click">
-                      
+                    <RadioButton Tag="Point" Margin="1" Click="Primitive_click">
+                        <RadioButton.Content>
+                            <Image  Source="Resources/Point.png"  Width="20" Height="20" />
+                        </RadioButton.Content>
                     </RadioButton>
                     <RadioButton Tag="Segment" Margin="0,4" VerticalAlignment="Stretch" Click="Primitive_click">
                         <RadioButton.Content>
                             <Image  Source="Resources/segment.png"  Width="20" Height="20" />
                         </RadioButton.Content>
                     </RadioButton>
-                    <RadioButton Tag="Star" Content="Star" Margin="1" Click="Primitive_click"/>
-                    <RadioButton Tag="Broken" Content="Broken" Margin="1" Click="Primitive_click"/>
-                    <RadioButton Tag="Circle" Content="Circle" Margin="1" Click="Primitive_click"/>
-                    <RadioButton Tag="Arc" Content="Arc" Margin="1" Click="Primitive_click"/>
-                    <RadioButton Tag="Curve" Content="Curve" Margin="1" Click="Primitive_click"/>
+                    <RadioButton Tag="Star" Margin="1" Click="Primitive_click">
+                        <RadioButton.Content>
+                            <Image  Source="Resources/Star.png" Width="20" Height="20" />
+                        </RadioButton.Content>
+                    </RadioButton>
+                    <RadioButton Tag="Broken" Margin="1" Click="Primitive_click">
+                        <RadioButton.Content>
+                            <Image  Source="Resources/BrokenLine.png" Width="20" Height="20" />
+                        </RadioButton.Content>
+                    </RadioButton>
+                    <RadioButton Tag="Circle" Margin="1" Click="Primitive_click">
+                        <RadioButton.Content>
+                            <Image  Source="Resources/Circle .png" Width="20" Height="20" />
+                        </RadioButton.Content>
+                    </RadioButton>
+                    <RadioButton Tag="Arc"  Margin="1" Click="Primitive_click">
+                        <RadioButton.Content>
+                            <Image  Source="Resources/arc.png" Width="20" Height="20" />
+                        </RadioButton.Content>
+                    </RadioButton>
+                    <RadioButton Tag="Curve" Margin="1" Click="Primitive_click">
+                        <RadioButton.Content>
+                            <Image  Source="Resources/Curve.png"  Width="20" Height="20" />
+                        </RadioButton.Content>
+                    </RadioButton>
+                        <Separator/>
+                    <Button>
+                        <Menu>
+                            <MenuItem x:Name="Requirments" Header="Requirments" />
+                        </Menu>
+                    </Button>
                     <Separator/>
                     <Button>
                         <Menu>
-                            <MenuItem x:Name="Reqs" Header="Requirments" />
+                            <MenuItem x:Name="Redaction" Header="Redaction">
+                                <MenuItem Header="Move" Click="Redaction_click">
+                                    <MenuItem.Icon>
+                                        <Image  Source="Resources/Move.png"  Width="16" Height="16" />
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem Header="Rotate" Click="Redaction_click">
+                                    <MenuItem.Icon>
+                                        <Image  Source="Resources/Rotate.png"  Width="16" Height="16" />
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem Header="Scale" Click="Redaction_click">
+                                    <MenuItem.Icon>
+                                        <Image  Source="Resources/Scale.png"  Width="16" Height="16" />
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                                <Separator/>
+                                <MenuItem Header="Delete" Click="Redaction_click">
+                                    <MenuItem.Icon>
+                                        <Image  Source="Resources/Delete.png"  Width="16" Height="16" />
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem Header="Clear" Click="Redaction_click">
+                                    <MenuItem.Icon>
+                                        <Image  Source="Resources/DeleteAll.png"  Width="16" Height="16" />
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                            </MenuItem>
                         </Menu>
                     </Button>
                     <Separator/>
@@ -137,24 +198,52 @@
 
 
             </Grid>
-            <Canvas x:Name="Scene" Grid.Row="1" HorizontalAlignment="Left" Height="600"  VerticalAlignment="Top" Width="900" Background="{Binding colors[7]}"
+            <Canvas x:Name="Scene" Grid.Row="1" HorizontalAlignment="Left" Height="600"  VerticalAlignment="Top" Width="900" Background="{Binding colors[1]}"
                     MouseMove="Scene_MouseMove"
-                    MouseDown="Scene_OnMouseDown"/>
+                    MouseLeftButtonDown="Scene_MouseLeftButtonDown"
+                    MouseLeftButtonUp="Scene_MouseLeftButtonUp"
+                    MouseRightButtonDown="Scene_MouseRightButtonDown"
+                    MouseRightButtonUp="Scene_MouseRightButtonUp"
+                    MouseWheel="Scene_MouseWheel"
+                    MouseLeave="Scene_MouseLeave"
+                    MouseEnter="Scene_MouseEnter"/>
+            <StatusBar Grid.Row="2" x:Name="StatusBar" Background="LightGray">
+                <Label Content="{Binding CursorPosition}"  />
+                <Separator/>
+                <Label Content="{Binding CurrentState}" />
+            </StatusBar>
 
         </Grid>
         
         <!-->Test Grid</!-->
-            <Grid x:Name="test" Grid.Column="1">
+
+        <Grid Background="{Binding colors[0]}" x:Name="test" Grid.Column="1" Panel.ZIndex="1" >
             <Grid.RowDefinitions>
-                <RowDefinition x:Name="ParamsRow" Height="auto"/>
-                <RowDefinition x:Name="ReqsRow" Height="auto"/>
+                <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
-            <DataGrid x:Name="datagr" Grid.Row="0">
-                <DataGrid.Columns>
-                    <DataGridTextColumn Header="Name" Width="100"/>
-                    <DataGridTextColumn Header="Value" Width="100"/>
-                </DataGrid.Columns>
-            </DataGrid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <GroupBox Grid.Column="0" Header="Field widgets" Width="auto">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition x:Name="ParamsRow" Height="auto"/>
+                        <RowDefinition x:Name="ReqsRow" Height="auto"/>
+                        <RowDefinition Height="auto" />
+                    </Grid.RowDefinitions>
+                    <DataGrid x:Name="datagr" Grid.Row="0" Width="auto">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Name" Width="auto"/>
+                            <DataGridTextColumn Header="Value" Width="auto"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                    <Grid Grid.Row="2" x:Name="FieldForDisplays" Width="150" HorizontalAlignment="Left">
+
+                    </Grid>
+                </Grid>
+
+            </GroupBox>
+            
         </Grid>
     </Grid>
 </Window>

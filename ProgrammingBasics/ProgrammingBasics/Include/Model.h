@@ -17,6 +17,8 @@ namespace DrawProject {
 		ReqController* reqCtrl;
 		DataController* dataCtrl;
 
+		SVGformat* svgFormat;
+
 		static Model* instance;
 
 		Model();
@@ -47,8 +49,11 @@ namespace DrawProject {
 		void Rotate(const Array<ID>& objs, const Vector2&, const double) const;
 		void Clear() const;
 
-		void Save(const std::string&) const;
-		void Download(const std::string&) const;
+		void NewFile(const std::string&) const;
+		void OpenFile(const std::string&) const;
+		void AddFile(const std::string&) const;
+		void SaveAs(const std::string&) const;
+		void Save() const;
 
 		bool IsPrim(const ID&) const;
 		bool IsReq(const ID&) const;

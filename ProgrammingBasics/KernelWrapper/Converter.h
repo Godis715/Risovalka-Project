@@ -16,11 +16,6 @@ namespace Helpers {
 			char* charArr = (char*)Marshal::StringToHGlobalAnsi(str).ToPointer();
 			return std::string(charArr);
 		}
-		
-		static String^ ToDotNetString(const std::string& str)
-		{
-			return gcnew String(str.c_str());
-		}
 
 		template<typename T>
 		static DrawProject::Array<T> ToDrawProjArray(array<T>^ arr)
@@ -44,5 +39,14 @@ namespace Helpers {
 			return newArr;
 		}
 
+		static array<String^>^ ToDotNetArrayStr(const DrawProject::Array<std::string>& arr)
+		{
+			auto newArr = gcnew array<String^>(arr.GetSize());
+			for (int i = 0; i < arr.GetSize(); ++i)
+			{
+				newArr[i] = gcnew String(arr[i].c_str());
+			}
+			return newArr;
+		}
 	};
 }

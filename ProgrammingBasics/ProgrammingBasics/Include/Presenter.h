@@ -31,7 +31,7 @@ namespace DrawProject {
 
 		void MoveObject(const Array<ID>&, const Vector2&);
 
-		void Compile();
+		void Compile(const std::string&);
 
 		//function for view
 		void Set_event(Event, Array<double>&, const std::string& str = "");

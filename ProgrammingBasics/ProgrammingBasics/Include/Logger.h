@@ -12,7 +12,8 @@ namespace DrawProject {
 #define LEVEL_1 1
 #define LEVEL_2 2
 #define LEVEL_3 3
-#define MAX_LEVEL 3
+#define LEVEL_4 4
+#define MAX_LEVEL 4
 
 #define LOG Logger::Log
 #define LOGERROR Logger::LogError
@@ -26,10 +27,8 @@ namespace DrawProject {
 
 	public:
 		static void InitLogger(std::ostream* _output, int _sensitivity) {
-			if (output == nullptr) {
-				output = _output;
-				minLevel = _sensitivity;
-			}
+			output = _output;
+			minLevel = _sensitivity;
 		}
 
 		static void SetSensitivity(int _level) {
@@ -61,7 +60,8 @@ namespace DrawProject {
 			}
 		}
 
-		static void Log(const char* message, int priority) {
+		static void Log(std::string message, int priority) {
+
 			if (priority >= minLevel) {
 				(*output) << "LOG:" << message << std::endl;
 			}
