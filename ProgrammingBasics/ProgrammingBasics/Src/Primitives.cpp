@@ -245,6 +245,21 @@ double Segment::GetDist(const Vector2& point) const {
 #pragma endregion
 
 #pragma region Arc
+Arc::Arc(Point* _p1, Point* _p2, Vector2 _center, double _angle) :
+	Primitive(ot_arc, CreateArr(_angle), CreateArr(_p1->GetID(), _p2->GetID()))
+{
+	if (_p1 == nullptr || _p2 == nullptr) {
+		throw std::invalid_argument("Arc::Arc::parameters was nullptr");
+	}
+
+	point1 = _p1;
+	point2 = _p2;
+
+	angle = &params[0];
+	cx = _center.x;
+	cy = _center.y;
+}
+
 Arc::Arc(Point* _p1, Point* _p2, double _angle) :
 	Primitive(ot_arc, CreateArr(_angle), CreateArr(_p1->GetID(), _p2->GetID()))
 {
