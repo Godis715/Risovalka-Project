@@ -105,7 +105,6 @@ namespace DrawProject {
 		view = _view;
 		
 		mode = new Selection();
-
 		model = Model::GetInstance();
 		
 		auto tree = new treeFunc;
@@ -167,19 +166,15 @@ namespace DrawProject {
 		}
 	}
 
-
 	void Presenter::DrawScene()
 	{
-		/*std::ofstream log("Log.txt", std::ios_base::app);
-		log << "DrawScene" << std::endl;
-		log.close();*/
-		auto color = Color::GetInstance();
+		LOG("Draw Scene", LEVEL_4);
 		auto objCtrl = ObjectController::GetInstance();
 		auto iter = model->GetPrimIterator();
 		if (iter.IsValid()) {
-		
-			view->SetStyleDrawing(color->Primitives(), solid);
+			view->SetStyleDrawing(Color::GetInstance()->Primitives(), solid);
 		}
+
 		while (iter.IsValid()) {
 			ID obj = *iter;
 			++iter;
@@ -213,21 +208,12 @@ namespace DrawProject {
 
 	void Presenter::Set_event(Event _ev, Array<double>& _params, const std::string& str)
 	{
-	/*	std::ofstream log("Log.txt", std::ios_base::app);
-		log.close();*/
-		/*std::ofstream log("Log.txt", std::ios_base::app);
-		log << "Set_event" << std::endl;
-		log.close();*/
 		Mode* temp = mode->HandleEvent(_ev, _params);
-	/*	log.open("Log.txt", std::ios_base::app);
-		log << ((int)temp) << std::endl;
-		log.close();*/
 		if (temp != nullptr)
 		{
 			delete mode;
 			mode = temp;
 		}
-		
 		switch (_ev)
 		{
 		case ev_newFile:
@@ -273,6 +259,7 @@ namespace DrawProject {
 			break;
 		}
 		}
+		LOG("Set_event 3", LEVEL_4);
 		view->Update();
 	}
 

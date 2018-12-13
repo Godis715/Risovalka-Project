@@ -1,6 +1,6 @@
 #include "Colors.h"
 #include <fstream>
-
+#include "Logger.h"
 using namespace DrawProject;
 
 void Color::Primitives(const int r, const int g, const int b) {
@@ -98,18 +98,22 @@ Color::Color() {
 	std::ifstream colorsFile;
 	colorsFile.open("colors.txt");
 	if (!colorsFile.is_open()) {
-		throw std::exception("file is not open");
+		LOG("normal", 4);
+		colorsFile.close();
+		SetTheme(1);
 	}
 	
 	for (int i = 0; i < size; ++i) {
 		if (!colorsFile.eof()) {
+			LOG("error", 4);
 			colorsFile >> colors[i].r;
 			colorsFile >> colors[i].g;
 			colorsFile >> colors[i].b;
 		}
 		else {
-			SetTheme(2);
+			LOG("normal", 4);
 			colorsFile.close();
+			SetTheme(1);
 			return;
 		}
 	}
@@ -118,8 +122,7 @@ Color::Color() {
 Color* Color::instance = nullptr;
 
 void Color::SaveFile() {
-	std::ofstream colorsFile;
-	colorsFile.open("colors.txt");
+	std::ofstream colorsFile("colors.txt");
 	if (!colorsFile.is_open()) {
 		throw std::exception("file is not open");
 	}

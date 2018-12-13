@@ -49,6 +49,7 @@ int ViewWPF::Run() {
 	return 0;
 }
 void ViewWPF::Update() {
+	LOG("ViewWPF::Update", LEVEL_4);
 	presenter->DrawScene();
 }
 

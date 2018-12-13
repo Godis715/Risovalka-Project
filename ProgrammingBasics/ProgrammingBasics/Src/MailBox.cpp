@@ -22,9 +22,6 @@ bool MailBox::Empty() {
 }
 
 MailBox* MailBox::GetInstance() {
-	std::ofstream imya("Log.txt");
-	imya << "shto-to";
-	imya.close();
 	if (instance == nullptr) {
 
 		instance = new MailBox;
@@ -37,8 +34,9 @@ MailBox::MailBox() {
 }
 
 void MailBox::InitKernel() {
-	// initializing viewWPF -> initializing presenter -> initializing Model
-	Logger::InitLogger(new std::ofstream("Log.txt"), 4);
+
+	Logger::InitLogger(new std::ofstream("Log.txt"), 3);
+	LOG("1", LEVEL_4);
 	auto viewWPF = ViewWPF::GetInstance();
 	viewWPF->Run();
 }
