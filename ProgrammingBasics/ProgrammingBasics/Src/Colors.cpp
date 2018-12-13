@@ -128,9 +128,10 @@ Color::Color() {
 	std::ifstream colorsFile;
 	colorsFile.open("colors.txt");
 	if (!colorsFile.is_open()) {
-		throw std::exception("file is not open");
+		colorsFile.close();
+		SetTheme(1);
 	}
-	
+
 	for (int i = 0; i < size; ++i) {
 		if (!colorsFile.eof()) {
 			colorsFile >> colors[i].r;
@@ -138,10 +139,12 @@ Color::Color() {
 			colorsFile >> colors[i].b;
 		}
 		else {
-			SetTheme(2);
+			colorsFile.close();
+			SetTheme(1);
 			return;
 		}
 	}
+	colorsFile.close();
 }
 Color* Color::instance = nullptr;
 
