@@ -2122,26 +2122,6 @@ void Redaction::DrawMode() {
 }
 #pragma endregion
 
-//RedactionReq::RedactionReq(ID _selecObj) : selectedPrim(_selecObj) {
-//	model->GetComponent(selectedPrim, objects, reqs);
-//}
-//
-//RedactionReq::RedactionReq() { }
-//
-//RedactionReq::~RedactionReq() {
-//	objects.Clear();
-//	reqs.Clear();
-//	objectsOfreq.Clear();
-//}
-//
-//Mode* RedactionReq::HandleEvent(const Event ev, const Array<double>& param) {
-//	return nullptr;
-//}
-//
-//void RedactionReq::DrawMode() {
-//
-//}
-
 #pragma region CreateRequirementWithParam
 CreateRequirementWithParam::CreateRequirementWithParam(Array<ID> _selecObj, Event _ev) : selectedObjects(_selecObj) {
 	IDrawMode* outputWidjet = static_cast<IDrawMode*>(view->GetWidjet(drawMode));
@@ -2914,22 +2894,31 @@ Array<ID> CreatingArc::HandleEvent(const Event ev, Array<Vector2>& params) {
 				throw std::invalid_argument("Bad number of parameters");
 			}
 			Array<ID>arcIDs(centerPoints.GetSize());
+			double radius1 = (startPoints[0] - centerPoints[0]).GetLength();
+			double radius2 = (params[0] - centerPoints[0]).GetLength();
+			double angle;
+			if (abs(radius2) > EPS) {
+				params[0] = centerPoints[0] + (params[0] - centerPoints[0]) / radius2 * radius1;
+				angle = Vector2::Angle(startPoints[0] - centerPoints[0], params[0] - centerPoints[0]);
+				if (std::isnan(angle) || angle < EPS) {
+					angle = 2 * PI;
+				}
+			}
+			else {
+				params = startPoints;
+				angle = 2 * PI;
+				radius2 = radius1;
+			}
+
 			for (int i = 0; i < params.GetSize(); i++)
 			{
 				Array<double> arcParameters(5);
 				arcParameters[0] = startPoints[i].x;
 				arcParameters[1] = startPoints[i].y;
-				double radius1 = (startPoints[i] - centerPoints[i]).GetLength();
-				double radius2 = (params[i] - centerPoints[i]).GetLength();
-				if (abs(radius2) > DBL_EPSILON) {
-					params[i] = centerPoints[i] + (params[i] - centerPoints[i]) / radius2 * radius1;
-				}
-				else {
-					params[i] = centerPoints[i] - (startPoints[i] - centerPoints[i]);
-				}
+				params[i] = centerPoints[i] + (params[i] - centerPoints[i]) / radius2 * radius1;
 				arcParameters[2] = params[i].x;
 				arcParameters[3] = params[i].y;
-				arcParameters[4] = Vector2::Angle(startPoints[i] - centerPoints[i], params[i] - centerPoints[i]);
+				arcParameters[4] = angle;
 				ID id = model->CreatePrimitive(ot_arc, arcParameters);
 				arcIDs[i] = id;
 			}
@@ -2969,35 +2958,46 @@ void CreatingArc::DrawMode() {
 	}
 	if (stateClick == twoClick)
 	{
-		view->SetStyleDrawing(color->Points());
-		for (int i = 0; i < centerPoints.GetSize(); i++)
-		{
-			view->DrawPoint(CreateArr(centerPoints[i].x, centerPoints[i].y));
+		double radius1 = (startPoints[0] - centerPoints[0]).GetLength();
+		double radius2 = (imaginaryPoints[0] - centerPoints[0]).GetLength();
+		double angle;
+		if (abs(radius2) > EPS) {
+			imaginaryPoints[0] = centerPoints[0] + (imaginaryPoints[0] - centerPoints[0]) / radius2 * radius1;
+			angle = Vector2::Angle(startPoints[0] - centerPoints[0], imaginaryPoints[0] - centerPoints[0]);
+			if (std::isnan(angle) || angle < EPS) {
+				angle = 2 * PI;
+			}
+		}
+		else {
+			imaginaryPoints = startPoints;
+			angle = 2 * PI;
+			radius2 = radius1;
 		}
 
 		view->SetStyleDrawing(color->Primitives(), dot);
 		for (int i = 0; i < startPoints.GetSize(); i++)
 		{
-			double radius = (imaginaryPoints[i] - centerPoints[i]).GetLength();
-			view->DrawCircle(CreateArr(centerPoints[i].x, centerPoints[i].y, radius));
+			view->DrawCircle(CreateArr(centerPoints[i].x, centerPoints[i].y, radius1));
 		}
 
-		view->SetStyleDrawing(color->Points());
 		for (int i = 0; i < startPoints.GetSize(); i++)
 		{
 			view->DrawPoint(CreateArr(startPoints[i].x, startPoints[i].y));
 		}
 
+		for (int i = 0; i < centerPoints.GetSize(); i++)
+		{
+			view->DrawPoint(CreateArr(centerPoints[i].x, centerPoints[i].y));
+		}
+
 		view->SetStyleDrawing(color->CreatingPrim(), solid);
 		for (int i = 0; i < imaginaryPoints.GetSize(); i++)
 		{
-
-			double radius = (imaginaryPoints[i] - centerPoints[i]).GetLength();
-			double angle = Vector2::Angle(startPoints[i] - centerPoints[i], imaginaryPoints[i] - centerPoints[i]);
+			imaginaryPoints[i] = centerPoints[i] + (imaginaryPoints[i] - centerPoints[i]) / radius2 * radius1;
 			view->DrawArc(CreateArr( startPoints[i].x, startPoints[i].y,
 				imaginaryPoints[i].x, imaginaryPoints[i].y,
 				centerPoints[i].x, centerPoints[i].y,
-				radius, angle));
+				radius1, angle));
 		}
 	}
 }

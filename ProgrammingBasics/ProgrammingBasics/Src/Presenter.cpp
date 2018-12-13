@@ -21,7 +21,28 @@ Array<ID> CreateArc(const Array<ID>& obj, const Array<double>& params) {
 	if (params.GetSize() != 6) {
 		return Array<ID>(0);
 	}
-	ID id = Model::GetInstance()->CreatePrimitive(ot_arc, params);
+	Vector2 center(params[0], params[1]);
+	Vector2 start(params[2], params[3]);
+	Vector2 end(params[4], params[5]);
+	double radius1 = (start - center).GetLength();
+	double radius2 = (end - center).GetLength();
+	double angle;
+	if (abs(radius2) > EPS) {
+		end = center + (end - center) / radius2 * radius1;
+		angle = Vector2::Angle(start - center, end - center);
+	}
+	else {
+		end = start;
+		angle = 2 * PI;
+		radius2 = radius1;
+	}
+	Array<double> arcParams(5);
+	arcParams[0] = start.x;
+	arcParams[1] = start.y;
+	arcParams[2] = end.x;
+	arcParams[3] = end.y;
+	arcParams[4] = angle;
+	ID id = Model::GetInstance()->CreatePrimitive(ot_arc, arcParams);
 	auto res = CreateArr(id);
 	res += PrimController::GetInstance()->GetChildren(id);
 	return res;
