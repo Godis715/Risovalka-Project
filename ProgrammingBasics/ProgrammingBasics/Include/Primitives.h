@@ -170,6 +170,7 @@ private:
 
 	friend class PrimController;
 public:
+	Arc(Point*, Point*, Vector2, double);
 	Arc(Point*, Point*, double);
 
 	double GetDist(const Vector2&) const;

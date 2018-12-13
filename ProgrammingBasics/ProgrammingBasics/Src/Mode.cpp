@@ -2898,7 +2898,6 @@ Array<ID> CreatingArc::HandleEvent(const Event ev, Array<Vector2>& params) {
 			double radius2 = (params[0] - centerPoints[0]).GetLength();
 			double angle;
 			if (abs(radius2) > EPS) {
-				params[0] = centerPoints[0] + (params[0] - centerPoints[0]) / radius2 * radius1;
 				angle = Vector2::Angle(startPoints[0] - centerPoints[0], params[0] - centerPoints[0]);
 				if (std::isnan(angle) || angle < EPS) {
 					angle = 2 * PI;
@@ -2912,13 +2911,15 @@ Array<ID> CreatingArc::HandleEvent(const Event ev, Array<Vector2>& params) {
 
 			for (int i = 0; i < params.GetSize(); i++)
 			{
-				Array<double> arcParameters(5);
+				Array<double> arcParameters(7);
 				arcParameters[0] = startPoints[i].x;
 				arcParameters[1] = startPoints[i].y;
 				params[i] = centerPoints[i] + (params[i] - centerPoints[i]) / radius2 * radius1;
 				arcParameters[2] = params[i].x;
 				arcParameters[3] = params[i].y;
-				arcParameters[4] = angle;
+				arcParameters[4] = centerPoints[i].x;
+				arcParameters[5] = centerPoints[i].y;
+				arcParameters[6] = angle;
 				ID id = model->CreatePrimitive(ot_arc, arcParameters);
 				arcIDs[i] = id;
 			}

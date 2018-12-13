@@ -474,12 +474,20 @@ ID PrimController::CreatePrimitive(object_type type, const Array<ID>& dependObjs
 	}
 	case ot_arc: {
 		if (dependObjs.GetSize() == 0) {
-			if (params.GetSize() != 5) {
+			if (params.GetSize() != 7 || params.GetSize() != 5) {
 				LOGERROR("CreatePrimitive: bad size of params", LEVEL_1);
 			}
-			Point* point1 = new Point(params[0], params[1]);
-			Point* point2 = new Point(params[2], params[3]);
-			prim = new Arc(point1, point2, params[4]);
+			if (params.GetSize() == 7) {
+				Point* point1 = new Point(params[0], params[1]);
+				Point* point2 = new Point(params[2], params[3]);
+				Vector2 center(params[4], params[5]);
+				prim = new Arc(point1, point2, center, params[6]);
+			}
+			else {
+				Point* point1 = new Point(params[0], params[1]);
+				Point* point2 = new Point(params[2], params[3]);
+				prim = new Arc(point1, point2, params[4]);
+			}
 		}
 		else {
 			if (params.GetSize() != 1) {

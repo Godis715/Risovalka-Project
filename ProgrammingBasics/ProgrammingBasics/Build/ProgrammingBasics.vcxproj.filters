@@ -5,28 +5,12 @@
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
-    <Filter Include="Файлы заголовков">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;hm;inl;inc;ipp;xsd</Extensions>
-    </Filter>
     <Filter Include="Файлы ресурсов">
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Файлы заголовков\View">
-      <UniqueIdentifier>{df4a5cc5-bb53-4721-a1a2-7361f97e8b38}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Исходные файлы\View">
       <UniqueIdentifier>{e66e65d2-1982-46c3-9dd4-cbe39ecd17a4}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Файлы заголовков\Model">
-      <UniqueIdentifier>{334dbc68-4d8c-428c-9d5a-04739e133d0a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Файлы заголовков\Presenter">
-      <UniqueIdentifier>{ed7f178f-90b2-401b-8074-3dbc1663ae94}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Файлы заголовков\Support">
-      <UniqueIdentifier>{f0559d4b-9408-46bf-82ca-99c76b72b3be}</UniqueIdentifier>
     </Filter>
     <Filter Include="Исходные файлы\Model">
       <UniqueIdentifier>{bec8a112-e6ae-436a-b44f-4377fa783023}</UniqueIdentifier>
@@ -39,6 +23,22 @@
     </Filter>
     <Filter Include="Исходные файлы\ViewWPF">
       <UniqueIdentifier>{ddba426d-406e-4189-8bbd-bd1f9e32de9f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Файлы заголовков">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Файлы заголовков\View">
+      <UniqueIdentifier>{df4a5cc5-bb53-4721-a1a2-7361f97e8b38}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Файлы заголовков\Model">
+      <UniqueIdentifier>{334dbc68-4d8c-428c-9d5a-04739e133d0a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Файлы заголовков\Presenter">
+      <UniqueIdentifier>{ed7f178f-90b2-401b-8074-3dbc1663ae94}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Файлы заголовков\Support">
+      <UniqueIdentifier>{f0559d4b-9408-46bf-82ca-99c76b72b3be}</UniqueIdentifier>
     </Filter>
     <Filter Include="Файлы заголовков\ViewWPF">
       <UniqueIdentifier>{be73f382-229b-4f61-bf5a-43c74cca973a}</UniqueIdentifier>
