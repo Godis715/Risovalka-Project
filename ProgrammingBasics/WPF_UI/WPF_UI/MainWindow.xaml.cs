@@ -252,8 +252,8 @@ namespace WPF_UI
 		private void Scene_MouseMove(object sender, MouseEventArgs e)
 		{
 			viewModel.SetNewCursorPosition(e.GetPosition(Scene).X, e.GetPosition(Scene).Y);
-			if (e.GetPosition(Scene).X < 0 || e.GetPosition(Scene).X > Scene.Width ||
-				e.GetPosition(Scene).Y < 0 || e.GetPosition(Scene).Y > Scene.Height)
+			if (e.GetPosition(Scene).X < 0 || e.GetPosition(Scene).X > Scene.ActualWidth ||
+				e.GetPosition(Scene).Y < 0 || e.GetPosition(Scene).Y > Scene.ActualHeight)
 			{
 				Scene.ReleaseMouseCapture();
 			}

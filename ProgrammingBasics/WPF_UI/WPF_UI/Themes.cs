@@ -67,7 +67,7 @@ namespace WPF_UI
 					{
 						SystemBar(Brushes.LightBlue);
 						ToolBar(Brushes.White);
-						Scene(Brushes.Black);
+						Scene(Brushes.DarkCyan);
 						BackGround(Brushes.White);
 						break;
 					}

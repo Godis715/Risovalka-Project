@@ -39,9 +39,18 @@ namespace WPF_UI
 
 		private void b_Ok_handler(object sender, RoutedEventArgs e)
 		{
-			var value = Double.Parse(((TextBox)((StackPanel)((Button)sender).Parent).Children[0]).Text);
-			viewModel.SetEvent(ViewModel.Event.ev_input, new double[] { value });
-			fieldForDisplays.Children.Remove(inputDisplay);
+            double value;
+            var inputTextBox = ((TextBox)((StackPanel)((Button)sender).Parent).Children[0]);
+            bool result = Double.TryParse(inputTextBox.Text, out value);
+            if (result)
+            {
+                viewModel.SetEvent(ViewModel.Event.ev_input, new double[] { value });
+                fieldForDisplays.Children.Remove(inputDisplay);
+            }
+            else
+            {
+                inputTextBox.Clear();
+            }
 		}
 
 		private void CreateInputDisplay()
@@ -75,7 +84,7 @@ namespace WPF_UI
 		private void Requirments_handler(object sender, RoutedEventArgs e)
 		{
 
-			var name = ((Label)sender).Content.ToString();
+			var name = ((MenuItem)sender).Header.ToString();
 			switch (name)
 			{
 				case "Dist points":
@@ -121,11 +130,11 @@ namespace WPF_UI
 			menuRequirments.Items.Clear();
 			for (int i = 0; i < requirments.Length; i++)
 			{
-				var label = new Label();
-				label.Content = requirments[i];
-				label.AddHandler(Label.MouseDownEvent, new MouseButtonEventHandler(Requirments_handler));
-				menuRequirments.Items.Add(label);
-			}
-		}
+                var newItem = new MenuItem();
+                newItem.Header = requirments[i];
+                newItem.AddHandler(MenuItem.ClickEvent, new RoutedEventHandler(Requirments_handler));
+                menuRequirments.Items.Add(newItem);
+            }
+        }
 	}
 }
