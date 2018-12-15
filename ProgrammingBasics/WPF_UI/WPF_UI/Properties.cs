@@ -78,6 +78,7 @@ namespace WPF_UI
 
 		private void b_Prim_close_handler(object sender, RoutedEventArgs e)
 		{
+			
 		}
 
 		private void b_Ok_handler(object sender, RoutedEventArgs e)
@@ -94,7 +95,7 @@ namespace WPF_UI
 		}
 		private ObjectProperties()
 		{
-
+			
 		}
 
 		private GroupBox inputDisplay;

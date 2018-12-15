@@ -29,7 +29,7 @@
                 <RowDefinition Height="auto"/>
             </Grid.RowDefinitions>
 
-            <Menu Grid.Row="0" Height="25" VerticalAlignment="Top" Background="{Binding colors[2]}">
+            <Menu Grid.Row="0" Height="25" VerticalAlignment="Top" Background="{Binding colors[2]}" >
                 <MenuItem Header="File" x:Name="File">
                     <MenuItem Header="New Project" Command="{Binding NewCommand}">
                         <MenuItem.Icon>
@@ -90,12 +90,12 @@
             </Menu>
 
             <ToolBar Grid.Row="1" Background="{Binding colors[3]}">
-                <Button Margin="2" Click="Button_Undo_Click">
+                <Button Margin="2" Click="Button_Undo_Click" ToolTip="Undo (Ctrl+Z)">
                     <Button.Content>
                         <Image Source="Resources/Undo.ico" Width="15" Height="15"/>
                     </Button.Content>
                 </Button>
-                <Button Margin="2" Click="Button_Redo_Click">
+                <Button Margin="2" Click="Button_Redo_Click" ToolTip="Redo (Ctrl+Y)">
                     <Button.Content>
                         <Image Source="Resources/Redo.ico" Width="15" Height="15"/>
                     </Button.Content>
@@ -104,7 +104,7 @@
                 <ComboBox x:Name="DrawMode">
                     <ComboBoxItem IsSelected="True">
                         <StackPanel>
-                            <Label Content="Default" MouseLeftButtonDown="Button_DrawMode"/>
+                            <Label Content="Default" MouseLeftButtonDown="Button_DrawMode" VerticalAlignment="Stretch"/>
                         </StackPanel>
                     </ComboBoxItem>
                     <StackPanel>
@@ -120,37 +120,37 @@
                     </ComboBoxItem>
                 </ComboBox>
                 <Separator/>
-                <RadioButton Tag="Point" Margin="1" Click="Primitive_click">
+                <RadioButton Tag="Point" Margin="1" Click="Primitive_click" ToolTip="Point">
                     <RadioButton.Content>
                         <Image  Source="Resources/Point.png"  Width="20" Height="20" />
                     </RadioButton.Content>
                 </RadioButton>
-                <RadioButton Tag="Segment" Margin="0,4" VerticalAlignment="Stretch" Click="Primitive_click">
+                <RadioButton Tag="Segment" Margin="0,4" VerticalAlignment="Stretch" Click="Primitive_click" ToolTip="Segment">
                     <RadioButton.Content>
                         <Image  Source="Resources/segment.png"  Width="20" Height="20" />
                     </RadioButton.Content>
                 </RadioButton>
-                <RadioButton Tag="Star" Margin="1" Click="Primitive_click">
+                <RadioButton Tag="Star" Margin="1" Click="Primitive_click" ToolTip="Star">
                     <RadioButton.Content>
                         <Image  Source="Resources/Star.png" Width="20" Height="20" />
                     </RadioButton.Content>
                 </RadioButton>
-                <RadioButton Tag="Broken" Margin="1" Click="Primitive_click">
+                <RadioButton Tag="Broken" Margin="1" Click="Primitive_click" ToolTip="BrokenLine">
                     <RadioButton.Content>
                         <Image  Source="Resources/BrokenLine.png" Width="20" Height="20" />
                     </RadioButton.Content>
                 </RadioButton>
-                <RadioButton Tag="Circle" Margin="1" Click="Primitive_click">
+                <RadioButton Tag="Circle" Margin="1" Click="Primitive_click" ToolTip="Circle">
                     <RadioButton.Content>
                         <Image  Source="Resources/Circle .png" Width="20" Height="20" />
                     </RadioButton.Content>
                 </RadioButton>
-                <RadioButton Tag="Arc"  Margin="1" Click="Primitive_click">
+                <RadioButton Tag="Arc"  Margin="1" Click="Primitive_click" ToolTip="Arc">
                     <RadioButton.Content>
                         <Image  Source="Resources/arc.png" Width="20" Height="20" />
                     </RadioButton.Content>
                 </RadioButton>
-                <RadioButton Tag="Curve" Margin="1" Click="Primitive_click">
+                <RadioButton Tag="Curve" Margin="1" Click="Primitive_click" ToolTip="Curve">
                     <RadioButton.Content>
                         <Image  Source="Resources/Curve.png"  Width="20" Height="20" />
                     </RadioButton.Content>

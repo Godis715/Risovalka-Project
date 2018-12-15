@@ -217,7 +217,6 @@ namespace WPF_UI
 		Boolean IsDown;
 		private void Window_KeyEvent(object sender, KeyEventArgs e)
 		{
-			lastKeyEvent = e.Key;
 			switch (e.Key)
 			{
 				case Key.Enter:
@@ -241,7 +240,25 @@ namespace WPF_UI
 						viewModel.SetEvent(lastCreateEvent, new double[0]);
 						break;
 					}
+				case Key.Delete:
+					{
+						//var slider = new Slider();
+						//FieldForDisplays.Children.Add(slider);
+						viewModel.SetEvent(ViewModel.Event.ev_del, new double[0]);
+						break;
+					}
+				case Key.Z:
+					{
+						if (lastKeyEvent == Key.LeftCtrl) viewModel.SetEvent(ViewModel.Event.ev_undo, new double[0]);
+						break;
+					}
+				case Key.Y:
+					{
+						if (lastKeyEvent == Key.LeftCtrl) viewModel.SetEvent(ViewModel.Event.ev_redu, new double[0]);
+						break;
+					}
 			}
+			lastKeyEvent = e.Key;
 			IsDown = e.IsDown;
 		}
 		
@@ -256,6 +273,8 @@ namespace WPF_UI
 				e.GetPosition(Scene).Y < 0 || e.GetPosition(Scene).Y > Scene.ActualHeight)
 			{
 				Scene.ReleaseMouseCapture();
+				viewModel.SetEvent(ViewModel.Event.ev_leftMouseUp,
+				new double[] { e.GetPosition(Scene).X, e.GetPosition(Scene).Y });
 			}
 			viewModel.SetEvent(ViewModel.Event.ev_mouseMove,
 				new double[] { e.GetPosition(Scene).X, e.GetPosition(Scene).Y });
