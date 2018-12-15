@@ -81,7 +81,11 @@ namespace DrawProject {
 		ev_saveAsFile,
 		ev_saveFile,
 		ev_compile,
-		ev_set_theme
+		ev_set_theme,
+		//
+		ev_dislayPoints,
+		ev_displayParameters,
+		ev_displayRequirements
 	};
 
 	class CreateObject {

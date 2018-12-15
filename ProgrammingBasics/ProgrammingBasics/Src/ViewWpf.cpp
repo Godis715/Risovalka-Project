@@ -36,6 +36,15 @@ void ViewWPF::DrawCurve(const Array<double>& params) {
 	mailBox->SendMessage(message);
 }
 
+void ViewWPF::DisplaySign(const std::string& sign, double x, double y) {
+	auto message = new Message;
+	message->code = draw_sign;
+	message->strArr = CreateArr(sign);
+	message->doubleArr = CreateArr(x, y);
+	mailBox->SendMessage(message);
+}
+
+
 void ViewWPF::SetStyleDrawing(const rgbColor color, const typeDrawing type) {
 	auto message = new Message;
 	message->code = set_style;

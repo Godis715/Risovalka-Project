@@ -103,10 +103,10 @@ namespace DrawProject {
 	void Presenter::Initializer(IView* _view)
 	{
 		view = _view;
-		
+
 		mode = new Selection();
 		model = Model::GetInstance();
-		
+
 		auto tree = new treeFunc;
 		tree->Add("Point", CreatePoint);
 		tree->Add("Segment", CreateSegment);
@@ -166,6 +166,29 @@ namespace DrawProject {
 		}
 	}
 
+	void Presenter::DrawPrimitiveParams(const ID& primitive) {
+		auto objCtrl = ObjectController::GetInstance();
+		switch (objCtrl->GetType(primitive))
+		{
+		case ot_segment: {
+			Array<double> coords = model->GetVariableObjParam(primitive, VERTEX);
+
+			auto x = (coords[0] + coords[2]) / 2.0;
+			auto y = (coords[1] + coords[3]) / 2.0;
+
+			auto length = sqrt((coords[0] - coords[2])*(coords[0] - coords[2]) +
+				(coords[1] - coords[3]) * (coords[1] - coords[3]));
+
+			view->DisplaySign(std::to_string(length), x, y);
+
+			break;
+		}
+		default:
+			break;
+		}
+	}
+
+
 	void Presenter::DrawScene()
 	{
 		LOG("Draw Scene", LEVEL_4);
@@ -175,13 +198,14 @@ namespace DrawProject {
 			view->SetStyleDrawing(Color::GetInstance()->Primitives(), solid);
 		}
 
+		// draw primitives
 		while (iter.IsValid()) {
 			ID obj = *iter;
 			++iter;
 			if (!objCtrl->IsValid(obj)) {
 				continue;
 			}
-			if (model->GetObjType(obj) == ot_point) {
+			if (model->GetObjType(obj) == ot_point && displayPoints) {
 				auto params = model->GetVariableObjParam(obj, VERTEX);
 				view->DrawPoint(params);
 			}
@@ -200,6 +224,10 @@ namespace DrawProject {
 			if (model->GetObjType(obj) == ot_curve) {
 				auto params = model->GetVariableObjParam(obj, VERTEX);
 				view->DrawCurve(params);
+			}
+
+			if (displayParameters) {
+				DrawPrimitiveParams(obj);
 			}
 		}
 
@@ -258,22 +286,34 @@ namespace DrawProject {
 			Color::GetInstance()->SetTheme(int(_params[0]));
 			break;
 		}
+		case ev_dislayPoints:
+		{
+			displayPoints = !displayPoints;
+		}
+		case ev_displayParameters:
+		{
+			displayParameters = !displayParameters;
+		}
+		case ev_displayRequirements:
+		{
+			displayRequirements = !displayRequirements;
 		}
 		LOG("Set_event 3", LEVEL_4);
 		view->Update();
-	}
-
-	void Presenter::Compile(const std::string& path) {
-		Compiler* compiler = Compiler::GetInstance();
-		std::ifstream file;
-		file.open(path);
-		if (file.is_open()) {
-			if (!file.eof()) {
-				compiler->Parse(file);
-			}
-			file.close();
 		}
 	}
+		void Presenter::Compile(const std::string& path) {
+			Compiler* compiler = Compiler::GetInstance();
+			std::ifstream file;
+			file.open(path);
+			if (file.is_open()) {
+				if (!file.eof()) {
+					compiler->Parse(file);
+				}
+				file.close();
+			}
+		}
 
-	Presenter* Presenter::instance = nullptr;
-}
+		Presenter* Presenter::instance = nullptr;
+	}
+

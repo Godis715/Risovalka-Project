@@ -70,8 +70,10 @@ namespace WPF_UI
 			scale_scene,
 			rotate_scene,
 			current_draw_mode,
-			delete_req_input
-		};
+			delete_req_input,
+
+            draw_sign,
+        };
 
 		private void MessageHandling(MessageWrapper message)
 		{
@@ -156,6 +158,13 @@ namespace WPF_UI
 					{
 						break;
 					}
+                case Code.draw_sign:
+                    {
+                        var sign = message.GetStrArr()[0];
+                        var position = message.GetDoubleArr();
+                        controlScene.DrawSign(sign, position);
+                        break;
+                    }
 			}
 		}
 
@@ -227,8 +236,12 @@ namespace WPF_UI
 			ev_saveAsFile,
 			ev_saveFile,
 			ev_compile,
-			ev_set_theme
-		};
+			ev_set_theme,
+
+            ev_dislayPoints,
+            ev_displayParameters,
+            ev_displayRequirements
+        };
 
 		public void SetEvent(Event ev, double[] arrParams, string str = "")
 		{

@@ -206,6 +206,15 @@ namespace WPF_UI
 			scene.Children.Add(circlePath);
 		}
 
+        public void DrawSign(String sign, double[] position) {
+            var text = new TextBlock();
+            text.Text = sign;
+            Canvas.SetLeft(text, position[0]);
+            Canvas.SetTop(text, position[1]);
+
+            scene.Children.Add(text);
+        }
+
 		public void CleareScene()
 		{
 			scene.Children.Clear();

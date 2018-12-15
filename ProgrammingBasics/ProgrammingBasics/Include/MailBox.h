@@ -28,7 +28,9 @@ namespace Kernel {
 		scale_scene,
 		rotate_scene,
 		current_draw_mode,
-		delete_req_input
+		delete_req_input,
+
+		draw_sign
 	};
 
 	struct Message {

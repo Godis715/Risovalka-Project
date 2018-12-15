@@ -16,6 +16,13 @@ namespace DrawProject {
 		static Presenter* instance;
 
 		Presenter();
+
+		bool displayPoints = true;
+		bool displayRequirements = false;
+		bool displayParameters = true;
+
+		void DrawPrimitiveParams(const ID&);
+	
 	public:
 		static Presenter* GetInstance();
 

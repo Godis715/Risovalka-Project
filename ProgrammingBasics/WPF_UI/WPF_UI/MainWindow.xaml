@@ -73,6 +73,11 @@
                         <MenuItem Header="Neutral" Click="ChangedTheme"/>
                         <MenuItem Header="Gradient" Click="ChangedTheme"/>
                     </MenuItem>
+                    <MenuItem x:Name="DispElem" Header="Display">
+                            <CheckBox Content="Points"/>
+                            <CheckBox Content="Parameters"/>
+                            <CheckBox Content="Requirements"/>
+                    </MenuItem>
                     <MenuItem x:Name="GridOnOff" Header="Grid On/Off" Command="{Binding GridOnOffCommand}" />
                     <Separator />
                     <MenuItem Header="More soon...">

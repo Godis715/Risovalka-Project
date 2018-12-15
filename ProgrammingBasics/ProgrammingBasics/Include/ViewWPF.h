@@ -18,6 +18,8 @@ namespace DrawProject {
 		void DrawCircle(const Array<double>&);
 		void DrawCurve(const Array<double>&);
 
+		void DisplaySign(const std::string&, double, double);
+
 		void SetStyleDrawing(const rgbColor, const typeDrawing = null);
 
 		int Run();

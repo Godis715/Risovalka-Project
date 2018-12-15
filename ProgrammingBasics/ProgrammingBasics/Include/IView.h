@@ -21,6 +21,8 @@ namespace DrawProject {
 		virtual void DrawCircle(const Array<double>&) = 0;
 		virtual void DrawCurve(const Array<double>&) = 0;
 
+		virtual void DisplaySign(const std::string&, double, double) = 0;
+
 		virtual void SetStyleDrawing(const rgbColor, const typeDrawing = null) = 0;
 		virtual int Run() = 0;
 		virtual void Update() = 0;

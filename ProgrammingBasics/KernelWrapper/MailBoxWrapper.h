@@ -30,6 +30,9 @@ namespace KernelWrapper {
 
 		void SendEvent(int code, array<double>^ doubleArr) 
 		{
+			if (code == 1) {
+				int b = 5;
+			}
 			instance->SendEvent(code,
 				Helpers::Converter::ToDrawProjArray(doubleArr));
 		}
