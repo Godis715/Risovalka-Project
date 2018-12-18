@@ -168,7 +168,7 @@ namespace DrawProject {
 
 	void Presenter::DrawScene()
 	{
-		LOG("Draw Scene", LEVEL_4);
+		//LOG("Draw Scene", LEVEL_4);
 		auto objCtrl = ObjectController::GetInstance();
 		auto iter = model->GetPrimIterator();
 		if (iter.IsValid()) {
@@ -259,7 +259,7 @@ namespace DrawProject {
 			break;
 		}
 		}
-		LOG("Set_event 3", LEVEL_4);
+		//LOG("Set_event 3", LEVEL_4);
 		view->Update();
 	}
 
