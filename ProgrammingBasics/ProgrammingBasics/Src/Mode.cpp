@@ -2114,7 +2114,6 @@ void Redaction::DrawMode() {
 }
 #pragma endregion
 
-
 #pragma region CreateRequirementWithParam
 CreateRequirementWithParam::CreateRequirementWithParam(Array<ID> _selecObj, Event _ev) : selectedObjects(_selecObj) {
 	IDrawMode* outputWidjet = static_cast<IDrawMode*>(view->GetWidjet(drawMode));
@@ -2159,11 +2158,10 @@ Mode* CreateRequirementWithParam::HandleEvent(const Event ev, const Array<double
 		if (params.GetSize() != 1) {
 			throw std::invalid_argument("Bad number of parameters");
 		}
-
-		model->CreateRequirement(typeRequirement, selectedObjects, params);
-
+		Undo_Redo::GetInstance()->AddVersion(tfc_creation_req, selectedObjects);
+		ID id = model->CreateRequirement(typeRequirement, selectedObjects, params);
+		Undo_Redo::GetInstance()->CompleteAddCreatingReq(id);
 		return new Selection(selectedObjects);
-
 	}
 	case ev_escape:
 	{
