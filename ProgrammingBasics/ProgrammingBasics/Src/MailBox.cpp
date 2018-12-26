@@ -1,5 +1,6 @@
 #include "MailBox.h"
-#include "ViewWPF.h";
+#include "ViewWPF.h"
+#include "WPFConsoleStream.h"
 
 using namespace DrawProject;
 
@@ -30,13 +31,13 @@ MailBox* MailBox::GetInstance() {
  }
 
 MailBox::MailBox() {
-
+	wpfcout = new WPFConsoleStream(this);
 }
 
 void MailBox::InitKernel() {
 
-	Logger::InitLogger(new std::ofstream("Log.txt"), 3);
-	LOG("1", LEVEL_4);
+	Logger::InitLogger(new std::iostream(wpfcout), 1);
+
 	auto viewWPF = ViewWPF::GetInstance();
 	viewWPF->Run();
 }

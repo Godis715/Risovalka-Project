@@ -185,6 +185,9 @@
     <ClInclude Include="Kernel.h">
       <Filter>Файлы заголовков\ViewWPF</Filter>
     </ClInclude>
+    <ClInclude Include="..\Include\WPFConsoleStream.h">
+      <Filter>Файлы заголовков\ViewWPF</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\..\Debug\script.txt">

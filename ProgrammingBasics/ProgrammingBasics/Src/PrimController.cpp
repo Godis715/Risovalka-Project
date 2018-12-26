@@ -138,7 +138,7 @@ Array<double> PrimController::GetVariableObjParam(const ID& obj, int modifiers[]
 				break;
 			}
 			default: {
-				LOGERROR("PrimController:GetVariableObjParam: not appropriate param modifier", LEVEL_1);
+				LOGERROR("PrimController:GetVariableObjParam: not appropriate param modifier 1", LEVEL_1);
 			}
 			}
 		}
@@ -155,7 +155,7 @@ Array<double> PrimController::GetVariableObjParam(const ID& obj, int modifiers[]
 				break;
 			}
 			default: {
-				LOGERROR("PrimController:GetVariableObjParam: not appropriate param modifier", LEVEL_1);
+				LOGERROR("PrimController:GetVariableObjParam: not appropriate param modifier 2", LEVEL_1);
 			}
 			}
 		}
@@ -188,7 +188,7 @@ Array<double> PrimController::GetVariableObjParam(const ID& obj, int modifiers[]
 				break;
 			}
 			default: {
-				LOGERROR("PrimController:GetVariableObjParam: not appropriate param modifier", LEVEL_1);
+				LOGERROR("PrimController:GetVariableObjParam: not appropriate param modifier 3", LEVEL_1);
 			}
 			}
 		}
@@ -209,7 +209,7 @@ Array<double> PrimController::GetVariableObjParam(const ID& obj, int modifiers[]
 				break;
 			}
 			default: {
-				LOGERROR("PrimController:GetVariableObjParam: not appropriate param modifier", LEVEL_1);
+				LOGERROR("PrimController:GetVariableObjParam: not appropriate param modifier 4", LEVEL_1);
 			}
 			}
 		}
@@ -232,14 +232,14 @@ Array<double> PrimController::GetVariableObjParam(const ID& obj, int modifiers[]
 				break;
 			}
 			default: {
-				LOGERROR("PrimController:GetVariableObjParam: not appropriate param modifier", LEVEL_1);
+				LOGERROR("PrimController:GetVariableObjParam: not appropriate param modifier 5", LEVEL_1);
 			}
 			}
 		}
 		break;
 	}
 	default: {
-		LOGERROR("PrimController:GetVariableObjParam: unexpected type", LEVEL_1);
+		LOGERROR("PrimController:GetVariableObjParam: unexpected type 6", LEVEL_1);
 	}
 	}
 	return params;
@@ -260,7 +260,7 @@ void PrimController::SetVariableObjParam(const ID& obj, const Array<double>& par
 				break;
 			}
 			default: {
-				LOGERROR("PrimController:SetVariableObjParam: not appropriate param modifier", LEVEL_1);
+				LOGERROR("PrimController:SetVariableObjParam: not appropriate param modifier 7", LEVEL_1);
 			}
 			}
 		}
@@ -276,7 +276,7 @@ void PrimController::SetVariableObjParam(const ID& obj, const Array<double>& par
 				break;
 			}
 			default: {
-				LOGERROR("PrimController:SetVariableObjParam: not appropriate param modifier", LEVEL_1);
+				LOGERROR("PrimController:SetVariableObjParam: not appropriate param modifier 8", LEVEL_1);
 			}
 			}
 		}
@@ -308,7 +308,7 @@ void PrimController::SetVariableObjParam(const ID& obj, const Array<double>& par
 				break;
 			}
 			default: {
-				LOGERROR("PrimController:GetVariableObjParam: not appropriate param modifier", LEVEL_1);
+				LOGERROR("PrimController:GetVariableObjParam: not appropriate param modifier 9", LEVEL_1);
 			}
 			}
 		}
@@ -331,7 +331,7 @@ void PrimController::SetVariableObjParam(const ID& obj, const Array<double>& par
 				break;
 			}
 			default: {
-				LOGERROR("PrimController:GetVariableObjParam: not appropriate param modifier", LEVEL_1);
+				LOGERROR("PrimController:GetVariableObjParam: not appropriate param modifier 10", LEVEL_1);
 			}
 			}
 		}
@@ -354,7 +354,7 @@ void PrimController::SetVariableObjParam(const ID& obj, const Array<double>& par
 				break;
 			}
 			default: {
-				LOGERROR("PrimController:SetVariableObjParam: not appropriate param modifier", LEVEL_1);
+				LOGERROR("PrimController:SetVariableObjParam: not appropriate param modifier 11", LEVEL_1);
 			}
 			}
 		}

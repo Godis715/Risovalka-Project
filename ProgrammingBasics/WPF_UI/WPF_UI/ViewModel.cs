@@ -156,6 +156,8 @@ namespace WPF_UI
 					{
 						break;
 					}
+                default:
+                    break;
 			}
 		}
 

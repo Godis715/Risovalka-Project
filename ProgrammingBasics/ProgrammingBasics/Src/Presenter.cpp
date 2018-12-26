@@ -136,27 +136,27 @@ namespace DrawProject {
 			switch (type)
 			{
 			case ot_point: {
-				auto params = model->GetVariableObjParam(obj, VERTEX);
+				auto params = model->GETVARPARAMS(obj, VERTEX);
 				view->DrawPoint(params);
 				break;
 			}
 			case ot_segment: {
-				auto params = model->GetVariableObjParam(obj, VERTEX);
+				auto params = model->GETVARPARAMS(obj, VERTEX);
 				view->DrawLine(params);
 				break;
 			}
 			case ot_arc: {
-				auto params = model->GetVariableObjParam(obj, VERTEX, CENTER, RADIUS, ANGLE);
+				auto params = model->GETVARPARAMS(obj, VERTEX, CENTER, RADIUS, ANGLE);
 				view->DrawArc(params);
 				break;
 			}
 			case ot_circle: {
-				auto params = model->GetVariableObjParam(obj, CENTER, RADIUS);
+				auto params = model->GETVARPARAMS(obj, CENTER, RADIUS);
 				view->DrawCircle(params);
 				break;
 			}
 			case ot_curve: {
-				auto params = model->GetVariableObjParam(obj, VERTEX);
+				auto params = model->GETVARPARAMS(obj, VERTEX);
 				view->DrawCurve(params);
 				break;
 			}
@@ -182,23 +182,23 @@ namespace DrawProject {
 				continue;
 			}
 			if (model->GetObjType(obj) == ot_point) {
-				auto params = model->GetVariableObjParam(obj, VERTEX);
+				auto params = model->GETVARPARAMS(obj, VERTEX);
 				view->DrawPoint(params);
 			}
 			if (model->GetObjType(obj) == ot_segment) {
-				auto params = model->GetVariableObjParam(obj, VERTEX);
+				auto params = model->GETVARPARAMS(obj, VERTEX);
 				view->DrawLine(params);
 			}
 			if (model->GetObjType(obj) == ot_arc) {
-				auto params = model->GetVariableObjParam(obj, VERTEX, CENTER, RADIUS, ANGLE);
+				auto params = model->GETVARPARAMS(obj, VERTEX, CENTER, RADIUS, ANGLE);
 				view->DrawArc(params);
 			}
 			if (model->GetObjType(obj) == ot_circle) {
-				auto params = model->GetVariableObjParam(obj, CENTER, RADIUS);
+				auto params = model->GETVARPARAMS(obj, CENTER, RADIUS);
 				view->DrawCircle(params);
 			}
 			if (model->GetObjType(obj) == ot_curve) {
-				auto params = model->GetVariableObjParam(obj, VERTEX);
+				auto params = model->GETVARPARAMS(obj, VERTEX);
 				view->DrawCurve(params);
 			}
 		}

@@ -79,7 +79,6 @@ void DataController::Connect(const ID& head, const Array<ID>& nodes) {
 				linkData.Add(nodes[i], currentNode);
 			}
 
-
 			continue;
 		}
 		else {
