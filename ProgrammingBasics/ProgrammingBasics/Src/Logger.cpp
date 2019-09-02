@@ -2,7 +2,7 @@
 
 using namespace DrawProject;
 
-int Logger::minLevel = LEVEL_3;
+int Logger::minLevel = LEVEL_4;
 std::ostream* Logger::output = nullptr;
 
 string operator + (int num, string str) {
