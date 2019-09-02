@@ -178,6 +178,7 @@
     <ClInclude Include="..\Include\Undo-Redo.h" />
     <ClInclude Include="..\Include\Vector2.h" />
     <ClInclude Include="..\Include\ViewWPF.h" />
+    <ClInclude Include="..\Include\WPFConsoleStream.h" />
     <ClInclude Include="..\Include\WPFWidget.h" />
     <ClInclude Include="Kernel.h" />
   </ItemGroup>

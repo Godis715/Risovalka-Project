@@ -3,6 +3,7 @@
 
 #include <fstream>
 #include <string>
+#include <iostream>
 
 using std::string;
 
@@ -63,7 +64,7 @@ namespace DrawProject {
 		static void Log(std::string message, int priority) {
 
 			if (priority >= minLevel) {
-				(*output) << "LOG:" << message << std::endl;
+				(*output) << "LOG:" << message << '\n';
 			}
 			else {
 				return;
@@ -73,8 +74,7 @@ namespace DrawProject {
 		static void LogError(const char* message, int priority) {
 			if (priority >= minLevel) {
 				(*output) << "ERROR:" << message << std::endl;
-				system("pause");
-				exit(0);
+				std::cout << message;
 			}
 			else {
 				return;

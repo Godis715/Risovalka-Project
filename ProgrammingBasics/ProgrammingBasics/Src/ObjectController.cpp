@@ -37,10 +37,6 @@ Array<double> ObjectController::GetObjParam(const ID& obj) {
 	return obj.object->GetParams();
 }
 
-Array<ID> ObjectController::GetObjChildren(const ID& obj) {
-	return obj.object->GetChildren();
-}
-
 void ObjectController::DeleteObj(ID& id) const {
 	Object* obj = id.object;
 	if (obj != nullptr) {

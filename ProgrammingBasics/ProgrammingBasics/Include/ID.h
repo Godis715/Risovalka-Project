@@ -52,7 +52,6 @@ namespace DrawProject {
 	public:
 		static IDGenerator* getInstance();
 		ID* generateID() const;
-		ID* generateID(unsigned long long) const;
 		static ID GetNullID();
 
 		static bool IsNullID(const ID&);
@@ -75,13 +74,11 @@ namespace DrawProject {
 		bool isValid;
 	public:
 		Object(object_type, const Array<double>&, const Array<ID>&);
-		Object(object_type, const Array<double>&, const Array<ID>&, unsigned long long);
 		virtual ~Object();
 
 		object_type GetType() const;
 		ID GetID() const;
 		Array<double> GetParams() const;
-		Array<ID> GetChildren() const;
 
 		void SetParams(const Array<double>&);
 
@@ -99,9 +96,8 @@ namespace DrawProject {
 		object_type GetType(const ID&) const;
 
 		void DeleteObj(ID&) const;
-		void SetObjParam(const ID&, const Array<double>&);
-		Array<double> GetObjParam(const ID&);
-		Array<ID> GetObjChildren(const ID&);
+		void SetObjParam(const ID&, const Array<double>&); // 
+		Array<double> GetObjParam(const ID&); // uses in undo-redo, but needed DELETE!
 		bool IsValid(const ID&);
 		void MakeInValid(ID&);
 		void MakeValid(ID&);

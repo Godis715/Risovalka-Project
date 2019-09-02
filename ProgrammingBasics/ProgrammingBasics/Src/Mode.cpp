@@ -1,6 +1,7 @@
 #include "Mode.h"
 #include "Presenter.h"
-
+#include <string>
+using std::string;
 namespace DrawProject {
 	Presenter* presenter = nullptr;
 
@@ -653,6 +654,7 @@ Mode* DMDefualt::HandleEvent(const Event ev, const Array<double>& params)
 
 void DMDefualt::DrawMode()
 {
+
 	if (createObject != nullptr)
 	{
 		createObject->DrawMode();
@@ -660,7 +662,6 @@ void DMDefualt::DrawMode()
 	view->SetStyleDrawing(color->SelectedPrim());
 	if (selectionObjects.GetSize() != 0)
 	{
-		
 		presenter->DrawSelectedObjects(selectionObjects);
 	}
 }
@@ -1487,7 +1488,7 @@ void Selection::DrawMode()
 #pragma region RedactionCurve
 RedactionCurve::RedactionCurve(const ID& _obj) {
 	obj = _obj;
-	auto params = model->GetVariableObjParam(obj, CURVE_AS_IT_IS);
+	auto params = model->GETVARPARAMS(obj, CURVE_AS_IT_IS);
 	int countParams = (params.GetSize() + 4) / 6;
 	points = Array<Vector2>(countParams);
 	orts = Array<Vector2>(countParams);

@@ -41,18 +41,6 @@ ID* IDGenerator::generateID() const {
 	return new ID(++_lastGivenHash);
 }
 
-ID* IDGenerator::generateID(unsigned long long hash) const {
-	if (hash > _lastGivenHash) {
-		ID* id = new ID(hash);
-		_lastGivenHash = hash + 1;
-		return id;
-	}
-	else {
-		LOGERROR("generateID: this hash already used", LEVEL_3);
-	}
-	
-}
-
 ID IDGenerator::GetNullID() {
 	return ID(0);
 }
@@ -91,15 +79,6 @@ Object::Object(object_type _type, const Array<double>& _params, const Array<ID>&
 	isValid = true;
 }
 
-Object::Object(object_type _type, const Array<double>& _params, const Array<ID>& _children, unsigned long long _hash) :
-	type(_type),
-	params(_params),
-	children(_children)
-{
-	id = IDGenerator::getInstance()->generateID(_hash);
-	id->object = this;
-	isValid = true;
-}
 
 Object::~Object() {
 	delete id;
@@ -119,8 +98,4 @@ void Object::SetParams(const Array<double>& _params) {
 
 Array<double> Object::GetParams() const {
 	return params;
-}
-
-Array<ID> Object::GetChildren() const {
-	return children;
 }

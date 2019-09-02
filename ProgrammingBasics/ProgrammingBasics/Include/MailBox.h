@@ -8,6 +8,10 @@
 
 #include "Presenter.h"
 
+namespace DrawProject {
+	class WPFConsoleStream;
+}
+
 namespace Kernel {
 
 	enum Code
@@ -28,7 +32,8 @@ namespace Kernel {
 		scale_scene,
 		rotate_scene,
 		current_draw_mode,
-		delete_req_input
+		delete_req_input,
+		logging
 	};
 
 	struct Message {
@@ -46,8 +51,6 @@ namespace Kernel {
 
 		void SendEvent(int code, DrawProject::Array<double>& doubleArr, const std::string& str = "") {
 			auto presenter = DrawProject::Presenter::GetInstance();
-			std::cout << doubleArr.GetSize();
-			std::cout << "string is" << str;
 
 			try {
 				presenter->Set_event(DrawProject::Event(code), doubleArr, str);
@@ -66,6 +69,8 @@ namespace Kernel {
 
 		std::queue<Message*> messageQueue;
 		static MailBox* instance;
+
+		DrawProject::WPFConsoleStream* wpfcout;
 	};
 }
 #endif

@@ -199,13 +199,13 @@
         <Grid Grid.Row="1" HorizontalAlignment="Stretch">
 
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="3*"/>
                 <ColumnDefinition Width="auto"/>
-                <ColumnDefinition Width="auto"/>
-                
+                <ColumnDefinition Width="1*"/>
+
             </Grid.ColumnDefinitions>
-            <Canvas x:Name="Scene" Grid.Column="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="10, 10"
-                   Background="{Binding colors[1]}"
+            <Canvas x:Name="Scene" Grid.Column="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="10"
+                    Background="{Binding colors[1]}"
                     MouseMove="Scene_MouseMove"
                     MouseLeftButtonDown="Scene_MouseLeftButtonDown"
                     MouseLeftButtonUp="Scene_MouseLeftButtonUp"
@@ -218,19 +218,19 @@
 
             </Canvas>
             <GridSplitter Grid.Column="1" ShowsPreview="False" Width="3"
-        HorizontalAlignment="Center" VerticalAlignment="Stretch" Background="DarkBlue"/>
-            <Grid Background="{Binding colors[0]}" x:Name="test" Grid.Column="2">
+        HorizontalAlignment="Center" VerticalAlignment="Stretch" Background="DarkBlue" Margin="0,10"/>
+            <Grid Background="{Binding colors[0]}" x:Name="test" Grid.Column="2" Margin="10">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
-                <GroupBox Grid.Column="1" Header="Field widgets" Width="auto">
+                <GroupBox Grid.Column="1" Header="Field widgets">
                     <Grid>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="119*"/>
-                            <ColumnDefinition Width="32*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
                         <Grid.RowDefinitions>
                             <RowDefinition x:Name="ParamsRow" Height="auto"/>
@@ -238,14 +238,26 @@
                             <RowDefinition Height="auto" />
                         </Grid.RowDefinitions>
 
-                        <Grid Grid.Row="2" x:Name="FieldForDisplays" Width="150" HorizontalAlignment="Left" Grid.ColumnSpan="2">
-
+                        <Grid Grid.Row="2" x:Name="FieldForDisplays" HorizontalAlignment="Stretch" Grid.ColumnSpan="2">
+                            <FlowDocumentScrollViewer HorizontalAlignment="Stretch" IsEnabled="False" MaxHeight="50">
+                                <FlowDocument>
+                                    <Paragraph>
+                                        <Run>Hello world!</Run>
+                                        <LineBreak/>
+                                        <Run>Hello world!</Run>
+                                        <LineBreak/>
+                                        <Run>Hello world!</Run>
+                                        <LineBreak/>
+                                        <Run>Hello world!</Run>
+                                        <LineBreak/>
+                                    </Paragraph>
+                                </FlowDocument>
+                            </FlowDocumentScrollViewer>
                         </Grid>
                     </Grid>
                 </GroupBox>
             </Grid>
         </Grid>
-
         <StatusBar Grid.Row="2" x:Name="StatusBar" Background="LightGray">
             <Label Content="{Binding CursorPosition}"  />
             <Separator/>
